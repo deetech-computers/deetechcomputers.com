@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-08T19:57:01.276Z",
+  "total": 4,
+  "products": [
+    {
+      "_id": "698f2f7532c9c8c8f264dba5",
+      "id": "698f2f7532c9c8c8f264dba5",
+      "name": "Samsung 24\" Monitor",
+      "short_description": "24\" IPS Panel, 1920x1080, 75Hz",
+      "description": "fdcfgchggvhg",
+      "specs": {},
+      "brand": "Samsung",
+      "category": "monitors",
+      "price": 500,
+      "countInStock": 8,
+      "isFeatured": true,
+      "homeSections": [],
+      "image_url": "https://i.postimg.cc/yNDS30H2/mouse.webp",
+      "image": "https://i.postimg.cc/yNDS30H2/mouse.webp",
+      "images": [
+        "https://i.postimg.cc/yNDS30H2/mouse.webp",
+        "https://i.postimg.cc/9XDv6SSp/photo_2025-09-07_12-36-21.jpg"
+      ],
+      "sold": 10,
+      "createdAt": "2026-02-13T14:04:37.222Z",
+      "updatedAt": "2026-03-05T13:02:13.413Z"
+    },
+    {
+      "_id": "699ebc276b0ecfb1276336d3",
+      "id": "699ebc276b0ecfb1276336d3",
+      "name": "Dell Latitude 5310 x360",
+      "short_description": "10th Gen Convertible Power",
+      "description": "Dell Latitude 5310 x360 – 10th Gen Convertible Power \r\nIdeal for business professionals, students, and portable productivity",
+      "specs": {
+        "Processor": "Intel Core i5 (10th Generation)",
+        "Speed": "2.10GHz",
+        "Memory": "16GB DDR4 RAM",
+        "Storage": "256GB SSD",
+        "Display": "13.3-inch Full HD Touchscreen (x360 Convertible)"
+      },
+      "brand": "Dell",
+      "category": "laptops",
+      "price": 4650,
+      "countInStock": 9,
+      "isFeatured": false,
+      "homeSections": [
+        "popular",
+        "best_laptops"
+      ],
+      "image_url": "https://i.postimg.cc/bJK3wtS5/photo-2026-02-25-01-05-01.jpg",
+      "image": "https://i.postimg.cc/bJK3wtS5/photo-2026-02-25-01-05-01.jpg",
+      "images": [
+        "https://i.postimg.cc/bJK3wtS5/photo-2026-02-25-01-05-01.jpg"
+      ],
+      "sold": 10,
+      "createdAt": "2026-02-25T09:08:55.589Z",
+      "updatedAt": "2026-03-05T13:02:14.743Z"
+    },
+    {
+      "_id": "699ee376d801f3a100d071fb",
+      "id": "699ee376d801f3a100d071fb",
+      "name": "HP Elitebook Folio 9470m",
+      "short_description": "HP Folio 9470m – Slim & Business Ready",
+      "description": "HP Elitebook Folio 9470m-Ideal for office work, business users, and multitasking",
+      "specs": {
+        "Processor": "Intel Core i7 (3rd Generation)",
+        "Speed": "2.10 – 2.60GHz",
+        "Memory": "16GB RAM",
+        "Storage": "256GB SSD",
+        "Display": "14-inch Full HD (1080p)",
+        "Features": "Keyboard Backlight 💡",
+        "Fingerprint Sensor": ""
+      },
+      "brand": "HP",
+      "category": "laptops",
+      "price": 2550,
+      "countInStock": 9,
+      "isFeatured": false,
+      "homeSections": [
+        "popular",
+        "best_laptops"
+      ],
+      "image_url": "https://i.postimg.cc/zDc2pp8T/photo-2026-02-25-01-04-29.jpg",
+      "image": "https://i.postimg.cc/zDc2pp8T/photo-2026-02-25-01-04-29.jpg",
+      "images": [
+        "https://i.postimg.cc/zDc2pp8T/photo-2026-02-25-01-04-29.jpg"
+      ],
+      "sold": 8,
+      "createdAt": "2026-02-25T11:56:38.351Z",
+      "updatedAt": "2026-03-05T13:02:17.505Z"
+    },
+    {
+      "_id": "699ff57cfe3829090bbc6cc2",
+      "id": "699ff57cfe3829090bbc6cc2",
+      "name": "Dell Latitude 5300 2-in-1",
+      "short_description": "Dell Latitude 5300 2-in-1-Affordable and Reliable",
+      "description": "Dell Latitude 5300 2-in-1 - Ideal for business professionals, students, and portable productivity",
+      "specs": {
+        "Processor": "Intel® Core™ i7-8665U vPro (8th Generation)",
+        "Speed": "1.90GHz Base Speed with Intel Turbo Boost",
+        "Memory": "8GB DDR4 RAM",
+        "Storage": "256GB PCIe NVMe M.2 SSD",
+        "Display": "13.3-inch FHD (1920×1080) Touchscreen",
+        "Graphics": "Intel UHD Graphics 620",
+        "Design": "x360 Convertible"
+      },
+      "brand": "Dell",
+      "category": "laptops",
+      "price": 4400,
+      "countInStock": 10,
+      "isFeatured": false,
+      "homeSections": [
+        "best_laptops"
+      ],
+      "image_url": "https://i.postimg.cc/jdxcsPpC/photo-2026-02-25-23-21-01.jpg",
+      "image": "https://i.postimg.cc/jdxcsPpC/photo-2026-02-25-23-21-01.jpg",
+      "images": [
+        "https://i.postimg.cc/jdxcsPpC/photo-2026-02-25-23-21-01.jpg"
+      ],
+      "sold": 5,
+      "createdAt": "2026-02-26T07:25:48.988Z",
+      "updatedAt": "2026-03-05T13:33:57.247Z"
+    }
+  ]
+}

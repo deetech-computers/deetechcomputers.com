@@ -1,0 +1,117 @@
+.wishlist-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-body .wishlist-page {
+  flex: 1 0 auto;
+}
+
+.wishlist-body .footer {
+  margin-top: auto;
+}
+
+.wishlist-page {
+  padding: 28px 0 56px;
+  --product-primary: #2f8fdc;
+  --product-primary-dark: #247fc6;
+}
+
+.wishlist-hero {
+  text-align: center;
+  padding: 24px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(47, 143, 220, 0.2);
+  background: linear-gradient(135deg, rgba(47, 143, 220, 0.1), rgba(36, 127, 198, 0.12));
+  margin-bottom: 18px;
+}
+
+.wishlist-hero h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+.wishlist-hero p {
+  margin: 0;
+  color: #475569;
+}
+
+.wishlist-content {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.wishlist-content .product-grid {
+  margin-top: 0;
+}
+
+.wishlist-product-card .product-desc {
+  min-height: 42px;
+}
+
+.wishlist-actions {
+  width: 100%;
+}
+
+.wishlist-content .add-to-cart:disabled {
+  opacity: 1;
+  background: #cbd5e1;
+  color: #334155;
+  cursor: not-allowed;
+}
+
+.wishlist-remove-btn {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #dc2626;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.wishlist-remove-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.wishlist-empty,
+.wishlist-auth-required {
+  text-align: center;
+  padding: 24px 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+}
+
+.wishlist-auth-required h3,
+.wishlist-empty h3 {
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.wishlist-auth-required .btn {
+  margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .wishlist-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .wishlist-content {
+    padding: 10px;
+  }
+
+  .wishlist-content .product-grid {
+    gap: 0.85rem;
+  }
+}

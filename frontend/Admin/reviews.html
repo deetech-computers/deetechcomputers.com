@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Reviews</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/reviews.css">
+</head>
+<body>
+  <div class="admin-shell reviews-page">
+    <div class="admin-header">
+      <h1>Manage Reviews</h1>
+      <div class="admin-actions">
+        <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="orders.html">Orders</a>
+      <a href="products.html">Products</a>
+      <a href="banners.html">Banners</a>
+      <a href="messages.html">Messages</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="users.html">Users</a>
+      <a href="affiliates.html">Affiliates</a>
+      <a href="discounts.html">Discounts</a>
+    </nav>
+
+    <section class="admin-card">
+      <div class="reviews-controls">
+        <input id="reviewSearch" class="input" type="text" placeholder="Search by user, product, or content">
+        <select id="reviewStatusFilter" class="input">
+          <option value="all">All</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <button id="reviewReloadBtn" class="btn-admin">Reload</button>
+      </div>
+
+      <div id="reviewsSummary" class="reviews-summary"></div>
+      <div id="reviewsList" class="reviews-list"></div>
+      <div id="reviewsEmpty" class="empty-state hidden">
+        <h3>No Reviews</h3>
+        <p>No reviews matched the current filters.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/runtime-config.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="assets/js/admin-common.js"></script>
+  <script src="assets/js/reviews.js"></script>
+</body>
+</html>
+
+

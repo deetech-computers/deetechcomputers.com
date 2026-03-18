@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Deetech Computers</title>
+  <meta name="description" content="Login to your Deetech Computers account for faster checkout, order tracking, wishlist, and full account features.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body class="auth-body">
+  <header class="site-header"></header>
+
+  <main class="auth-main">
+    <div class="container auth-shell">
+      <section class="auth-benefits-card">
+        <h1>Welcome Back</h1>
+        <p class="auth-benefits-lead">Sign in to get the full DEETECH experience.</p>
+        <ul class="auth-benefits-list">
+          <li>Faster checkout with saved details</li>
+          <li>Track orders and status updates</li>
+          <li>Save products to your wishlist</li>
+          <li>Manage reviews and account settings</li>
+        </ul>
+      </section>
+
+      <section class="auth-card">
+        <h2>Login to Your Account</h2>
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-field">
+              <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="password-toggle" data-password-toggle="#password" aria-label="Show password">Show</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn auth-submit-btn">Login</button>
+
+          <p class="auth-link">Don't have an account? <a href="register.html">Register</a></p>
+          <p class="auth-link"><a href="forgot-password.html">Forgot your password?</a></p>
+          <p class="auth-link"><a href="products.html">Continue as Guest</a></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Deetech Computers</h4>
+        <p>Your trusted source for laptops, gadgets, and accessories in Ghana.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact Support</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://wa.me/233591755964" target="_blank" rel="noreferrer">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="warranty.html">Warranty</a></li>
+          <li><a href="delivery-policy.html">Delivery Policy</a></li>
+          <li><a href="return-refund.html">Return and Refund</a></li>
+          <li><a href="payment-policy.html">Payment Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2025 Deetech Computers. All rights reserved.</div>
+  </footer>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/runtime-config.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>
+
+

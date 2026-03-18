@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deetech | Cart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/cart.css?v=20260213-3">
+</head>
+<body class="page-loading">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <span>Cart Page</span>
+        <div class="socials">
+          <a href="mailto:deetechcomputers1@gmail.com">deetechcomputers1@gmail.com</a>
+          <a href="tel:+233591755964">0591755964</a>
+          <a href="https://wa.me/233591755964" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <div class="container nav-inner">
+        <a class="logo" href="index.html">
+          <img src="assets/img/logo.png" alt="Deetech Logo">
+        </a>
+        <form class="searchbar" action="products.html" method="get">
+          <input type="text" name="q" placeholder="Search products…">
+          <button type="submit">Search</button>
+        </form>
+        <div class="nav-actions">
+          <a class="nav-action" href="login.html">👤 Account</a>
+          <a class="nav-action" href="cart.html">🛒 Cart</a>
+        </div>
+      </div>
+    </nav>
+
+    </div>
+  </header>
+
+  <div id="page-loader" class="page-loader" aria-live="polite">
+    <div class="page-loader-card">
+      <div class="page-loader-spinner" aria-hidden="true"></div>
+      <p>Loading your cart...</p>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="cart-container">
+    <div class="cart-header">
+      <h1>Your Cart</h1>
+      <div class="cart-actions">
+        <a class="cart-btn-secondary" href="products.html">Continue Shopping</a>
+      </div>
+    </div>
+
+    <div class="cart-layout">
+      <!-- Cart Items -->
+      <div class="cart-items" id="cartItems"><!-- JS will inject cart items here --></div>
+
+      <!-- Order Summary -->
+      <aside class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="cart-summary-row"><span>Subtotal</span><span id="subtotal">GHC 0.00</span></div>
+        <div class="cart-summary-row"><span>Shipping</span><span id="shipping">FREE</span></div>
+        <div class="cart-summary-row cart-total"><span>Total</span><span id="total">GHC 0.00</span></div>
+        <button class="cart-checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+        <a class="cart-continue-shopping-link" href="products.html">Continue Shopping</a>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+    <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Deetech Computers</h4>
+        <p>Your trusted source for laptops, gadgets, and accessories in Ghana.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact Support</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://wa.me/233591755964" target="_blank">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="warranty.html">Warranty</a></li>
+          <li><a href="delivery-policy.html">Delivery Policy</a></li>
+          <li><a href="return-refund.html">Return and Refund</a></li>
+          <li><a href="payment-policy.html">Payment Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2025 Deetech Computers. All rights reserved.</div>
+  </footer>
+
+  <!-- JS -->
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/runtime-config.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/cart.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

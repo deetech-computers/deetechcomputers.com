@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Discounts</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/discounts.css">
+</head>
+<body>
+  <div class="admin-shell discounts-page">
+    <div class="admin-header">
+      <h1>Discount Codes</h1>
+      <div class="admin-actions">
+        <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="orders.html">Orders</a>
+      <a href="products.html">Products</a>
+      <a href="banners.html">Banners</a>
+      <a href="messages.html">Messages</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="users.html">Users</a>
+      <a href="affiliates.html">Affiliates</a>
+      <a href="discounts.html">Discounts</a>
+    </nav>
+
+    <section class="admin-card">
+      <h3>Generate Codes</h3>
+      <form id="discountForm" class="grid-2">
+        <input class="input" name="percent" type="number" min="2" max="10" placeholder="Percent (2-10)" required>
+        <input class="input" name="count" type="number" min="1" max="50" placeholder="Count" value="1">
+        <button class="btn-admin" type="submit">Generate</button>
+      </form>
+      <div id="newCodes" class="new-codes-box hidden"></div>
+    </section>
+
+    <section class="admin-card">
+      <h3>All Codes</h3>
+      <div class="discounts-summary">
+        <p>Total Codes: <strong id="summaryTotalCodes">0</strong></p>
+        <p>Used Codes: <strong id="summaryUsedCodes">0</strong></p>
+      </div>
+      <table class="admin-table discounts-table" id="discountsTable">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Percent</th>
+            <th>Used</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="discountsMobileList" class="discounts-mobile-list"></div>
+      <div id="discountsEmptyState" class="empty-state hidden">
+        <h3>No Discount Codes</h3>
+        <p>Generate your first discount codes to get started.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/runtime-config.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="assets/js/admin-common.js"></script>
+  <script src="assets/js/discounts.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders - Deetech Computers</title>
+
+  <!-- Global + Orders CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/account.css">
+  <link rel="stylesheet" href="assets/css/orders.css">
+
+  <!-- Scripts -->
+  <script defer src="assets/js/utils.js"></script>
+  <script defer src="assets/js/runtime-config.js"></script>
+  <script defer src="assets/js/config.js"></script>
+  <script defer src="assets/js/auth.js"></script>
+  <script defer src="assets/js/orders.js"></script>
+  <script defer src="assets/js/activeLink.js"></script>
+</head>
+<body data-require-auth="true">
+
+  <header class="site-header"></header>
+
+  <main class="account-page">
+    <section class="account-header compact">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M3 6h18v12H3zm2 2v8h14V8zm2 2h6v2H7z"/>
+      </svg>
+      <div class="account-header-content">
+        <h1>My Orders</h1>
+        <p class="account-welcome">Track your recent purchases and order status.</p>
+      </div>
+    </section>
+
+    <section class="account-layout">
+      <aside class="account-sidebar">
+        <a class="account-sidebar-tab" href="account.html">Profile</a>
+        <a class="account-sidebar-tab" href="account.html?tab=reviews">My Reviews</a>
+        <a class="account-sidebar-tab" href="affiliates.html">Affiliates</a>
+        <a class="account-sidebar-tab account-active" href="orders.html">My Orders</a>
+        <a class="account-sidebar-tab" href="change-password.html">Change Password</a>
+        <button class="account-sidebar-tab" id="logoutBtn" type="button">Logout</button>
+      </aside>
+
+      <div class="account-content">
+        <section class="account-orders-section">
+          <div class="section-header">Orders</div>
+          <div id="ordersList" class="account-orders-list">Loading your orders...</div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Deetech Computers</h4>
+        <p>Your trusted source for laptops, gadgets, and accessories in Ghana.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact Support</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://wa.me/233591755964" target="_blank">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="warranty.html">Warranty</a></li>
+          <li><a href="delivery-policy.html">Delivery Policy</a></li>
+          <li><a href="return-refund.html">Return and Refund</a></li>
+          <li><a href="payment-policy.html">Payment Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2025 Deetech Computers. All rights reserved.</div>
+  </footer>
+</body>
+</html>
+
+
+

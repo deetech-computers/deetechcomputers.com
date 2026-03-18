@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deetech | Product</title>
+
+  <!-- SEO -->
+  <meta name="description" content="View product details, specs, and shop quality devices at Deetech Computers." />
+  <meta property="og:title" content="Deetech Computers Product" />
+  <meta property="og:description" content="Shop laptops, accessories, and phones at Deetech Computers." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
+  <link rel="stylesheet" href="assets/css/product.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <span>Product Page</span>
+        <div class="socials">
+          <a href="mailto:deetechcomputers1@gmail.com">deetechcomputers1@gmail.com</a>
+          <a href="tel:+233591755964">0591755964</a>
+          <a href="https://wa.me/233591755964" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <div class="container nav-inner">
+        <a class="logo" href="index.html">
+          <img src="assets/img/logo.png" alt="Deetech Computers Logo" />
+        </a>
+        <form class="searchbar" action="products.html" method="GET">
+          <input type="text" id="searchInput" name="q" placeholder="Search products..." aria-label="Search products" />
+          <button type="submit">Search</button>
+        </form>
+        <div class="nav-actions">
+          <a class="nav-action" href="login.html">Account</a>
+          <a class="nav-action" href="cart.html">
+            Cart <span id="headerCartCount">0</span> - <span id="headerCartTotal">GHC 0.00</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-cats">
+      <div class="container cats-inner">
+        <a href="index.html">Home</a>
+        <a href="products.html?cat=all">All</a>
+        <a href="#" class="nav-cat" data-cat="Laptops">Laptops</a>
+        <a href="#" class="nav-cat" data-cat="Accessories">Accessories</a>
+        <a href="#" class="nav-cat" data-cat="Phones">Phones</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail -->
+  <main class="container product-page">
+    <div class="product-top-nav">
+      <a href="products.html" class="back-to-products-btn" aria-label="Back to Products">? Back to Products</a>
+    </div>
+
+    <div class="product-wrap">
+      <!-- Image Gallery -->
+      <div class="gallery">
+        <button class="gallery-nav gallery-prev" type="button" aria-label="Previous image">‹</button>
+        <img id="mainImage" src="" alt="Product image" />
+        <button class="gallery-nav gallery-next" type="button" aria-label="Next image">›</button>
+        <div id="thumbs" class="thumbs" aria-label="Product thumbnails"></div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="info">
+        <h1 id="prodName">Loading...</h1>
+        <p class="sku">Brand: <span id="prodBrand"></span></p>
+
+        <div class="price-row">
+          <span id="prodPrice" class="price"></span>
+          <span id="prodOldPrice" class="old-price"></span>
+        </div>
+        <div id="prodStock" class="prod-stock in">In Stock</div>
+
+        <div id="prodBadges" class="badges"></div>
+        <div class="rating">
+          <span id="prodRating"></span>
+          <span id="prodReviews"></span>
+        </div>
+
+        <!-- Quantity + CTA -->
+        <div class="qty-row">
+          <label for="qtyInput">Qty</label>
+          <div class="qty-controls" role="group" aria-label="Quantity selector">
+            <button type="button" id="qtyDecrease" class="qty-btn" aria-label="Decrease quantity">-</button>
+            <input type="number" id="qtyInput" value="1" min="1" />
+            <button type="button" id="qtyIncrease" class="qty-btn" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button id="addToCartBtn" class="btn">Add to Cart</button>
+          <button id="buyNowBtn" class="btn btn-outline">Buy Now</button>
+        </div>
+        <div class="product-actions-inline">
+          <button id="wishlistBtn" class="icon-btn btn-wishlist" type="button" aria-label="Add to Wishlist">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20.6l-1.1-1C6.2 15.3 3 12.5 3 9.1 3 6.6 5 4.5 7.6 4.5c1.6 0 3.1.7 4.1 1.8 1-1.1 2.5-1.8 4.1-1.8 2.6 0 4.6 2.1 4.6 4.6 0 3.4-3.2 6.2-7.9 10.5l-1.1 1z"></path>
+            </svg>
+          </button>
+          <button id="shareBtn" class="icon-btn btn-share" type="button" aria-label="Share">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.1c.1-.3.1-.6.1-.9s0-.6-.1-.9l7.1-4.1c.5.5 1.2.8 2 .8 1.6 0 2.9-1.3 2.9-2.9S19.6 2 18 2s-2.9 1.3-2.9 2.9c0 .3 0 .6.1.9L8.1 9.9C7.6 9.4 6.9 9.1 6.1 9.1c-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9c.8 0 1.5-.3 2-.8l7.1 4.1c-.1.3-.1.5-.1.8 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.3-2.9-2.9-2.9z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <p class="meta">Ships from Kumasi &bull; Pickup available &bull; 7-day warranty</p>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <section class="details">
+      <div class="prod-tabs" role="tablist" aria-label="Product information">
+        <button class="prod-tab-btn active" type="button" data-tab="description" role="tab" aria-selected="true">Description</button>
+        <button class="prod-tab-btn" type="button" data-tab="specifications" role="tab" aria-selected="false">Specifications</button>
+        <button class="prod-tab-btn" type="button" data-tab="shipping" role="tab" aria-selected="false">Shipping & Returns</button>
+      </div>
+      <div class="prod-tab-panels">
+        <div class="prod-tab-pane active" data-pane="description" role="tabpanel">
+          <p id="prodDesc"></p>
+        </div>
+        <div class="prod-tab-pane" data-pane="specifications" role="tabpanel" hidden>
+          <ul id="specList" class="specs"></ul>
+        </div>
+        <div class="prod-tab-pane" data-pane="shipping" role="tabpanel" hidden>
+          <ul class="shipping-list">
+            <li>Ships from Kumasi with nationwide delivery options.</li>
+            <li>Pickup available at our Kumasi location.</li>
+            <li>Return and refund support follows our policy terms.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="product-reviews" id="productReviewsSection">
+      <div class="reviews-header">
+        <h2>Customer Reviews</h2>
+        <p id="reviewsSummary">No reviews yet</p>
+      </div>
+
+      <div class="review-form-wrap" id="reviewFormWrap">
+        <h3 id="reviewFormTitle">Write a Review</h3>
+        <p class="review-form-hint" id="reviewAuthHint">Sign in to leave a review.</p>
+        <div id="myReviewPreview" class="my-review-preview hidden"></div>
+        <form id="reviewForm" class="review-form hidden">
+          <div class="review-form-row">
+            <label>Rating</label>
+            <input type="hidden" id="reviewRating" name="rating" value="" required>
+            <div id="reviewStarsInput" class="review-stars-input" role="radiogroup" aria-label="Choose rating">
+              <button type="button" class="review-star-btn" data-value="1" aria-label="1 star">?</button>
+              <button type="button" class="review-star-btn" data-value="2" aria-label="2 stars">?</button>
+              <button type="button" class="review-star-btn" data-value="3" aria-label="3 stars">?</button>
+              <button type="button" class="review-star-btn" data-value="4" aria-label="4 stars">?</button>
+              <button type="button" class="review-star-btn" data-value="5" aria-label="5 stars">?</button>
+            </div>
+            <small id="reviewRatingText" class="review-rating-text">Select rating</small>
+          </div>
+          <div class="review-form-row">
+            <label for="reviewComment">Your Review</label>
+            <textarea id="reviewComment" name="comment" rows="4" maxlength="1000" placeholder="Share your experience with this product..." required></textarea>
+          </div>
+          <div class="review-form-actions">
+            <button type="submit" class="btn" id="reviewSubmitBtn">Submit Review</button>
+            <button type="button" class="btn btn-outline hidden" id="reviewCancelEditBtn">Cancel Edit</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="reviewsList" class="reviews-list"></div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="related">
+      <h2>Related Products</h2>
+      <div id="relatedGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+    <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Deetech Computers</h4>
+        <p>Your trusted source for laptops, gadgets, and accessories in Ghana.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact Support</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://wa.me/233591755964" target="_blank">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="warranty.html">Warranty</a></li>
+          <li><a href="delivery-policy.html">Delivery Policy</a></li>
+          <li><a href="return-refund.html">Return and Refund</a></li>
+          <li><a href="payment-policy.html">Payment Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2025 Deetech Computers. All rights reserved.</div>
+  </footer>
+
+  <!-- FOOTER SCRIPTS (order matters) -->
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/runtime-config.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/product.js"></script>
+</body>
+</html>
+
+
+
+
+

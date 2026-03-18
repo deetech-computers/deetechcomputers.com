@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account - Deetech Computers</title>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
+  <link rel="stylesheet" href="assets/css/account.css" />
+
+  <script defer src="assets/js/utils.js"></script>
+  <script defer src="assets/js/runtime-config.js"></script>
+  <script defer src="assets/js/config.js"></script>
+  <script defer src="assets/js/auth.js"></script>
+  <script defer src="assets/js/account.js"></script>
+  <script defer src="assets/js/activeLink.js"></script>
+</head>
+<body data-require-auth="true">
+  <header class="site-header"></header>
+
+  <main class="account-page">
+    <section class="account-header compact">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2-8 4.5V21h16v-2.5c0-2.5-3.58-4.5-8-4.5Z"/>
+      </svg>
+      <div class="account-header-content">
+        <h1>My Account</h1>
+        <p class="account-welcome">Welcome back, <span id="accountWelcomeName">Customer</span>.</p>
+        <div class="account-badges">
+          <span class="account-affiliate-badge" id="accountRoleBadge" style="display:none;">Member</span>
+          <span class="account-admin-badge" id="accountAdminBadge" style="display:none;">Admin</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="account-layout">
+      <aside class="account-sidebar">
+        <button class="account-sidebar-tab account-active" type="button" id="accountTabProfile">Profile</button>
+        <button class="account-sidebar-tab" type="button" id="accountTabReviews">My Reviews</button>
+        <a class="account-sidebar-tab" href="affiliates.html">Affiliates</a>
+        <a class="account-sidebar-tab" href="orders.html">My Orders</a>
+        <a class="account-sidebar-tab" href="change-password.html">Change Password</a>
+        <button class="account-sidebar-tab" id="accountLogoutBtn" type="button">Logout</button>
+      </aside>
+
+      <div class="account-content">
+        <section class="account-profile-section" id="accountProfileSection">
+          <div class="account-section-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8 8 0 1 1 13 16.93Z"/>
+            </svg>
+            Personal Information
+          </div>
+          <form id="accountProfileForm" class="account-profile-form">
+            <div class="account-form-row">
+              <div class="account-form-group">
+                <label for="accountFirstName">First Name</label>
+                <input id="accountFirstName" type="text" autocomplete="given-name" required>
+              </div>
+              <div class="account-form-group">
+                <label for="accountLastName">Last Name</label>
+                <input id="accountLastName" type="text" autocomplete="family-name" required>
+              </div>
+            </div>
+
+            <div class="account-form-group">
+              <label for="accountEmailInput">Email</label>
+              <input id="accountEmailInput" type="email" class="account-disabled-input" disabled>
+              <small>Email cannot be changed.</small>
+            </div>
+
+            <div class="account-form-group">
+              <label for="accountPhone">Phone Number</label>
+              <input id="accountPhone" type="tel" autocomplete="tel">
+              <small>Optional - Ghana format: 0241234567 or +233241234567</small>
+            </div>
+
+            <div class="account-form-group">
+              <label for="accountAddress">Address</label>
+              <input id="accountAddress" type="text" autocomplete="street-address">
+            </div>
+
+            <div class="account-form-row">
+              <div class="account-form-group">
+                <label for="accountRegion">Region</label>
+                <input id="accountRegion" type="text" autocomplete="address-level1">
+              </div>
+              <div class="account-form-group">
+                <label for="accountCity">City</label>
+                <input id="accountCity" type="text" autocomplete="address-level2">
+              </div>
+            </div>
+
+            <button class="account-save-btn" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7Zm0 16H5V5h10v4h4ZM7 12h10v2H7Zm0 4h10v2H7Z"/>
+              </svg>
+              Save Changes
+            </button>
+            <div id="accountProfileMessage"></div>
+          </form>
+        </section>
+
+        <section class="account-profile-section account-hidden" id="accountReviewsSection">
+          <div class="account-section-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+            My Reviews
+          </div>
+
+          <div class="account-reviews-note">
+            Manage your submitted reviews. You can update any review and open the related product page.
+          </div>
+
+          <div id="accountReviewsList" class="account-reviews-list"></div>
+
+          <div id="accountReviewEditor" class="account-review-editor account-hidden">
+            <h3>Update Review</h3>
+            <input type="hidden" id="accountReviewId">
+            <div class="account-review-stars" id="accountReviewStars">
+              <button type="button" data-value="1">?</button>
+              <button type="button" data-value="2">?</button>
+              <button type="button" data-value="3">?</button>
+              <button type="button" data-value="4">?</button>
+              <button type="button" data-value="5">?</button>
+            </div>
+            <small id="accountReviewStarsLabel">Select rating</small>
+            <textarea id="accountReviewComment" rows="4" maxlength="1000" placeholder="Update your review"></textarea>
+            <div class="account-review-editor-actions">
+              <button type="button" class="account-save-btn" id="accountReviewSaveBtn">Save Review</button>
+              <button type="button" class="btn btn-outline" id="accountReviewCancelBtn">Cancel</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Deetech Computers</h4>
+        <p>Your trusted source for laptops, gadgets, and accessories in Ghana.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">Account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="contact.html">Contact Support</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="https://wa.me/233591755964" target="_blank">WhatsApp</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policies</h4>
+        <ul>
+          <li><a href="warranty.html">Warranty</a></li>
+          <li><a href="delivery-policy.html">Delivery Policy</a></li>
+          <li><a href="return-refund.html">Return and Refund</a></li>
+          <li><a href="payment-policy.html">Payment Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">&copy; 2025 Deetech Computers. All rights reserved.</div>
+  </footer>
+</body>
+</html>
+
+
+

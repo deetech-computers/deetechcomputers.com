@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Orders</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/orders.css?v=20260305-5">
+</head>
+<body>
+  <div class="admin-shell admin-orders orders-page">
+    <div class="admin-header">
+      <h1>Orders</h1>
+      <div class="admin-actions">
+        <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="orders.html">Orders</a>
+      <a href="products.html">Products</a>
+      <a href="banners.html">Banners</a>
+      <a href="messages.html">Messages</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="users.html">Users</a>
+      <a href="affiliates.html">Affiliates</a>
+      <a href="discounts.html">Discounts</a>
+    </nav>
+
+    <section class="admin-card admin-controls">
+      <div class="search-box">
+        <input id="ordersSearchInput" class="search-input" type="search" placeholder="Search by order ID, name, email, phone">
+      </div>
+      <div class="filter-group">
+        <select id="ordersStatusFilter" class="filter-select">
+          <option value="">All Order Status</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Rejected</option>
+        </select>
+        <select id="ordersPaymentFilter" class="filter-select">
+          <option value="">All Payment Status</option>
+          <option value="pending">Pending</option>
+          <option value="paid">Verified</option>
+          <option value="failed">Rejected</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="orders-summary-grid" aria-label="Order summary counts">
+      <article class="summary-tile">
+        <span class="summary-label">Total</span>
+        <strong id="ordersSummaryTotal">0</strong>
+      </article>
+      <article class="summary-tile delivered">
+        <span class="summary-label">Delivered</span>
+        <strong id="ordersSummaryDelivered">0</strong>
+      </article>
+      <article class="summary-tile pending">
+        <span class="summary-label">Pending</span>
+        <strong id="ordersSummaryPending">0</strong>
+      </article>
+      <article class="summary-tile rejected">
+        <span class="summary-label">Rejected</span>
+        <strong id="ordersSummaryRejected">0</strong>
+      </article>
+    </section>
+
+    <section class="admin-card orders-table-container">
+      <table class="admin-table orders-table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Uploaded Proof</th>
+            <th>Affiliate</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="mobileOrdersList" class="mobile-orders-list"></div>
+
+      <div id="ordersEmptyState" class="empty-state hidden">
+        <h3>No Orders Found</h3>
+        <p>No orders match the current filters.</p>
+      </div>
+    </section>
+
+    <div id="orderDetailsModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="orderDetailsTitle">Order Details</h3>
+          <button id="closeOrderDetailsModal" class="btn-close" type="button" aria-label="Close">x</button>
+        </div>
+        <div id="orderDetailsBody" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/runtime-config.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="assets/js/admin-common.js"></script>
+  <script src="assets/js/orders.js?v=20260305-5"></script>
+</body>
+</html>
+
+

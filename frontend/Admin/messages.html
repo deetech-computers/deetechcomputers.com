@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Messages</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/messages.css">
+</head>
+<body>
+  <div class="admin-shell messages-page">
+    <div class="admin-header">
+      <h1>Support Messages</h1>
+      <div class="admin-actions">
+        <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="orders.html">Orders</a>
+      <a href="products.html">Products</a>
+      <a href="banners.html">Banners</a>
+      <a href="messages.html">Messages</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="users.html">Users</a>
+      <a href="affiliates.html">Affiliates</a>
+      <a href="discounts.html">Discounts</a>
+    </nav>
+
+    <section class="admin-card admin-controls">
+      <div class="search-box">
+        <input id="messagesSearchInput" class="search-input" type="search" placeholder="Search name, email, subject">
+      </div>
+      <div class="filter-group">
+        <select id="messagesStatusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="new">New</option>
+          <option value="in-progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <div class="messages-summary">
+        <p>Total Messages: <strong id="summaryTotalMessages">0</strong></p>
+        <p>New: <strong id="summaryNewMessages">0</strong></p>
+      </div>
+
+      <table class="admin-table messages-table" id="messagesTable">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Total</th>
+            <th>New</th>
+            <th>Latest</th>
+            <th>Thread</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="mobileMessagesList" class="mobile-messages-list"></div>
+      <div id="messagesEmptyState" class="empty-state hidden">
+        <h3>No Messages Found</h3>
+        <p>No support messages match current filters.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/runtime-config.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="assets/js/admin-common.js"></script>
+  <script src="assets/js/messages.js"></script>
+</body>
+</html>
+
+

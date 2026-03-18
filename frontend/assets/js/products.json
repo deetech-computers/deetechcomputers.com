@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "name": "HP EliteBook 745 G6",
+    "brand": "HP",
+    "category": "Laptops",
+    "price": 4500,
+    "oldPrice": 5200,
+    "description": "A premium business-class laptop with powerful Ryzen 5 PRO performance, slim design, and durable build.",
+    "rating": 4,
+    "reviews": 18,
+    "specs": {
+      "Processor": "AMD Ryzen 5 PRO 3500U",
+      "RAM": "8GB DDR4",
+      "Storage": "256GB SSD",
+      "Display": "14-inch FHD (1920x1080) Touch",
+      "Graphics": "AMD Radeon Vega 8",
+      "OS": "Windows 11 Pro"
+    },
+    "images": [
+      "assets/images/products/hp-elitebook-745-g6-1.jpg",
+      "assets/images/products/hp-elitebook-745-g6-2.jpg",
+      "assets/images/products/hp-elitebook-745-g6-3.jpg"
+    ],
+    "date": "2025-07-10"
+  },
+  {
+    "id": 2,
+    "name": "Dell XPS 13",
+    "brand": "Dell",
+    "category": "Laptops",
+    "price": 6500,
+    "oldPrice": 7000,
+    "description": "Ultra-portable high-performance laptop with InfinityEdge display, ideal for professionals and creatives.",
+    "rating": 5,
+    "reviews": 32,
+    "specs": {
+      "Processor": "Intel Core i7 11th Gen",
+      "RAM": "16GB LPDDR4x",
+      "Storage": "512GB SSD",
+      "Display": "13.4-inch 4K UHD+ Touch",
+      "Graphics": "Intel Iris Xe",
+      "OS": "Windows 11 Home"
+    },
+    "images": [
+      "assets/images/products/dell-xps-13-1.jpg",
+      "assets/images/products/dell-xps-13-2.jpg"
+    ],
+    "date": "2025-07-20"
+  },
+  {
+    "id": 3,
+    "name": "Samsung Galaxy S23",
+    "brand": "Samsung",
+    "category": "Phones",
+    "price": 7200,
+    "oldPrice": 8000,
+    "description": "Flagship smartphone with professional-grade camera system, AMOLED display, and S Pen support.",
+    "rating": 5,
+    "reviews": 50,
+    "specs": {
+      "Processor": "Snapdragon 8 Gen 2",
+      "RAM": "12GB",
+      "Storage": "256GB",
+      "Display": "6.8-inch QHD+ AMOLED 120Hz",
+      "Camera": "200MP + 12MP + 10MP + 10MP",
+      "Battery": "5000mAh with Fast Charging",
+      "OS": "Android 13"
+    },
+    "images": [
+      "assets/images/products/galaxy-s23-ultra-1.jpg",
+      "assets/images/products/galaxy-s23-ultra-2.jpg",
+      "assets/images/products/galaxy-s23-ultra-3.jpg"
+    ],
+    "date": "2025-08-05"
+  },
+  {
+    "id": 4,
+    "name": "Apple iPhone 14 Pro",
+    "brand": "Apple",
+    "category": "Phones",
+    "price": 8500,
+    "oldPrice": 9200,
+    "description": "Apple’s latest flagship featuring the A16 Bionic chip, Dynamic Island, and ProMotion display.",
+    "rating": 5,
+    "reviews": 40,
+    "specs": {
+      "Processor": "Apple A16 Bionic",
+      "RAM": "6GB",
+      "Storage": "256GB",
+      "Display": "6.1-inch Super Retina XDR OLED",
+      "Camera": "48MP + 12MP + 12MP",
+      "Battery": "3200mAh with MagSafe",
+      "OS": "iOS 16"
+    },
+    "images": [
+      "assets/images/products/iphone-14-pro-1.jpg",
+      "assets/images/products/iphone-14-pro-2.jpg"
+    ],
+    "date": "2025-08-15"
+  }
+]
