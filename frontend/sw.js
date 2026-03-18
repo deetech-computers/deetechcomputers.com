@@ -1,4 +1,4 @@
-const CACHE_NAME = "deetech-static-v5";
+const CACHE_NAME = "deetech-static-v6";
 const OFFLINE_URL = "offline.html";
 const SNAPSHOT_URL = "assets/data/products-snapshot.json";
 const PLACEHOLDER_URL = "assets/img/placeholder.svg";
@@ -69,9 +69,13 @@ function isRealtimeCriticalAsset(url) {
   );
 }
 
+function isCacheableResponse(response) {
+  return Boolean(response) && (response.ok || response.type === "opaque");
+}
+
 async function cachePutSafe(request, response) {
   try {
-    if (!response || !response.ok) return;
+    if (!isCacheableResponse(response)) return;
     const cache = await caches.open(CACHE_NAME);
     await cache.put(request, response.clone());
   } catch {
@@ -137,7 +141,7 @@ async function handleProductApiFallback(request, url) {
 async function imageWithFallback(request) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse && networkResponse.ok) {
+    if (isCacheableResponse(networkResponse)) {
       await cachePutSafe(request, networkResponse.clone());
       return networkResponse;
     }
@@ -213,5 +217,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-
-
