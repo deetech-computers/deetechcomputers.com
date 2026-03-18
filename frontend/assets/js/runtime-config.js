@@ -3,5 +3,6 @@
 // Change only this file when pointing the static site to a different API.
 
 window.DEETECH_RUNTIME_CONFIG = Object.freeze({
-  apiBase: "http://localhost:5000",
+  apiBase: "https://deetech-api.onrender.com",
 });
+
