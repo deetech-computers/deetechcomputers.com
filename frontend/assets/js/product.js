@@ -803,3 +803,4 @@ document.addEventListener("DOMContentLoaded", () => {
   wireTabs();
   if (productId) loadProduct();
 });
+
