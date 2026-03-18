@@ -1,25 +1,7 @@
 import multer from "multer";
-import fs from "fs";
 import path from "path";
 
-const uploadDir = path.resolve("uploads");
-fs.mkdirSync(uploadDir, { recursive: true });
-
-// Save uploaded files in /uploads and keep original filename
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    try {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    } catch (err) {
-      return cb(err);
-    }
-    cb(null, uploadDir);
-  },
-  filename(req, file, cb) {
-    const safeName = String(file.originalname || "proof.png").replace(/[^\w.\-]/g, "_");
-    cb(null, `${Date.now()}-${safeName}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 // File filter: accept only images
 function checkFileType(file, cb) {
@@ -36,7 +18,7 @@ export const upload = multer({
   storage,
   limits: {
     fileSize: 10 * 1024 * 1024,
-    files: 1,
+    files: 5,
   },
   fileFilter: (req, file, cb) => checkFileType(file, cb),
 });

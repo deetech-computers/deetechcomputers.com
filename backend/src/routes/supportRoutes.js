@@ -7,9 +7,11 @@ import {
   getMySupportTickets,
   addSupportReply,
 } from "../controllers/supportController.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import { createRateLimiter } from "../middleware/rateLimitFactory.js";
+import { storeImageFile } from "../utils/mediaStorage.js";
 
 const router = express.Router();
 const supportCreateLimiter = createRateLimiter({
@@ -38,8 +40,19 @@ router.get("/my", protect, getMySupportTickets);
 router.post("/:id/reply", protect, addSupportReply);
 
 // User: Upload support image
-router.post("/upload", protect, supportUploadLimiter, upload.single("image"), (req, res) => {
-  res.status(201).json({ imageUrl: `/uploads/${req.file.filename}` });
-});
+router.post(
+  "/upload",
+  protect,
+  supportUploadLimiter,
+  upload.single("image"),
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      res.status(400);
+      throw new Error("Support image is required");
+    }
+    const stored = await storeImageFile(req.file, "deetech/support");
+    res.status(201).json({ imageUrl: stored.url, storage: stored.storage });
+  })
+);
 
 export default router;

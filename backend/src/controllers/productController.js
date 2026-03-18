@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Product from "../models/Product.js";
 import Review from "../models/Review.js";
+import { storeImageFile } from "../utils/mediaStorage.js";
 import {
   rebuildProductSnapshot,
   readProductSnapshotProducts,
@@ -131,9 +132,18 @@ async function refreshProductSnapshotNonBlocking() {
   }
 }
 
+async function uploadProductImages(files = []) {
+  const uploaded = [];
+  for (const file of files) {
+    const stored = await storeImageFile(file, "deetech/products");
+    uploaded.push(stored.url);
+  }
+  return uploaded;
+}
+
 // @desc    Create new product (admin only) with images
 export const createProduct = asyncHandler(async (req, res) => {
-  const uploadedImages = req.files?.map((file) => `/uploads/${file.filename}`) || [];
+  const uploadedImages = await uploadProductImages(req.files || []);
   const galleryUrls = parseImageUrls(req.body.imageUrls);
   const incomingMainImage = String(req.body.image_url || "").trim();
   const allImages = uniqueImages([incomingMainImage, ...uploadedImages, ...galleryUrls]);
@@ -259,7 +269,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     product.homeSections = parseHomeSections(req.body.homeSections);
   }
 
-  const uploadedImages = req.files?.map((file) => `/uploads/${file.filename}`) || [];
+  const uploadedImages = await uploadProductImages(req.files || []);
   const galleryUrls = parseImageUrls(req.body.imageUrls);
   const requestedExistingImages = parseExistingImagesInput(req.body.existingImages);
   const currentImages = Array.isArray(product.images) ? uniqueImages(product.images) : [];

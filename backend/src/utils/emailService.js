@@ -6,6 +6,7 @@ import {
   SMTP_PASS,
   ADMIN_EMAIL,
   FRONTEND_URL,
+  BACKEND_PUBLIC_URL,
   NODE_ENV,
 } from "../config/env.js";
 import logger from "./logger.js";
@@ -52,6 +53,30 @@ function paymentMethodLabel(method) {
   return map[String(method || "").toLowerCase()] || (method || "N/A");
 }
 
+function trimTrailingSlash(value = "") {
+  return String(value || "").replace(/\/$/, "");
+}
+
+function resolvePublicMediaUrl(rawUrl = "") {
+  const value = String(rawUrl || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+
+  const backendBaseUrl = trimTrailingSlash(BACKEND_PUBLIC_URL);
+  const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
+  const normalizedPath = value.startsWith("/") ? value : `/${value}`;
+
+  if (backendBaseUrl) {
+    return `${backendBaseUrl}${normalizedPath}`;
+  }
+
+  if (frontendBaseUrl) {
+    return `${frontendBaseUrl}${normalizedPath}`;
+  }
+
+  return value;
+}
+
 function orderItemsForEmail(items = []) {
   return items.map((item) => ({
     qty: Number(item.qty || item.quantity || 0),
@@ -74,62 +99,69 @@ function initTransporter() {
 
     t.verify((err) => {
       if (err) {
-        logger.error("Email service initialization failed", { error: err.message });
+        logger.warn(`Email transporter verification failed: ${err.message}`);
       } else {
         logger.info("Email service initialized with SMTP");
       }
     });
-
     return t;
   }
 
-  logger.warn("SMTP config missing. Email service disabled.");
+  if (NODE_ENV !== "production") {
+    logger.warn("SMTP not fully configured. Falling back to console email logging.");
+  }
   return null;
 }
 
 transporter = initTransporter();
 
-async function sendEmail({ to, subject, html }) {
+async function sendEmail({ to, subject, html, text }) {
+  if (!to) return false;
+
   if (!transporter) {
-    logger.warn(`Skipping email to ${to} - no transporter configured.`);
-    return;
+    logger.info(`Email preview -> To: ${to} | Subject: ${subject}`);
+    if (text) logger.info(text);
+    return true;
   }
 
-  try {
-    await transporter.sendMail({
-      from: `${COMPANY_NAME} <${SMTP_USER || SUPPORT_EMAIL}>`,
-      to,
-      subject,
-      html,
-    });
-    logger.info(`Email sent to ${to} | Subject: ${subject}`);
-  } catch (err) {
-    logger.error("Failed to send email", {
-      to,
-      subject,
-      error: err.message,
-    });
-  }
+  await transporter.sendMail({
+    from: `"${COMPANY_NAME}" <${SUPPORT_EMAIL}>`,
+    to,
+    subject,
+    html,
+    text,
+  });
+  return true;
 }
 
-export async function sendPasswordResetEmail(to, resetUrl) {
+export async function sendWelcomeEmail(to, name = "") {
+  const safeName = escapeHtml(name || "there");
   const html = `
-    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:8px;">
-      <h2 style="margin:0 0 12px;">Password Reset Request</h2>
-      <p style="margin:0 0 16px;">You requested a password reset for your account.</p>
-      <p style="margin:0 0 16px;">
-        <a href="${escapeHtml(resetUrl)}" style="background:#2563eb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:6px;display:inline-block;">
-          Reset Password
-        </a>
-      </p>
-      <p style="margin:0;color:#6b7280;font-size:13px;">If you did not request this, you can ignore this email.</p>
+    <div style="font-family:Arial,sans-serif;background:#f7f7f7;padding:24px;">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background:linear-gradient(135deg,#0b75c9 0%,#0a5ea8 100%);padding:28px;color:#ffffff;text-align:center;">
+          <h1 style="margin:0;font-size:28px;letter-spacing:1px;">Welcome to ${COMPANY_NAME}</h1>
+          <p style="margin:10px 0 0;font-size:15px;opacity:0.95;">Tech Excellence Delivered.</p>
+        </div>
+        <div style="padding:28px;color:#1f2937;line-height:1.6;">
+          <p style="margin-top:0;">Hi <strong>${safeName}</strong>,</p>
+          <p>Thank you for creating an account with <strong>${COMPANY_NAME}</strong>.</p>
+          <p>You can now shop premium tech products, track orders, manage your account, and access exclusive offers.</p>
+          <p style="margin-bottom:0;">If you ever need assistance, reply to this email or contact us on <strong>${escapeHtml(SUPPORT_PHONE)}</strong>.</p>
+        </div>
+        <div style="background:#f3f4f6;padding:16px;text-align:center;font-size:13px;color:#6b7280;">
+          ${COMPANY_NAME} • ${escapeHtml(SUPPORT_EMAIL)} • ${escapeHtml(SUPPORT_PHONE)}
+        </div>
+      </div>
     </div>
   `;
 
-  await sendEmail({
+  const text = `Welcome to ${COMPANY_NAME}, ${name || "there"}! Your account has been created successfully.`;
+  return sendEmail({
     to,
-    subject: "Password Reset Request",
+    subject: `Welcome to ${COMPANY_NAME}`,
     html,
+    text,
   });
 }
 
@@ -137,8 +169,9 @@ export async function sendOrderNotification(to, orderDetails = {}) {
   const items = orderItemsForEmail(orderDetails.orderItems || []);
   const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
   const created = formatDateTime(orderDetails.createdAt);
-  const baseUrl = String(FRONTEND_URL || "").replace(/\/$/, "");
-  const adminOrderUrl = baseUrl ? `${baseUrl}/Admin/orders.html` : "#";
+  const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
+  const adminOrderUrl = frontendBaseUrl ? `${frontendBaseUrl}/Admin/orders.html` : "#";
+  const paymentProofUrl = resolvePublicMediaUrl(orderDetails.paymentScreenshotUrl);
 
   const orderItemsHtml = items
     .map(
@@ -178,8 +211,8 @@ export async function sendOrderNotification(to, orderDetails = {}) {
           <p style="margin:6px 0;"><strong>Status:</strong> ${escapeHtml(orderDetails.orderStatus || "pending")} | ${escapeHtml(orderDetails.paymentStatus || "pending")}</p>
           <p style="margin:6px 0;"><strong>Notes:</strong> ${escapeHtml(orderDetails.guestNotes || "None")}</p>
           ${
-            orderDetails.paymentScreenshotUrl
-              ? `<p style="margin:6px 0;"><strong>Payment Proof:</strong> <a href="${escapeHtml(baseUrl + orderDetails.paymentScreenshotUrl)}">View Uploaded Proof</a></p>`
+            paymentProofUrl
+              ? `<p style="margin:6px 0;"><strong>Payment Proof:</strong> <a href="${escapeHtml(paymentProofUrl)}">View Uploaded Proof</a></p>`
               : ""
           }
 
@@ -214,8 +247,8 @@ export async function sendOrderNotification(to, orderDetails = {}) {
 export async function sendOrderConfirmation(to, orderDetails = {}) {
   const items = orderItemsForEmail(orderDetails.orderItems || []);
   const created = formatDateTime(orderDetails.createdAt);
-  const baseUrl = String(FRONTEND_URL || "").replace(/\/$/, "");
-  const trackingUrl = baseUrl ? `${baseUrl}/orders.html?tab=orders` : "#";
+  const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
+  const trackingUrl = frontendBaseUrl ? `${frontendBaseUrl}/orders.html?tab=orders` : "#";
   const subtotal = Number(orderDetails.totalPrice || 0);
   const rows = items
     .map((item) => {
@@ -233,128 +266,93 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
   const html = `
     <!DOCTYPE html>
     <html>
-    <head><meta charset="utf-8"><title>Order Confirmed</title></head>
-    <body style="margin:0;padding:20px 0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.4;color:#000;">
-      <div style="max-width:340px;margin:0 auto;background:#fff;border:1px solid #ddd;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:2px dashed #ccc;">
-          <tr><td align="center" style="padding:25px 20px 20px;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:2px solid #000;padding-bottom:15px;margin-bottom:15px;">
-              <tr><td align="center" style="padding-bottom:8px;">
-                <div style="font-size:28px;font-weight:bold;letter-spacing:1.5px;font-family:'Courier New',monospace;">DEETECH</div>
-              </td></tr>
-              <tr><td align="center">
-                <div style="font-size:15px;font-weight:bold;margin-bottom:5px;">COMPUTERS & ELECTRONICS</div>
-                <div style="font-size:11px;color:#666;margin-bottom:4px;">Quality Tech Solutions Since 2020</div>
-                <div style="font-size:10px;color:#666;font-weight:500;">${escapeHtml(SUPPORT_PHONE)} | ${escapeHtml(SUPPORT_EMAIL)}</div>
-              </td></tr>
-            </table>
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px dashed #ccc;border-bottom:1px dashed #ccc;">
-              <tr><td align="center" style="padding:8px 0;">
-                <div style="font-size:18px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">ORDER CONFIRMATION</div>
-                <div style="font-size:10px;color:#666;margin-top:4px;font-style:italic;">Thank you for choosing DEETECH</div>
-              </td></tr>
-            </table>
-          </td></tr>
-        </table>
+    <head><meta charset="utf-8"><title>Order Confirmation</title></head>
+    <body style="margin:0;padding:20px 0;background:#f5f5f5;font-family:Arial,sans-serif;color:#333;">
+      <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="background:linear-gradient(135deg,#0f9d58 0%,#0b7a43 100%);color:#fff;padding:26px 30px;text-align:center;">
+          <h1 style="margin:0;font-size:26px;">ORDER CONFIRMED</h1>
+          <div style="margin-top:8px;font-size:15px;opacity:0.95;">Thank you for shopping with ${COMPANY_NAME}</div>
+        </div>
 
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr><td style="padding:20px;">
-            <p style="margin:0 0 10px;font-size:12px;line-height:1.5;">
-              Hi ${escapeHtml(orderDetails.customerName || "Customer")},<br>
-              <strong style="font-size:12.5px;">Thank you for trusting DEETECH with your tech needs!</strong>
-            </p>
+        <div style="padding:26px 30px;">
+          <p style="margin-top:0;">Hello <strong>${escapeHtml(orderDetails.customerName || "Customer")}</strong>,</p>
+          <p>Your order has been received successfully and is now being processed.</p>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:2px solid #000;margin-bottom:18px;padding-bottom:12px;">
+          <div style="background:#f8f9fa;border-left:4px solid #0f9d58;padding:12px 14px;border-radius:4px;margin:16px 0;">
+            <div><strong>Order ID:</strong> ${escapeHtml(orderDetails.id || "N/A")}</div>
+            <div><strong>Order Date:</strong> ${created.date} ${created.time}</div>
+            <div><strong>Payment Method:</strong> ${escapeHtml(paymentMethodLabel(orderDetails.paymentMethod))}</div>
+            <div><strong>Delivery Address:</strong> ${escapeHtml(orderDetails.deliveryAddress || orderDetails.deliveryRegion || "N/A")}</div>
+          </div>
+
+          <h3 style="margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid #007bff;">Order Items</h3>
+          <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
+            <thead>
               <tr>
-                <td width="50%" style="font-weight:bold;font-size:11.5px;">ORDER #${escapeHtml(orderDetails.id || "N/A")}</td>
-                <td width="50%" align="right" style="font-size:10px;color:#666;font-weight:500;">${created.date}</td>
+                <th align="left" style="padding:0 0 8px 5px;color:#6b7280;">Item</th>
+                <th align="center" style="padding:0 0 8px;color:#6b7280;">Qty</th>
+                <th align="right" style="padding:0 5px 8px 0;color:#6b7280;">Amount</th>
               </tr>
-            </table>
+            </thead>
+            <tbody>
+              ${rows || '<tr><td colspan="3"><em>No items</em></td></tr>'}
+            </tbody>
+          </table>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #000;border-bottom:1px solid #000;margin-bottom:0;background:#f9f9f9;">
-              <tr>
-                <td width="50%" style="padding:8px 0 8px 5px;"><strong style="font-size:11.5px;">ITEM DESCRIPTION</strong></td>
-                <td width="20%" align="center" style="padding:8px 0;"><strong style="font-size:11.5px;">QTY</strong></td>
-                <td width="30%" align="right" style="padding:8px 5px 8px 0;"><strong style="font-size:11.5px;">AMOUNT</strong></td>
-              </tr>
-            </table>
+          <div style="margin-top:18px;background:#e9ecef;padding:14px;border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Subtotal</span>
+              <strong>${money(subtotal)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;border-top:1px solid #cfd4da;padding-top:10px;">
+              <span><strong>Total</strong></span>
+              <strong style="color:#d9534f;">${money(subtotal)}</strong>
+            </div>
+          </div>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;font-size:12px;">
-              ${rows}
-            </table>
+          <div style="text-align:center;margin-top:22px;">
+            <a href="${escapeHtml(trackingUrl)}" style="display:inline-block;background:#007bff;color:#fff;text-decoration:none;padding:11px 20px;border-radius:6px;font-weight:700;">
+              Track Your Order
+            </a>
+          </div>
+        </div>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:2px solid #000;padding-top:12px;margin-bottom:18px;">
-              <tr>
-                <td width="70%" style="padding:4px 0;font-weight:500;">Subtotal:</td>
-                <td width="30%" align="right" style="padding:4px 0;font-weight:500;">${money(subtotal)}</td>
-              </tr>
-              <tr>
-                <td style="padding:4px 0;font-weight:500;">Delivery Fee:</td>
-                <td align="right" style="padding:4px 0;color:#28a745;font-weight:bold;font-size:12.5px;">FREE</td>
-              </tr>
-              <tr>
-                <td colspan="2" style="border-top:1px solid #000;padding-top:10px;">
-                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td style="font-size:13px;font-weight:bold;">TOTAL:</td>
-                      <td align="right" style="font-size:16px;font-weight:bold;">${money(subtotal)}</td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;">
-              <tr><td align="center" style="font-size:10px;font-weight:600;padding:5px;border:1px dashed #c3e6cb;background:#f8fff8;color:#28a745;">
-                Free delivery included
-              </td></tr>
-            </table>
-
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #cfe2ff;border-left:4px solid #007bff;background:#f0f7ff;margin-bottom:18px;">
-              <tr><td style="padding:12px;">
-                <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td width="50%" align="center" style="padding-right:10px;border-right:1px dashed #cfe2ff;">
-                      <div style="font-size:10px;color:#666;font-weight:600;margin-bottom:4px;">ORDER STATUS</div>
-                      <div style="font-size:12px;font-weight:bold;color:#28a745;margin-bottom:4px;">CONFIRMED</div>
-                      <div style="font-size:10px;color:#666;font-weight:500;">Processing â€¢ Estimated: 4-24 hours</div>
-                    </td>
-                    <td width="50%" align="center" style="padding-left:10px;">
-                      <div style="font-size:10px;color:#666;font-weight:600;margin-bottom:4px;">SUPPORT</div>
-                      <div style="font-size:10px;color:#666;font-weight:500;margin-bottom:2px;">${escapeHtml(SUPPORT_PHONE)}</div>
-                      <div style="font-size:10px;color:#666;font-weight:500;margin-bottom:4px;">${escapeHtml(SUPPORT_EMAIL)}</div>
-                      <div style="font-size:9px;color:#666;margin-top:4px;font-weight:500;">We're here to help</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" style="border-top:1px dashed #cfe2ff;padding-top:10px;">
-                      <div style="font-size:10px;color:#666;text-align:center;font-weight:500;">
-                        Track your order anytime via your account â€¢
-                        <a href="${escapeHtml(trackingUrl)}" style="color:#007bff;text-decoration:none;font-weight:600;">View order</a>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </td></tr>
-            </table>
-
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px dashed #ccc;padding-top:12px;">
-              <tr><td align="center">
-                <div style="font-size:12px;font-weight:bold;margin-bottom:8px;">THANK YOU FOR YOUR PURCHASE!</div>
-                <div style="font-size:11px;color:#666;margin-bottom:10px;font-style:italic;font-weight:500;">We appreciate your business and look forward to serving you</div>
-                <div style="font-size:10px;color:#666;margin-bottom:12px;font-weight:500;">Please keep this receipt for your records.</div>
-              </td></tr>
-            </table>
-          </td></tr>
-        </table>
+        <div style="background:#343a40;color:#fff;padding:18px 24px;text-align:center;font-size:12px;">
+          <div>${COMPANY_NAME}</div>
+          <div style="margin-top:4px;">${escapeHtml(SUPPORT_EMAIL)} | ${escapeHtml(SUPPORT_PHONE)}</div>
+        </div>
       </div>
     </body>
     </html>
   `;
 
+  const text = `Your order ${orderDetails.id || ""} has been confirmed. Total: ${money(subtotal)}.`;
+
   await sendEmail({
     to,
-    subject: `Order Confirmed - ${COMPANY_NAME} #${orderDetails.id || "N/A"}`,
+    subject: `Order Confirmation #${orderDetails.id || "N/A"}`,
+    html,
+    text,
+  });
+}
+
+export async function sendPasswordResetEmail(to, resetUrl) {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;border:1px solid #e5e7eb;border-radius:8px;">
+      <h2 style="margin:0 0 12px;">Password Reset Request</h2>
+      <p style="margin:0 0 16px;">You requested a password reset for your account.</p>
+      <p style="margin:0 0 16px;">
+        <a href="${escapeHtml(resetUrl)}" style="background:#2563eb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:6px;display:inline-block;">
+          Reset Password
+        </a>
+      </p>
+      <p style="margin:0;color:#6b7280;font-size:13px;">If you did not request this, you can ignore this email.</p>
+    </div>
+  `;
+
+  await sendEmail({
+    to,
+    subject: "Password Reset Request",
     html,
   });
 }

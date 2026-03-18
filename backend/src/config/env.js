@@ -31,6 +31,7 @@ export const MONGO_URI = process.env.MONGO_URI;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 export const FRONTEND_URL = process.env.FRONTEND_URL;
+export const BACKEND_PUBLIC_URL = process.env.BACKEND_PUBLIC_URL || "";
 export const REDIS_URL = process.env.REDIS_URL || "";
 export const RATE_LIMIT_PREFIX = process.env.RATE_LIMIT_PREFIX || "deetech:rl";
 
@@ -40,3 +41,8 @@ export const SMTP_PORT = process.env.SMTP_PORT || 587;
 export const SMTP_USER = process.env.SMTP_USER;
 export const SMTP_PASS = process.env.SMTP_PASS;
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+// Cloudinary (optional in local dev, expected in production media hosting)
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "";
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || "";
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";

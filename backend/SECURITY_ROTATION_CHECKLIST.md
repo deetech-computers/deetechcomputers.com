@@ -9,6 +9,7 @@ Run this checklist before production launch and anytime credentials are exposed.
 - `SMOKE_ADMIN_PASSWORD` / admin user password
 - `MONGO_URI` credentials (DB user password)
 - `REDIS_URL` credentials (if used)
+- `CLOUDINARY_API_SECRET`
 
 ## 2) Update Runtime Environment
 
@@ -46,4 +47,3 @@ Expected:
 - Enforce HTTPS at reverse proxy/load balancer.
 - Keep `FRONTEND_URL` strict (avoid wildcard origins).
 - Monitor logs for repeated 401/403/429 spikes.
-

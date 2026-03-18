@@ -130,21 +130,10 @@ async function releaseDiscountCode(discount) {
 }
 
 async function removePaymentProofFile(rawUrl) {
-  const value = String(rawUrl || "").trim();
-  if (!value) return;
-  const clean = value.split("?")[0];
-  if (!clean.startsWith("/uploads/")) return;
-
-  const filename = path.basename(clean);
-  if (!filename || filename === "." || filename === "..") return;
-
-  const fullPath = path.resolve("uploads", filename);
   try {
-    await fsPromises.unlink(fullPath);
+    await deleteStoredMedia(rawUrl);
   } catch (err) {
-    if (err?.code !== "ENOENT") {
-      console.warn("Payment proof file cleanup skipped:", err?.message || err);
-    }
+    console.warn("Payment proof file cleanup skipped:", err?.message || err);
   }
 }
 
@@ -410,10 +399,7 @@ export async function createOrder(req, res) {
     res.status(400);
     throw new Error("Mobile number is required");
   }
-  const screenshotUrl =
-    req.file?.filename
-      ? `/uploads/${req.file.filename}`
-      : String(paymentScreenshotUrl || "").trim();
+  const screenshotUrl = String(paymentScreenshotUrl || "").trim();
 
   if (!screenshotUrl) {
     res.status(400);
@@ -568,10 +554,7 @@ export async function createGuestOrder(req, res) {
   const submittedAffiliateCode = normalizeAffiliateCode(affiliateCode);
   const trimmedOrderRef = String(clientOrderRef || "").trim();
 
-  const screenshotUrl =
-    req.file?.filename
-      ? `/uploads/${req.file.filename}`
-      : String(paymentScreenshotUrl || "").trim();
+  const screenshotUrl = String(paymentScreenshotUrl || "").trim();
 
   if (!screenshotUrl) {
     res.status(400);
@@ -883,3 +866,7 @@ export async function resyncAffiliateReferrals(req, res) {
     synced,
   });
 }
+
+
+
+
