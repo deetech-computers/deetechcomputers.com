@@ -122,6 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
     accessories: "Accessories",
     storage: "Storage Devices",
     printers: "Printers & Scanners",
+    samsung: "Samsung Products",
+    hp: "HP Products",
+    lg: "LG Products",
+    it: "IT & Networking",
+    home: "Home Appliances",
+    small: "Small Appliances",
+    more: "More Tech Categories",
+    ramadan: "Ramadan Offers",
   };
 
   const categoryBrands = {
@@ -543,6 +551,38 @@ document.addEventListener("DOMContentLoaded", () => {
     if (headingEl) headingEl.textContent = `${label}${sortLabel}${sectionLabel} (${total})`;
   }
 
+  function updateSeoMeta(total) {
+    const meta = document.querySelector('meta[name="description"]');
+    const label = getCategoryLabel(state.category);
+    const titleBase = "Deetech Computers | Products";
+    const hasSearch = Boolean(state.q && state.q.trim());
+    const rawSection = state.section ? state.section.replace(/_/g, " ") : "";
+    const sectionLabel = rawSection ? rawSection.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
+    let title = titleBase;
+    let description = "Browse all laptops, gadgets, and accessories at Deetech Computers. Best deals in Ghana.";
+
+    if (state.category !== "all") {
+      title = `${label} | Deetech Computers`;
+      description = `Shop ${label.toLowerCase()} at Deetech Computers with trusted support and delivery across Ghana.`;
+    }
+
+    if (state.section) {
+      title = `${label === "All Categories" ? "Products" : label} - ${sectionLabel} | Deetech Computers`;
+      description = `Browse ${rawSection} in ${label === "All Categories" ? "our full product catalog" : label.toLowerCase()} at Deetech Computers.`;
+    }
+
+    if (hasSearch) {
+      title = `Search results for "${state.q.trim()}" | Deetech Computers`;
+      description = `Find search results for ${state.q.trim()} at Deetech Computers across laptops, gadgets, and accessories in Ghana.`;
+    }
+
+    if (typeof total === "number" && total > 0 && !hasSearch) {
+      description += ` Explore ${total} available options.`;
+    }
+
+    document.title = title;
+    if (meta) meta.setAttribute("content", description);
+  }
   function updateUrl() {
     const params = new URLSearchParams();
     if (state.q) params.set("search", state.q);
@@ -709,6 +749,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProducts(filtered.slice(start, start + perPage));
     renderPagination(totalPages);
     updateHeading(filtered.length);
+    updateSeoMeta(filtered.length);
     renderActiveFilterTags();
     if (pushUrl) updateUrl();
   }
@@ -1123,6 +1164,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   init();
 });
+
+
+
 
 
 
