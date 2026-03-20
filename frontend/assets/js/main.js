@@ -380,7 +380,7 @@
       <article class="product-card">
         <div class="product-media">
           <a href="product.html?id=${encodeURIComponent(prod._id)}">
-            <img src="${resolveImage(prod.image || prod.images?.[0])}" alt="${prod.name}">
+            <img src="${resolveImage(prod.image || prod.images?.[0])}" alt="${prod.name}" loading="lazy" decoding="async" fetchpriority="low">
           </a>
         </div>
         <div class="product-info">
@@ -503,7 +503,7 @@
         const img = cat.image;
         return `
           <a class="category-bubble" href="products.html?cat=${encodeURIComponent(cat.label)}">
-            <span class="bubble-media"><img src="${img}" alt="${cat.label}"></span>
+            <span class="bubble-media"><img src="${img}" alt="${cat.label}" loading="lazy" decoding="async"></span>
             <span class="bubble-label">${cat.label}</span>
           </a>
         `;
@@ -522,7 +522,6 @@
       if (!products.length) throw new Error("Failed to load products");
 
       container.innerHTML = "";
-      renderCategoryBubbles();
       getHomeSectionDefinitions().forEach((section) => {
         const items = pickProductsForSection(products, section.key, 4);
         if (!items.length) return;
@@ -544,7 +543,13 @@
   /* ---------- Boot ---------- */
   document.addEventListener("DOMContentLoaded", () => {
     updateHeaderCartBadge();
-    renderHomeSections();
+    renderCategoryBubbles();
+    const bootHomeSections = () => renderHomeSections();
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(bootHomeSections, { timeout: 1200 });
+    } else {
+      window.setTimeout(bootHomeSections, 180);
+    }
     renderCartPage();
 
     document.addEventListener("cart-updated", () => {
@@ -553,5 +558,7 @@
     });
   });
 })();
+
+
 
 

@@ -4,7 +4,7 @@
   const host = document.getElementById("heroBanner");
   if (!host || !API_BASE) return;
   const BANNER_STORAGE_KEY = "deetech_banners_cache_v1";
-  const API_TIMEOUT_MS = 1800;
+  const API_TIMEOUT_MS = 4000;
   let currentIndex = 0;
   let slides = [];
   let autoSlideTimer = null;
@@ -35,6 +35,8 @@
     const image = document.createElement("img");
     image.src = img;
     image.alt = banner.title || "Deetech banner";
+    image.decoding = "async";
+    image.fetchPriority = "high";
 
     const overlay = document.createElement("div");
     overlay.className = "hero-overlay";
@@ -158,3 +160,5 @@
 
   loadBanner();
 })();
+
+

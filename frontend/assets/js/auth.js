@@ -277,15 +277,15 @@ const clearToken = () => localStorage.removeItem("token");
 
             <div class="mobile-menu-items">
               <a class="mobile-menu-item ${path.includes('contact.html') ? "active" : ""}" href="${basePrefix}contact.html">
-                <img class="mobile-menu-item-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/question-circle.svg" alt="" />
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.75 9a2.25 2.25 0 1 1 3.91 1.5c-.72.75-1.66 1.24-1.66 2.5"></path><circle cx="12" cy="16.6" r=".9"></circle></svg></span>
                 Support
               </a>
               <a class="mobile-menu-item ${path.includes('about.html') ? "active" : ""}" href="${basePrefix}about.html">
-                <img class="mobile-menu-item-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/info-circle.svg" alt="" />
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10.2v5.1"></path><circle cx="12" cy="7.4" r=".9"></circle></svg></span>
                 About
               </a>
               <a class="mobile-menu-item ${path.includes('affiliates.html') ? "active" : ""}" href="${basePrefix}affiliates.html">
-                <img class="mobile-menu-item-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/cash-coin.svg" alt="" />
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 10.25c0-1.1 1.12-2 2.5-2s2.5.9 2.5 2-1.12 2-2.5 2-2.5.9-2.5 2 1.12 2 2.5 2 2.5-.9 2.5-2"></path><path d="M12 7v10"></path></svg></span>
                 Affiliates
               </a>
               <a class="mobile-menu-item auth-only ${path.includes('wishlist.html') ? "active" : ""}" href="${basePrefix}wishlist.html">
@@ -298,7 +298,7 @@ const clearToken = () => localStorage.removeItem("token");
                 Wishlist
               </a>
               <a class="mobile-menu-item admin-only" href="${adminPrefix}admin.html">
-                <img class="mobile-menu-item-icon" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/shield-lock.svg" alt="" />
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 5.5 6v5.55c0 4.05 2.74 7.82 6.5 8.95 3.76-1.13 6.5-4.9 6.5-8.95V6z"></path><path d="M10.2 11.3V10a1.8 1.8 0 1 1 3.6 0v1.3"></path><rect x="9.1" y="11.3" width="5.8" height="4.2" rx="1"></rect></svg></span>
                 Admin Dashboard
               </a>
               <button class="mobile-menu-item logout auth-only" id="mobileLogoutBtn" type="button">
@@ -912,6 +912,8 @@ function guardProtected() {
   // Keep global fallback for non-module scripts
   window.auth = { getUser, setUser, clearUser, getToken, setToken, clearToken };
 })();
+
+
 
 
 
