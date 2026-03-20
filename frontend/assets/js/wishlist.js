@@ -125,7 +125,7 @@
       card.innerHTML = `
         <div class="product-media">
           <a href="product.html?id=${encodeURIComponent(productId)}">
-            <img src="${resolveImage(p.image || p.image_url || p.images?.[0])}" alt="${p.name}">
+            <img src="${resolveImage(p.image || p.image_url || p.images?.[0])}" alt="${p.name}" width="140" height="140">
           </a>
           ${p.featured || p.isFeatured ? '<div class="media-badge">FEATURED</div>' : ""}
         </div>
@@ -172,3 +172,4 @@
 
   loadWishlist().catch((e) => console.error(e));
 })();
+

@@ -714,7 +714,7 @@ async function renderOrder(products) {
     row.className = "order-item";
     row.innerHTML = `
       <a class="order-item-image" href="product.html?id=${encodeURIComponent(p._id)}">
-        <img src="${imageSrc}" alt="${p.name}">
+        <img src="${imageSrc}" alt="${p.name}" width="120" height="120">
         <span class="order-item-qty-badge">${item.qty}</span>
       </a>
       <div class="order-item-details">
@@ -1426,6 +1426,7 @@ function handleCheckout(products) {
     }
   });
 })();
+
 
 
 

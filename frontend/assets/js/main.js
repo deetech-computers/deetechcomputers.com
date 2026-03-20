@@ -380,7 +380,7 @@
       <article class="product-card">
         <div class="product-media">
           <a href="product.html?id=${encodeURIComponent(prod._id)}">
-            <img src="${resolveImage(prod.image || prod.images?.[0])}" alt="${prod.name}" loading="lazy" decoding="async" fetchpriority="low">
+            <img src="${resolveImage(prod.image || prod.images?.[0])}" alt="${prod.name}" width="400" height="300" loading="lazy" decoding="async" fetchpriority="low">
           </a>
         </div>
         <div class="product-info">
@@ -503,7 +503,7 @@
         const img = cat.image;
         return `
           <a class="category-bubble" href="products.html?cat=${encodeURIComponent(cat.label)}">
-            <span class="bubble-media"><img src="${img}" alt="${cat.label}" loading="lazy" decoding="async"></span>
+            <span class="bubble-media"><img src="${img}" alt="${cat.label}" width="220" height="220" loading="lazy" decoding="async"></span>
             <span class="bubble-label">${cat.label}</span>
           </a>
         `;
@@ -558,6 +558,7 @@
     });
   });
 })();
+
 
 
 

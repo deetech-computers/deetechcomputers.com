@@ -390,7 +390,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   const link = productId ? `product.html?id=${encodeURIComponent(productId)}` : "javascript:void(0)";
                   return `
                     <a class="account-order-item-preview" href="${link}" ${productId ? "" : "aria-disabled='true'"}>
-                      <img src="${getItemImage(item)}" alt="${getItemName(item)}">
+                      <img src="${getItemImage(item)}" alt="${getItemName(item)}" width="96" height="96">
                       <span>${getItemName(item)} x ${Number(item?.qty || item?.quantity || 1)}</span>
                     </a>
                   `;
@@ -463,7 +463,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   const link = productId ? `product.html?id=${encodeURIComponent(productId)}` : "javascript:void(0)";
                   return `
                     <a class="account-order-item" href="${link}" ${productId ? "" : "aria-disabled='true'"}>
-                      <img src="${getItemImage(item)}" alt="${getItemName(item)}">
+                      <img src="${getItemImage(item)}" alt="${getItemName(item)}" width="96" height="96">
                       <div>
                         <div><strong>${getItemName(item)}</strong></div>
                         <div>Qty: ${Number(item?.qty || item?.quantity || 1)}</div>
@@ -534,3 +534,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
   const productLookup = new Map();
+

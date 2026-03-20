@@ -613,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = `
         <div class="product-media">
           <a href="product.html?id=${encodeURIComponent(productId)}">
-            <img src="${imageSrc}" alt="${escapeHtml(p.name)}">
+            <img src="${imageSrc}" alt="${escapeHtml(p.name)}" width="400" height="300">
           </a>
           ${isFeatured ? '<div class="media-badge">FEATURED</div>' : ""}
           <div class="media-actions">
@@ -1156,6 +1156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   init();
 });
+
 
 
 

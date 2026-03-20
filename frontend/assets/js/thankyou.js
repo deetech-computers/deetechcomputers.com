@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <article class="receipt-shell">
     <header class="receipt-header">
       <div class="brand-row">
-        <img src="${logoUrl}" alt="DEETECH" class="receipt-logo" />
+        <img src="${logoUrl}" alt="DEETECH" class="receipt-logo" width="160" height="56" />
         <div class="brand-name">DEETECH</div>
       </div>
       <div class="brand-sub">COMPUTERS & ELECTRONICS</div>
@@ -293,3 +293,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   localStorage.removeItem("lastOrder");
 });
+

@@ -164,7 +164,7 @@ const clearToken = () => localStorage.removeItem("token");
       <nav class="navbar">
         <div class="container nav-container">
           <a class="nav-logo" href="${basePrefix}index.html">
-            <img src="${basePrefix}assets/img/logo.png" alt="Deetech Computers" class="logo-image" />
+            <img src="${basePrefix}assets/img/logo.png" alt="Deetech Computers" class="logo-image" width="160" height="56" />
           </a>
 
           <ul class="nav-menu">
@@ -178,7 +178,7 @@ const clearToken = () => localStorage.removeItem("token");
           <div class="nav-icons">
             ${!isProductsPage ? `
             <button class="nav-icon search-toggle" aria-label="Search">
-              <img class="icon-img" src="${basePrefix}assets/img/icons/search.png" alt="" />
+              <img class="icon-img" src="${basePrefix}assets/img/icons/search.png" alt="" width="24" height="24" />
             </button>` : ""}
 
             <a class="nav-icon wishlist-link ${path.includes('wishlist.html') ? "active" : ""}" href="${basePrefix}wishlist.html" aria-label="Wishlist">
@@ -195,7 +195,7 @@ const clearToken = () => localStorage.removeItem("token");
 
             <div class="user-dropdown" id="userDropdownWrap">
               <button class="nav-icon user-toggle" aria-label="Account">
-                <img class="icon-img" src="${basePrefix}assets/img/icons/user.png" alt="" />
+                <img class="icon-img" src="${basePrefix}assets/img/icons/user.png" alt="" width="24" height="24" />
               </button>
               <div class="dropdown-menu" id="userDropdown">
                 <div class="dropdown-user-info" id="dropdownUserEmail"></div>
@@ -207,7 +207,7 @@ const clearToken = () => localStorage.removeItem("token");
               </div>
             </div>
             <a class="nav-icon account-link" id="loginIcon" href="${basePrefix}login.html" aria-label="Login">
-              <img class="icon-img" src="${basePrefix}assets/img/icons/user.png" alt="" />
+              <img class="icon-img" src="${basePrefix}assets/img/icons/user.png" alt="" width="24" height="24" />
             </a>
 
             <button class="mobile-hamburger" aria-label="Menu">
@@ -218,7 +218,7 @@ const clearToken = () => localStorage.removeItem("token");
           <div class="mobile-nav-icons">
             ${!isProductsPage ? `
             <button class="mobile-search-icon" aria-label="Search">
-              <img class="icon-img" src="${basePrefix}assets/img/icons/search.png" alt="" />
+              <img class="icon-img" src="${basePrefix}assets/img/icons/search.png" alt="" width="24" height="24" />
             </button>` : ""}
             <button class="mobile-hamburger" aria-label="Menu">
               <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
@@ -257,12 +257,12 @@ const clearToken = () => localStorage.removeItem("token");
       <div class="mobile-menu-overlay" id="mobileMenu">
         <div class="mobile-menu-content" role="dialog" aria-modal="true" aria-label="Mobile menu">
           <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Close menu">
-            <img class="icon-img" src="${basePrefix}assets/img/icons/x.png" alt="" />
+            <img class="icon-img" src="${basePrefix}assets/img/icons/x.png" alt="" width="24" height="24" />
           </button>
           <div class="mobile-menu-header">
             <a class="mobile-profile-card" href="${basePrefix}account.html">
               <div class="mobile-profile-left">
-                <img class="mobile-profile-avatar" src="${basePrefix}assets/img/logo.png" alt="Deetech logo" />
+                <img class="mobile-profile-avatar" src="${basePrefix}assets/img/logo.png" alt="Deetech logo" width="72" height="72" />
                 <div class="mobile-profile-text">
                   <span class="mobile-profile-name" id="mobileProfileName">Deetech Guest</span>
                   <span class="mobile-profile-email" id="mobileUserEmail">Guest</span>
@@ -302,7 +302,7 @@ const clearToken = () => localStorage.removeItem("token");
                 Admin Dashboard
               </a>
               <button class="mobile-menu-item logout auth-only" id="mobileLogoutBtn" type="button">
-                <img class="mobile-menu-item-icon" src="${basePrefix}assets/img/icons/x.png" alt="" />
+                <img class="mobile-menu-item-icon" src="${basePrefix}assets/img/icons/x.png" alt="" width="24" height="24" />
                 Logout
               </button>
             </div>
@@ -484,7 +484,7 @@ const clearToken = () => localStorage.removeItem("token");
               const imageSrc = resolveSearchImage((p.images && p.images[0]) || p.image || p.image_url);
               return `
                 <a class="search-product-item" href="product.html?id=${encodeURIComponent(productId)}">
-                  <img src="${imageSrc}" alt="${p.name}" />
+                  <img src="${imageSrc}" alt="${p.name}" width="72" height="72" />
                   <div>
                     <span class="search-product-brand">${p.brand || ""}</span>
                     <span class="search-product-name">${p.name || ""}</span>
@@ -738,7 +738,7 @@ const clearToken = () => localStorage.removeItem("token");
         const icon = categoryIconMap[key] || categoryIconMap.other;
         return `
           <a class="mobile-menu-tile" href="${basePrefix}products.html?cat=${encodeURIComponent(key)}">
-            <img src="${icon}" alt="${label}" />
+            <img src="${icon}" alt="${label}" width="24" height="24" />
             <span>${label}</span>
           </a>
         `;
@@ -912,6 +912,8 @@ function guardProtected() {
   // Keep global fallback for non-module scripts
   window.auth = { getUser, setUser, clearUser, getToken, setToken, clearToken };
 })();
+
+
 
 
 

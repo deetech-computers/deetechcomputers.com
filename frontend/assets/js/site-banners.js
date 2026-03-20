@@ -35,6 +35,8 @@
     const image = document.createElement("img");
     image.src = img;
     image.alt = banner.title || "Deetech banner";
+    image.width = 1600;
+    image.height = 600;
     image.decoding = "async";
     image.fetchPriority = "high";
 
@@ -160,5 +162,6 @@
 
   loadBanner();
 })();
+
 
 
