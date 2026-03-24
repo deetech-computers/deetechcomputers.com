@@ -277,15 +277,15 @@ const clearToken = () => localStorage.removeItem("token");
 
             <div class="mobile-menu-items">
               <a class="mobile-menu-item ${path.includes('contact.html') ? "active" : ""}" href="${basePrefix}contact.html">
-                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.75 9a2.25 2.25 0 1 1 3.91 1.5c-.72.75-1.66 1.24-1.66 2.5"></path><circle cx="12" cy="16.6" r=".9"></circle></svg></span>
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5.5h18v11H8l-5 4v-15z"></path><path d="M8.5 10h7M8.5 13h4.5"></path></svg></span>
                 Support
               </a>
               <a class="mobile-menu-item ${path.includes('about.html') ? "active" : ""}" href="${basePrefix}about.html">
-                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10.2v5.1"></path><circle cx="12" cy="7.4" r=".9"></circle></svg></span>
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8.5 8h7M8.5 12h7M8.5 16h5"></path></svg></span>
                 About
               </a>
               <a class="mobile-menu-item ${path.includes('affiliates.html') ? "active" : ""}" href="${basePrefix}affiliates.html">
-                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 10.25c0-1.1 1.12-2 2.5-2s2.5.9 2.5 2-1.12 2-2.5 2-2.5.9-2.5 2 1.12 2 2.5 2 2.5-.9 2.5-2"></path><path d="M12 7v10"></path></svg></span>
+                <span class="mobile-menu-item-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm8 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"></path><path d="M3.5 18.5c.8-2.1 2.4-3.3 4.5-3.3 2.1 0 3.7 1.2 4.5 3.3"></path><path d="M11.5 18.5c.8-2.1 2.4-3.3 4.5-3.3 2.1 0 3.7 1.2 4.5 3.3"></path></svg></span>
                 Affiliates
               </a>
               <a class="mobile-menu-item auth-only ${path.includes('wishlist.html') ? "active" : ""}" href="${basePrefix}wishlist.html">

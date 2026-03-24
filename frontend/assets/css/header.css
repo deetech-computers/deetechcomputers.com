@@ -824,9 +824,29 @@ body { padding-top: 70px; }
 .mobile-menu-item-icon {
   width: 20px;
   height: 20px;
-  object-fit: contain;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  filter: grayscale(1);
+  color: #0b84c6;
+}
+
+.mobile-menu-item-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.mobile-menu-item-icon svg path,
+.mobile-menu-item-icon svg circle,
+.mobile-menu-item-icon svg rect,
+.mobile-menu-item-icon svg line,
+.mobile-menu-item-icon svg polyline {
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
 
 .mobile-menu-item-icon--wishlist {

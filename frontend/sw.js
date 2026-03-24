@@ -1,4 +1,4 @@
-const CACHE_NAME = "deetech-static-v7";
+const CACHE_NAME = "deetech-static-v8";
 const OFFLINE_URL = "offline.html";
 const SNAPSHOT_URL = "assets/data/products-snapshot.json";
 const PLACEHOLDER_URL = "assets/img/placeholder.svg";
@@ -65,7 +65,9 @@ function isRealtimeCriticalAsset(url) {
     p.endsWith("/assets/js/cart.js") ||
     p.endsWith("/assets/js/runtime-config.js") ||
     p.endsWith("/assets/js/config.js") ||
-    p.endsWith("/assets/js/auth.js")
+    p.endsWith("/assets/js/auth.js") ||
+    p.endsWith("/assets/css/header.css") ||
+    p.endsWith("/assets/css/footer.css")
   );
 }
 

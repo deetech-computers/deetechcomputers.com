@@ -50,3 +50,16 @@
   border:0;
 }
 
+
+.footer-social-icon svg path{
+  fill: currentColor;
+  stroke: none;
+}
+.footer-social-icon svg circle,
+.footer-social-icon svg rect,
+.footer-social-icon svg line{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
