@@ -519,7 +519,7 @@
 
       row.innerHTML = `
         <a class="cart-item-image" href="${productLink}">
-          <img src="${resolveImage(imageSrc)}" alt="${name}" width="120" height="120">
+          <img src="${resolveImage(imageSrc)}" alt="${name}" width="120" height="120" loading="lazy" decoding="async">
           ${Number.isFinite(stock) && stock <= 0 ? `<span class="cart-stock-badge cart-unavailable-badge">Out</span>` : ""}
         </a>
         <div class="cart-item-details">
@@ -695,6 +695,7 @@
     clearCart: clearCartFully,
   };
 })();
+
 
 
 

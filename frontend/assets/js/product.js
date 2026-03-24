@@ -742,7 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="product-media">
               ${r.featured ? '<div class="media-badge">FEATURED</div>' : ""}
               <a href="product.html?id=${encodeURIComponent(r._id)}">
-                <img src="${resolveImage((r.images && r.images[0]) || r.image)}" alt="${escapeHtml(r.name)}" width="160" height="120">
+                <img src="${resolveImage((r.images && r.images[0]) || r.image)}" alt="${escapeHtml(r.name)}" width="160" height="120" loading="lazy" decoding="async">
               </a>
             </div>
             <div class="product-info">
@@ -804,6 +804,7 @@ document.addEventListener("DOMContentLoaded", () => {
   wireTabs();
   if (productId) loadProduct();
 });
+
 
 
 
