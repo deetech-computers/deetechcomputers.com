@@ -702,7 +702,8 @@ const clearToken = () => localStorage.removeItem("token");
     if (v.startsWith("access")) return "accessories";
     if (v.startsWith("stor")) return "storage";
     if (v.startsWith("print")) return "printers";
-    return v || "other";
+    if (v.startsWith("other")) return "others";
+    return v || "others";
   }
 
   const categoryLabels = {
@@ -712,7 +713,7 @@ const clearToken = () => localStorage.removeItem("token");
     accessories: "Accessories",
     storage: "Storage",
     printers: "Printers",
-    other: "Other",
+    others: "Others",
   };
 
   const categoryIconMap = {
@@ -722,7 +723,7 @@ const clearToken = () => localStorage.removeItem("token");
     accessories: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/headphones.svg",
     storage: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/device-hdd.svg",
     printers: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/printer.svg",
-    other: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/grid.svg",
+    others: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/grid.svg",
   };
 
   function loadMobileCategories() {
@@ -730,12 +731,12 @@ const clearToken = () => localStorage.removeItem("token");
     if (!grid) return;
 
     const basePrefix = location.pathname.toLowerCase().includes("/admin/") ? "../" : "";
-    const order = ["laptops", "phones", "monitors", "accessories", "storage", "printers"];
+    const order = ["laptops", "phones", "monitors", "accessories", "storage", "printers", "others"];
 
     grid.innerHTML = order
       .map((key) => {
         const label = categoryLabels[key] || key;
-        const icon = categoryIconMap[key] || categoryIconMap.other;
+        const icon = categoryIconMap[key] || categoryIconMap.others;
         return `
           <a class="mobile-menu-tile" href="${basePrefix}products.html?category=${encodeURIComponent(key)}">
             <img src="${icon}" alt="${label}" width="24" height="24" loading="lazy" decoding="async" />
@@ -912,6 +913,7 @@ function guardProtected() {
   // Keep global fallback for non-module scripts
   window.auth = { getUser, setUser, clearUser, getToken, setToken, clearToken };
 })();
+
 
 
 

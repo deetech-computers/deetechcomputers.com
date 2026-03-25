@@ -40,6 +40,7 @@
       accessories: "ACCESSORIES",
       storage: "STORAGE DEVICES",
       printers: "PRINTERS & SCANNERS",
+      others: "OTHERS",
     };
     return map[key] || "PRODUCT";
   }

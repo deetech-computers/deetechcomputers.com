@@ -65,6 +65,7 @@
     if (v.startsWith("access")) return "accessories";
     if (v.startsWith("stor")) return "storage";
     if (v.startsWith("print")) return "printers";
+    if (v.startsWith("other")) return "others";
     return v;
   }
 
@@ -495,6 +496,7 @@
       { label: "Accessories", image: "category%20img/accessories.webp" },
       { label: "Storage Devices", image: "category%20img/storage%20devices.webp" },
       { label: "Printers & Scanners", image: "category%20img/printers.webp" },
+      { label: "Others", image: "assets/img/placeholder.svg" },
       { label: "Projectors", image: "category%20img/projectors.webp" },
     ];
 

@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     accessories: "Accessories",
     storage: "Storage Devices",
     printers: "Printers & Scanners",
+    others: "Others",
   };
 
   const categoryBrands = {
@@ -131,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX"],
     storage: ["Seagate", "Western Digital", "Samsung", "Toshiba", "Kingston", "SanDisk", "Crucial", "Transcend"],
     printers: ["HP", "Canon", "Epson", "Brother", "Xerox", "Lexmark", "Ricoh", "Kyocera"],
+    others: ["Generic", "Unbranded", "Other", "Multiple"],
   };
 
   const categoryPriceRanges = {
@@ -140,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     accessories: { min: 50, max: 5000, step: 50 },
     storage: { min: 50, max: 3000, step: 50 },
     printers: { min: 500, max: 10000, step: 500 },
+    others: { min: 50, max: 25000, step: 100 },
     default: { min: 0, max: 25000, step: 100 },
   };
 
@@ -162,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (v.startsWith("access")) return "accessories";
     if (v.startsWith("stor")) return "storage";
     if (v.startsWith("print")) return "printers";
+    if (v.startsWith("other")) return "others";
     return v;
   }
 

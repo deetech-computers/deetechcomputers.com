@@ -15,6 +15,7 @@ const BRANDS_BY_CATEGORY = {
   accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX"],
   storage: ["Seagate", "Western Digital", "Samsung", "Toshiba", "Kingston", "SanDisk", "Crucial", "Transcend"],
   printers: ["HP", "Canon", "Epson", "Brother", "Xerox", "Lexmark", "Ricoh", "Kyocera"],
+  others: ["Generic", "Unbranded", "Other", "Multiple"],
 };
 
 const HOME_SECTION_KEYS = new Set([
@@ -33,6 +34,7 @@ function canonicalCategory(raw) {
   if (v.startsWith("access")) return "accessories";
   if (v.startsWith("stor")) return "storage";
   if (v.startsWith("print")) return "printers";
+  if (v.startsWith("other")) return "others";
   return v;
 }
 

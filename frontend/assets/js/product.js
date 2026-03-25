@@ -214,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (key.startsWith("access")) return "accessories";
     if (key.startsWith("stor")) return "storage";
     if (key.startsWith("print")) return "printers";
+    if (key.startsWith("other")) return "others";
     return key;
   }
 
@@ -225,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (key === "accessories") return "Accessories";
     if (key === "storage") return "Storage Devices";
     if (key === "printers") return "Printers & Scanners";
+    if (key === "others") return "Others";
     return key ? key.charAt(0).toUpperCase() + key.slice(1) : "Category";
   }
 

@@ -35,6 +35,7 @@
     accessories: "Accessories",
     storage: "Storage Devices",
     printers: "Printers & Scanners",
+    others: "Others",
   };
 
   const homeSectionNames = {
@@ -52,6 +53,7 @@
     accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX"],
     storage: ["Seagate", "Western Digital", "Samsung", "Toshiba", "Kingston", "SanDisk", "Crucial", "Transcend"],
     printers: ["HP", "Canon", "Epson", "Brother", "Xerox", "Lexmark", "Ricoh", "Kyocera"],
+    others: ["Generic", "Unbranded", "Other", "Multiple"],
   };
 
   function canonicalCategory(value) {
@@ -62,7 +64,8 @@
     if (v.startsWith("access")) return "accessories";
     if (v.startsWith("stor")) return "storage";
     if (v.startsWith("print")) return "printers";
-    return v || "accessories";
+    if (v.startsWith("other")) return "others";
+    return v || "";
   }
 
   function categoryLabel(value) {
@@ -494,3 +497,4 @@
 
   showManage();
 })();
+

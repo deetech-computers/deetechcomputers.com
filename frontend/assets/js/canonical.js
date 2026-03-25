@@ -14,6 +14,7 @@
     if (v.indexOf("access") === 0) return "accessories";
     if (v.indexOf("stor") === 0) return "storage";
     if (v.indexOf("print") === 0) return "printers";
+    if (v.indexOf("other") === 0) return "others";
     return v;
   }
 
