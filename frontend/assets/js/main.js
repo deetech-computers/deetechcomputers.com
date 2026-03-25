@@ -496,7 +496,7 @@
       { label: "Accessories", image: "category%20img/accessories.webp" },
       { label: "Storage Devices", image: "category%20img/storage%20devices.webp" },
       { label: "Printers & Scanners", image: "category%20img/printers.webp" },
-      { label: "Others", image: "assets/img/placeholder.svg" },
+      { label: "Others", image: "category%20img/others.png" },
       { label: "Projectors", image: "category%20img/projectors.webp" },
     ];
 
@@ -560,6 +560,7 @@
     });
   });
 })();
+
 
 
 
