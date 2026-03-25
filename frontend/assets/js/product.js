@@ -528,14 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      let imageUrl = myReview?.image_url ? String(myReview.image_url) : "";
-      const selectedImage = reviewImageEl?.files?.[0];
-
       try {
-        if (selectedImage) {
-          imageUrl = await uploadReviewImage(selectedImage, token);
-        }
-
         const endpoint = myReview?._id
           ? `${BASE_URL}/api/reviews/${encodeURIComponent(myReview._id)}`
           : `${BASE_URL}/api/reviews/${encodeURIComponent(product._id)}`;
@@ -547,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ rating, title, comment, image_url: imageUrl }),
+          body: JSON.stringify({ rating, title, comment }),
         });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload?.message || "Review submit failed");
@@ -930,6 +923,8 @@ document.addEventListener("DOMContentLoaded", () => {
   wireTabs();
   if (productId) loadProduct();
 });
+
+
 
 
 
