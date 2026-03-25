@@ -130,7 +130,6 @@ body { padding-top: 70px; }
   font-family: "Roboto", "Helvetica Neue", sans-serif;
   letter-spacing: 0.5px;
   line-height: 1.2;
-  white-space: nowrap;
 }
 
 .nav-link::after {
@@ -1223,6 +1222,7 @@ body { padding-top: 70px; }
               box-shadow 0.3s ease;
   will-change: transform;
 }
+
 
 
 
