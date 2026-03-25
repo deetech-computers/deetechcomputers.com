@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -89,12 +89,12 @@
         <p class="meta">Ships from Kumasi &bull; Pickup available &bull; 7-day warranty</p>
       </div>
     </div>
-
     <!-- Description -->
     <section class="details">
       <div class="prod-tabs" role="tablist" aria-label="Product information">
         <button class="prod-tab-btn active" type="button" data-tab="description" role="tab" aria-selected="true">Description</button>
         <button class="prod-tab-btn" type="button" data-tab="specifications" role="tab" aria-selected="false">Specifications</button>
+        <button class="prod-tab-btn" type="button" data-tab="reviews" role="tab" aria-selected="false">Reviews</button>
         <button class="prod-tab-btn" type="button" data-tab="shipping" role="tab" aria-selected="false">Shipping & Returns</button>
       </div>
       <div class="prod-tab-panels">
@@ -104,6 +104,44 @@
         <div class="prod-tab-pane" data-pane="specifications" role="tabpanel" hidden>
           <ul id="specList" class="specs"></ul>
         </div>
+        <div class="prod-tab-pane" data-pane="reviews" role="tabpanel" hidden>
+          <section class="product-reviews" id="productReviewsSection">
+            <div class="reviews-header">
+              <h2>Customer Reviews</h2>
+              <p id="reviewsSummary">No reviews yet</p>
+            </div>
+
+            <div class="review-form-wrap" id="reviewFormWrap">
+              <h3 id="reviewFormTitle">Write a Review</h3>
+              <p class="review-form-hint" id="reviewAuthHint">Sign in to leave a review.</p>
+              <div id="myReviewPreview" class="my-review-preview hidden"></div>
+              <form id="reviewForm" class="review-form hidden">
+                <div class="review-form-row">
+                  <label>Rating</label>
+                  <input type="hidden" id="reviewRating" name="rating" value="" required>
+                  <div id="reviewStarsInput" class="review-stars-input" role="radiogroup" aria-label="Choose rating">
+                    <button type="button" class="review-star-btn" data-value="1" aria-label="1 star">&#9733;</button>
+                    <button type="button" class="review-star-btn" data-value="2" aria-label="2 stars">&#9733;</button>
+                    <button type="button" class="review-star-btn" data-value="3" aria-label="3 stars">&#9733;</button>
+                    <button type="button" class="review-star-btn" data-value="4" aria-label="4 stars">&#9733;</button>
+                    <button type="button" class="review-star-btn" data-value="5" aria-label="5 stars">&#9733;</button>
+                  </div>
+                  <small id="reviewRatingText" class="review-rating-text">Select rating</small>
+                </div>
+                <div class="review-form-row">
+                  <label for="reviewComment">Your Review</label>
+                  <textarea id="reviewComment" name="comment" rows="4" maxlength="1000" placeholder="Share your experience with this product..." required></textarea>
+                </div>
+                <div class="review-form-actions">
+                  <button type="submit" class="btn" id="reviewSubmitBtn">Submit Review</button>
+                  <button type="button" class="btn btn-outline hidden" id="reviewCancelEditBtn">Cancel Edit</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="reviewsList" class="reviews-list"></div>
+          </section>
+        </div>
         <div class="prod-tab-pane" data-pane="shipping" role="tabpanel" hidden>
           <ul class="shipping-list">
             <li>Ships from Kumasi with nationwide delivery options.</li>
@@ -112,43 +150,6 @@
           </ul>
         </div>
       </div>
-    </section>
-
-    <section class="product-reviews" id="productReviewsSection">
-      <div class="reviews-header">
-        <h2>Customer Reviews</h2>
-        <p id="reviewsSummary">No reviews yet</p>
-      </div>
-
-      <div class="review-form-wrap" id="reviewFormWrap">
-        <h3 id="reviewFormTitle">Write a Review</h3>
-        <p class="review-form-hint" id="reviewAuthHint">Sign in to leave a review.</p>
-        <div id="myReviewPreview" class="my-review-preview hidden"></div>
-        <form id="reviewForm" class="review-form hidden">
-          <div class="review-form-row">
-            <label>Rating</label>
-            <input type="hidden" id="reviewRating" name="rating" value="" required>
-            <div id="reviewStarsInput" class="review-stars-input" role="radiogroup" aria-label="Choose rating">
-              <button type="button" class="review-star-btn" data-value="1" aria-label="1 star">&#9733;</button>
-              <button type="button" class="review-star-btn" data-value="2" aria-label="2 stars">&#9733;</button>
-              <button type="button" class="review-star-btn" data-value="3" aria-label="3 stars">&#9733;</button>
-              <button type="button" class="review-star-btn" data-value="4" aria-label="4 stars">&#9733;</button>
-              <button type="button" class="review-star-btn" data-value="5" aria-label="5 stars">&#9733;</button>
-            </div>
-            <small id="reviewRatingText" class="review-rating-text">Select rating</small>
-          </div>
-          <div class="review-form-row">
-            <label for="reviewComment">Your Review</label>
-            <textarea id="reviewComment" name="comment" rows="4" maxlength="1000" placeholder="Share your experience with this product..." required></textarea>
-          </div>
-          <div class="review-form-actions">
-            <button type="submit" class="btn" id="reviewSubmitBtn">Submit Review</button>
-            <button type="button" class="btn btn-outline hidden" id="reviewCancelEditBtn">Cancel Edit</button>
-          </div>
-        </form>
-      </div>
-
-      <div id="reviewsList" class="reviews-list"></div>
     </section>
 
     <!-- Related Products -->

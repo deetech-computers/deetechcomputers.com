@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function starsFromRating(rating) {
     const safe = Math.max(0, Math.min(5, Number(rating || 0)));
-    return `${"★".repeat(safe)}${"☆".repeat(5 - safe)}`;
+    return `${"\u2605".repeat(safe)}${"\u2606".repeat(5 - safe)}`;
   }
 
   function formatReviewDate(value) {
@@ -197,14 +197,25 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast?.(`[${product.name}] added to cart`, "success");
   }
 
-  function categoryLabel(category) {
+  function normalizeCategoryKey(category) {
     const key = String(category || "").trim().toLowerCase();
-    if (key.startsWith("laptop")) return "Laptops & Computers";
-    if (key.startsWith("phone")) return "Phones & Tablets";
-    if (key.startsWith("monitor")) return "Monitors & Displays";
-    if (key.startsWith("access")) return "Accessories";
-    if (key.startsWith("stor")) return "Storage Devices";
-    if (key.startsWith("print")) return "Printers & Scanners";
+    if (key.startsWith("laptop")) return "laptops";
+    if (key.startsWith("phone")) return "phones";
+    if (key.startsWith("monitor")) return "monitors";
+    if (key.startsWith("access")) return "accessories";
+    if (key.startsWith("stor")) return "storage";
+    if (key.startsWith("print")) return "printers";
+    return key;
+  }
+
+  function categoryLabel(category) {
+    const key = normalizeCategoryKey(category);
+    if (key === "laptops") return "Laptops & Computers";
+    if (key === "phones") return "Phones & Tablets";
+    if (key === "monitors") return "Monitors & Displays";
+    if (key === "accessories") return "Accessories";
+    if (key === "storage") return "Storage Devices";
+    if (key === "printers") return "Printers & Scanners";
     return key ? key.charAt(0).toUpperCase() + key.slice(1) : "Category";
   }
 
@@ -328,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const avg = count ? reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / count : 0;
     if (prodRatingEl) prodRatingEl.textContent = starsFromRating(Math.round(avg || 0));
     if (prodReviewsEl) prodReviewsEl.textContent = `(${count} reviews)`;
-    if (reviewsSummaryEl) reviewsSummaryEl.textContent = count ? `${avg.toFixed(1)} / 5 • ${count} reviews` : "No reviews yet";
+    if (reviewsSummaryEl) reviewsSummaryEl.textContent = count ? `${avg.toFixed(1)} / 5 \u2022 ${count} reviews` : "No reviews yet";
 
     if (!token) {
       reviewFormEl.classList.add("hidden");
@@ -729,8 +740,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const relatedGrid = document.getElementById("relatedGrid");
       if (relatedGrid) {
         const all = await fetchRelatedProductsWithFallback(product.category);
-        const related = (Array.isArray(all) ? all : []).filter((p) => p._id !== product._id).slice(0, 4);
+        const activeCategoryKey = normalizeCategoryKey(product.category);
+        const related = (Array.isArray(all) ? all : [])
+          .filter((p) => {
+            const sameProduct = String(p?._id || p?.id || "") === String(product?._id || product?.id || "");
+            if (sameProduct) return false;
+            return normalizeCategoryKey(p?.category) === activeCategoryKey;
+          })
+          .slice(0, 4);
+
         relatedGrid.innerHTML = "";
+        if (!related.length) {
+          relatedGrid.innerHTML = '<p class="related-empty">No related product found.</p>';
+          return;
+        }
 
         related.forEach((r) => {
           const rStock = getStock(r);
@@ -804,7 +827,6 @@ document.addEventListener("DOMContentLoaded", () => {
   wireTabs();
   if (productId) loadProduct();
 });
-
 
 
 

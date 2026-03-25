@@ -405,6 +405,12 @@
   padding-top: 18px;
 }
 
+.prod-tab-pane .product-reviews {
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 0;
+}
+
 .reviews-header {
   display: flex;
   align-items: center;
@@ -700,6 +706,17 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 14px;
+}
+
+.related-empty {
+  grid-column: 1 / -1;
+  margin: 6px 0 0;
+  padding: 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+  text-align: center;
+  font-weight: 500;
 }
 
 .related .product-card {
