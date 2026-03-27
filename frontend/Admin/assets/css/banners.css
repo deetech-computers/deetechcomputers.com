@@ -1,52 +1,238 @@
-@import url("./admin-shared.css");
+﻿@import url("./admin-shared.css");
 
 .banners-page {
-  animation: admin-fadeIn 0.3s ease-out;
+  animation: admin-fadeIn 0.32s ease-out;
 }
 
-.banners-page .admin-header {
+.banners-page .hidden {
+  display: none !important;
+}
+
+body.admin-portal .banners-page .admin-card {
+  border-radius: 20px;
+  border: 1px solid #dbe2ef;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  padding: 16px;
+}
+
+body.admin-portal .banners-page .admin-card h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.12rem, 1.8vw, 1.45rem);
+}
+
+.banners-manage-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.banners-page .admin-header .admin-actions {
+.banners-manage-actions {
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.banners-page .banner-form-top {
+.banners-summary {
+  margin-bottom: 12px;
+}
+
+.banners-summary p {
+  position: relative;
+  margin: 0;
+  border-radius: 15px;
+  border: 0;
+  padding: 12px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  font-weight: 800;
+  background: linear-gradient(135deg, #5b21b6, #4338ca);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.banners-summary p::after {
+  content: "";
+  position: absolute;
+  width: 108px;
+  height: 108px;
+  right: -34px;
+  top: -38px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.banners-summary strong {
+  color: #ffffff;
+  font-size: clamp(1.08rem, 2.1vw, 1.58rem);
+  font-weight: 900;
+}
+
+.banners-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 14px;
+}
+
+.banner-card {
+  border: 1px solid #dbe2ef;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.banner-card:hover {
+  transform: translateY(-2px);
+  border-color: #bfdbfe;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+}
+
+.banner-thumb {
+  position: relative;
+  height: 186px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #edf2f8, #dfe7f1);
+}
+
+.banner-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-content {
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.banner-content h4 {
+  margin: 0;
+  font-size: 1.02rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.banner-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.banner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.73rem;
+  font-weight: 800;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.banner-link {
+  font-size: 0.84rem;
+  color: #475569;
+  word-break: break-all;
+  line-height: 1.45;
+}
+
+.banner-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.banner-actions .btn-admin {
+  width: 100%;
+  justify-content: center;
+}
+
+.banner-actions .btn-danger {
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #b91c1c;
+}
+
+.banner-actions .btn-danger:hover {
+  background: #fee2e2;
+}
+
+.banner-form-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #e2e8f0;
+}
+
+.banner-form-top h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.06rem, 1.75vw, 1.32rem);
+}
+
+.banners-page .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.banners-page .span-2 {
+  grid-column: 1 / -1;
 }
 
 .banners-page .input,
 .banners-page select,
 .banners-page textarea {
-  border: 2px solid #d5ddeb;
-  border-radius: 10px;
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #cfd9ea;
+  border-radius: 11px;
   padding: 10px 12px;
+  background: #f8fbff;
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .banners-page .input:focus,
 .banners-page select:focus,
 .banners-page textarea:focus {
   outline: none;
-  border-color: var(--admin-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #ffffff;
 }
 
 .banners-page #bannerForm > .btn-admin {
   grid-column: 1 / -1;
-  justify-self: start;
-  min-width: 150px;
+  justify-self: stretch;
+  width: 100%;
+  position: sticky;
+  bottom: 10px;
+  z-index: 8;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #dbe2ef;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
 }
 
 .banner-preview-wrap {
@@ -58,15 +244,15 @@
 
 .banner-preview-title {
   margin: 0 0 8px;
-  font-size: 0.85rem;
-  color: #475569;
-  font-weight: 700;
+  font-size: 0.84rem;
+  color: #334155;
+  font-weight: 800;
 }
 
 .banner-preview-main {
-  height: 140px;
+  height: 160px;
   border: 1px solid #d4dceb;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background: linear-gradient(135deg, #eef2f7, #dde6f1);
 }
@@ -77,133 +263,70 @@
   object-fit: cover;
 }
 
-.banners-summary {
-  margin-bottom: 12px;
-}
-
-.banners-summary p {
-  margin: 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: #fff;
-  font-weight: 600;
-}
-
-.banners-summary strong {
-  color: #1d4ed8;
-  font-size: 1.1rem;
-}
-
-.banners-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-}
-
-.banner-card {
-  border: 2px solid #dbe2ef;
+.banners-page .empty-state {
+  margin-top: 10px;
   border-radius: 14px;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  padding: 18px;
+  text-align: center;
+  color: #64748b;
 }
 
-.banner-card:hover {
-  border-color: #60a5fa;
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.13);
-}
-
-.banner-thumb {
-  height: 170px;
-  overflow: hidden;
-  background: #edf2f8;
-}
-
-.banner-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.banner-content {
-  padding: 12px;
-}
-
-.banner-content h4 {
-  margin: 0 0 8px;
-  font-size: 1.02rem;
-}
-
-.banner-meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-
-.banner-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: #eff6ff;
-  color: #1d4ed8;
-}
-
-.banner-link {
-  font-size: 0.83rem;
-  color: #334155;
-  word-break: break-all;
-  margin-bottom: 10px;
-}
-
-.banner-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.banner-actions .btn-admin {
-  flex: 1;
-}
-
-.hidden {
-  display: none !important;
-}
-
-@media (max-width: 768px) {
-  .banners-page .admin-header {
+@media (max-width: 1023px) {
+  .banners-manage-top {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
-  .banners-page .admin-header .admin-actions {
+  .banners-manage-actions {
     width: 100%;
   }
 
-  .banners-page .admin-header .admin-actions .btn-admin {
+  .banners-manage-actions .btn-admin,
+  .banners-manage-actions .btn-ghost {
     flex: 1;
     text-align: center;
-  }
-
-  .banners-page .banner-form-top {
-    flex-direction: column;
-    align-items: stretch;
+    justify-content: center;
   }
 
   .banners-page .grid-2 {
     grid-template-columns: 1fr;
   }
 
-  .banners-page #bannerForm > .btn-admin {
-    width: 100%;
+  .banner-form-top {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .banners-list {
     grid-template-columns: 1fr;
   }
+
+  .banner-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
+@media (max-width: 720px) {
+  body.admin-portal .banners-page .admin-card {
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  .banners-summary p {
+    padding: 10px 11px;
+  }
+
+  .banners-summary strong {
+    font-size: 1.08rem;
+  }
+
+  .banner-thumb {
+    height: 168px;
+  }
+
+  .banner-preview-main {
+    height: 136px;
+  }
+}

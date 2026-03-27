@@ -7,16 +7,13 @@
   <link rel="apple-touch-icon" href="../assets/img/logo.png">
   <title>Admin Banners</title>
   <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/banners.css">
+  <link rel="stylesheet" href="assets/css/banners.css?v=20260327-1">
 </head>
 <body class="admin-portal">
   <div class="admin-shell banners-page">
     <div class="admin-header">
       <h1>Manage Banners</h1>
-      <div class="admin-actions">
-        <button class="btn-admin btn-ghost" type="button" id="showCreateBannerBtn">Add New Banner</button>
-        <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
-      </div>
+      <div class="admin-actions"></div>
     </div>
 
     <nav class="admin-nav">
@@ -48,14 +45,20 @@
             <img id="bannerMainPreview" alt="Banner preview">
           </div>
         </div>
-        <button class="btn-admin" type="submit">Create</button>
+        <button class="btn-admin" type="submit">Create Banner</button>
       </form>
     </section>
 
     <section class="admin-card" id="bannersManageSection">
-      <h3>All Banners</h3>
+      <div class="banners-manage-top">
+        <h3>All Banners</h3>
+        <div class="banners-manage-actions">
+          <button class="btn-admin" type="button" id="showCreateBannerBtn">Add New Banner</button>
+          <a class="btn-admin btn-ghost" href="index.html">Dashboard</a>
+        </div>
+      </div>
       <div class="banners-summary">
-        <p>Total Banners: <strong id="summaryTotalBanners">0</strong></p>
+        <p>Total Banners <strong id="summaryTotalBanners">0</strong></p>
       </div>
       <div id="bannersList" class="banners-list"></div>
       <div id="emptyBannersState" class="empty-state hidden">
@@ -73,9 +76,3 @@
   <script src="assets/js/banners.js"></script>
 </body>
 </html>
-
-
-
-
-
-
