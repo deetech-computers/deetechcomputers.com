@@ -7,7 +7,14 @@
   function isDedicatedAccountSubpage() {
     try {
       const path = String(window.location.pathname || "").toLowerCase();
-      return path.endsWith("/orders.html") || path.endsWith("/change-password.html") || path.endsWith("orders.html") || path.endsWith("change-password.html");
+      return (
+        path.endsWith("/orders.html") ||
+        path.endsWith("/change-password.html") ||
+        path.endsWith("/edit-account.html") ||
+        path.endsWith("orders.html") ||
+        path.endsWith("change-password.html") ||
+        path.endsWith("edit-account.html")
+      );
     } catch {
       return false;
     }
@@ -22,11 +29,17 @@
     const backBtn = document.querySelector("[data-account-back]");
 
     const showMenu = () => {
+      if (isDedicatedAccountSubpage()) {
+        window.location.href = "account.html";
+        return;
+      }
+
       if (!isMobile()) {
         sidebar.classList.remove("account-hidden");
         content.classList.remove("account-hidden");
         return;
       }
+
       content.classList.add("account-hidden");
       sidebar.classList.remove("account-hidden");
       window.scrollTo({ top: 0, behavior: "auto" });
