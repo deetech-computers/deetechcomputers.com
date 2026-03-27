@@ -20,7 +20,8 @@
 .account-page {
   width: 100%;
   max-width: min(1400px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
   padding: clamp(1rem, 4vw, 2rem);
   animation: account-fadeInUp 0.8s ease-out;
 }
@@ -168,7 +169,8 @@
   animation: account-slideInUp 0.8s ease-out 0.2s both;
   width: 100%;
   max-width: min(1400px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 /* ===== SIDEBAR - MOBILE FIRST ===== */
@@ -181,7 +183,8 @@
   height: fit-content;
   width: 100%;
   max-width: min(400px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 .account-sidebar-tab {
@@ -189,7 +192,8 @@
   align-items: center;
   gap: 0.7rem;
   width: 100%;
-  min-height: 66px;`r`n  padding: 0.85rem 1rem;
+  min-height: 66px;
+  padding: 0.85rem 1rem;
   border: none;
   background: transparent;
   color: var(--account-gray-600);
@@ -203,7 +207,8 @@
   font-size: 1.01rem;
   text-align: left;
   justify-content: flex-start;
-  text-decoration: none;`r`n  border-bottom: 1px solid var(--account-gray-200);
+  text-decoration: none;
+  border-bottom: 1px solid var(--account-gray-200);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -263,7 +268,8 @@
 
 .account-profile-form {
   max-width: min(800px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 .account-form-row {
@@ -304,7 +310,8 @@
 .account-form-group input,
 .account-form-group select {
   width: 100%;
-  min-height: 66px;`r`n  padding: 0.85rem 1rem;
+  min-height: 66px;
+  padding: 0.85rem 1rem;
   border: 2px solid var(--account-gray-300);
   border-radius: 0;
   font-size: 1.01rem;
@@ -523,7 +530,8 @@
   font-size: 0.9rem;
   border: 1px solid transparent;
   cursor: pointer;
-  text-decoration: none;`r`n  border-bottom: 1px solid var(--account-gray-200);
+  text-decoration: none;
+  border-bottom: 1px solid var(--account-gray-200);
 }
 
 .btn-outline {
@@ -565,7 +573,8 @@
   border-radius: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   max-width: min(500px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
   width: 100%;
 }
 
@@ -705,7 +714,8 @@
   color: var(--account-gray-600);
   width: 100%;
   max-width: min(600px, 95vw);
-  margin: 0 auto;`r`n  overflow: hidden;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 .account-orders-list {
@@ -878,7 +888,8 @@
   border-radius: 8px;
   border: 1px solid var(--account-gray-200);
   transition: transform 0.2s ease;
-  text-decoration: none;`r`n  border-bottom: 1px solid var(--account-gray-200);
+  text-decoration: none;
+  border-bottom: 1px solid var(--account-gray-200);
   color: inherit;
 }
 
@@ -1024,7 +1035,8 @@
   background: var(--account-gray-50);
   border-radius: 10px;
   border: 1px solid var(--account-gray-200);
-  text-decoration: none;`r`n  border-bottom: 1px solid var(--account-gray-200);
+  text-decoration: none;
+  border-bottom: 1px solid var(--account-gray-200);
   color: inherit;
 }
 
@@ -1217,7 +1229,8 @@
   background: #2563eb;
   color: #ffffff;
   font-weight: 600;
-  text-decoration: none;`r`n  border-bottom: 1px solid var(--account-gray-200);
+  text-decoration: none;
+  border-bottom: 1px solid var(--account-gray-200);
 }
 
 .account-help-whatsapp:hover,
@@ -1511,4 +1524,155 @@
   .account-form-group select {
     font-size: 1rem;
   }
+}
+
+/* ===== Premium Account Polish ===== */
+.account-header {
+  background: linear-gradient(135deg, #0f2f9f 0%, #2f7bff 100%);
+  border: 1px solid rgba(47, 123, 255, 0.28);
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(16, 55, 145, 0.16);
+  text-align: left;
+  align-items: flex-start;
+  padding: 1.1rem 1.2rem;
+}
+
+.account-header::before,
+.account-header::after {
+  display: none !important;
+}
+
+.account-header h1 {
+  color: #ffffff;
+  font-size: clamp(2rem, 2.8vw, 2.55rem);
+  letter-spacing: 0.2px;
+}
+
+.account-welcome {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(0.95rem, 1.2vw, 1.06rem);
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 1023px) {
+  .account-header {
+    padding: 0.95rem 0.9rem;
+    border-radius: 10px;
+  }
+
+  .account-header h1 {
+    font-size: 1.56rem;
+  }
+
+  .account-welcome {
+    font-size: 0.9rem;
+  }
+}
+
+.account-sidebar {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #dce6f5;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+.account-sidebar-tab {
+  border-bottom: 1px solid #e6ecf5;
+  min-height: 64px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.account-sidebar-tab.account-active {
+  background: #eaf2ff;
+  color: #0f2f9f;
+  border-left: 3px solid #1e40af;
+}
+
+.account-tab-chevron {
+  display: inline-flex;
+  align-items: center;
+  color: #8ca2c6;
+}
+
+.account-tab-chevron svg {
+  width: 16px;
+  height: 16px;
+}
+
+.account-section-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.95rem 1rem;
+}
+
+.account-section-heading-row .account-section-title {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: clamp(1.5rem, 2vw, 1.95rem);
+}
+
+.account-edit-profile-btn {
+  min-height: 40px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  padding: 0.5rem 0.95rem;
+  border-width: 1px;
+}
+
+.account-profile-form {
+  max-width: 100%;
+}
+
+.account-form-row {
+  display: block;
+  margin: 0;
+}
+
+.account-form-group {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #e8edf5;
+  display: block;
+}
+
+.account-form-group label {
+  margin-bottom: 0.45rem;
+  font-size: 0.95rem;
+}
+
+.account-form-group input,
+.account-form-group select,
+.password-field input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #d2dbea;
+  border-radius: 10px;
+  padding: 0 1rem;
+  font-size: 1rem;
+  background: #ffffff;
+  color: #334155;
+}
+
+.account-profile-form:not(.account-editing) .account-form-group input:not(.account-disabled-input),
+.account-profile-form:not(.account-editing) .account-form-group select {
+  border: none;
+  background: transparent;
+  height: auto;
+  min-height: 0;
+  padding: 0.15rem 0;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.account-profile-form:not(.account-editing) .account-form-group label {
+  font-weight: 700;
+}
+
+.account-save-btn {
+  border-radius: 10px;
 }

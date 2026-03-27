@@ -118,7 +118,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     hideReviewEditor();
     accountContent?.classList.add("account-hidden");
     sidebar?.classList.remove("account-hidden");
-    window.scrollTo({ top: 0, behavior: "auto" });
+    setProfileEditMode(false);
+
+  window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   function activateTab(tab, options = {}) {
@@ -405,6 +407,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (addressInput) addressInput.value = user.address || "";
       if (regionInput) regionInput.value = user.region || "";
       if (cityInput) cityInput.value = user.city || "";
+      profileSnapshot = captureProfileSnapshot();
+      setProfileEditMode(false);
       if (welcomeName) welcomeName.textContent = first || user.name || "Customer";
 
       if (adminBadge) adminBadge.style.display = user.role === "admin" ? "inline-flex" : "none";
@@ -601,6 +605,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   backFromReviewsBtn?.addEventListener("click", showAccountMenu);
   backFromAffiliateBtn?.addEventListener("click", showAccountMenu);
 
+  profileEditBtn?.addEventListener("click", () => {
+    if (isProfileEditing) {
+      applyProfileSnapshot(profileSnapshot);
+      setProfileEditMode(false);
+      setMessage("");
+      return;
+    }
+    profileSnapshot = captureProfileSnapshot();
+    setProfileEditMode(true);
+    setMessage("");
+  });
+
   logoutBtn?.addEventListener("click", handleLogout);
   form?.addEventListener("submit", handleProfileSave);
   reviewSaveBtn?.addEventListener("click", saveReviewUpdate);
@@ -648,6 +664,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   });
+
+  setProfileEditMode(false);
 
   window.scrollTo({ top: 0, behavior: "auto" });
   requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
