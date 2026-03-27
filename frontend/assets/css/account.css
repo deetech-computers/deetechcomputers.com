@@ -2091,12 +2091,13 @@ body.account-page-leaving .account-page {
 }
 
 .account-header-nav {
+  display: flex;
   margin-top: 0.45rem;
   margin-bottom: 0.7rem;
 }
 
 @media (min-width: 1024px) {
   .account-header-nav {
-    display: flex;
+    display: none !important;
   }
 }
