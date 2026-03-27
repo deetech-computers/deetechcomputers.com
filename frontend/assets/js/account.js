@@ -572,6 +572,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   tabProfileBtn?.addEventListener("click", () => activateTab("profile"));
   tabReviewsBtn?.addEventListener("click", () => activateTab("reviews"));
+  tabAffiliateBtn?.addEventListener("click", () => activateTab("affiliate"));
   logoutBtn?.addEventListener("click", handleLogout);
   form?.addEventListener("submit", handleProfileSave);
   reviewSaveBtn?.addEventListener("click", saveReviewUpdate);
@@ -582,6 +583,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const tabFromUrl = new URLSearchParams(window.location.search).get("tab");
   if (tabFromUrl === "reviews") activateTab("reviews");
+  else if (tabFromUrl === "affiliate") activateTab("affiliate");
   else activateTab("profile");
 
   loadAccountInfo();
