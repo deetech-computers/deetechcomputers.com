@@ -761,21 +761,29 @@ function setPaymentInstructions(methodRaw) {
   if (method === "mtn") {
     html = `
       <h4>MTN Mobile Money</h4>
-      <p><strong>Number:</strong> 0591755964</p>
-      <p><strong>Name:</strong> Daniel Adjei Mensah (DEETECH COMPUTERS)</p>
+      <p><strong>Merchant Number(ID):</strong> 694988</p>
+      <p><strong>Merchant Name:</strong> Deetek 360 Enterprise (DEETECH COMPUTERS)</p>
+      <p><strong>MoMo Number:</strong> 0591755964</p>
+      <p><strong>Account Name:</strong> Daniel Adjei Mensah (DEETECH COMPUTERS)</p>
     `;
   } else if (method === "vodafone") {
     html = `
-      <h4>Vodafone/Telecel Cash</h4>
+      <h4>Telecel (Vodafone) Cash</h4>
       <p><strong>Merchant ID:</strong> 451444</p>
-      <p><strong>Name:</strong> Deetek 360 Enterprise (DEETECH)</p>
+      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
+    `;
+  } else if (method === "hubtel") {
+    html = `
+      <h4>Hubtel</h4>
+      <p><strong>Dial:</strong> *713*5964#</p>
+      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
     `;
   } else if (method === "bank") {
     html = `
       <h4>Bank Transfer</h4>
       <p><strong>Bank:</strong> CALBANK</p>
-      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH)</p>
-      <p><strong>Account No:</strong> 1400009398769</p>
+      <p><strong>Account Number:</strong> 1400009398769</p>
+      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
     `;
   }
   box.innerHTML = html;
@@ -1426,6 +1434,9 @@ function handleCheckout(products) {
     }
   });
 })();
+
+
+
 
 
 
