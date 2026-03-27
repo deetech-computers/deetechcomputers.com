@@ -1677,3 +1677,95 @@
   border-radius: 10px;
 }
 
+
+/* ===== Account Selector Redesign (match clean reference style) ===== */
+.account-sidebar {
+  background: #fff;
+  border: 1px solid #d7dee9;
+  border-radius: 8px;
+  box-shadow: none;
+  max-width: 360px;
+}
+
+.account-sidebar-tab {
+  display: grid;
+  grid-template-columns: 24px 1fr 20px;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 0 20px;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 1.02rem;
+  font-weight: 500;
+  text-decoration: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.account-sidebar-tab:nth-child(even) {
+  background: #f8fafc;
+}
+
+.account-sidebar-tab:hover {
+  transform: none;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.account-sidebar-tab.account-active {
+  background: #eef4ff;
+  color: #0f172a;
+  border-left: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.account-tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #111827;
+}
+
+.account-tab-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.account-tab-label {
+  font-size: 1rem;
+  line-height: 1;
+  color: inherit;
+}
+
+.account-tab-chevron {
+  margin-left: auto;
+  color: #111827;
+}
+
+.account-tab-chevron svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 1023px) {
+  .account-sidebar {
+    max-width: 100%;
+  }
+
+  .account-sidebar-tab {
+    min-height: 64px;
+    padding: 0 16px;
+  }
+
+  .account-tab-label {
+    font-size: 0.92rem;
+  }
+}
+
+
