@@ -2122,3 +2122,26 @@ body.account-page-leaving .account-page {
     display: none !important;
   }
 }
+
+@media (max-width: 1023px) {
+  body[data-require-auth="true"] .account-mobile-back-nav {
+    display: flex !important;
+    margin-top: 0.45rem !important;
+    margin-bottom: 0.7rem !important;
+    padding: 0 0.25rem !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  body[data-require-auth="true"] .account-mobile-back-nav .account-back-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  body[data-require-auth="true"] .account-mobile-back-nav {
+    display: none !important;
+  }
+}
