@@ -198,11 +198,13 @@ const clearToken = () => localStorage.removeItem("token");
                 <img class="icon-img" src="${basePrefix}assets/img/icons/user.png" alt="" width="24" height="24" loading="lazy" decoding="async" />
               </button>
               <div class="dropdown-menu" id="userDropdown">
-                <div class="dropdown-user-info" id="dropdownUserEmail"></div>
-                <a href="${basePrefix}account.html" class="dropdown-item auth-only">My Account Dashboard</a>
-                <a href="${basePrefix}orders.html" class="dropdown-item auth-only">Order History</a>
-                <a href="${basePrefix}wishlist.html" class="dropdown-item auth-only">Saved Wishlist</a>
-                <a href="${adminPrefix}index.html" class="dropdown-item admin-only">Admin Dashboard</a>
+                <div class="dropdown-user-info">
+                  <div class="dropdown-user-title" id="dropdownUserName">Welcome' Guest</div>
+                  <div class="dropdown-user-subtitle">Manage Cart, Orders & Wishlist</div>
+                </div>
+                <a href="${basePrefix}account.html" class="dropdown-item auth-only">Profile</a>
+                <a href="${basePrefix}orders.html" class="dropdown-item auth-only">Orders</a>
+                <a href="${basePrefix}wishlist.html" class="dropdown-item auth-only">Wishlist</a>
                 <button class="dropdown-item logout" id="logoutBtn">Logout</button>
               </div>
             </div>
@@ -554,7 +556,7 @@ const clearToken = () => localStorage.removeItem("token");
 
   function updateNavbar() {
     const user = getUser();
-    const dropdownEmail = document.getElementById("dropdownUserEmail");
+    const dropdownUserName = document.getElementById("dropdownUserName");
     const adminOnly = document.querySelectorAll(".admin-only");
     const authOnly = document.querySelectorAll(".auth-only");
     const userWrap = document.getElementById("userDropdownWrap");
@@ -572,8 +574,13 @@ const clearToken = () => localStorage.removeItem("token");
         loginIcon.href = loginIcon.getAttribute("href") || "login.html";
       }
     }
-    if (dropdownEmail) {
-      dropdownEmail.textContent = user?.email || "Guest";
+    if (dropdownUserName) {
+      const preferredName =
+        user?.firstName ||
+        (user?.name ? String(user.name).trim().split(/\s+/)[0] : "") ||
+        (user?.email ? String(user.email).split("@")[0] : "") ||
+        "Guest";
+      dropdownUserName.textContent = `Welcome' ${preferredName}`;
     }
     if (mobileUserEmail) {
       mobileUserEmail.textContent = user?.email || "Guest";
@@ -913,6 +920,7 @@ function guardProtected() {
   // Keep global fallback for non-module scripts
   window.auth = { getUser, setUser, clearUser, getToken, setToken, clearToken };
 })();
+
 
 
 
