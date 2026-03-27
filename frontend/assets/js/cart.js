@@ -466,7 +466,20 @@
     cartItemsEl.innerHTML = "";
 
     if (!cart || cart.length === 0) {
-      cartItemsEl.innerHTML = `<p>Your cart is empty.</p>`;
+      cartItemsEl.innerHTML = `
+        <div class="cart-empty-cart cart-empty-cart-rich" role="status" aria-live="polite">
+          <div class="cart-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" focusable="false">
+              <path d="M14 16h6l4 24h24l6-18H22" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="28" cy="50" r="4" fill="currentColor"></circle>
+              <circle cx="46" cy="50" r="4" fill="currentColor"></circle>
+              <path d="M14 16h-4" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <h2>Your cart is empty</h2>
+          <p>Add products to your cart and they will appear here.</p>
+        </div>
+      `;
       subtotalEl.textContent = "GHC 0.00";
       shippingEl.textContent = "FREE";
       totalEl.textContent = "GHC 0.00";
@@ -695,6 +708,7 @@
     clearCart: clearCartFully,
   };
 })();
+
 
 
 
