@@ -24,6 +24,7 @@
   <script defer src="assets/js/config.js"></script>
   <script defer src="assets/js/auth.js"></script>
   <script defer src="assets/js/orders.js"></script>
+  <script defer src="assets/js/account-mobile-reveal.js"></script>
   <script defer src="assets/js/activeLink.js"></script>
 </head>
 <body data-require-auth="true">
@@ -46,13 +47,16 @@
         <a class="account-sidebar-tab" href="account.html">Profile</a>
         <a class="account-sidebar-tab" href="account.html?tab=reviews">My Reviews</a>
         <a class="account-sidebar-tab" href="account.html?tab=affiliate">Affiliate Program</a>
-        <a class="account-sidebar-tab account-active" href="orders.html">My Orders</a>
+        <button class="account-sidebar-tab account-active" id="accountOpenOrdersContent" data-account-open-current type="button">My Orders</button>
         <a class="account-sidebar-tab" href="change-password.html">Change Password</a>
         <button class="account-sidebar-tab" id="logoutBtn" type="button">Logout</button>
       </aside>
 
       <div class="account-content">
         <section class="account-orders-section">
+          <div class="account-view-nav">
+            <button type="button" class="btn btn-outline account-back-btn" data-account-back>Back to Account Menu</button>
+          </div>
           <div class="section-header">Orders</div>
           <div id="ordersList" class="account-orders-list">Loading your orders...</div>
         </section>
@@ -137,13 +141,3 @@
   </footer>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

@@ -610,7 +610,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const tabFromUrl = new URLSearchParams(window.location.search).get("tab");
   if (isMobileAccountView()) {
-    showAccountMenu();
+    if (tabFromUrl === "reviews" || tabFromUrl === "affiliate" || tabFromUrl === "profile") {
+      activateTab(tabFromUrl);
+    } else {
+      showAccountMenu();
+    }
   } else if (tabFromUrl === "reviews") {
     activateTab("reviews");
   } else if (tabFromUrl === "affiliate") {
