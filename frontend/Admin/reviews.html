@@ -7,7 +7,7 @@
   <link rel="apple-touch-icon" href="../assets/img/logo.png">
   <title>Admin Reviews</title>
   <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/reviews.css?v=20260327-1">
+  <link rel="stylesheet" href="assets/css/reviews.css?v=20260327-2">
 </head>
 <body class="admin-portal">
   <div class="admin-shell reviews-page">
@@ -39,7 +39,20 @@
         <button id="reviewReloadBtn" class="btn-admin">Reload</button>
       </div>
 
-      <div id="reviewsSummary" class="reviews-summary"></div>
+      <div id="reviewsSummary" class="reviews-summary">
+        <article class="reviews-kpi total">
+          <span class="reviews-kpi-label">Total Reviews</span>
+          <strong id="reviewsSummaryTotal">0</strong>
+        </article>
+        <article class="reviews-kpi approved">
+          <span class="reviews-kpi-label">Approved</span>
+          <strong id="reviewsSummaryApproved">0</strong>
+        </article>
+        <article class="reviews-kpi rejected">
+          <span class="reviews-kpi-label">Rejected</span>
+          <strong id="reviewsSummaryRejected">0</strong>
+        </article>
+      </div>
       <div id="reviewsList" class="reviews-list"></div>
       <div id="reviewsEmpty" class="empty-state hidden">
         <h3>No Reviews</h3>
@@ -53,6 +66,8 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script src="assets/js/admin-common.js"></script>
-  <script src="assets/js/reviews.js"></script>
+  <script src="assets/js/reviews.js?v=20260327-2"></script>
 </body>
 </html>
+
+

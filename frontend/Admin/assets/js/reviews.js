@@ -1,10 +1,13 @@
-(async function () {
+﻿(async function () {
   const { requireAdmin, apiFetch, API_BASE, toast, confirmAction } = window.AdminAPI || {};
   if (!requireAdmin || !(await requireAdmin())) return;
 
   const listEl = document.getElementById("reviewsList");
   const emptyEl = document.getElementById("reviewsEmpty");
   const summaryEl = document.getElementById("reviewsSummary");
+  const summaryTotalEl = document.getElementById("reviewsSummaryTotal");
+  const summaryApprovedEl = document.getElementById("reviewsSummaryApproved");
+  const summaryRejectedEl = document.getElementById("reviewsSummaryRejected");
   const searchEl = document.getElementById("reviewSearch");
   const statusEl = document.getElementById("reviewStatusFilter");
   const reloadBtn = document.getElementById("reviewReloadBtn");
@@ -22,7 +25,7 @@
 
   function stars(rating) {
     const safe = Math.max(0, Math.min(5, Number(rating || 0)));
-    return `${"★".repeat(safe)}${"☆".repeat(5 - safe)}`;
+    return `${"â˜…".repeat(safe)}${"â˜†".repeat(5 - safe)}`;
   }
 
   function fmtDate(value) {
@@ -54,7 +57,9 @@
     const total = currentReviews.length;
     const approved = currentReviews.filter((r) => r.approved !== false).length;
     const rejected = total - approved;
-    summaryEl.textContent = `Total: ${total} • Approved: ${approved} • Rejected: ${rejected}`;
+    if (summaryTotalEl) summaryTotalEl.textContent = String(total);
+    if (summaryApprovedEl) summaryApprovedEl.textContent = String(approved);
+    if (summaryRejectedEl) summaryRejectedEl.textContent = String(rejected);
 
     if (!total) {
       listEl.innerHTML = "";
@@ -74,7 +79,7 @@
           <div class="review-meta">
             <div class="review-user">${escapeHtml(review?.user?.name || "Unknown User")}</div>
             <div class="review-product">${escapeHtml(review?.product?.name || "Unknown Product")}</div>
-            <div class="review-sub">${escapeHtml(review?.user?.email || "-")} • ${escapeHtml(fmtDate(review.createdAt))}</div>
+            <div class="review-sub">${escapeHtml(review?.user?.email || "-")} â€¢ ${escapeHtml(fmtDate(review.createdAt))}</div>
           </div>
           <span class="review-status ${review.approved === false ? "rejected" : "approved"}">
             ${review.approved === false ? "Rejected" : "Approved"}
@@ -151,3 +156,6 @@
     toast?.("Failed to load reviews", "error");
   });
 })();
+
+
+
