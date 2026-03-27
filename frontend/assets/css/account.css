@@ -1997,3 +1997,63 @@ body.account-page-leaving .account-page {
     padding: 0.2rem;
   }
 }
+/* ===== Premium Account Copy + Password Polish ===== */
+.account-header.compact h1 {
+  font-size: clamp(1.65rem, 2.4vw, 2.2rem);
+  letter-spacing: 0.01em;
+}
+
+.account-header.compact .account-welcome {
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  max-width: 760px;
+}
+
+.account-review-card-link {
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.account-review-card-link:hover {
+  transform: translateY(-2px);
+}
+
+.account-review-card-link:hover .account-review-card,
+.account-review-card:hover {
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+  border-color: #cfd9ea;
+}
+
+.account-password-section {
+  padding-top: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.account-password-subtitle {
+  margin: -0.6rem 0 1.2rem;
+  color: #64748b;
+  font-size: 0.98rem;
+}
+
+.account-password-form {
+  max-width: 760px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+#changePasswordForm .account-save-btn {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 767px) {
+  .account-password-form {
+    border-radius: 12px;
+    padding: 0.85rem;
+  }
+
+  .account-password-subtitle {
+    margin-top: -0.4rem;
+    font-size: 0.9rem;
+  }
+}

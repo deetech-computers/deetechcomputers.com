@@ -1,4 +1,4 @@
-// assets/js/account.js
+﻿// assets/js/account.js
 document.addEventListener("DOMContentLoaded", async () => {
   const firstNameInput = document.getElementById("accountFirstName");
   const lastNameInput = document.getElementById("accountLastName");
@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const welcomeName = document.getElementById("accountWelcomeName");
   const roleBadge = document.getElementById("accountRoleBadge");
   const adminBadge = document.getElementById("accountAdminBadge");
+  const accountHeaderTitle = document.getElementById("accountHeaderTitle");
+  const accountHeaderSubtitle = document.getElementById("accountHeaderSubtitle");
   const form = document.getElementById("accountProfileForm");
   const messageEl = document.getElementById("accountProfileMessage");
   const logoutBtn = document.getElementById("accountLogoutBtn");
@@ -100,6 +102,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     return typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches;
   }
 
+  function updateAccountHeader(tab) {
+    if (!accountHeaderTitle || !accountHeaderSubtitle) return;
+    const copy = {
+      profile: {
+        title: "Profile",
+        subtitle: "Manage your personal details, orders, and account preferences.",
+      },
+      reviews: {
+        title: "Review",
+        subtitle: "Track your product feedback and open any item directly to its Reviews section.",
+      },
+      affiliate: {
+        title: "Affiliate Program",
+        subtitle: "Manage your referral code, monitor commissions, and grow your affiliate earnings.",
+      },
+    };
+    const active = copy[tab] || copy.profile;
+    accountHeaderTitle.textContent = active.title;
+    accountHeaderSubtitle.textContent = active.subtitle;
+  }
+
   function showAccountMenu() {
     if (!isMobileAccountView()) {
       accountContent?.classList.remove("account-hidden");
@@ -143,6 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (tab === "reviews") {
+      updateAccountHeader("reviews");
       reviewsSection?.classList.remove("account-hidden");
       tabReviewsBtn?.classList.add("account-active");
       loadMyReviews();
@@ -151,6 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (tab === "affiliate") {
+      updateAccountHeader("affiliate");
       affiliateSection?.classList.remove("account-hidden");
       tabAffiliateBtn?.classList.add("account-active");
       loadAffiliateSummary();
@@ -159,6 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    updateAccountHeader("profile");
     profileSection?.classList.remove("account-hidden");
     tabProfileBtn?.classList.add("account-active");
     hideReviewEditor();
@@ -729,4 +755,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadAccountInfo();
 });
+
 
