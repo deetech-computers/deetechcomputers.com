@@ -1658,7 +1658,7 @@
   color: #334155;
 }
 
-.account-profile-form:not(.account-editing) .account-form-group input:not(.account-disabled-input),
+.account-profile-form:not(.account-editing) .account-form-group input,
 .account-profile-form:not(.account-editing) .account-form-group select {
   border: none;
   background: transparent;
@@ -1676,3 +1676,4 @@
 .account-save-btn {
   border-radius: 10px;
 }
+
