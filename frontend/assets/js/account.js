@@ -1,4 +1,4 @@
-﻿// assets/js/account.js
+// assets/js/account.js
 document.addEventListener("DOMContentLoaded", async () => {
   const firstNameInput = document.getElementById("accountFirstName");
   const lastNameInput = document.getElementById("accountLastName");
@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const backFromReviewsBtn = document.getElementById("accountBackFromReviews");
   const backFromAffiliateBtn = document.getElementById("accountBackFromAffiliate");
   const backFromProfileBtn = document.getElementById("accountBackFromProfile");
+  const accountHeaderBackBtn = document.getElementById("accountHeaderBackBtn");
   const reviewsList = document.getElementById("accountReviewsList");
 
   const affiliateJoinCard = document.getElementById("accountAffiliateJoinCard");
@@ -697,6 +698,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   tabAffiliateBtn?.addEventListener("click", () => activateTab("affiliate"));
 
   backFromProfileBtn?.addEventListener("click", showAccountMenu);
+  accountHeaderBackBtn?.addEventListener("click", showAccountMenu);
   backFromReviewsBtn?.addEventListener("click", showAccountMenu);
   backFromAffiliateBtn?.addEventListener("click", showAccountMenu);
 
@@ -755,5 +757,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadAccountInfo();
 });
-
-

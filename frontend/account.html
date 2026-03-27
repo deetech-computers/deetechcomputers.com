@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -14,13 +14,13 @@
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="stylesheet" href="assets/css/header.css" />
   <link rel="stylesheet" href="assets/css/footer.css" />
-  <link rel="stylesheet" href="assets/css/account.css?v=20260326-10" />
+  <link rel="stylesheet" href="assets/css/account.css?v=20260326-11" />
 
   <script defer src="assets/js/utils.js"></script>
   <script defer src="assets/js/runtime-config.js"></script>
   <script defer src="assets/js/config.js"></script>
   <script defer src="assets/js/auth.js"></script>
-  <script defer src="assets/js/account.js?v=20260326-9"></script>
+  <script defer src="assets/js/account.js?v=20260326-10"></script>
   <script defer src="assets/js/activeLink.js"></script>
   <script defer src="assets/js/account-nav-transition.js?v=20260326-1"></script>
 </head>
@@ -41,6 +41,9 @@
         </div>
       </div>
     </section>
+    <div class="account-view-nav account-header-nav">
+      <button type="button" class="btn btn-outline account-back-btn" id="accountHeaderBackBtn">Back to Account Menu</button>
+    </div>
 
     <section class="account-layout">
       <aside class="account-sidebar">
@@ -56,9 +59,6 @@
         <section class="account-profile-section" id="accountProfileSection">
           <div class="account-section-heading-row">
             <div class="account-section-title">Profile</div>
-          </div>
-          <div class="account-view-nav">
-            <button type="button" class="btn btn-outline account-back-btn" id="accountBackFromProfile">Back to Account</button>
           </div>
           <form id="accountProfileForm" class="account-profile-form">
             <div class="account-form-row">
@@ -117,10 +117,6 @@
             </svg>
             Review
           </div>
-          <div class="account-view-nav">
-            <button type="button" class="btn btn-outline account-back-btn" id="accountBackFromReviews">Back to Account</button>
-          </div>
-
           <div class="account-reviews-note">
             Manage your submitted reviews. You can update any review and open the related product page.
           </div>
@@ -154,10 +150,6 @@
             </svg>
             Affiliate Program
           </div>
-          <div class="account-view-nav">
-            <button type="button" class="btn btn-outline account-back-btn" id="accountBackFromAffiliate">Back to Account</button>
-          </div>
-
           <div class="account-reviews-note">
             Manage your affiliate profile here without leaving your account dashboard.
             You can still use the full affiliate page for complete analytics.
@@ -284,7 +276,3 @@
   </footer>
 </body>
 </html>
-
-
-
-
