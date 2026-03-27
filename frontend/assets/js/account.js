@@ -16,9 +16,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const tabProfileBtn = document.getElementById("accountTabProfile");
   const tabReviewsBtn = document.getElementById("accountTabReviews");
+  const tabAffiliateBtn = document.getElementById("accountTabAffiliate");
   const profileSection = document.getElementById("accountProfileSection");
   const reviewsSection = document.getElementById("accountReviewsSection");
+  const affiliateSection = document.getElementById("accountAffiliateSection");
   const reviewsList = document.getElementById("accountReviewsList");
+
+  const affiliateJoinCard = document.getElementById("accountAffiliateJoinCard");
+  const affiliateDashboardCard = document.getElementById("accountAffiliateDashboardCard");
+  const affiliateJoinBtn = document.getElementById("accountAffiliateJoinBtn");
+  const affiliateJoinMessage = document.getElementById("accountAffiliateJoinMessage");
+  const affiliateCopyCodeBtn = document.getElementById("accountAffiliateCopyCodeBtn");
+  const affiliateCodeEl = document.getElementById("accountAffiliateCode");
+  const affiliateTierEl = document.getElementById("accountAffiliateTier");
+  const affiliateTotalReferralsEl = document.getElementById("accountAffiliateTotalReferrals");
+  const affiliatePendingReferralsEl = document.getElementById("accountAffiliatePendingReferrals");
+  const affiliateEarnedCommissionEl = document.getElementById("accountAffiliateEarnedCommission");
+  const affiliatePendingCommissionEl = document.getElementById("accountAffiliatePendingCommission");
 
   const reviewEditor = document.getElementById("accountReviewEditor");
   const reviewIdInput = document.getElementById("accountReviewId");
@@ -66,6 +80,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  function money(v) {
+    return `GHC ${Number(v || 0).toFixed(2)}`;
+  }
+
   function setMessage(text, type = "info") {
     if (!messageEl) return;
     messageEl.textContent = text || "";
@@ -74,19 +92,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function activateTab(tab) {
+    profileSection?.classList.add("account-hidden");
+    reviewsSection?.classList.add("account-hidden");
+    affiliateSection?.classList.add("account-hidden");
+
+    tabProfileBtn?.classList.remove("account-active");
+    tabReviewsBtn?.classList.remove("account-active");
+    tabAffiliateBtn?.classList.remove("account-active");
+
     if (tab === "reviews") {
-      profileSection?.classList.add("account-hidden");
       reviewsSection?.classList.remove("account-hidden");
-      tabProfileBtn?.classList.remove("account-active");
       tabReviewsBtn?.classList.add("account-active");
       loadMyReviews();
-    } else {
-      reviewsSection?.classList.add("account-hidden");
-      profileSection?.classList.remove("account-hidden");
-      tabReviewsBtn?.classList.remove("account-active");
-      tabProfileBtn?.classList.add("account-active");
-      hideReviewEditor();
+      return;
     }
+
+    if (tab === "affiliate") {
+      affiliateSection?.classList.remove("account-hidden");
+      tabAffiliateBtn?.classList.add("account-active");
+      loadAffiliateSummary();
+      hideReviewEditor();
+      return;
+    }
+
+    profileSection?.classList.remove("account-hidden");
+    tabProfileBtn?.classList.add("account-active");
+    hideReviewEditor();
   }
 
   function setEditorRating(value) {
@@ -366,6 +397,109 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+
+  function renderAffiliateJoinState(message = "") {
+    affiliateDashboardCard?.classList.add("account-hidden");
+    affiliateJoinCard?.classList.remove("account-hidden");
+    if (affiliateJoinMessage) affiliateJoinMessage.textContent = message;
+  }
+
+  function renderAffiliateDashboard(data) {
+    const affiliate = data?.affiliate || {};
+    const stats = data?.stats || {};
+
+    if (affiliateCodeEl) affiliateCodeEl.textContent = String(affiliate.code || "-");
+    if (affiliateTierEl) {
+      const tier = String(affiliate.tier || "starter");
+      affiliateTierEl.textContent = `${tier.charAt(0).toUpperCase()}${tier.slice(1)}`;
+    }
+    if (affiliateTotalReferralsEl) affiliateTotalReferralsEl.textContent = String(stats.totalReferrals || 0);
+    if (affiliatePendingReferralsEl) affiliatePendingReferralsEl.textContent = String(stats.pendingReferrals || 0);
+    if (affiliateEarnedCommissionEl) affiliateEarnedCommissionEl.textContent = money(stats.earnedCommission || 0);
+    if (affiliatePendingCommissionEl) affiliatePendingCommissionEl.textContent = money(stats.pendingCommission || 0);
+
+    affiliateJoinCard?.classList.add("account-hidden");
+    affiliateDashboardCard?.classList.remove("account-hidden");
+  }
+
+  async function loadAffiliateSummary() {
+    const token = typeof getToken === "function" ? getToken() : null;
+    if (!token) {
+      renderAffiliateJoinState("Please sign in to manage your affiliate profile.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/affiliates/me`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to load affiliate profile");
+
+      if (!data?.isAffiliate) {
+        renderAffiliateJoinState("You're not an affiliate yet. Create your code to start earning.");
+        return;
+      }
+
+      renderAffiliateDashboard(data);
+    } catch (error) {
+      console.error("Affiliate summary error:", error);
+      renderAffiliateJoinState(error.message || "Unable to load affiliate profile.");
+    }
+  }
+
+  async function createAffiliateCode() {
+    const token = typeof getToken === "function" ? getToken() : null;
+    if (!token) {
+      showToast?.("Please sign in first", "info");
+      return;
+    }
+
+    try {
+      affiliateJoinBtn.disabled = true;
+      const res = await fetch(`${API_BASE}/affiliates/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+      showToast?.("Affiliate code created", "success");
+      await loadAffiliateSummary();
+    } catch (error) {
+      console.error("Affiliate register error:", error);
+      if (affiliateJoinMessage) affiliateJoinMessage.textContent = error.message || "Registration failed.";
+      showToast?.(error.message || "Registration failed", "error");
+    } finally {
+      if (affiliateJoinBtn) affiliateJoinBtn.disabled = false;
+    }
+  }
+
+  async function copyAffiliateCode() {
+    const code = String(affiliateCodeEl?.textContent || "").trim();
+    if (!code || code === "-") return;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const input = document.createElement("input");
+        input.value = code;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
+      }
+      showToast?.("Affiliate code copied", "success");
+    } catch (error) {
+      console.error("Copy affiliate code error:", error);
+      showToast?.("Could not copy code", "error");
+    }
+  }
   async function handleProfileSave(e) {
     e.preventDefault();
     const token = typeof getToken === "function" ? getToken() : null;

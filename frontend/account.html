@@ -45,7 +45,7 @@
       <aside class="account-sidebar">
         <button class="account-sidebar-tab account-active" type="button" id="accountTabProfile">Profile</button>
         <button class="account-sidebar-tab" type="button" id="accountTabReviews">My Reviews</button>
-        <a class="account-sidebar-tab" href="affiliates.html">Affiliate Program</a>
+        <button class="account-sidebar-tab" type="button" id="accountTabAffiliate">Affiliate Program</button>
         <a class="account-sidebar-tab" href="orders.html">My Orders</a>
         <a class="account-sidebar-tab" href="change-password.html">Change Password</a>
         <button class="account-sidebar-tab" id="accountLogoutBtn" type="button">Logout</button>
@@ -138,6 +138,62 @@
             <div class="account-review-editor-actions">
               <button type="button" class="account-save-btn" id="accountReviewSaveBtn">Save Review</button>
               <button type="button" class="btn btn-outline" id="accountReviewCancelBtn">Cancel</button>
+            </div>
+          </div>
+
+                </section>
+
+        <section class="account-profile-section account-hidden" id="accountAffiliateSection">
+          <div class="account-section-title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M12 2 2 7l10 5 8-4v6h2V7L12 2Zm-7 9v4c0 2.76 3.13 5 7 5s7-2.24 7-5v-4l-7 3.5L5 11Z"/>
+            </svg>
+            Affiliate Program
+          </div>
+
+          <div class="account-reviews-note">
+            Manage your affiliate profile here without leaving your account dashboard.
+            You can still use the full affiliate page for complete analytics.
+          </div>
+
+          <div id="accountAffiliateJoinCard" class="account-affiliate-card account-hidden">
+            <h2>Join Our Affiliate Program</h2>
+            <p>Create your referral code to start earning commission on completed orders.</p>
+            <button type="button" class="account-save-btn" id="accountAffiliateJoinBtn">Create Affiliate Code</button>
+            <div id="accountAffiliateJoinMessage" class="account-affiliate-message"></div>
+          </div>
+
+          <div id="accountAffiliateDashboardCard" class="account-affiliate-card account-hidden">
+            <div class="account-affiliate-grid">
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Affiliate Code</span>
+                <strong id="accountAffiliateCode">-</strong>
+              </div>
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Tier</span>
+                <strong id="accountAffiliateTier">Starter</strong>
+              </div>
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Total Referrals</span>
+                <strong id="accountAffiliateTotalReferrals">0</strong>
+              </div>
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Pending Referrals</span>
+                <strong id="accountAffiliatePendingReferrals">0</strong>
+              </div>
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Earned Commission</span>
+                <strong id="accountAffiliateEarnedCommission">GHC 0.00</strong>
+              </div>
+              <div class="account-affiliate-stat">
+                <span class="account-affiliate-label">Pending Commission</span>
+                <strong id="accountAffiliatePendingCommission">GHC 0.00</strong>
+              </div>
+            </div>
+
+            <div class="account-affiliate-actions">
+              <button type="button" class="account-save-btn" id="accountAffiliateCopyCodeBtn">Copy Code</button>
+              <a href="affiliates.html" class="btn btn-outline">Open Full Affiliate Page</a>
             </div>
           </div>
         </section>
