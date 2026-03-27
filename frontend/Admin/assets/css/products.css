@@ -639,3 +639,41 @@ body.admin-portal .products-page #productsManageSection > h3 {
     height: 40px;
   }
 }
+
+/* ===== Products form action visibility fix ===== */
+body.admin-portal .products-page #productForm > .btn-admin,
+body.admin-portal .products-page #editProductForm > .admin-actions {
+  position: sticky;
+  bottom: 10px;
+  z-index: 8;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #dbe2ef;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
+}
+
+body.admin-portal .products-page #productForm > .btn-admin {
+  justify-self: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+body.admin-portal .products-page #editProductForm > .admin-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+body.admin-portal .products-page #editProductForm > .admin-actions .btn-admin,
+body.admin-portal .products-page #editProductForm > .admin-actions .btn-ghost {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  body.admin-portal .products-page #editProductForm > .admin-actions {
+    grid-template-columns: 1fr;
+  }
+}
