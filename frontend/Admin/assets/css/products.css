@@ -677,3 +677,32 @@ body.admin-portal .products-page #editProductForm > .admin-actions .btn-ghost {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Ensure edit form actions are visible (override shared hide rule) ===== */
+body.admin-portal .products-page #editProductForm > .admin-actions {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  position: sticky;
+  bottom: 10px;
+  z-index: 9;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #dbe2ef;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
+}
+
+body.admin-portal .products-page #editProductForm > .admin-actions .btn-admin,
+body.admin-portal .products-page #editProductForm > .admin-actions .btn-ghost {
+  display: inline-flex !important;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  body.admin-portal .products-page #editProductForm > .admin-actions {
+    grid-template-columns: 1fr;
+  }
+}
