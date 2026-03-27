@@ -139,12 +139,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   function setMobileQuickNav(tab) {
     if (!mobileQuickLinks.length) return;
     mobileQuickLinks.forEach((link) => {
-      link.classList.toggle("account-active", String(link.dataset.mobileTab || "") === String(tab || "profile"));
+      link.classList.toggle("account-active", String(link.dataset.mobileTab || "") === String(tab || "main"));
     });
   }
   function updateAccountHeader(tab) {
     if (!accountHeaderTitle || !accountHeaderSubtitle) return;
     const copy = {
+      main: {
+        title: "My Account",
+        subtitle: "Manage your personal details, reviews, affiliate profile, orders, and password.",
+      },
       profile: {
         title: "Profile",
         subtitle: "Manage your personal details, orders, and account preferences.",
@@ -158,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         subtitle: "Manage your referral code, monitor commissions, and grow your affiliate earnings.",
       },
     };
-    const active = copy[tab] || copy.profile;
+    const active = copy[tab] || copy.main;
     accountHeaderTitle.textContent = active.title;
     accountHeaderSubtitle.textContent = active.subtitle;
     if (accountCrumbCurrent) accountCrumbCurrent.textContent = active.title;
@@ -166,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function showAccountMenu() {
-    updateAccountHeader("profile");
+    updateAccountHeader("main");
 
     try {
       const currentPath = String(window.location.pathname || "").toLowerCase();
@@ -836,6 +840,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadAccountInfo();
 });
+
 
 
 
