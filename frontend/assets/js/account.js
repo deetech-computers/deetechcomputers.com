@@ -481,42 +481,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (affiliateJoinBtn) affiliateJoinBtn.disabled = false;
     }
   }
-
-  async function copyAffiliateCode() {
-    const notify = (message, type = "info") => {
-      if (typeof window?.CONFIG?.showToast === "function") return window.CONFIG.showToast(message, type);
-      if (typeof window?.showToast === "function") return window.showToast(message, type);
-      console.log(`[${String(type).toUpperCase()}] ${message}`);
-    };
-
-    const codeFromData = String(affiliateCopyCodeBtn?.dataset?.code || "").trim();
-    const codeFromState = String(currentAffiliateCode || "").trim();
-    const codeFromUi = String(affiliateCodeEl?.textContent || "").trim();
-    const code = [codeFromData, codeFromState, codeFromUi].find((v) => v && v !== "-") || "";
-
-    if (!code) {
-      notify("Affiliate code is not available yet.", "info");
-      return;
-    }
-
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(code);
-      } else {
-        const input = document.createElement("input");
-        input.value = code;
-        document.body.appendChild(input);
-        input.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(input);
-        if (!ok) throw new Error("copy-command-failed");
-      }
-      notify("Affiliate code copied", "success");
-    } catch (error) {
-      console.error("Copy affiliate code error:", error);
-      notify("Could not copy code", "error");
-    }
-  }
   async function handleProfileSave(e) {
     e.preventDefault();
     const token = typeof getToken === "function" ? getToken() : null;
