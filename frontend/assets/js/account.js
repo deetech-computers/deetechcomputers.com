@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     hideReviewEditor();
     accountContent?.classList.add("account-hidden");
     sidebar?.classList.remove("account-hidden");
-    setProfileEditMode(false);
+    setProfileEditMode(true);
 
   window.scrollTo({ top: 0, behavior: "auto" });
   }
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (regionInput) regionInput.value = user.region || "";
       if (cityInput) cityInput.value = user.city || "";
       profileSnapshot = captureProfileSnapshot();
-      setProfileEditMode(false);
+      setProfileEditMode(true);
       if (welcomeName) welcomeName.textContent = first || user.name || "Customer";
 
       if (adminBadge) adminBadge.style.display = user.role === "admin" ? "inline-flex" : "none";
@@ -529,8 +529,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   async function handleProfileSave(e) {
     e.preventDefault();
-    if (!isProfileEditing) return;
-
     const token = typeof getToken === "function" ? getToken() : null;
     if (!token) {
       showToast?.("Please sign in to update your profile.", "info");
@@ -583,7 +581,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (welcomeName) welcomeName.textContent = data.firstName || firstName || data.name || "Customer";
       profileSnapshot = captureProfileSnapshot();
-      setProfileEditMode(false);
+      setProfileEditMode(true);
       setMessage("Profile updated successfully.", "success");
       showToast?.("Profile updated", "success");
     } catch (err) {
@@ -627,23 +625,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (cityInput) cityInput.value = snapshot.city || "";
   }
 
-  function setProfileEditMode(enabled) {
-    isProfileEditing = Boolean(enabled);
-    form?.classList.toggle("account-editing", isProfileEditing);
+  function setProfileEditMode() {
+    isProfileEditing = true;
+    form?.classList.add("account-editing");
 
     [firstNameInput, lastNameInput, phoneInput, addressInput, regionInput, cityInput].forEach((input) => {
       if (!input) return;
-      input.disabled = !isProfileEditing;
-      input.classList.toggle("account-disabled-input", !isProfileEditing);
+      input.disabled = false;
+      input.classList.remove("account-disabled-input");
     });
 
-    if (profileEditBtn) {
-      profileEditBtn.textContent = isProfileEditing ? "Cancel Edit" : "Edit Profile";
-      profileEditBtn.classList.toggle("account-editing", isProfileEditing);
-    }
+    if (profileEditBtn) profileEditBtn.style.display = "none";
     if (profileSaveBtn) {
-      profileSaveBtn.style.display = isProfileEditing ? "" : "none";
-      profileSaveBtn.disabled = !isProfileEditing;
+      profileSaveBtn.style.display = "";
+      profileSaveBtn.disabled = false;
     }
   }
   tabProfileBtn?.addEventListener("click", () => activateTab("profile"));
@@ -654,19 +649,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   backFromReviewsBtn?.addEventListener("click", showAccountMenu);
   backFromAffiliateBtn?.addEventListener("click", showAccountMenu);
 
-  profileEditBtn?.addEventListener("click", () => {
-    if (isProfileEditing) {
-      applyProfileSnapshot(profileSnapshot);
-      setProfileEditMode(false);
-      setMessage("");
-      return;
-    }
-    profileSnapshot = captureProfileSnapshot();
-    setProfileEditMode(true);
-    setMessage("");
-  });
-
-  logoutBtn?.addEventListener("click", handleLogout);
+    logoutBtn?.addEventListener("click", handleLogout);
   form?.addEventListener("submit", handleProfileSave);
   reviewSaveBtn?.addEventListener("click", saveReviewUpdate);
   reviewCancelBtn?.addEventListener("click", hideReviewEditor);
@@ -714,13 +697,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  setProfileEditMode(false);
+  setProfileEditMode(true);
 
   window.scrollTo({ top: 0, behavior: "auto" });
   requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
 
   loadAccountInfo();
 });
+
+
 
 
 
