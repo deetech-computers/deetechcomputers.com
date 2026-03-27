@@ -609,7 +609,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     btn.addEventListener("click", () => setEditorRating(Number(btn.dataset.value || 0)));
   });
 
-  const tabFromUrl = new URLSearchParams(window.location.search).get("tab");
+  let tabFromUrl = new URLSearchParams(window.location.search).get("tab");
+
+  const navEntry = (typeof performance !== "undefined" && typeof performance.getEntriesByType === "function")
+    ? performance.getEntriesByType("navigation")[0]
+    : null;
+  const isReloadNav = Boolean((navEntry && navEntry.type === "reload") || (performance && performance.navigation && performance.navigation.type === 1));
+  if (isReloadNav && tabFromUrl) {
+    tabFromUrl = null;
+    if (window.history && typeof window.history.replaceState === "function") {
+      window.history.replaceState({}, "", "account.html");
+    }
+  }
   if (isMobileAccountView()) {
     if (tabFromUrl === "reviews" || tabFromUrl === "affiliate" || tabFromUrl === "profile") {
       activateTab(tabFromUrl, { scroll: false });
