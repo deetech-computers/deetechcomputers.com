@@ -294,17 +294,27 @@
   }
 
   async function copyCode() {
-    if (!currentCode) return;
+    const codeFromState = text(currentCode);
+    const codeFromData = text(els.copyCodeBtn?.dataset?.code || "");
+    const codeFromUi = text(els.codeValue?.textContent || "");
+    const code = [codeFromState, codeFromData, codeFromUi].find((v) => v && v !== "-") || "";
+
+    if (!code) {
+      showToast?.("Affiliate code is not available yet.", "info");
+      return;
+    }
+
     try {
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(currentCode);
+        await navigator.clipboard.writeText(code);
       } else {
         const input = document.createElement("input");
-        input.value = currentCode;
+        input.value = code;
         document.body.appendChild(input);
         input.select();
-        document.execCommand("copy");
+        const ok = document.execCommand("copy");
         document.body.removeChild(input);
+        if (!ok) throw new Error("copy-command-failed");
       }
       showToast?.("Affiliate code copied", "success");
     } catch (error) {
