@@ -629,6 +629,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function setProfileEditMode(enabled) {
     isProfileEditing = Boolean(enabled);
+    form?.classList.toggle("account-editing", isProfileEditing);
+
     [firstNameInput, lastNameInput, phoneInput, addressInput, regionInput, cityInput].forEach((input) => {
       if (!input) return;
       input.disabled = !isProfileEditing;
@@ -719,6 +721,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadAccountInfo();
 });
+
+
+
+
 
 
 
