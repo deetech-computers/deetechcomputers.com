@@ -1852,3 +1852,119 @@ body.account-page-leaving .account-page {
 #changePasswordForm .password-toggle:hover {
   background: #eff6ff;
 }
+/* ===== My Account Review Card Redesign ===== */
+.account-reviews-list {
+  gap: 1rem;
+}
+
+.account-review-card {
+  border: 1px solid #dbe2ee;
+  border-radius: 14px;
+  background: #fff;
+  padding: 1.1rem 1.2rem;
+}
+
+.account-review-layout {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.account-review-thumb-link {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #dbe2ee;
+  background: #f8fbff;
+}
+
+.account-review-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.account-review-main {
+  min-width: 0;
+}
+
+.account-review-card-head {
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.account-review-product {
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.account-review-meta {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.account-review-stars-text {
+  color: #f59e0b;
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  margin-top: 0.2rem;
+}
+
+.account-review-comment {
+  margin-top: 0.8rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.account-review-actions {
+  margin-top: 0.95rem;
+}
+
+@media (max-width: 767px) {
+  .account-review-card {
+    padding: 0.95rem;
+    border-radius: 12px;
+  }
+
+  .account-review-layout {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  .account-review-thumb-link {
+    width: 84px;
+    height: 84px;
+    border-radius: 10px;
+  }
+
+  .account-review-card-head {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .account-review-product {
+    font-size: 1.08rem;
+  }
+
+  .account-review-meta {
+    font-size: 0.8rem;
+  }
+
+  .account-review-stars-text {
+    font-size: 0.92rem;
+    letter-spacing: 0.1em;
+  }
+
+  .account-review-comment {
+    margin-top: 0.55rem;
+    font-size: 0.92rem;
+  }
+}

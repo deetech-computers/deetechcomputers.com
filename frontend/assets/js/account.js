@@ -211,19 +211,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         const product = review.product || {};
         const productName = product.name || "Product";
         const productId = product._id || "";
+        const reviewImageRaw =
+          review?.image_url ||
+          review?.image ||
+          product?.image ||
+          product?.image_url ||
+          (Array.isArray(product?.images) ? product.images[0] : "") ||
+          "assets/img/placeholder.svg";
+        const reviewImage =
+          typeof window.resolveImage === "function"
+            ? window.resolveImage(reviewImageRaw)
+            : String(reviewImageRaw || "").trim() || "assets/img/placeholder.svg";
+        const reviewDateTime = (() => {
+          try {
+            const d = new Date(review.updatedAt || review.createdAt);
+            if (Number.isNaN(d.getTime())) return "-";
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const hh = String(d.getHours()).padStart(2, "0");
+            const mi = String(d.getMinutes()).padStart(2, "0");
+            const ss = String(d.getSeconds()).padStart(2, "0");
+            return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+          } catch {
+            return "-";
+          }
+        })();
+        const reviewComment = escapeHtml(review.comment || "No comment provided.");
+
         return `
           <article class="account-review-card">
-            <div class="account-review-card-head">
-              <div>
-                <div class="account-review-product">${escapeHtml(productName)}</div>
-                <div class="account-review-meta">${escapeHtml(product.category || "General")} &bull; Updated ${escapeHtml(formatDate(review.updatedAt || review.createdAt))}</div>
+            <div class="account-review-layout">
+              <a class="account-review-thumb-link" href="product.html?id=${encodeURIComponent(productId)}" aria-label="Open ${escapeHtml(productName)}">
+                <img class="account-review-thumb" src="${escapeHtml(reviewImage)}" alt="${escapeHtml(productName)} review image" width="120" height="120" loading="lazy" decoding="async">
+              </a>
+              <div class="account-review-main">
+                <div class="account-review-card-head">
+                  <div>
+                    <div class="account-review-product">${escapeHtml(productName)}</div>
+                    <div class="account-review-meta">${escapeHtml(reviewDateTime)}</div>
+                  </div>
+                  <div class="account-review-stars-text" aria-label="${Number(review.rating || 0)} out of 5 stars">${starsText(review.rating)}</div>
+                </div>
+                <p class="account-review-comment">${reviewComment}</p>
+                <div class="account-review-actions">
+                  <button type="button" class="btn account-review-edit-btn" data-review-id="${escapeHtml(review._id || "")}">Update Review</button>
+                  <a class="btn btn-outline" href="product.html?id=${encodeURIComponent(productId)}">Open Product</a>
+                </div>
               </div>
-              <div class="account-review-stars-text">${starsText(review.rating)} (${Number(review.rating || 0)}/5)</div>
-            </div>
-            <p class="account-review-comment">${escapeHtml(review.comment || "")}</p>
-            <div class="account-review-actions">
-              <button type="button" class="btn account-review-edit-btn" data-review-id="${escapeHtml(review._id || "")}">Update Review</button>
-              <a class="btn btn-outline" href="product.html?id=${encodeURIComponent(productId)}">Open Product</a>
             </div>
           </article>
         `;
@@ -238,7 +273,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
   }
-
   async function loadMyReviews() {
     try {
       const token = typeof getToken === "function" ? getToken() : null;
@@ -704,15 +738,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadAccountInfo();
 });
-
-
-
-
-
-
-
-
-
-
-
 
