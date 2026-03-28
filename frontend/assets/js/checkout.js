@@ -59,6 +59,36 @@ function showMsg(text, ok = true) {
   } catch {}
 }
 
+function navigateCheckoutToField(step, fieldId, message) {
+  try {
+    if (typeof window.__checkoutShowStep === "function") {
+      window.__checkoutShowStep(step, { skipScroll: true });
+    }
+  } catch {}
+
+  if (message) showMsg(message, false);
+
+  const el = document.getElementById(fieldId);
+  if (!el) return false;
+
+  requestAnimationFrame(() => {
+    try {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch {}
+    try {
+      el.focus({ preventScroll: true });
+    } catch {
+      try { el.focus(); } catch {}
+    }
+    try {
+      if (typeof el.select === "function" && el.tagName !== "SELECT" && el.type !== "file") {
+        el.select();
+      }
+    } catch {}
+  });
+
+  return false;
+}
 function hidePageLoader() {
   const body = document.body;
   if (!body) return;
@@ -1262,25 +1292,36 @@ function initCheckoutStepFlow() {
     const phone = String(phoneInput?.value || "").replace(/\s+/g, "");
     const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const phoneValid = /^(?:0\d{9}|\+233\d{9})$/.test(phone);
-    if (!String(nameInput?.value || "").trim() || !email || !String(addressInput?.value || "").trim() || !String(cityInput?.value || "").trim() || !phone) {
-      showMsg("Please complete your buyer details to continue.", false);
-      return false;
+    if (!String(nameInput?.value || "").trim()) {
+      return navigateCheckoutToField(1, "name", "Please enter your full name.");
     }
-    if (!emailValid || !phoneValid) {
-      showMsg("Please enter a valid email and Ghana phone number.", false);
-      return false;
+    if (!email) {
+      return navigateCheckoutToField(1, "email", "Please enter your email address.");
+    }
+    if (!phone) {
+      return navigateCheckoutToField(1, "phone", "Please enter your Ghana phone number.");
+    }
+    if (!String(addressInput?.value || "").trim()) {
+      return navigateCheckoutToField(1, "address", "Please enter your delivery address.");
+    }
+    if (!String(cityInput?.value || "").trim()) {
+      return navigateCheckoutToField(1, "city", "Please enter your city or town.");
+    }
+    if (!emailValid) {
+      return navigateCheckoutToField(1, "email", "Please enter a valid email address.");
+    }
+    if (!phoneValid) {
+      return navigateCheckoutToField(1, "phone", "Please enter a valid Ghana phone number (e.g. 0241234567 or +233241234567).");
     }
     return true;
   };
 
   const validateStep2 = () => {
     if (!String(paymentMethodSelect?.value || "").trim()) {
-      showMsg("Please choose a payment method to continue.", false);
-      return false;
+      return navigateCheckoutToField(2, "payment-method", "Please choose a payment method to continue.");
     }
     if (!screenshotInput?.files?.[0]) {
-      showMsg("Please upload payment screenshot to continue.", false);
-      return false;
+      return navigateCheckoutToField(2, "payment-screenshot", "Please upload payment screenshot to continue.");
     }
     return true;
   };
@@ -1384,6 +1425,7 @@ function handleCheckout(products) {
       if (!methodEl || !value) return;
       methodEl.value = value;
       setPaymentInstructions(value);
+      saveCheckoutDraft();
     });
   });
 
@@ -1489,17 +1531,30 @@ function handleCheckout(products) {
     const phoneClean = phone.replace(/\s+/g, "");
     const phoneValid = /^(?:0\d{9}|\+233\d{9})$/.test(phoneClean);
 
-    if (!emailValid || !phoneValid) {
-      showMsg(
-        "Please enter a valid email and Ghana phone number (e.g. 0241234567 or +233241234567).",
-        false
+    if (!name) return navigateCheckoutToField(1, "name", "Please enter your full name.");
+    if (!email) return navigateCheckoutToField(1, "email", "Please enter your email address.");
+    if (!phone) return navigateCheckoutToField(1, "phone", "Please enter your Ghana phone number.");
+    if (!address) return navigateCheckoutToField(1, "address", "Please enter your delivery address.");
+    if (!city) return navigateCheckoutToField(1, "city", "Please enter your city or town.");
+    if (!emailValid) {
+      return navigateCheckoutToField(
+        1,
+        "email",
+        "Please enter a valid email address."
       );
-      return;
     }
-
-    if (!name || !email || !address || !city || !phone || !method) {
-      showMsg("Please fill all required fields.", false);
-      return;
+    if (!phoneValid) {
+      return navigateCheckoutToField(
+        1,
+        "phone",
+        "Please enter a valid Ghana phone number (e.g. 0241234567 or +233241234567)."
+      );
+    }
+    if (!method) {
+      return navigateCheckoutToField(2, "payment-method", "Please choose a payment method to continue.");
+    }
+    if (!screenshotEl?.files?.[0]) {
+      return navigateCheckoutToField(2, "payment-screenshot", "Please upload payment screenshot to continue.");
     }
 
     const cart = window.cart?.getLocalCart?.();
@@ -1875,11 +1930,13 @@ function handleCheckout(products) {
     initCheckoutStepFlow();
     handleCheckout(products);
     setPaymentInstructions("");
+    restoreCheckoutDraft();
     wireScreenshotPreview();
     const isLoggedIn = !!(typeof getToken === "function" ? getToken() : null);
     toggleGuestUI(isLoggedIn);
     if (isLoggedIn) {
       await prefillCheckoutDetails();
+      saveCheckoutDraft();
     }
 
     const discountInput = document.getElementById("discount-code");
@@ -2001,6 +2058,10 @@ function handleCheckout(products) {
     }
   });
 })();
+
+
+
+
 
 
 
