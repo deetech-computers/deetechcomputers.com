@@ -42,15 +42,120 @@
     .two-col {
       display:grid; grid-template-columns: 1fr 1fr; gap: .75rem;
     }
+        .payment-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 0.35rem;
+      margin-bottom: 0.65rem;
+    }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      border: 1px solid #dbe2ef;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .1s ease;
+    }
+    .payment-option:hover {
+      border-color: #0d6efd;
+      box-shadow: 0 8px 18px rgba(13,110,253,.12);
+    }
+    .payment-option:active { transform: translateY(1px); }
+    .payment-option.active {
+      border-color: #0d6efd;
+      background: #f1f6ff;
+      box-shadow: 0 0 0 3px rgba(13,110,253,.12);
+    }
+    .payment-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 1px solid #dbe2ef;
+      padding: 6px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .payment-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .payment-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1f2937;
+      line-height: 1.2;
+    }
+    .payment-method-select {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      overflow: hidden;
+      white-space: nowrap;
+    }
     .payment-instructions {
-      display:none;
+      display: none;
       margin-top: 1rem;
       padding: 1rem;
-      background: #f1f5ff;
-      border: 1px solid #d0e0ff;
-      border-radius: 8px;
+      background: #f8fbff;
+      border: 1px solid #d3e4ff;
+      border-radius: 12px;
       font-size: 0.95rem;
       color: #1d3557;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
+    }
+    .payment-info-wrap {
+      display: grid;
+      gap: 10px;
+    }
+    .payment-info-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.01em;
+    }
+    .payment-info-list {
+      display: grid;
+      gap: 8px;
+    }
+    .payment-info-row {
+      display: grid;
+      grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+      gap: 10px;
+      align-items: baseline;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #e2ecff;
+    }
+    .payment-info-label {
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.86rem;
+    }
+    .payment-info-value {
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.9rem;
+      line-height: 1.35;
+      word-break: break-word;
     }
     .hint { font-size:.85rem; color:#6b7280; margin-top:.3rem;}
     .preview { margin-top:.5rem; max-width:100%; border-radius:8px; display:none; }
@@ -123,7 +228,14 @@
       to { transform: rotate(360deg); }
     }
 
-    @media(max-width: 900px) { .checkout-grid { grid-template-columns: 1fr; } }
+    @media(max-width: 900px) {
+      .checkout-grid { grid-template-columns: 1fr; }
+      .payment-options { grid-template-columns: 1fr; }
+      .payment-info-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+    }
   </style>
 </head>
 <body class="page-loading">
@@ -183,7 +295,25 @@
         <div id="affiliate-code-status" class="hint" style="display:none;"></div>
 
         <label for="payment-method">Payment Method</label>
-        <select id="payment-method" required>
+        <div class="payment-options" id="payment-options" role="group" aria-label="Select payment method">
+          <button type="button" class="payment-option" data-method="mtn" aria-pressed="false">
+            <span class="payment-logo" aria-hidden="true"><img src="assets/img/Mtn%20logo.svg" alt=""></span>
+            <span class="payment-name">MTN Mobile Money</span>
+          </button>
+          <button type="button" class="payment-option" data-method="vodafone" aria-pressed="false">
+            <span class="payment-logo" aria-hidden="true"><img src="assets/img/Telecel-Icon-Red.png" alt=""></span>
+            <span class="payment-name">Telecel Cash</span>
+          </button>
+          <button type="button" class="payment-option" data-method="hubtel" aria-pressed="false">
+            <span class="payment-logo" aria-hidden="true"><img src="assets/img/hubtel%20logo.webp" alt=""></span>
+            <span class="payment-name">Hubtel</span>
+          </button>
+          <button type="button" class="payment-option" data-method="bank" aria-pressed="false">
+            <span class="payment-logo" aria-hidden="true"><img src="assets/img/Calbank%20logo.png" alt=""></span>
+            <span class="payment-name">CALBANK Transfer</span>
+          </button>
+        </div>
+        <select id="payment-method" class="payment-method-select" required>
           <option value="">-- Select Payment Method --</option>
           <option value="mtn">MTN Mobile Money</option>
           <option value="vodafone">Vodafone/Telecel Cash</option>
@@ -342,6 +472,17 @@
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
 
 
 

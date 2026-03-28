@@ -752,40 +752,65 @@ async function renderOrder(products) {
 // ----------------------
 // Payment Instructions
 // ----------------------
+function syncPaymentOptionCards(methodRaw) {
+  const method = (methodRaw || "").toLowerCase();
+  document.querySelectorAll(".payment-option[data-method]").forEach((btn) => {
+    const isActive = (btn.dataset.method || "").toLowerCase() === method && method !== "";
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+function renderPaymentInfo(title, rows) {
+  const list = rows
+    .map((row) => `
+      <div class="payment-info-row">
+        <span class="payment-info-label">${row.label}</span>
+        <strong class="payment-info-value">${row.value}</strong>
+      </div>
+    `)
+    .join("");
+
+  return `
+    <div class="payment-info-wrap">
+      <h4 class="payment-info-title">${title}</h4>
+      <div class="payment-info-list">${list}</div>
+    </div>
+  `;
+}
+
 function setPaymentInstructions(methodRaw) {
   const method = (methodRaw || "").toLowerCase();
+  syncPaymentOptionCards(method);
   const box = document.getElementById("payment-instructions");
   if (!box) return;
 
   let html = "";
   if (method === "mtn") {
-    html = `
-      <h4>MTN Mobile Money</h4>
-      <p><strong>Merchant Number(ID):</strong> 694988</p>
-      <p><strong>Merchant Name:</strong> Deetek 360 Enterprise (DEETECH COMPUTERS)</p>
-      <p><strong>MoMo Number:</strong> 0591755964</p>
-      <p><strong>Account Name:</strong> Daniel Adjei Mensah (DEETECH COMPUTERS)</p>
-    `;
+    html = renderPaymentInfo("MTN Mobile Money", [
+      { label: "Merchant Number(ID)", value: "694988" },
+      { label: "Merchant Name", value: "Deetek 360 Enterprise (DEETECH COMPUTERS)" },
+      { label: "MoMo Number", value: "0591755964" },
+      { label: "Account Name", value: "Daniel Adjei Mensah (DEETECH COMPUTERS)" },
+    ]);
   } else if (method === "vodafone") {
-    html = `
-      <h4>Telecel (Vodafone) Cash</h4>
-      <p><strong>Merchant ID:</strong> 451444</p>
-      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
-    `;
+    html = renderPaymentInfo("Telecel (Vodafone) Cash", [
+      { label: "Merchant ID", value: "451444" },
+      { label: "Account Name", value: "DEETEK 360 Enterprise (DEETECH COMPUTERS)" },
+    ]);
   } else if (method === "hubtel") {
-    html = `
-      <h4>Hubtel</h4>
-      <p><strong>Dial:</strong> *713*5964#</p>
-      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
-    `;
+    html = renderPaymentInfo("Hubtel", [
+      { label: "Dial", value: "*713*5964#" },
+      { label: "Account Name", value: "DEETEK 360 Enterprise (DEETECH COMPUTERS)" },
+    ]);
   } else if (method === "bank") {
-    html = `
-      <h4>Bank Transfer</h4>
-      <p><strong>Bank:</strong> CALBANK</p>
-      <p><strong>Account Number:</strong> 1400009398769</p>
-      <p><strong>Account Name:</strong> DEETEK 360 Enterprise (DEETECH COMPUTERS)</p>
-    `;
+    html = renderPaymentInfo("Bank Transfer", [
+      { label: "Bank", value: "CALBANK" },
+      { label: "Account Number", value: "1400009398769" },
+      { label: "Account Name", value: "DEETEK 360 Enterprise (DEETECH COMPUTERS)" },
+    ]);
   }
+
   box.innerHTML = html;
   box.style.display = method ? "block" : "none";
 }
@@ -867,6 +892,16 @@ function handleCheckout(products) {
       setPaymentInstructions(e.target.value)
     );
   }
+
+  const paymentOptionButtons = document.querySelectorAll(".payment-option[data-method]");
+  paymentOptionButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = String(btn.dataset.method || "").toLowerCase();
+      if (!methodEl || !value) return;
+      methodEl.value = value;
+      setPaymentInstructions(value);
+    });
+  });
 
   let affiliateValidateTimer = null;
   async function validateAffiliateCodeUi() {
@@ -1434,6 +1469,15 @@ function handleCheckout(products) {
     }
   });
 })();
+
+
+
+
+
+
+
+
+
 
 
 
