@@ -295,6 +295,17 @@
       transform: none !important;
       object-position: center;
     }
+    .payment-logo--hubtel {
+      justify-content: flex-start;
+      padding-left: 6px;
+    }
+    .payment-logo-image--hubtel {
+      width: 76px;
+      height: auto;
+      max-width: none;
+      object-fit: contain;
+      object-position: left center;
+    }
     .payment-name {
       font-size: 0.93rem;
       font-weight: 700;
@@ -626,7 +637,13 @@
         height: 28px;
         padding: 0;
       }
-.payment-name {
+      .payment-logo--hubtel {
+        padding-left: 8px;
+      }
+      .payment-logo-image--hubtel {
+        width: 74px;
+      }
+      .payment-name {
         font-size: .74rem;
         line-height: 1.1;
         white-space: nowrap;
@@ -800,6 +817,13 @@
         width: 82px !important;
         height: 24px !important;
         flex: 0 0 82px !important;
+      }
+      body.checkout-mobile-flow .checkout-step-panel[data-step="2"] .payment-logo--hubtel {
+        padding-left: 8px !important;
+      }
+      body.checkout-mobile-flow .checkout-step-panel[data-step="2"] .payment-logo-image--hubtel {
+        width: 70px !important;
+        height: auto !important;
       }
       body.checkout-mobile-flow .checkout-step-panel[data-step="2"] .payment-name {
         white-space: normal !important;
@@ -1273,5 +1297,6 @@
 
 </body>
 </html>
+
 
 
