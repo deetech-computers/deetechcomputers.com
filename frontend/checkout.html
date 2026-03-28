@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="assets/css/checkout.css">
   <style>
     .checkout-page { padding: 2rem 0 1rem; overflow-x: clip; }
+    .checkout-page *, .checkout-page *::before, .checkout-page *::after { box-sizing: border-box; }
     html, body {
       height: 100%;
       min-height: 100%;
@@ -105,14 +106,15 @@
       box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12);
     }
     .checkout-stepper-item p {
-      margin: 0;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      line-height: 1.1;
-      color: #94a3b8;
-    }
+        font-size: .64rem;
+        letter-spacing: .01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        min-height: 1.3em;
+        line-height: 1.1;
+      }
     .checkout-stepper-item.is-active p,
     .checkout-stepper-item.is-complete p {
       color: #1e3a8a;
@@ -127,9 +129,15 @@
     .checkout-step-wrap {
       display: grid;
       gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
     .checkout-step-panel {
       display: none;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       border: 1px solid #dbeafe;
       border-radius: 0;
       padding: 16px;
@@ -326,6 +334,13 @@
     .hint { font-size:.85rem; color:#6b7280; margin-top:.3rem; }
     .affiliate-hint { display: none; }
     #guest-payment-proof { display:grid; gap:8px; }
+    #guest-payment-proof input[type="file"] {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
     .preview {
       margin-top:.25rem;
       width:100%;
@@ -540,13 +555,13 @@
       }
       .checkout-stepper-item p {
         font-size: .64rem;
-        letter-spacing: .02em;
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
+        letter-spacing: .01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         width: 100%;
-        min-height: 2.1em;
-        line-height: 1.05;
+        min-height: 1.3em;
+        line-height: 1.1;
       }
 
       .checkout-step-panel,
@@ -604,6 +619,16 @@
     @media(max-width: 520px) {
       .payment-options { grid-template-columns: 1fr; }
     }
+    @media(max-width: 420px) {
+      .discount-row {
+        flex-wrap: wrap;
+      }
+      .discount-row .input,
+      .discount-row #apply-discount {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
   
     .checkout-grid,
     .checkout-stepper,
@@ -617,11 +642,15 @@
       min-width: 0;
     }
     .checkout-stepper-item p {
-      display: block;
-      width: 100%;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
+        font-size: .64rem;
+        letter-spacing: .01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        min-height: 1.3em;
+        line-height: 1.1;
+      }
     .checkout-mobile-back {
       display: none;
     }
@@ -629,7 +658,22 @@
       display: none;
     }
     @media (max-width: 900px) {
-      body.checkout-mobile-flow .checkout-top-actions {
+      body.checkout-mobile-flow {
+        overflow-x: hidden;
+      }
+      body.checkout-mobile-flow .checkout-grid {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+        width: 100% !important;
+      }
+      body.checkout-mobile-flow .checkout-grid > .card,
+      body.checkout-mobile-flow .checkout-grid > form,
+      body.checkout-mobile-flow .checkout-grid > aside {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }      body.checkout-mobile-flow .checkout-top-actions {
         display: none !important;
       }
       body.checkout-mobile-flow .checkout-stepper {
@@ -639,7 +683,7 @@
         margin-top: 0;
       }
       body.checkout-mobile-flow .checkout-page {
-        padding-bottom: 132px !important;
+        padding-bottom: 108px !important;
       }
       body.checkout-mobile-flow .footer {
         display: none !important;
@@ -894,7 +938,7 @@
   </main>
 
 
-  <section class="container checkout-mobile-actionbar" id="checkoutMobileBar" aria-live="polite">
+  <section class="checkout-mobile-actionbar" id="checkoutMobileBar" aria-live="polite">
     <div class="checkout-mobile-meta">
       <div class="checkout-mobile-total">Total Amount:<strong id="checkoutMobileTotal">GHC 0.00</strong></div>
       <div class="checkout-mobile-status" id="checkoutMobileStatus">Ready to continue</div>
