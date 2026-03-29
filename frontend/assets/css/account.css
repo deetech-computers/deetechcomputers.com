@@ -257,7 +257,7 @@
   left: 0;
   width: 60px;
   height: 2px;
-  background: var(--account-primary);
+  background: var(--account-gray-300);
 }
 
 /* ===== PROFILE SECTION ===== */
@@ -1009,15 +1009,7 @@
 }
 
 .account-order-progress::after {
-  content: '';
-  position: absolute;
-  top: 22px;
-  left: 0;
-  height: 2px;
-  width: var(--progress);
-  background: var(--account-primary);
-  z-index: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .account-order-timeline::before {
@@ -2940,4 +2932,5 @@ body.account-modal-open {
   overflow: hidden !important;
   touch-action: none;
 }
+
 

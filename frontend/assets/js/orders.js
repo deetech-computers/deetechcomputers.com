@@ -474,15 +474,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const iconSvg = (step) => {
         if (step === 1) {
-          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5.5 5a.5.5 0 0 0-.5.5V6h6v-.5a.5.5 0 0 0-.5-.5h-5ZM4 6V5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5V6h.5A1.5 1.5 0 0 1 14 7.5v4A1.5 1.5 0 0 1 12.5 13h-9A1.5 1.5 0 0 1 2 11.5v-4A1.5 1.5 0 0 1 3.5 6H4Zm9 2.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-3Z"/></svg>';
+          return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12"/><path d="M9 4h6"/><rect x="5" y="8" width="14" height="12" rx="2" ry="2"/></svg>';
         }
         if (step === 2) {
-          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4Zm0 2h16v6a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6Zm3 3.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H3Z"/></svg>';
+          return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2" ry="2"/><path d="M3 10h18"/></svg>';
         }
         if (step === 3) {
-          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M0 1.5A.5.5 0 0 1 .5 1h8a.5.5 0 0 1 .5.5V5h2.586a1.5 1.5 0 0 1 1.06.44l2.914 2.914A1.5 1.5 0 0 1 16 9.414V12.5a.5.5 0 0 1-.5.5H15a2 2 0 1 1-4 0H5a2 2 0 1 1-4 0H.5a.5.5 0 0 1-.5-.5v-11ZM1 2v10h.146a2 2 0 0 1 3.708 0H8V2H1Zm8 4v6h2.146a2 2 0 0 1 3.708 0H15V9.414a.5.5 0 0 0-.146-.353L11.94 6.146A.5.5 0 0 0 11.586 6H9Zm-6 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>';
+          return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v8H3z"/><path d="M14 11h4l3 3v1h-7z"/><circle cx="8" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>';
         }
-        return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM6.97 11.03a.75.75 0 0 0 1.08-.022l3.992-4.99a.75.75 0 1 0-1.172-.936L7.4 9.42 5.607 7.627a.75.75 0 1 0-1.06 1.06l2.423 2.343Z"/></svg>';
+        return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.4 2.4 4.6-5.1"/></svg>';
       };
 
       const html = steps
