@@ -645,6 +645,44 @@ async function sendOrderEmailsViaEmailJs({
   await Promise.all([customerPromise, adminPromise]);
 }
 
+function promiseWithTimeout(promise, timeoutMs = 6000) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      resolve({ skipped: true, reason: "EmailJS timeout" });
+    }, Math.max(1000, Number(timeoutMs) || 6000));
+
+    Promise.resolve(promise)
+      .then((value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch((err) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
+
+function dispatchOrderEmailsNonBlocking(params) {
+  // Email sending should never block checkout completion.
+  setTimeout(async () => {
+    try {
+      const emailResult = await promiseWithTimeout(sendOrderEmailsViaEmailJs(params), 7000);
+      if (emailResult?.skipped) {
+        console.warn("Order email send skipped:", emailResult?.reason || "Unknown reason");
+      }
+    } catch (emailErr) {
+      console.error("Order EmailJS send failed:", emailErr);
+    }
+  }, 0);
+}
 // ----------------------
 // API Fetch Helper
 // ----------------------
@@ -1836,31 +1874,17 @@ function handleCheckout(products) {
         showMsg("Order was not saved correctly. Please try again.", false);
         return;
       }
-
-      const orderItemsHTML = cart
-        .map((i) => `<li>${i.name} x ${i.qty} = ${money(i.price * i.qty)}</li>`)
-        .join("");
-
-      try {
-        const emailResult = await sendOrderEmailsViaEmailJs({
-          savedOrder,
-          cart,
-          customerName: name,
-          customerEmail: email,
-          customerPhone: phoneClean,
-          address,
-          city,
-          paymentMethod: method,
-          notes,
-                });
-        if (emailResult?.skipped) {
-          console.warn("Order email send skipped:", emailResult?.reason || "Unknown reason");
-          showMsg("Order saved, but email service is unavailable right now. We'll still process your order.", false);
-        }
-      } catch (emailErr) {
-        console.error("Order EmailJS send failed:", emailErr);
-        showMsg("Order saved, but email notification failed. We'll still process your order.", false);
-      }
+      dispatchOrderEmailsNonBlocking({
+        savedOrder,
+        cart,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phoneClean,
+        address,
+        city,
+        paymentMethod: method,
+        notes,
+      });
 
       showMsg(`Order placed successfully (#${savedOrderId}). Redirecting...`, true);
       setProcessingOverlay(true, "Order confirmed. Redirecting to your receipt...");
@@ -2119,48 +2143,4 @@ function handleCheckout(products) {
     }
   });
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

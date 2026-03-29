@@ -1,4 +1,4 @@
-const CACHE_NAME = "deetech-static-v19";
+const CACHE_NAME = "deetech-static-v20";
 const OFFLINE_URL = "offline.html";
 const SNAPSHOT_URL = "assets/data/products-snapshot.json";
 const PLACEHOLDER_URL = "assets/img/placeholder.svg";
