@@ -452,25 +452,56 @@ document.addEventListener("DOMContentLoaded", async () => {
       cancelled: { step: 1, label: "Cancelled" },
     };
 
-    function buildTimeline(status) {
-      const normalized = (status || "pending").toLowerCase();
+    function buildTimeline(order) {
+      const normalized = String(order?.orderStatus || "pending").toLowerCase();
       const current = statusMap[normalized]?.step || 1;
+      const createdDate = (() => {
+        try {
+          return order?.createdAt ? new Date(order.createdAt).toLocaleDateString("en-GB") : "";
+        } catch {
+          return "";
+        }
+      })();
+
       const steps = [
-        { step: 1, label: "Order Placed" },
-        { step: 2, label: "Processing" },
+        { step: 1, label: "Order Placed", meta: createdDate || "Placed" },
+        { step: 2, label: "Payment Confirmed" },
         { step: 3, label: "Shipped" },
-        { step: 4, label: normalized === "completed" ? "Completed" : "Delivered" },
+        { step: 4, label: "Delivered" },
       ];
-      return steps
-        .map(
-          (s) => `
-            <div class="account-timeline-step ${current >= s.step ? "account-active" : ""}">
-              <div class="account-timeline-icon">${s.step}</div>
-              <div class="account-timeline-content"><h4>${s.label}</h4></div>
+
+      const progressPercent = Math.max(0, Math.min(100, ((current - 1) / (steps.length - 1)) * 100));
+
+      const iconSvg = (step) => {
+        if (step === 1) {
+          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h10v2h2v14H5V6h2V4Zm0 4v10h10V8H7Zm2 2h6v2H9Z"/></svg>';
+        }
+        if (step === 2) {
+          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Zm2 0v2h14V6H5Zm14 6H5v6h14v-6Z"/></svg>';
+        }
+        if (step === 3) {
+          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6h11v8h2.5l2.5 3V19h-2a2 2 0 1 1-4 0H9a2 2 0 1 1-4 0H3V6Zm2 2v9h1a2 2 0 0 1 4 0h3V8H5Zm10 2h2.2l1.8 2.2V16h-4V10Zm-7 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>';
+        }
+        return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm4.6 7.8-5.2 6a1 1 0 0 1-1.5.05l-2.5-2.5 1.4-1.4 1.74 1.74 4.48-5.17 1.58 1.38Z"/></svg>';
+      };
+
+      const html = steps
+        .map((s) => {
+          const active = current >= s.step;
+          const meta = s.meta || (active ? "Completed" : "Pending");
+          return `
+            <div class="account-timeline-step ${active ? "account-active" : ""}">
+              <div class="account-timeline-icon">${iconSvg(s.step)}</div>
+              <div class="account-timeline-content">
+                <h4>${s.label}</h4>
+                <p>${meta}</p>
+              </div>
             </div>
-          `
-        )
+          `;
+        })
         .join("");
+
+      return `<div class="account-order-progress" style="--progress:${progressPercent}%;">${html}</div>`;
     }
 
     function openOrderModal(order) {
@@ -491,7 +522,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <button class="account-order-modal-close" aria-label="Close">x</button>
           </div>
           <div class="account-order-modal-content">
-            <div class="account-order-timeline">${buildTimeline(order.orderStatus)}</div>
+            ${buildTimeline(order)}
 
             <h4>Items</h4>
             <div class="account-order-items-list">
@@ -576,5 +607,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
   const productLookup = new Map();
-
-

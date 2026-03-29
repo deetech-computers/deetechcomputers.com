@@ -974,16 +974,22 @@
   z-index: 0;
 }
 
+.account-order-progress {
+  position: relative;
+  --progress: 0%;
+}
+
 .account-order-timeline {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
-  margin: 0.5rem 0 2rem;
+  margin: 0.6rem 0 2rem;
   position: relative;
   z-index: 0;
 }
 
-.account-order-timeline::before {
+.account-order-timeline::before,
+.account-order-progress::before {
   content: '';
   position: absolute;
   top: 24px;
@@ -992,6 +998,21 @@
   height: 2px;
   background: var(--account-gray-300);
   z-index: 0;
+}
+
+.account-order-progress::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 0;
+  height: 2px;
+  width: var(--progress);
+  background: var(--account-primary);
+  z-index: 0;
+}
+
+.account-order-timeline::before {
+  display: none;
 }
 
 .account-timeline-step {
@@ -1005,10 +1026,17 @@
   height: 44px;
   border-radius: 50%;
   background: var(--account-gray-200);
+  color: #6b7280;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 0.75rem;
+  margin: 0 auto 0.65rem;
+}
+
+.account-timeline-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .account-timeline-step.account-active .account-timeline-icon {
@@ -1017,19 +1045,19 @@
 }
 
 .account-timeline-content h4 {
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.15rem;
   font-size: 0.85rem;
   color: var(--account-gray-700);
+  font-weight: 700;
 }
 
 .account-timeline-step.account-active .account-timeline-content h4 {
   color: var(--account-primary);
-  font-weight: 700;
 }
 
 .account-timeline-content p {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--account-gray-500);
 }
 
@@ -1104,22 +1132,35 @@
   }
 
   .account-order-timeline {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+    margin: 0.5rem 0 1.5rem;
   }
 
-  .account-order-timeline::before {
-    display: none;
-  }
-
-  .account-timeline-step {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    text-align: left;
+  .account-order-progress::before,
+  .account-order-progress::after {
+    top: 20px;
   }
 
   .account-timeline-icon {
-    margin: 0;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.5rem;
+  }
+
+  .account-timeline-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .account-timeline-content h4 {
+    font-size: 0.74rem;
+    line-height: 1.2;
+  }
+
+  .account-timeline-content p {
+    font-size: 0.72rem;
+    line-height: 1.2;
   }
 }
 
