@@ -10,6 +10,7 @@ import path from "path";
 import { FRONTEND_URL, NODE_ENV } from "./config/env.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import { createRateLimiter, getRateLimiterMode } from "./middleware/rateLimitFactory.js";
+import { getEmailHealthStatus } from "./utils/emailService.js";
 
 // ✅ Route imports
 import authRoutes from "./routes/authRoutes.js";
@@ -105,7 +106,16 @@ export default async function createApp() {
     });
   });
 
-  // ✅ Serve uploaded images (allow cross-origin image embedding)
+  app.get("/api/health/email", async (req, res) => {
+    const emailHealth = await getEmailHealthStatus();
+    res.status(emailHealth.status === "ok" ? 200 : 503).json({
+      status: emailHealth.status,
+      env: NODE_ENV || "development",
+      email: emailHealth,
+    });
+  });
+
+  // Serve uploaded images (allow cross-origin image embedding)
   app.use(
     "/uploads",
     (req, res, next) => {
@@ -143,5 +153,4 @@ export default async function createApp() {
 
   return app;
 }
-
 

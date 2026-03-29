@@ -359,6 +359,48 @@ export async function sendPasswordResetEmail(to, resetUrl) {
 
 export const sendOrderConfirmationEmail = sendOrderConfirmation;
 
+
+function verifyTransporter(timeoutMs = 5000) {
+  if (!transporter || typeof transporter.verify !== "function") {
+    return Promise.resolve({ ok: false, message: "SMTP transporter is not configured" });
+  }
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      resolve({ ok: false, message: "SMTP verify timed out" });
+    }, Math.max(1000, Number(timeoutMs) || 5000));
+
+    transporter.verify((err) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) {
+        resolve({ ok: false, message: err.message || "SMTP verify failed" });
+      } else {
+        resolve({ ok: true, message: "SMTP transport verified" });
+      }
+    });
+  });
+}
+
+export async function getEmailHealthStatus() {
+  const provider = getEmailProviderInfo();
+  const verify = await verifyTransporter(5000);
+
+  return {
+    status: verify.ok ? "ok" : "degraded",
+    provider,
+    smtp: {
+      configured: Boolean(provider.smtpHost && provider.smtpUser),
+      hasTransporter: provider.hasTransporter,
+      verified: verify.ok,
+      message: verify.message,
+    },
+  };
+}
 export function getEmailProviderInfo() {
   return {
     provider: "smtp_nodemailer",
