@@ -519,7 +519,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="account-order-modal">
           <div class="account-order-modal-header">
             <h3>Order #${order._id}</h3>
-            <button class="account-order-modal-close" aria-label="Close">x</button>
+            <div class="account-order-modal-header-actions">
+              <button class="btn btn-outline btn-sm account-invoice-btn" type="button">Download Invoice</button>
+              <button class="btn btn-outline btn-sm account-order-modal-close" type="button" aria-label="Close order details">Close</button>
+            </div>
           </div>
           <div class="account-order-modal-content">
             ${buildTimeline(order)}
@@ -572,10 +575,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <div class="account-order-summary-row"><span>Region</span><span>${region}</span></div>
             </div>
 
-            <div class="account-order-modal-footer">
-              <button class="btn btn-outline btn-sm account-invoice-btn">Download Invoice</button>
-              <button class="btn btn-outline btn-sm account-order-modal-close">Close</button>
-            </div>
+
           </div>
         </div>
       `;
@@ -588,8 +588,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
       overlay.addEventListener("click", (e) => {
         if (e.target === overlay) close();
-        if (e.target.classList.contains("account-order-modal-close")) close();
-        if (e.target.classList.contains("account-invoice-btn")) downloadInvoice(order);
+        if (e.target.closest(".account-order-modal-close")) close();
+        if (e.target.closest(".account-invoice-btn")) downloadInvoice(order);
       });
     }
 
@@ -607,3 +607,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
   const productLookup = new Map();
+
