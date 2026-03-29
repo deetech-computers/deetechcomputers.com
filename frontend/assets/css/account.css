@@ -2624,3 +2624,30 @@ body.account-page-leaving .account-page {
     grid-template-columns: 1fr;
   }
 }
+
+/* Match account affiliate stat icons with main affiliate dashboard icons */
+#accountAffiliateSection .account-affiliate-label::before {
+  background-size: 14px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='8.5' cy='7' r='3'/%3E%3Cpath d='M20 8v6M23 11h-6'/%3E%3C/svg%3E");
+}
+
+#accountAffiliateSection .account-affiliate-stat.orange .account-affiliate-label::before {
+  background-color: #d98215;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12h8M12 8v8'/%3E%3C/svg%3E");
+}
+#accountAffiliateSection .account-affiliate-stat.green .account-affiliate-label::before {
+  background-color: #179f6f;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7h18'/%3E%3Cpath d='M5 7l1 12h12l1-12'/%3E%3Cpath d='M9 10v6M15 10v6'/%3E%3C/svg%3E");
+}
+#accountAffiliateSection .account-affiliate-stat.cyan .account-affiliate-label::before {
+  background-color: #198ac8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20h18'/%3E%3Cpath d='M6 16V8M12 16V4M18 16v-6'/%3E%3C/svg%3E");
+}
+#accountAffiliateSection .account-affiliate-stat.amber .account-affiliate-label::before {
+  background-color: #c58a12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 4v10l-7 4-7-4V7l7-4z'/%3E%3Cpath d='M9 12h6'/%3E%3C/svg%3E");
+}
+#accountAffiliateSection .account-affiliate-stat.indigo .account-affiliate-label::before {
+  background-color: #335fdc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Ccircle cx='12' cy='12' r='1' fill='white'/%3E%3C/svg%3E");
+}
