@@ -43,9 +43,14 @@ export default async function createApp() {
 
   // 🔒 Security & parsing
   app.use(helmet());
+  const normalizeOrigin = (value) =>
+    String(value || "")
+      .trim()
+      .replace(/\/+$/, "");
+
   const allowedOrigins = String(FRONTEND_URL || "")
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => normalizeOrigin(origin))
     .filter(Boolean);
   app.use(
     cors({
@@ -54,7 +59,8 @@ export default async function createApp() {
         // Allow server-side/no-origin requests only.
         if (!origin) return cb(null, true);
         if (origin === "null") return cb(new Error("CORS blocked"), false);
-        return cb(null, allowedOrigins.includes(origin));
+        const normalizedRequestOrigin = normalizeOrigin(origin);
+        return cb(null, allowedOrigins.includes(normalizedRequestOrigin));
       },
       credentials: true,
     })
@@ -137,3 +143,5 @@ export default async function createApp() {
 
   return app;
 }
+
+
