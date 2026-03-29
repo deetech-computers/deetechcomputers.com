@@ -474,15 +474,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const iconSvg = (step) => {
         if (step === 1) {
-          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h10v2h2v14H5V6h2V4Zm0 4v10h10V8H7Zm2 2h6v2H9Z"/></svg>';
+          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M5.5 5a.5.5 0 0 0-.5.5V6h6v-.5a.5.5 0 0 0-.5-.5h-5ZM4 6V5.5A1.5 1.5 0 0 1 5.5 4h5A1.5 1.5 0 0 1 12 5.5V6h.5A1.5 1.5 0 0 1 14 7.5v4A1.5 1.5 0 0 1 12.5 13h-9A1.5 1.5 0 0 1 2 11.5v-4A1.5 1.5 0 0 1 3.5 6H4Zm9 2.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-3Z"/></svg>';
         }
         if (step === 2) {
-          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Zm2 0v2h14V6H5Zm14 6H5v6h14v-6Z"/></svg>';
+          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0V4Zm0 2h16v6a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6Zm3 3.5a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H3Z"/></svg>';
         }
         if (step === 3) {
-          return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6h11v8h2.5l2.5 3V19h-2a2 2 0 1 1-4 0H9a2 2 0 1 1-4 0H3V6Zm2 2v9h1a2 2 0 0 1 4 0h3V8H5Zm10 2h2.2l1.8 2.2V16h-4V10Zm-7 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>';
+          return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M0 1.5A.5.5 0 0 1 .5 1h8a.5.5 0 0 1 .5.5V5h2.586a1.5 1.5 0 0 1 1.06.44l2.914 2.914A1.5 1.5 0 0 1 16 9.414V12.5a.5.5 0 0 1-.5.5H15a2 2 0 1 1-4 0H5a2 2 0 1 1-4 0H.5a.5.5 0 0 1-.5-.5v-11ZM1 2v10h.146a2 2 0 0 1 3.708 0H8V2H1Zm8 4v6h2.146a2 2 0 0 1 3.708 0H15V9.414a.5.5 0 0 0-.146-.353L11.94 6.146A.5.5 0 0 0 11.586 6H9Zm-6 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>';
         }
-        return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm4.6 7.8-5.2 6a1 1 0 0 1-1.5.05l-2.5-2.5 1.4-1.4 1.74 1.74 4.48-5.17 1.58 1.38Z"/></svg>';
+        return '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM6.97 11.03a.75.75 0 0 0 1.08-.022l3.992-4.99a.75.75 0 1 0-1.172-.936L7.4 9.42 5.607 7.627a.75.75 0 1 0-1.06 1.06l2.423 2.343Z"/></svg>';
       };
 
       const html = steps

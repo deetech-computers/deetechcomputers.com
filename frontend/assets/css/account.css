@@ -1005,6 +1005,7 @@
   height: 2px;
   background: var(--account-gray-300);
   z-index: 0;
+  pointer-events: none;
 }
 
 .account-order-progress::after {
@@ -1016,6 +1017,7 @@
   width: var(--progress);
   background: var(--account-primary);
   z-index: 0;
+  pointer-events: none;
 }
 
 .account-order-timeline::before {
@@ -1040,6 +1042,7 @@
   margin: 0 auto 0.65rem;
   position: relative;
   z-index: 3;
+  box-shadow: 0 0 0 6px var(--account-white);
 }
 
 .account-timeline-icon svg {
@@ -2937,5 +2940,4 @@ body.account-modal-open {
   overflow: hidden !important;
   touch-action: none;
 }
-
 
