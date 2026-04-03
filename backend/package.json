@@ -5,7 +5,10 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon --watch src --watch .env --ext js,mjs,cjs,json --ignore scripts/*.ps1 src/server.js",
+    "dev:lan": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-lan.ps1",
+    "dev:watch": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-watch.ps1",
+    "dev:loop": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-loop.ps1",
     "start": "node src/server.js",
     "test": "jest --env=node --testMatch \"**/src/tests/**/*.test.js\"",
     "smoke:staging": "node scripts/smoke-staging.js",

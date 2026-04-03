@@ -7,6 +7,7 @@ import createApp from "./app.js";
 import logger from "./utils/logger.js";
 
 let server;
+let shutdownStarted = false;
 
 async function start() {
   try {
@@ -16,6 +17,16 @@ async function start() {
     // 2️⃣ Initialize Express app
     const app = await createApp();
     server = createServer(app);
+
+    server.on("close", () => {
+      logger.warn("HTTP server close event fired");
+    });
+
+    server.on("error", (error) => {
+      logger.error("HTTP server emitted an error", {
+        error: error.stack || error.message,
+      });
+    });
 
     // 3️⃣ Start server
     server.listen(PORT, () => {
@@ -31,6 +42,12 @@ start();
 
 // 🛑 Graceful shutdown handler
 async function shutdown(signal) {
+  if (shutdownStarted) {
+    logger.warn(`Shutdown already in progress. Ignoring duplicate signal: ${signal}`);
+    return;
+  }
+
+  shutdownStarted = true;
   logger.info(`${signal} received. Shutting down gracefully...`);
 
   try {
@@ -53,6 +70,12 @@ async function shutdown(signal) {
 // 🔌 Handle kill signals
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("beforeExit", (code) => {
+  logger.warn(`beforeExit event fired with code ${code}`);
+});
+process.on("exit", (code) => {
+  logger.warn(`Process exit event fired with code ${code}`);
+});
 
 // 🔥 Handle uncaught errors
 process.on("uncaughtException", (err) => {

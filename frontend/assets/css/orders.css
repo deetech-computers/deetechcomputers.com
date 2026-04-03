@@ -1,9 +1,0 @@
-.orders-list,
-.account-orders-list {
-  min-height: 80px;
-}
-
-.loading {
-  color: #64748b;
-  font-weight: 600;
-}
