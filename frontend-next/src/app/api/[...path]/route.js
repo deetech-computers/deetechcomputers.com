@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 const API_ORIGIN =
   process.env.DEETECH_API_ORIGIN ||
   process.env.NEXT_PUBLIC_DEETECH_API_BASE ||
-  "http://127.0.0.1:5000";
+  (process.env.NODE_ENV === "production"
+    ? "https://deetechcomputers-com.onrender.com"
+    : "http://127.0.0.1:5000");
 
 const HOP_BY_HOP_HEADERS = new Set([
   "connection",

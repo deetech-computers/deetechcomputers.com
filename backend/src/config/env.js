@@ -9,9 +9,6 @@ dotenv.config({ path: envPath });
 
 const NODE_ENV = process.env.NODE_ENV || "development";
 const required = ["MONGO_URI", "JWT_SECRET"];
-if (NODE_ENV === "production") {
-  required.push("FRONTEND_URL");
-}
 
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length > 0) {
