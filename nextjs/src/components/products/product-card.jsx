@@ -77,6 +77,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const productHref = `/products/${productId}`;
   const isCatalog = variant === "catalog";
   const isRelated = variant === "related";
+  const isHome = variant === "default";
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const summary = getSummary(product);
   const categoryLabel = getCategoryLabel(product);
@@ -145,6 +146,24 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
     }
   }
 
+  async function handleCopy() {
+    if (typeof window === "undefined") return;
+
+    const url = `${window.location.origin}${productHref}`;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        pushToast("Product link copied", "success");
+        return;
+      }
+
+      pushToast("Copy is not available on this device", "warning");
+    } catch {
+      pushToast("Could not copy this product link right now", "warning");
+    }
+  }
+
   function handleAddToCart() {
     if (typeof onAddToCart === "function") {
       onAddToCart(product);
@@ -161,7 +180,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   }
 
   return (
-    <article className={`product-card${isCatalog ? " product-card--catalog" : ""}${isRelated ? " product-card--related" : ""}`}>
+    <article className={`product-card${isCatalog ? " product-card--catalog" : ""}${isRelated ? " product-card--related" : ""}${isHome ? " product-card--home" : ""}`}>
       <div className="product-card__media-wrap">
         <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
           <div className="product-card__media">
@@ -209,6 +228,42 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               onClick={handleShare}
             >
               <ActionIcon src="/icons/share.svg" alt="" />
+            </button>
+            <button
+              type="button"
+              className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
+              onClick={handleAddToCart}
+              disabled={stock < 1}
+              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+            >
+              <CartIcon />
+              <span>
+                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`product-card__icon-button product-card__icon-button--footer${wishlisted ? " is-active" : ""}`}
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={wishlisted}
+              onClick={toggleWishlist}
+            >
+              <ActionIcon src="/icons/wishlist.svg" alt="" />
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {isHome ? (
+        <div className="product-card__footer product-card__footer--reveal">
+          <div className="product-card__footer-actions" aria-label="Homepage product actions">
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Copy product link"
+              onClick={handleCopy}
+            >
+              <ActionIcon src="/icons/copy.svg" alt="" />
             </button>
             <button
               type="button"
