@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
@@ -17,11 +18,9 @@ import {
 
 function getProductImages(product) {
   const images = Array.isArray(product?.images) ? product.images : [];
-  const normalized = images
-    .map((image) => resolveProductImage(image))
-    .filter(Boolean);
-
+  const normalized = images.map((image) => resolveProductImage(image)).filter(Boolean);
   const fallback = resolveProductImage(product?.image);
+
   if (fallback && !normalized.includes(fallback)) {
     normalized.unshift(fallback);
   }
@@ -32,12 +31,8 @@ function getProductImages(product) {
 function getProductSpecs(product) {
   const specs = product?.specs;
   if (!specs) return [];
-  if (typeof specs.entries === "function") {
-    return Array.from(specs.entries());
-  }
-  if (typeof specs === "object") {
-    return Object.entries(specs);
-  }
+  if (typeof specs.entries === "function") return Array.from(specs.entries());
+  if (typeof specs === "object") return Object.entries(specs);
   return [];
 }
 
@@ -66,9 +61,12 @@ export default function ProductDetailPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
-  const images = useMemo(() => getProductImages(product), [product]);
-  const currentImage = images[activeImage] || images[0] || "";
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     if (!productId) return;
@@ -87,6 +85,9 @@ export default function ProductDetailPage() {
         setStatus("error");
       });
   }, [productId]);
+
+  const images = useMemo(() => getProductImages(product), [product]);
+  const currentImage = images[activeImage] || images[0] || "";
 
   useEffect(() => {
     setActiveImage(0);
@@ -118,7 +119,7 @@ export default function ProductDetailPage() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [previewOpen, images.length]);
+  }, [images.length, previewOpen]);
 
   if (status === "loading") {
     return <main className="shell page-section"><div className="panel">Loading product...</div></main>;
@@ -139,6 +140,50 @@ export default function ProductDetailPage() {
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
     .slice(0, 4);
 
+  const previewModal = previewOpen && currentImage
+    ? createPortal(
+        <div className="product-preview" role="dialog" aria-modal="true" aria-label="Product image preview">
+          <button type="button" className="product-preview__close" onClick={() => setPreviewOpen(false)} aria-label="Close preview">
+            x
+          </button>
+          <button
+            type="button"
+            className="product-preview__arrow product-preview__arrow--left"
+            onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+            aria-label="Previous preview image"
+          >
+            &lsaquo;
+          </button>
+          <div className="product-preview__stage" onClick={() => setPreviewOpen(false)}>
+            <img src={currentImage} alt={product.name} onClick={(event) => event.stopPropagation()} />
+          </div>
+          <button
+            type="button"
+            className="product-preview__arrow product-preview__arrow--right"
+            onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+            aria-label="Next preview image"
+          >
+            &rsaquo;
+          </button>
+
+          <div className="product-preview__thumbs" aria-label="Preview images">
+            {images.map((image, index) => (
+              <button
+                key={`preview-${image}-${index}`}
+                type="button"
+                className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
+                onClick={() => setActiveImage(index)}
+                aria-label={`Preview image ${index + 1}`}
+              >
+                <img src={image} alt={`${product.name} preview ${index + 1}`} />
+              </button>
+            ))}
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
   return (
     <main className="shell page-section">
       <section className="product-breadcrumbs" aria-label="Breadcrumb">
@@ -153,20 +198,19 @@ export default function ProductDetailPage() {
 
       <section className="product-detail-view">
         <div className="product-gallery panel">
-          <div className="product-gallery__main">
+          <button
+            type="button"
+            className="product-gallery__main product-gallery__main--interactive"
+            onClick={() => setPreviewOpen(true)}
+            aria-label="Tap to preview product image"
+          >
             {currentImage ? (
-              <button
-                type="button"
-                className="product-gallery__preview-trigger"
-                onClick={() => setPreviewOpen(true)}
-                aria-label="Tap to preview product image"
-              >
-                <img src={currentImage} alt={product.name} />
-              </button>
+              <img src={currentImage} alt={product.name} />
             ) : (
               <div className="product-card__placeholder">No image</div>
             )}
-          </div>
+          </button>
+
           {images.length ? (
             <div className="product-gallery__selector" aria-label="Product images">
               <button
@@ -323,46 +367,7 @@ export default function ProductDetailPage() {
         </section>
       ) : null}
 
-      {previewOpen && currentImage ? (
-        <div className="product-preview" role="dialog" aria-modal="true" aria-label="Product image preview">
-          <button type="button" className="product-preview__close" onClick={() => setPreviewOpen(false)} aria-label="Close preview">
-            ×
-          </button>
-          <button
-            type="button"
-            className="product-preview__arrow product-preview__arrow--left"
-            onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
-            aria-label="Previous preview image"
-          >
-            &lsaquo;
-          </button>
-          <div className="product-preview__stage">
-            <img src={currentImage} alt={product.name} />
-          </div>
-          <button
-            type="button"
-            className="product-preview__arrow product-preview__arrow--right"
-            onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
-            aria-label="Next preview image"
-          >
-            &rsaquo;
-          </button>
-
-          <div className="product-preview__thumbs" aria-label="Preview images">
-            {images.map((image, index) => (
-              <button
-                key={`preview-${image}-${index}`}
-                type="button"
-                className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
-                onClick={() => setActiveImage(index)}
-                aria-label={`Preview image ${index + 1}`}
-              >
-                <img src={image} alt={`${product.name} preview ${index + 1}`} />
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      {portalReady ? previewModal : null}
     </main>
   );
 }
