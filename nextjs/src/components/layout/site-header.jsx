@@ -36,6 +36,13 @@ function ActionIcon({ name }) {
       </svg>
     );
   }
+  if (name === "search-field") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10.2 4.8a5.4 5.4 0 1 0 3.7 9.3l3.8 3.8 1.4-1.4-3.8-3.8a5.4 5.4 0 0 0-5.1-7.9Zm0 2a3.4 3.4 0 1 1 0 6.8 3.4 3.4 0 0 1 0-6.8Z" fill="currentColor" />
+      </svg>
+    );
+  }
   if (name === "support") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -197,14 +204,33 @@ export default function SiteHeader() {
         <div className="shell">
           <div className="header-inner">
             <div className="header-mobile-top">
-              <Link href="/" className="brand-mark brand-mark--mobile">
-                <Image src="/logo.png" alt="Deetech" width={190} height={56} className="brand-mark__image" priority />
-              </Link>
-              <Link href="/contact" className="mobile-support-link">
-                <span className="mobile-support-link__icon">
-                  <ActionIcon name="support" />
-                </span>
-              </Link>
+              <div className="header-mobile-main">
+                <button
+                  ref={mobileMenuButtonRef}
+                  type="button"
+                  className="icon-button icon-button--mobile"
+                  onClick={() => setMobileOpen(true)}
+                  aria-label="Open menu"
+                  aria-expanded={mobileOpen}
+                  aria-controls="mobile-navigation-menu"
+                >
+                  <span />
+                  <span />
+                  <span />
+                </button>
+                <Link href="/" className="brand-mark brand-mark--mobile">
+                  <Image src="/logo.png" alt="Deetech" width={190} height={56} className="brand-mark__image" priority />
+                </Link>
+              </div>
+              <div className="header-mobile-quick-actions">
+                <Link href="/cart" className="icon-button icon-button--mobile-action cart-button" aria-label="Cart">
+                  <ActionIcon name="cart" />
+                  <span>{count}</span>
+                </Link>
+                <Link href="/account" className="icon-button icon-button--mobile-action" aria-label="Account">
+                  <ActionIcon name="account" />
+                </Link>
+              </div>
             </div>
 
             <Link href="/" className="brand-mark brand-mark--desktop-shell">
@@ -220,27 +246,20 @@ export default function SiteHeader() {
             </nav>
 
             <div className="header-icon-actions">
-              <button
-                ref={mobileMenuButtonRef}
-                type="button"
-                className="icon-button icon-button--mobile"
-                onClick={() => setMobileOpen(true)}
-                aria-label="Open menu"
-                aria-expanded={mobileOpen}
-                aria-controls="mobile-navigation-menu"
-              >
-                <span />
-                <span />
-                <span />
-              </button>
               <form className="mobile-header-search" onSubmit={onSearchSubmit}>
+                <span className="mobile-header-search__icon" aria-hidden="true">
+                  <ActionIcon name="search-field" />
+                </span>
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   className="search-input"
-                  placeholder="Search products"
+                  placeholder="Search products here"
                   aria-label="Search products"
                 />
+                <button type="submit" className="mobile-header-search__submit" aria-label="Search">
+                  <ActionIcon name="search" />
+                </button>
               </form>
               <button type="button" className="icon-button icon-button--desktop" onClick={() => router.push("/products")} aria-label="Search catalog">
                 <ActionIcon name="search" />

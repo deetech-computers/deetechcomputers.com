@@ -53,22 +53,18 @@ button, input, select, textarea { font: inherit; }
 .header-mobile-top {
   display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px;
 }
+.header-mobile-main {
+  display: flex; align-items: center; gap: 14px; min-width: 0;
+}
+.header-mobile-quick-actions {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+}
 .brand-mark { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
 .brand-mark__image { width: auto; height: 40px; object-fit: contain; }
-.brand-mark--mobile .brand-mark__image { height: 50px; }
+.brand-mark--mobile .brand-mark__image { height: 42px; }
 .brand-mark--desktop-shell .brand-mark__image { height: 46px; }
 .brand-mark--desktop-shell {
   display: none;
-}
-.mobile-support-link {
-  display: inline-flex; align-items: center; justify-content: center; color: #423a2e;
-}
-.mobile-support-link__icon {
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid #ddd4c6; background: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.mobile-support-link__icon svg {
-  width: 1rem; height: 1rem;
 }
 .main-nav, .header-actions, .hero-actions, .stack-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .main-nav {
@@ -90,11 +86,44 @@ button, input, select, textarea { font: inherit; }
   margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: 6px;
 }
 .mobile-header-search {
+  position: relative;
   flex: 1 1 auto;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 .mobile-header-search .search-input {
-  min-width: 0; height: 48px; border-radius: 999px;
+  min-width: 0; height: 42px; border-radius: 12px; padding: 11px 48px 11px 40px;
+  border-color: #dfd5c8;
+  background: #fff;
+}
+.mobile-header-search__icon,
+.mobile-header-search__submit {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b1916;
+}
+.mobile-header-search__icon {
+  left: 12px;
+  pointer-events: none;
+}
+.mobile-header-search__submit {
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.mobile-header-search__icon svg,
+.mobile-header-search__submit svg {
+  width: 1rem;
+  height: 1rem;
 }
 .icon-button {
   width: 42px; height: 42px; border: 1px solid transparent; border-radius: 999px; background: transparent;
@@ -104,11 +133,17 @@ button, input, select, textarea { font: inherit; }
 .icon-button:hover { background: rgba(217, 164, 65, 0.1); border-color: rgba(217, 164, 65, 0.22); }
 .icon-button svg { width: 1.1rem; height: 1.1rem; }
 .icon-button--mobile {
-  width: 48px; height: 48px; border-color: #d8d0c3; background: #ffffff; flex-direction: column; gap: 5px;
-  box-shadow: 0 12px 32px rgba(27, 25, 22, 0.09);
+  width: 30px; height: 30px; border: 0; border-radius: 0; background: transparent; flex-direction: column; gap: 4px;
+  box-shadow: none; padding: 0;
 }
 .icon-button--mobile span {
-  width: 20px; height: 2px; border-radius: 999px; background: var(--text); display: block;
+  width: 18px; height: 2px; border-radius: 0; background: var(--text); display: block;
+}
+.icon-button--mobile-action {
+  width: 28px; height: 28px; border: 0; border-radius: 0; background: transparent; padding: 0;
+}
+.icon-button--mobile-action svg {
+  width: 1.12rem; height: 1.12rem;
 }
 .icon-button--desktop { display: none; }
 .cart-button { position: relative; }
@@ -1566,7 +1601,6 @@ button, input, select, textarea { font: inherit; }
     gap: 28px;
   }
   .header-mobile-top,
-  .mobile-support-link,
   .mobile-header-search {
     display: none;
   }
@@ -1878,7 +1912,7 @@ button, input, select, textarea { font: inherit; }
     align-items: center;
     row-gap: 12px;
   }
-  .brand-mark--mobile .brand-mark__image { height: 44px; }
+  .brand-mark--mobile .brand-mark__image { height: 38px; }
   .brand-mark--desktop-shell {
     display: none;
   }
@@ -1886,7 +1920,7 @@ button, input, select, textarea { font: inherit; }
     grid-column: 1 / -1;
     width: 100%;
     margin-left: 0;
-    gap: 10px;
+    gap: 0;
   }
   .mobile-header-search {
     width: 100%;
