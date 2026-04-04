@@ -67,6 +67,8 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const images = useMemo(() => getProductImages(product), [product]);
+  const currentImage = images[activeImage] || images[0] || "";
 
   useEffect(() => {
     if (!productId) return;
@@ -127,8 +129,6 @@ export default function ProductDetailPage() {
   }
 
   const stock = getProductStock(product);
-  const images = getProductImages(product);
-  const currentImage = images[activeImage] || images[0] || "";
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
   const productSpecs = getProductSpecs(product).filter(([, value]) => String(value || "").trim());
   const description = getProductDescription(product);
