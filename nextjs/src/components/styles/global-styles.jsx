@@ -1090,8 +1090,11 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .shop-toolbar {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     align-items: end;
+  }
+  .shop-toolbar__sort {
+    display: none;
   }
   .shop-sidebar {
     display: none;
@@ -1162,6 +1165,9 @@ button, input, select, textarea { font: inherit; }
   }
   .shop-toolbar {
     grid-template-columns: 1fr;
+  }
+  .shop-toolbar__sort {
+    display: none;
   }
   .shop-mobile-bar {
     display: grid; grid-template-columns: 1fr; gap: 10px;
