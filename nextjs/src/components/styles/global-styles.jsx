@@ -1176,19 +1176,26 @@ button, input, select, textarea { font: inherit; }
   letter-spacing: 0.08em;
 }
 .product-summary__inline-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
 }
 .product-summary__icon-action {
-  border: 0;
-  background: transparent;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
   color: #2a251e;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
-  padding: 0;
+  padding: 10px 12px;
+  text-align: center;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 180ms ease;
 }
 .product-summary__icon-action svg,
 .product-summary__icon-action span[aria-hidden="true"] {
@@ -1199,7 +1206,14 @@ button, input, select, textarea { font: inherit; }
   justify-content: center;
   flex: 0 0 auto;
 }
+.product-summary__icon-action:hover {
+  border-color: rgba(217, 164, 65, 0.35);
+  background: rgba(217, 164, 65, 0.08);
+  transform: translateY(-1px);
+}
 .product-summary__icon-action.is-active {
+  border-color: rgba(217, 164, 65, 0.45);
+  background: rgba(217, 164, 65, 0.12);
   color: #173d16;
 }
 .product-summary__meta {
@@ -1227,29 +1241,37 @@ button, input, select, textarea { font: inherit; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   color: var(--muted);
 }
 .product-summary__social p {
   margin: 0;
+  font-weight: 500;
 }
 .product-summary__social-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
 }
 .product-summary__social-links a {
+  width: 22px;
+  height: 22px;
   color: #2a251e;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  transition: color 180ms ease, transform 180ms ease;
+}
+.product-summary__social-links a:hover {
+  color: var(--brand-strong);
+  transform: translateY(-1px);
 }
 .product-summary__social-links svg,
 .product-summary__social-links span[aria-hidden="true"] {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1687,6 +1709,14 @@ button, input, select, textarea { font: inherit; }
   }
   .product-summary__social {
     gap: 10px;
+  }
+  .product-summary__inline-actions {
+    gap: 8px;
+  }
+  .product-summary__icon-action {
+    padding: 10px 8px;
+    gap: 6px;
+    font-size: 0.82rem;
   }
   .product-gallery__main {
     padding: 14px;
