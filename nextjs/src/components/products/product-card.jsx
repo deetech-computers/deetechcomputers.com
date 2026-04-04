@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/format";
 import { resolveProductImage } from "@/lib/products";
 import { useToast } from "@/components/providers/toast-provider";
+import { useCart } from "@/hooks/use-cart";
 
 const WISHLIST_STORAGE_KEY = "deetech:wishlist";
 
@@ -61,10 +62,13 @@ function ActionIcon({ src, alt }) {
 
 export default function ProductCard({ product, onAddToCart, variant = "default" }) {
   const { pushToast } = useToast();
+  const { items } = useCart();
   const productId = String(product?._id || product?.id || "");
   const [wishlisted, setWishlisted] = useState(() =>
     productId ? readWishlist().includes(productId) : false
   );
+  const [justAdded, setJustAdded] = useState(false);
+  const highlightTimerRef = useRef(null);
   const image = resolveProductImage(product.images?.[0] || product.image);
   const price = Number(product?.price || 0);
   const rating = getRating(product);
@@ -79,6 +83,23 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
     }),
     [product, summary]
   );
+  const cartQuantity = useMemo(
+    () =>
+      items.reduce((sum, item) => {
+        const itemId = String(item?.productId || item?._id || "");
+        return itemId === productId ? sum + Number(item?.qty || 0) : sum;
+      }, 0),
+    [items, productId]
+  );
+  const isInCart = cartQuantity > 0;
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) {
+        window.clearTimeout(highlightTimerRef.current);
+      }
+    };
+  }, []);
 
   function toggleWishlist() {
     if (!productId) return;
@@ -123,6 +144,13 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   function handleAddToCart() {
     if (typeof onAddToCart === "function") {
       onAddToCart(product);
+      setJustAdded(true);
+      if (highlightTimerRef.current) {
+        window.clearTimeout(highlightTimerRef.current);
+      }
+      highlightTimerRef.current = window.setTimeout(() => {
+        setJustAdded(false);
+      }, 1800);
     } else {
       pushToast("Open the product to add it from here", "info");
     }
@@ -165,9 +193,17 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
             >
               <ActionIcon src="/icons/share.svg" alt="" />
             </button>
-            <button type="button" className="product-card__cart-button" onClick={handleAddToCart} disabled={stock < 1}>
+            <button
+              type="button"
+              className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
+              onClick={handleAddToCart}
+              disabled={stock < 1}
+              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+            >
               <CartIcon />
-              <span>{stock > 0 ? "Add to cart" : "Unavailable"}</span>
+              <span>
+                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+              </span>
             </button>
             <button
               type="button"
