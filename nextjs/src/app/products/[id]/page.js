@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/format";
@@ -54,7 +54,8 @@ function getProductDescription(product) {
   );
 }
 
-export default function ProductDetailPage({ params }) {
+export default function ProductDetailPage() {
+  const params = useParams();
   const router = useRouter();
   const { addItem } = useCart();
   const [product, setProduct] = useState(null);
@@ -64,9 +65,15 @@ export default function ProductDetailPage({ params }) {
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
+  const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   useEffect(() => {
-    Promise.all([fetchProductById(params.id), fetchProducts()])
+    if (!productId) return;
+
+    setStatus("loading");
+    setError("");
+
+    Promise.all([fetchProductById(productId), fetchProducts()])
       .then(([item, items]) => {
         setProduct(item);
         setAllProducts(items);
@@ -76,7 +83,7 @@ export default function ProductDetailPage({ params }) {
         setError(err.message);
         setStatus("error");
       });
-  }, [params.id]);
+  }, [productId]);
 
   useEffect(() => {
     setActiveImage(0);
