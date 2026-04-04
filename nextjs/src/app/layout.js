@@ -2,7 +2,6 @@ import AppProviders from "@/components/providers/app-providers";
 import SiteFooter from "@/components/layout/site-footer";
 import SiteHeader from "@/components/layout/site-header";
 import GlobalStyles from "@/components/styles/global-styles";
-import "./globals.css";
 
 export const metadata = {
   title: "Deetech Computers",
