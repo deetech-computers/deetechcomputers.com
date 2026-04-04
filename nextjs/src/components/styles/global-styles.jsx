@@ -614,6 +614,13 @@ button, input, select, textarea { font: inherit; }
 .shop-hero__crumbs a:hover {
   color: var(--text);
 }
+.shop-hero__intro {
+  margin: 2px 0 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
 .shop-layout {
   display: grid; gap: 14px;
 }

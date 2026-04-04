@@ -522,6 +522,9 @@ export default function ProductsPage() {
           <span aria-hidden="true">/</span>
           <span>Shop</span>
         </p>
+        <p className="shop-hero__intro">
+          Find standout computers, accessories, and everyday tech picked to make work, play, and setup upgrades feel easy.
+        </p>
       </section>
 
       {status === "loading" && <div className="panel">Loading products...</div>}
