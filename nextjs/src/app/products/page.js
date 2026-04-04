@@ -20,11 +20,10 @@ const PRICE_FILTERS = [
 ];
 
 const SORT_OPTIONS = [
-  { value: "featured", label: "Featured" },
+  { value: "name", label: "Name: A to Z" },
   { value: "price-asc", label: "Price: Low to high" },
   { value: "price-desc", label: "Price: High to low" },
   { value: "rating", label: "Top rated" },
-  { value: "name", label: "Name: A to Z" },
 ];
 
 const REVIEW_FILTERS = [
@@ -149,7 +148,7 @@ export default function ProductsPage() {
   const [brand, setBrand] = useState("all");
   const [availability, setAvailability] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
-  const [sortBy, setSortBy] = useState("featured");
+  const [sortBy, setSortBy] = useState("name");
   const [reviewMin, setReviewMin] = useState("all");
   const [promotion, setPromotion] = useState("all");
   const [selectedSpecs, setSelectedSpecs] = useState({});
@@ -263,13 +262,7 @@ export default function ProductsPage() {
       case "name":
         return items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
       default:
-        return items.sort((a, b) => {
-          const featuredDelta = Number(Boolean(b?.isFeatured)) - Number(Boolean(a?.isFeatured));
-          if (featuredDelta !== 0) return featuredDelta;
-          const stockDelta = getProductStock(b) - getProductStock(a);
-          if (stockDelta !== 0) return stockDelta;
-          return getProductRating(b) - getProductRating(a);
-        });
+        return items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
     }
   }, [filtered, sortBy]);
 
@@ -287,6 +280,10 @@ export default function ProductsPage() {
     if (priceRange !== "all") {
       const match = PRICE_FILTERS.find((item) => item.value === priceRange);
       chips.push({ key: "price", label: match?.label || "Price", clear: () => setPriceRange("all") });
+    }
+    if (sortBy !== "name") {
+      const match = SORT_OPTIONS.find((item) => item.value === sortBy);
+      chips.push({ key: "sort", label: match?.label || "Sort", clear: () => setSortBy("name") });
     }
     if (reviewMin !== "all") {
       chips.push({ key: "review", label: `${reviewMin}+ stars`, clear: () => setReviewMin("all") });
@@ -309,7 +306,7 @@ export default function ProductsPage() {
       });
     });
     return chips;
-  }, [availability, brand, category, priceRange, promotion, reviewMin, selectedSpecs]);
+  }, [availability, brand, category, priceRange, promotion, reviewMin, selectedSpecs, sortBy]);
 
   function toggleSpecFilter(key, value) {
     setSelectedSpecs((current) => {
@@ -330,7 +327,7 @@ export default function ProductsPage() {
     setBrand("all");
     setAvailability("all");
     setPriceRange("all");
-    setSortBy("featured");
+    setSortBy("name");
     setReviewMin("all");
     setPromotion("all");
     setSelectedSpecs({});
@@ -354,6 +351,19 @@ export default function ProductsPage() {
             aria-label="Search products"
           />
         </div>
+
+        <ShopFilterSection title="Sort By">
+          <div className="shop-filter-stack">
+            {SORT_OPTIONS.map((item) => (
+              <FilterOption
+                key={item.value}
+                active={sortBy === item.value}
+                label={item.label}
+                onClick={() => setSortBy(item.value)}
+              />
+            ))}
+          </div>
+        </ShopFilterSection>
 
         <ShopFilterSection title="By Categories">
           <div className="shop-filter-stack">
