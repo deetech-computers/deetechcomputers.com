@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
+import { useToast } from "@/components/providers/toast-provider";
 import { formatCurrency } from "@/lib/format";
 import {
   canonicalCategory,
@@ -49,10 +50,66 @@ function getProductDescription(product) {
   );
 }
 
+const WISHLIST_STORAGE_KEY = "deetech:wishlist";
+const SOCIAL_LINKS = [
+  { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
+  { label: "WhatsApp", href: "https://wa.me/message/WEYXKNNA6KXXL1", icon: "whatsapp" },
+  { label: "Facebook", href: "https://www.facebook.com/share/19NkhoTCdi/?mibextid=wwXIfr", icon: "facebook" },
+  { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
+];
+
+function readWishlist() {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.map((item) => String(item)) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeWishlist(items) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+}
+
+function ProductActionIcon({ name }) {
+  if (name === "copy") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 9h10v12H9zM5 3h10v3H8v9H5z" fill="currentColor" />
+      </svg>
+    );
+  }
+  if (name === "wishlist") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21 4.7 13.9A4.9 4.9 0 0 1 12 7a4.9 4.9 0 0 1 7.3 6.9Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (name === "share") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15 8a3 3 0 1 0-2.8-4H12a3 3 0 0 0 .2 1L8 7.2a3 3 0 1 0 0 9.6l4.2 2.2A3 3 0 1 0 13 17a3 3 0 0 0-.2 1l-4.2-2.2a3 3 0 0 0 0-7.6L12.8 6A3 3 0 0 0 15 8Z" fill="currentColor" />
+      </svg>
+    );
+  }
+  const icons = {
+    facebook: "f",
+    tiktok: "♪",
+    instagram: "◎",
+    whatsapp: "◔",
+  };
+  return <span aria-hidden="true">{icons[name] || "•"}</span>;
+}
+
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { addItem } = useCart();
+  const { pushToast } = useToast();
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [qty, setQty] = useState(1);
@@ -62,6 +119,7 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   useEffect(() => {
@@ -94,6 +152,7 @@ export default function ProductDetailPage() {
     setActiveTab("description");
     setQty(1);
     setPreviewOpen(false);
+    setWishlisted(product?._id ? readWishlist().includes(String(product._id)) : false);
   }, [product?._id]);
 
   useEffect(() => {
@@ -184,6 +243,52 @@ export default function ProductDetailPage() {
       )
     : null;
 
+  function decrementQty() {
+    setQty((current) => Math.max(1, current - 1));
+  }
+
+  function incrementQty() {
+    setQty((current) => Math.min(Math.max(stock, 1), current + 1));
+  }
+
+  async function handleCopy() {
+    const url = `${window.location.origin}/products/${productId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      pushToast("Product link copied", "success");
+    } catch {
+      pushToast("Could not copy product link", "warning");
+    }
+  }
+
+  async function handleShare() {
+    const url = `${window.location.origin}/products/${productId}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: product?.name || "Deetech product", text: description, url });
+        pushToast("Product shared", "success");
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      pushToast("Product link copied", "success");
+    } catch (error) {
+      if (error?.name !== "AbortError") {
+        pushToast("Could not share product", "warning");
+      }
+    }
+  }
+
+  function handleWishlist() {
+    const currentId = String(product?._id || productId || "");
+    if (!currentId) return;
+    const nextWishlist = wishlisted
+      ? readWishlist().filter((item) => item !== currentId)
+      : Array.from(new Set([...readWishlist(), currentId]));
+    writeWishlist(nextWishlist);
+    setWishlisted(nextWishlist.includes(currentId));
+    pushToast(wishlisted ? "Removed from wishlist" : "Saved to wishlist", wishlisted ? "info" : "success");
+  }
+
   return (
     <main className="shell page-section">
       <section className="product-breadcrumbs" aria-label="Breadcrumb">
@@ -258,23 +363,57 @@ export default function ProductDetailPage() {
           <p className="product-summary__copy">{description}</p>
 
           <div className="product-summary__buy">
-            <input
-              id="qty"
-              className="field product-summary__qty"
-              type="number"
-              min="1"
-              max={Math.max(stock, 1)}
-              value={qty}
-              onChange={(event) => setQty(Number(event.target.value || 1))}
-            />
+            <div className="product-summary__qty-control" aria-label="Product quantity">
+              <button type="button" className="product-summary__qty-button" onClick={decrementQty} aria-label="Reduce quantity">
+                -
+              </button>
+              <input
+                id="qty"
+                className="field product-summary__qty"
+                type="number"
+                min="1"
+                max={Math.max(stock, 1)}
+                value={qty}
+                onChange={(event) => setQty(Math.min(Math.max(Number(event.target.value || 1), 1), Math.max(stock, 1)))}
+              />
+              <button type="button" className="product-summary__qty-button" onClick={incrementQty} aria-label="Increase quantity">
+                +
+              </button>
+            </div>
             <button type="button" className="primary-button product-summary__cart" disabled={stock < 1} onClick={() => addItem(product, qty)}>
               Add to cart
+            </button>
+          </div>
+
+          <div className="product-summary__inline-actions" aria-label="Product actions">
+            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
+              <ProductActionIcon name="copy" />
+              <span>Copy</span>
+            </button>
+            <button type="button" className={`product-summary__icon-action${wishlisted ? " is-active" : ""}`} onClick={handleWishlist}>
+              <ProductActionIcon name="wishlist" />
+              <span>Wishlist</span>
+            </button>
+            <button type="button" className="product-summary__icon-action" onClick={handleShare}>
+              <ProductActionIcon name="share" />
+              <span>Share</span>
             </button>
           </div>
 
           <div className="product-summary__meta">
             <p><strong>Category:</strong> {categoryLabel}</p>
             <p><strong>Stock:</strong> {stock > 0 ? `${stock} available` : "Out of stock"}</p>
+          </div>
+
+          <div className="product-summary__social">
+            <p>Share this product</p>
+            <div className="product-summary__social-links">
+              {SOCIAL_LINKS.map((item) => (
+                <a key={item.label} href={item.href} target="_blank" rel="noreferrer" aria-label={item.label}>
+                  <ProductActionIcon name={item.icon} />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div className="product-summary__actions">
