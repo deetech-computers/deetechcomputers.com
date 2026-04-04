@@ -897,6 +897,19 @@ button, input, select, textarea { font: inherit; }
   gap: 6px;
   min-height: 0;
 }
+.product-card__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.product-card__category {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: #a29a8b;
+  text-transform: none;
+}
 .product-card--related .product-card__body h3 {
   font-size: 0.86rem;
   line-height: 1.45;
@@ -917,7 +930,8 @@ button, input, select, textarea { font: inherit; }
 .product-card--related .product-card__rating {
   justify-content: flex-start;
   font-size: 0.62rem;
-  margin-top: 2px;
+  margin-top: 0;
+  flex: 0 0 auto;
 }
 .product-card--related .product-card__rating strong {
   display: none;

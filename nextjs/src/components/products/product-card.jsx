@@ -45,6 +45,10 @@ function getSummary(product) {
   return String(source).replace(/\s+/g, " ").trim();
 }
 
+function getCategoryLabel(product) {
+  return String(product?.category || "").replace(/[_-]+/g, " ").trim() || "Products";
+}
+
 function CartIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -77,6 +81,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const isRelated = variant === "related";
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const summary = getSummary(product);
+  const categoryLabel = getCategoryLabel(product);
   const sharePayload = useMemo(
     () => ({
       title: product?.name || "Deetech product",
@@ -170,17 +175,30 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
       </div>
 
       <div className="product-card__body">
+        {isRelated ? (
+          <div className="product-card__meta-row">
+            <p className="product-card__category">{categoryLabel}</p>
+            <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+              {Array.from({ length: 5 }, (_, index) => (
+                <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+              ))}
+              <strong>{rating.toFixed(1)}</strong>
+            </p>
+          </div>
+        ) : null}
         <Link href={productHref} className="product-card__title-link">
           <h3>{product?.name || "Product"}</h3>
         </Link>
-        <p className="product-card__description">{summary}</p>
+        <p className="product-card__description">{isRelated ? summary : summary}</p>
         <p className="product-card__price">{formatCurrency(price)}</p>
-        <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
-          {Array.from({ length: 5 }, (_, index) => (
-            <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
-          ))}
-          <strong>{rating.toFixed(1)}</strong>
-        </p>
+        {!isRelated ? (
+          <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+            ))}
+            <strong>{rating.toFixed(1)}</strong>
+          </p>
+        ) : null}
       </div>
 
       {isCatalog ? (
