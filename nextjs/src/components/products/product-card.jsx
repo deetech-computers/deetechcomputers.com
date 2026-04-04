@@ -260,10 +260,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
             <button
               type="button"
               className="product-card__icon-button product-card__icon-button--footer"
-              aria-label="Copy product link"
-              onClick={handleCopy}
+              aria-label="Share product"
+              onClick={handleShare}
             >
-              <ActionIcon src="/icons/copy.svg" alt="" />
+              <ActionIcon src="/icons/share.svg" alt="" />
             </button>
             <button
               type="button"
