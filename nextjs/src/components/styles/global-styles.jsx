@@ -1735,6 +1735,14 @@ button, input, select, textarea { font: inherit; }
 }
 @media (max-width: 640px) {
   .shell, .narrow-shell { width: min(100vw - 20px, 100%); }
+  .product-grid {
+    border-top-color: #d9d0c2;
+    border-left-color: #d9d0c2;
+  }
+  .product-card--home {
+    border-right-color: #d9d0c2;
+    border-bottom-color: #d9d0c2;
+  }
   .shop-page {
     padding-bottom: 96px;
   }
