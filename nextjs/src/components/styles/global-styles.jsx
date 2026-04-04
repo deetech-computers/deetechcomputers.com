@@ -675,15 +675,6 @@ button, input, select, textarea { font: inherit; }
 .shop-active-filter span {
   font-size: 1rem; line-height: 1;
 }
-.shop-toolbar__sort {
-  display: grid; gap: 8px;
-}
-.shop-sort-label {
-  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700;
-}
-.shop-sort-select {
-  min-width: 0;
-}
 .shop-mobile-bar,
 .shop-drawer {
   display: none;
@@ -707,6 +698,52 @@ button, input, select, textarea { font: inherit; }
 }
 .products-results {
   margin: 0; color: var(--muted); font-size: 0.88rem; font-weight: 600;
+}
+.shop-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 2px;
+}
+.shop-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shop-pagination__arrow,
+.shop-pagination__page {
+  border: 0;
+  background: transparent;
+  color: #2a251e;
+  min-width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.shop-pagination__arrow:disabled,
+.shop-pagination__page:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.shop-pagination__page.is-active {
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #183d17;
+  color: #ffffff;
+}
+.shop-pagination__ellipsis {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0 2px;
 }
 .homepage-products {
   display: grid; gap: 20px;
@@ -1064,11 +1101,8 @@ button, input, select, textarea { font: inherit; }
     align-items: start;
   }
   .shop-toolbar {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     align-items: center;
-  }
-  .shop-toolbar__sort {
-    min-width: 220px;
   }
   .shop-mobile-bar,
   .shop-drawer {
@@ -1092,9 +1126,6 @@ button, input, select, textarea { font: inherit; }
   .shop-toolbar {
     grid-template-columns: 1fr;
     align-items: end;
-  }
-  .shop-toolbar__sort {
-    display: none;
   }
   .shop-sidebar {
     display: none;
@@ -1160,14 +1191,8 @@ button, input, select, textarea { font: inherit; }
   .shop-filter-chip {
     padding: 9px 11px; font-size: 0.78rem;
   }
-  .shop-toolbar__sort {
-    gap: 6px;
-  }
   .shop-toolbar {
     grid-template-columns: 1fr;
-  }
-  .shop-toolbar__sort {
-    display: none;
   }
   .shop-mobile-bar {
     display: grid; grid-template-columns: 1fr; gap: 10px;

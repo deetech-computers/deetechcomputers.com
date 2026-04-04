@@ -153,6 +153,8 @@ export default function ProductsPage() {
   const [promotion, setPromotion] = useState("all");
   const [selectedSpecs, setSelectedSpecs] = useState({});
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchProducts()
@@ -176,6 +178,22 @@ export default function ProductsPage() {
       document.body.style.overflow = previousOverflow;
     };
   }, [mobileFiltersOpen]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+    const updateItemsPerPage = () => {
+      setItemsPerPage(mediaQuery.matches ? 6 : 9);
+    };
+
+    updateItemsPerPage();
+    mediaQuery.addEventListener("change", updateItemsPerPage);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateItemsPerPage);
+    };
+  }, []);
 
   const categories = useMemo(() => deriveCategories(products), [products]);
   const scopedProducts = useMemo(() => {
@@ -266,6 +284,37 @@ export default function ProductsPage() {
     }
   }, [filtered, sortBy]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, brand, availability, priceRange, sortBy, reviewMin, promotion, selectedSpecs, itemsPerPage]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / itemsPerPage));
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
+
+  const pagedProducts = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sorted.slice(start, start + itemsPerPage);
+  }, [currentPage, itemsPerPage, sorted]);
+
+  const visiblePagination = useMemo(() => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, "ellipsis", totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, "ellipsis", totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, "ellipsis", currentPage, currentPage + 1, "ellipsis-tail", totalPages];
+  }, [currentPage, totalPages]);
+
   const activeFilters = useMemo(() => {
     const chips = [];
     if (category !== "all") {
@@ -352,19 +401,6 @@ export default function ProductsPage() {
           />
         </div>
 
-        <ShopFilterSection title="Sort By">
-          <div className="shop-filter-stack">
-            {SORT_OPTIONS.map((item) => (
-              <FilterOption
-                key={item.value}
-                active={sortBy === item.value}
-                label={item.label}
-                onClick={() => setSortBy(item.value)}
-              />
-            ))}
-          </div>
-        </ShopFilterSection>
-
         <ShopFilterSection title="By Categories">
           <div className="shop-filter-stack">
             <FilterOption active={category === "all"} label="All" onClick={() => setCategory("all")} />
@@ -375,6 +411,19 @@ export default function ProductsPage() {
                 label={item.label}
                 count={item.count}
                 onClick={() => setCategory(item.slug)}
+              />
+            ))}
+          </div>
+        </ShopFilterSection>
+
+        <ShopFilterSection title="Sort By">
+          <div className="shop-filter-stack">
+            {SORT_OPTIONS.map((item) => (
+              <FilterOption
+                key={item.value}
+                active={sortBy === item.value}
+                label={item.label}
+                onClick={() => setSortBy(item.value)}
               />
             ))}
           </div>
@@ -487,7 +536,7 @@ export default function ProductsPage() {
               <div className="shop-toolbar panel">
                 <div className="shop-toolbar__summary">
                   <p className="products-results">
-                    Showing {sorted.length} of {products.length} products
+                    Showing {pagedProducts.length} of {sorted.length} products
                   </p>
                   {activeFilters.length ? (
                     <div className="shop-active-filters">
@@ -501,21 +550,57 @@ export default function ProductsPage() {
                   ) : null}
                 </div>
 
-                <div className="shop-toolbar__sort">
-                  <label className="shop-sort-label" htmlFor="shop-sort">Sort by</label>
-                  <select id="shop-sort" className="field shop-sort-select" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-                    {SORT_OPTIONS.map((item) => (
-                      <option key={item.value} value={item.value}>{item.label}</option>
-                    ))}
-                  </select>
-                </div>
               </div>
 
               <div className="product-grid product-grid--catalog">
-                {sorted.map((product) => (
+                {pagedProducts.map((product) => (
                   <ProductCard key={product._id} product={product} onAddToCart={addItem} variant="catalog" />
                 ))}
               </div>
+
+              {totalPages > 1 ? (
+                <nav className="shop-pagination" aria-label="Products pagination">
+                  <button
+                    type="button"
+                    className="shop-pagination__arrow"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={currentPage === 1}
+                    aria-label="Previous page"
+                  >
+                    &lsaquo;
+                  </button>
+
+                  <div className="shop-pagination__pages">
+                    {visiblePagination.map((entry, index) =>
+                      typeof entry === "number" ? (
+                        <button
+                          key={entry}
+                          type="button"
+                          className={currentPage === entry ? "shop-pagination__page is-active" : "shop-pagination__page"}
+                          onClick={() => setCurrentPage(entry)}
+                          aria-current={currentPage === entry ? "page" : undefined}
+                        >
+                          {entry}
+                        </button>
+                      ) : (
+                        <span key={`${entry}-${index}`} className="shop-pagination__ellipsis" aria-hidden="true">
+                          ...
+                        </span>
+                      )
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="shop-pagination__arrow"
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={currentPage === totalPages}
+                    aria-label="Next page"
+                  >
+                    &rsaquo;
+                  </button>
+                </nav>
+              ) : null}
             </section>
           </div>
 
