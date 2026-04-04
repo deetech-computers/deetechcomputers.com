@@ -163,7 +163,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-label="Share product"
               onClick={handleShare}
             >
-              <ActionIcon src="/icons/share.png" alt="" />
+              <ActionIcon src="/icons/share.svg" alt="" />
             </button>
             <button type="button" className="product-card__cart-button" onClick={handleAddToCart} disabled={stock < 1}>
               <CartIcon />
@@ -176,7 +176,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-pressed={wishlisted}
               onClick={toggleWishlist}
             >
-              <ActionIcon src="/icons/wishlist.png" alt="" />
+              <ActionIcon src="/icons/wishlist.svg" alt="" />
             </button>
           </div>
         </div>

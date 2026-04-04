@@ -183,9 +183,13 @@ export default function ProductsPage() {
   }, [mobileFiltersOpen, mobileSortOpen]);
 
   const categories = useMemo(() => deriveCategories(products), [products]);
+  const scopedProducts = useMemo(() => {
+    if (category === "all") return products;
+    return products.filter((product) => canonicalCategory(product.category) === category);
+  }, [category, products]);
   const brands = useMemo(() => {
     const seen = new Set();
-    return products
+    return scopedProducts
       .map((item) => String(item?.brand || "").trim())
       .filter(Boolean)
       .filter((item) => {
@@ -195,8 +199,8 @@ export default function ProductsPage() {
         return true;
       })
       .sort((a, b) => a.localeCompare(b));
-  }, [products]);
-  const specGroups = useMemo(() => buildSpecGroups(products), [products]);
+  }, [scopedProducts]);
+  const specGroups = useMemo(() => buildSpecGroups(scopedProducts), [scopedProducts]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
