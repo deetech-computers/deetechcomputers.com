@@ -1265,8 +1265,8 @@ button, input, select, textarea { font: inherit; }
   gap: 18px;
 }
 .product-summary__social-links a {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   color: #2a251e;
   display: inline-flex;
   align-items: center;
@@ -1280,8 +1280,8 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__social-links svg,
 .product-summary__social-links span[aria-hidden="true"] {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1719,6 +1719,15 @@ button, input, select, textarea { font: inherit; }
   }
   .product-summary__social {
     gap: 10px;
+  }
+  .product-summary__social-links a {
+    width: 23px;
+    height: 23px;
+  }
+  .product-summary__social-links svg,
+  .product-summary__social-links span[aria-hidden="true"] {
+    width: 17px;
+    height: 17px;
   }
   .product-summary__inline-actions {
     gap: 8px;

@@ -416,7 +416,7 @@ export default function ProductDetailPage() {
               </button>
             </div>
             <button type="button" className="primary-button product-summary__cart" disabled={stock < 1} onClick={() => addItem(product, qty)}>
-              Add to cart
+              {stock < 1 ? "Out of stock" : "Add to cart"}
             </button>
           </div>
 
