@@ -257,9 +257,6 @@ export default function SiteHeader() {
                   placeholder="Search products here"
                   aria-label="Search products"
                 />
-                <button type="submit" className="mobile-header-search__submit" aria-label="Search">
-                  <ActionIcon name="search" />
-                </button>
               </form>
               <button type="button" className="icon-button icon-button--desktop" onClick={() => router.push("/products")} aria-label="Search catalog">
                 <ActionIcon name="search" />
@@ -267,7 +264,7 @@ export default function SiteHeader() {
               <Link href="/account" className="icon-button icon-button--desktop" aria-label="Account">
                 <ActionIcon name="account" />
               </Link>
-              <Link href="/cart" className="icon-button cart-button" aria-label="Cart">
+              <Link href="/cart" className="icon-button icon-button--desktop cart-button" aria-label="Cart">
                 <ActionIcon name="cart" />
                 <span>{count}</span>
               </Link>

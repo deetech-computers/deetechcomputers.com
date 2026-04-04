@@ -93,12 +93,11 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
 }
 .mobile-header-search .search-input {
-  min-width: 0; height: 42px; border-radius: 12px; padding: 11px 48px 11px 40px;
+  min-width: 0; height: 42px; border-radius: 12px; padding: 11px 14px 11px 40px;
   border-color: #dfd5c8;
   background: #fff;
 }
-.mobile-header-search__icon,
-.mobile-header-search__submit {
+.mobile-header-search__icon {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -111,17 +110,7 @@ button, input, select, textarea { font: inherit; }
   left: 12px;
   pointer-events: none;
 }
-.mobile-header-search__submit {
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-.mobile-header-search__icon svg,
-.mobile-header-search__submit svg {
+.mobile-header-search__icon svg {
   width: 1rem;
   height: 1rem;
 }
