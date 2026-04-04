@@ -1144,7 +1144,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__buy {
   display: grid;
-  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-columns: 128px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
 }
@@ -1153,6 +1153,7 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: 42px minmax(0, 1fr) 42px;
   gap: 0;
   align-items: stretch;
+  min-width: 128px;
 }
 .product-summary__qty-button {
   border: 1px solid #d8d0c3;
@@ -1163,11 +1164,20 @@ button, input, select, textarea { font: inherit; }
   cursor: pointer;
 }
 .product-summary__qty {
+  width: 100%;
   text-align: center;
   min-height: 48px;
   border-radius: 0;
   border-left: 0;
   border-right: 0;
+  padding: 0 6px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.product-summary__qty::-webkit-outer-spin-button,
+.product-summary__qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 .product-summary__cart {
   min-height: 48px;
