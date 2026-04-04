@@ -1068,6 +1068,9 @@ button, input, select, textarea { font: inherit; }
   }
 }
 @media (min-width: 680px) and (max-width: 899px) {
+  .shop-page {
+    padding-bottom: 104px;
+  }
   .homepage-products__controls {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
@@ -1086,9 +1089,11 @@ button, input, select, textarea { font: inherit; }
     display: none;
   }
   .shop-mobile-bar {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-    position: sticky; bottom: 10px; z-index: 30;
-    width: 100%; margin-top: 18px;
+    display: grid; grid-template-columns: 1fr; gap: 12px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+    padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
+    margin-top: 0;
+    background: linear-gradient(180deg, rgba(252, 250, 246, 0), rgba(252, 250, 246, 0.92) 36%, #fcfaf6 100%);
   }
   .shop-mobile-bar__button {
     min-height: 48px; border: 0; border-radius: 0;
@@ -1121,6 +1126,9 @@ button, input, select, textarea { font: inherit; }
 }
 @media (max-width: 640px) {
   .shell, .narrow-shell { width: min(100vw - 20px, 100%); }
+  .shop-page {
+    padding-bottom: 96px;
+  }
   .shop-hero {
     padding: 22px 16px;
   }
@@ -1147,9 +1155,11 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 1fr;
   }
   .shop-mobile-bar {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    position: sticky; bottom: 10px; z-index: 30;
-    width: min(100vw - 20px, 100%); margin: 16px auto 0;
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+    width: auto; margin: 0;
+    padding: 10px 10px calc(env(safe-area-inset-bottom) + 10px);
+    background: linear-gradient(180deg, rgba(252, 250, 246, 0), rgba(252, 250, 246, 0.92) 36%, #fcfaf6 100%);
   }
   .shop-mobile-bar__button {
     min-height: 46px; border: 0; border-radius: 0;

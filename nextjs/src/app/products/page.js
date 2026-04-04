@@ -36,9 +36,6 @@ const REVIEW_FILTERS = [
 const PROMOTION_FILTERS = [
   { value: "featured", label: "Featured items" },
   { value: "new_arrivals", label: "New arrivals" },
-  { value: "best_laptops", label: "Best laptops" },
-  { value: "top_smartphones", label: "Top smartphones" },
-  { value: "shop_by_brands", label: "Shop by brands" },
 ];
 
 function labelize(value) {
@@ -157,7 +154,6 @@ export default function ProductsPage() {
   const [promotion, setPromotion] = useState("all");
   const [selectedSpecs, setSelectedSpecs] = useState({});
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [mobileSortOpen, setMobileSortOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts()
@@ -172,7 +168,7 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
-    if (!mobileFiltersOpen && !mobileSortOpen) return undefined;
+    if (!mobileFiltersOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -180,7 +176,7 @@ export default function ProductsPage() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [mobileFiltersOpen, mobileSortOpen]);
+  }, [mobileFiltersOpen]);
 
   const categories = useMemo(() => deriveCategories(products), [products]);
   const scopedProducts = useMemo(() => {
@@ -388,21 +384,23 @@ export default function ProductsPage() {
           </div>
         </ShopFilterSection>
 
-        {specGroups.map((group) => (
-          <ShopFilterSection key={group.key} title={`By ${group.label}`}>
-            <div className="shop-filter-stack">
-              {group.options.map((option) => (
-                <FilterOption
-                  key={`${group.key}-${option.value}`}
-                  active={(selectedSpecs[group.key] || []).includes(option.value)}
-                  label={option.label}
-                  count={option.count}
-                  onClick={() => toggleSpecFilter(group.key, option.value)}
-                />
-              ))}
-            </div>
-          </ShopFilterSection>
-        ))}
+        {category !== "all"
+          ? specGroups.map((group) => (
+              <ShopFilterSection key={group.key} title={`By ${group.label}`}>
+                <div className="shop-filter-stack">
+                  {group.options.map((option) => (
+                    <FilterOption
+                      key={`${group.key}-${option.value}`}
+                      active={(selectedSpecs[group.key] || []).includes(option.value)}
+                      label={option.label}
+                      count={option.count}
+                      onClick={() => toggleSpecFilter(group.key, option.value)}
+                    />
+                  ))}
+                </div>
+              </ShopFilterSection>
+            ))
+          : null}
 
         <ShopFilterSection title="Price">
           <div className="shop-filter-stack">
@@ -456,7 +454,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section shop-page">
       <section className="shop-hero panel">
         <p className="section-kicker">Shop</p>
         <h1>Find the exact product you want with richer filters and faster sorting.</h1>
@@ -470,9 +468,9 @@ export default function ProductsPage() {
 
       {status === "ready" && (
         <>
-          <div className="shop-layout">
-            <aside className="shop-sidebar panel" aria-label="Filter options">
-              {renderFilterContent()}
+        <div className="shop-layout">
+          <aside className="shop-sidebar panel" aria-label="Filter options">
+            {renderFilterContent()}
             </aside>
 
             <section className="shop-content">
@@ -515,9 +513,6 @@ export default function ProductsPage() {
             <button type="button" className="shop-mobile-bar__button" onClick={() => setMobileFiltersOpen(true)}>
               Filter
             </button>
-            <button type="button" className="shop-mobile-bar__button" onClick={() => setMobileSortOpen(true)}>
-              Sort
-            </button>
           </div>
 
           {mobileFiltersOpen ? (
@@ -529,32 +524,6 @@ export default function ProductsPage() {
                 </button>
               </div>
               <div className="shop-drawer__body">{renderFilterContent()}</div>
-            </div>
-          ) : null}
-
-          {mobileSortOpen ? (
-            <div className="shop-drawer" role="dialog" aria-modal="true" aria-label="Sort products">
-              <div className="shop-drawer__header">
-                <h2>Sort Products</h2>
-                <button type="button" className="shop-drawer__close" onClick={() => setMobileSortOpen(false)}>
-                  Close
-                </button>
-              </div>
-              <div className="shop-drawer__body">
-                <div className="shop-filter-stack">
-                  {SORT_OPTIONS.map((item) => (
-                    <FilterOption
-                      key={item.value}
-                      active={sortBy === item.value}
-                      label={item.label}
-                      onClick={() => {
-                        setSortBy(item.value);
-                        setMobileSortOpen(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
           ) : null}
         </>
