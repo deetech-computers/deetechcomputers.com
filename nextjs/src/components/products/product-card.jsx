@@ -74,6 +74,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const rating = getRating(product);
   const productHref = `/products/${productId}`;
   const isCatalog = variant === "catalog";
+  const isRelated = variant === "related";
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const summary = getSummary(product);
   const sharePayload = useMemo(
@@ -157,9 +158,9 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   }
 
   return (
-    <article className={`product-card${isCatalog ? " product-card--catalog" : ""}`}>
+    <article className={`product-card${isCatalog ? " product-card--catalog" : ""}${isRelated ? " product-card--related" : ""}`}>
       <div className="product-card__media-wrap">
-        <Link href={productHref} className={`product-card__link${isCatalog ? " product-card__link--media" : ""}`}>
+        <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
           <div className="product-card__media">
             <div className="product-card__image-shell">
               {image ? <img src={image} alt={getImageAlt(product)} loading="lazy" /> : <div className="product-card__placeholder">No image</div>}

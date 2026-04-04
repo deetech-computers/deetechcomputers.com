@@ -281,9 +281,9 @@ export default function ProductDetailPage() {
           <div className="related-products__header">
             <h2>Related products</h2>
           </div>
-          <div className="product-grid">
+          <div className="related-products__grid">
             {relatedProducts.map((item) => (
-              <ProductCard key={item._id} product={item} onAddToCart={addItem} />
+              <ProductCard key={item._id} product={item} onAddToCart={addItem} variant="related" />
             ))}
           </div>
         </section>
