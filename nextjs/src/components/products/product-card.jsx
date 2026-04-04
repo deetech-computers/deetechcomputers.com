@@ -163,7 +163,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-pressed={wishlisted}
               onClick={toggleWishlist}
             >
-              <ActionIcon src="/icons/wishlist.png" alt="" />
+              <ActionIcon src="/icons/wishlist.svg" alt="" />
             </button>
             <button
               type="button"
@@ -171,7 +171,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-label="Copy product link"
               onClick={handleCopyLink}
             >
-              <ActionIcon src="/icons/copy.png" alt="" />
+              <ActionIcon src="/icons/copy.svg" alt="" />
             </button>
             <button
               type="button"
@@ -179,7 +179,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-label="Share product"
               onClick={handleShare}
             >
-              <ActionIcon src="/icons/share.png" alt="" />
+              <ActionIcon src="/icons/share.svg" alt="" />
             </button>
           </div>
         ) : null}
