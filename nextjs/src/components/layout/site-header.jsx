@@ -181,67 +181,64 @@ export default function SiteHeader() {
         </div>
       </div>
 
-      <div
-        id="mobile-navigation-menu"
-        className={mobileOpen ? "mobile-menu is-open" : "mobile-menu"}
-        aria-hidden={mobileOpen ? undefined : true}
-        inert={mobileOpen ? undefined : ""}
-      >
-        <div className="mobile-menu__header">
-          <Link href="/" className="brand-mark">
-            <Image src="/logo.png" alt="Deetech" width={170} height={48} className="brand-mark__image" priority />
-          </Link>
-          <button
-            ref={mobileMenuCloseButtonRef}
-            type="button"
-            className="mobile-menu__close"
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close menu"
-          >
-            <span />
-            <span />
-          </button>
-        </div>
-
-        <form className="mobile-menu__search" onSubmit={onSearchSubmit}>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="search-input"
-            placeholder="Search products"
-            aria-label="Search products"
-          />
-        </form>
-
-        <nav className="mobile-menu__nav" aria-label="Mobile navigation">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className={isActivePath(pathname, item.href) ? "mobile-menu__link is-active" : "mobile-menu__link"}>
-              <span>{item.label}</span>
+      {mobileOpen ? (
+        <div id="mobile-navigation-menu" className="mobile-menu is-open" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+          <div className="mobile-menu__header">
+            <Link href="/" className="brand-mark">
+              <Image src="/logo.png" alt="Deetech" width={170} height={48} className="brand-mark__image" priority />
             </Link>
-          ))}
-        </nav>
+            <button
+              ref={mobileMenuCloseButtonRef}
+              type="button"
+              className="mobile-menu__close"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+            >
+              <span />
+              <span />
+            </button>
+          </div>
 
-        <div className="mobile-menu__actions">
-          <Link href="/cart" className="cart-pill">
-            Cart
-            <span>{count}</span>
-          </Link>
-          {isAuthenticated ? (
-            <>
-              <Link href="/account" className="ghost-link">
-                {user?.firstName || user?.name || "Account"}
+          <form className="mobile-menu__search" onSubmit={onSearchSubmit}>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="search-input"
+              placeholder="Search products"
+              aria-label="Search products"
+            />
+          </form>
+
+          <nav className="mobile-menu__nav" aria-label="Mobile navigation">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href} className={isActivePath(pathname, item.href) ? "mobile-menu__link is-active" : "mobile-menu__link"}>
+                <span>{item.label}</span>
               </Link>
-              {user?.role === "admin" ? <Link href="/admin" className="ghost-link">Admin</Link> : null}
-              <button type="button" className="ghost-button" onClick={logout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="ghost-link">Login</Link>
-              <Link href="/register" className="primary-link">Create account</Link>
-            </>
-          )}
+            ))}
+          </nav>
+
+          <div className="mobile-menu__actions">
+            <Link href="/cart" className="cart-pill">
+              Cart
+              <span>{count}</span>
+            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link href="/account" className="ghost-link">
+                  {user?.firstName || user?.name || "Account"}
+                </Link>
+                {user?.role === "admin" ? <Link href="/admin" className="ghost-link">Admin</Link> : null}
+                <button type="button" className="ghost-button" onClick={logout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="ghost-link">Login</Link>
+                <Link href="/register" className="primary-link">Create account</Link>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      ) : null}
     </header>
   );
 }
