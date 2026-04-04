@@ -979,7 +979,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-gallery {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 .product-gallery__main {
   aspect-ratio: 1 / 1;
@@ -987,6 +987,7 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   place-items: center;
   overflow: hidden;
+  padding: 24px;
 }
 .product-gallery__main img {
   width: 100%;
@@ -994,22 +995,42 @@ button, input, select, textarea { font: inherit; }
   object-fit: contain;
   display: block;
 }
+.product-gallery__selector {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  gap: 12px;
+  align-items: center;
+}
+.product-gallery__arrow {
+  border: 0;
+  background: transparent;
+  color: #40372d;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+}
 .product-gallery__thumbs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 .product-gallery__thumb {
   border: 1px solid #e6dfd3;
   background: #ffffff;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
+  min-height: 84px;
 }
 .product-gallery__thumb.is-active {
   border-color: var(--brand-strong);
 }
 .product-gallery__thumb img {
   width: 100%;
+  height: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
   display: block;
@@ -1417,8 +1438,24 @@ button, input, select, textarea { font: inherit; }
   .product-summary__buy {
     grid-template-columns: 1fr;
   }
+  .product-gallery__main {
+    padding: 14px;
+  }
+  .product-gallery__selector {
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    gap: 8px;
+  }
+  .product-gallery__arrow {
+    min-height: 56px;
+    font-size: 1.5rem;
+  }
   .product-gallery__thumbs {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .product-gallery__thumb {
+    min-height: 64px;
+    padding: 6px;
   }
   .product-tabs__nav {
     justify-content: flex-start;

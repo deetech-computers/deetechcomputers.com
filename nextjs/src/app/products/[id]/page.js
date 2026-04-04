@@ -134,18 +134,36 @@ export default function ProductDetailPage() {
             )}
           </div>
           {images.length ? (
-            <div className="product-gallery__thumbs" aria-label="Product images">
-              {images.map((image, index) => (
-                <button
-                  key={`${image}-${index}`}
-                  type="button"
-                  className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
-                  onClick={() => setActiveImage(index)}
-                  aria-label={`View image ${index + 1}`}
-                >
-                  <img src={image} alt={`${product.name} ${index + 1}`} />
-                </button>
-              ))}
+            <div className="product-gallery__selector" aria-label="Product images">
+              <button
+                type="button"
+                className="product-gallery__arrow"
+                onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+                aria-label="Previous product image"
+              >
+                &lsaquo;
+              </button>
+              <div className="product-gallery__thumbs">
+                {images.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
+                    onClick={() => setActiveImage(index)}
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    <img src={image} alt={`${product.name} ${index + 1}`} />
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="product-gallery__arrow"
+                onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+                aria-label="Next product image"
+              >
+                &rsaquo;
+              </button>
             </div>
           ) : null}
         </div>
