@@ -1,0 +1,31 @@
+{
+  "name": "deetech-next",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.9 <25"
+  },
+  "scripts": {
+    "predev": "node -e \"const major=Number(process.versions.node.split('.')[0]); if (major >= 25) { console.error('This project should be run with Node 24 LTS or 22 LTS. Current Node: ' + process.versions.node); process.exit(1); }\"",
+    "dev": "set WATCHPACK_POLLING=true&& set CHOKIDAR_USEPOLLING=1&& next dev --webpack --hostname 0.0.0.0 --port 3000",
+    "dev:lan": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-lan.ps1",
+    "dev:watch": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-watch.ps1",
+    "dev:loop": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-dev-loop.ps1",
+    "dev:cmd": "cmd /c .\\scripts\\start-dev-lan.cmd",
+    "dev:webpack": "set WATCHPACK_POLLING=true&& set CHOKIDAR_USEPOLLING=1&& next dev --webpack --hostname 0.0.0.0 --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.2.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "tailwindcss": "^4"
+  }
+}
