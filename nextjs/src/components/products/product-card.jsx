@@ -70,8 +70,6 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const rating = getRating(product);
   const productHref = `/products/${productId}`;
   const isCatalog = variant === "catalog";
-  const brand = String(product?.brand || "Deetech").trim();
-  const category = String(product?.category || "General").trim();
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const summary = getSummary(product);
   const sharePayload = useMemo(
@@ -161,31 +159,34 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
       </div>
 
       <div className="product-card__body">
-        <div className="product-card__meta">
-          <span className="product-card__eyebrow">{brand}</span>
-          <span className={stock > 0 ? "product-card__stock is-in-stock" : "product-card__stock is-out-of-stock"}>
-            {stock > 0 ? "In stock" : "Out of stock"}
-          </span>
-        </div>
         <Link href={productHref} className="product-card__title-link">
           <h3>{product?.name || "Product"}</h3>
         </Link>
         <p className="product-card__description">{summary}</p>
-        <div className="product-card__details">
-          <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
-            {Array.from({ length: 5 }, (_, index) => (
-              <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
-            ))}
-            <strong>{rating.toFixed(1)}</strong>
-          </p>
-          <span className="product-card__category">{category}</span>
-        </div>
         <p className="product-card__price">{formatCurrency(price)}</p>
+        <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+          {Array.from({ length: 5 }, (_, index) => (
+            <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+          ))}
+          <strong>{rating.toFixed(1)}</strong>
+        </p>
       </div>
 
       {isCatalog ? (
         <div className="product-card__footer">
           <div className="product-card__footer-actions" aria-label="Product actions">
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Share product"
+              onClick={handleShare}
+            >
+              <ActionIcon src="/icons/share.png" alt="" />
+            </button>
+            <button type="button" className="product-card__cart-button" onClick={handleAddToCart} disabled={stock < 1}>
+              <CartIcon />
+              <span>{stock > 0 ? "Add to cart" : "Unavailable"}</span>
+            </button>
             <button
               type="button"
               className={`product-card__icon-button product-card__icon-button--footer${wishlisted ? " is-active" : ""}`}
@@ -203,19 +204,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
             >
               <ActionIcon src="/icons/copy.png" alt="" />
             </button>
-            <button
-              type="button"
-              className="product-card__icon-button product-card__icon-button--footer"
-              aria-label="Share product"
-              onClick={handleShare}
-            >
-              <ActionIcon src="/icons/share.png" alt="" />
-            </button>
           </div>
-          <button type="button" className="product-card__cart-button" onClick={handleAddToCart} disabled={stock < 1}>
-            <CartIcon />
-            <span>{stock > 0 ? "Add to cart" : "Unavailable"}</span>
-          </button>
         </div>
       ) : null}
     </article>
