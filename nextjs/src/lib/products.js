@@ -35,6 +35,50 @@ export function getProductStock(product) {
   );
 }
 
+export function getProductReviewCount(product) {
+  const numericCount = Number(
+    product?.numReviews ??
+      product?.reviewCount ??
+      product?.reviewsCount ??
+      product?.totalReviews
+  );
+
+  if (Number.isFinite(numericCount) && numericCount > 0) {
+    return numericCount;
+  }
+
+  if (Array.isArray(product?.reviews)) {
+    return product.reviews.length;
+  }
+
+  return 0;
+}
+
+export function getProductRating(product) {
+  const reviewCount = getProductReviewCount(product);
+
+  if (reviewCount < 1) {
+    return 0;
+  }
+
+  const explicitRating = Number(product?.averageRating ?? product?.rating);
+  if (Number.isFinite(explicitRating) && explicitRating > 0) {
+    return explicitRating;
+  }
+
+  if (Array.isArray(product?.reviews) && product.reviews.length) {
+    const ratings = product.reviews
+      .map((review) => Number(review?.rating))
+      .filter((value) => Number.isFinite(value) && value > 0);
+
+    if (ratings.length) {
+      return ratings.reduce((sum, value) => sum + value, 0) / ratings.length;
+    }
+  }
+
+  return 0;
+}
+
 export function canonicalCategory(value) {
   const input = String(value || "").trim().toLowerCase();
   if (!input) return "all";
@@ -114,6 +158,6 @@ export async function fetchProductById(id) {
 
 export function pickFeaturedProducts(products, count = 6) {
   return [...(products || [])]
-    .sort((a, b) => Number(b?.rating || 0) - Number(a?.rating || 0))
+    .sort((a, b) => getProductRating(b) - getProductRating(a))
     .slice(0, count);
 }

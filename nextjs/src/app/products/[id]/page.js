@@ -13,6 +13,8 @@ import {
   fetchProductById,
   fetchProducts,
   formatCategoryLabel,
+  getProductRating,
+  getProductReviewCount,
   getProductStock,
   resolveProductImage,
 } from "@/lib/products";
@@ -35,10 +37,6 @@ function getProductSpecs(product) {
   if (typeof specs.entries === "function") return Array.from(specs.entries());
   if (typeof specs === "object") return Object.entries(specs);
   return [];
-}
-
-function getProductRating(product) {
-  return Number(product?.rating ?? product?.averageRating ?? 4);
 }
 
 function getProductDescription(product) {
@@ -227,7 +225,9 @@ export default function ProductDetailPage() {
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
   const productSpecs = getProductSpecs(product).filter(([, value]) => String(value || "").trim());
   const description = getProductDescription(product);
-  const rating = getProductRating(product);
+  const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
+  const rating = Math.round(ratingValue);
+  const reviewCount = getProductReviewCount(product);
   const reviews = Array.isArray(product?.reviews) ? product.reviews : [];
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
@@ -389,10 +389,14 @@ export default function ProductDetailPage() {
         <div className="product-summary panel">
           <p className="product-summary__eyebrow">{product?.brand || categoryLabel}</p>
           <h1>{product.name}</h1>
-          <div className="product-summary__rating" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
-            <span>{"★".repeat(Math.max(0, Math.min(5, Math.round(rating))))}</span>
-            <strong>{rating.toFixed(1)}</strong>
-            <small>{reviews.length ? `(${reviews.length} reviews)` : "(Customer favorite)"}</small>
+          <div className="product-summary__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
+            <span>
+              {Array.from({ length: 5 }, (_, index) => (
+                <span key={index}>{index < rating ? "★" : "☆"}</span>
+              ))}
+            </span>
+            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
+            <small>{reviewCount > 0 ? `(${reviewCount} reviews)` : "(0 reviews)"}</small>
           </div>
           <p className="product-summary__price">{formatCurrency(product.price)}</p>
           <p className="product-summary__copy">{description}</p>
@@ -517,7 +521,7 @@ export default function ProductDetailPage() {
                 reviews.map((review, index) => (
                   <article key={review?._id || index} className="product-review">
                     <strong>{review?.name || "Customer"}</strong>
-                    <p>{review?.comment || "Great product and solid value."}</p>
+                    <p>{review?.comment || review?.message || "No review text provided."}</p>
                   </article>
                 ))
               ) : (

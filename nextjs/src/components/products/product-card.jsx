@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/format";
-import { resolveProductImage } from "@/lib/products";
+import { getProductRating, getProductReviewCount, resolveProductImage } from "@/lib/products";
 import { useToast } from "@/components/providers/toast-provider";
 import { useCart } from "@/hooks/use-cart";
 
@@ -28,10 +28,6 @@ function writeWishlist(items) {
 
 function getImageAlt(product) {
   return product?.name || product?.title || "Product image";
-}
-
-function getRating(product) {
-  return Math.max(0, Math.min(5, Math.round(Number(product?.rating ?? product?.averageRating ?? 4))));
 }
 
 function getSummary(product) {
@@ -75,7 +71,9 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const highlightTimerRef = useRef(null);
   const image = resolveProductImage(product.images?.[0] || product.image);
   const price = Number(product?.price || 0);
-  const rating = getRating(product);
+  const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
+  const rating = Math.round(ratingValue);
+  const reviewCount = getProductReviewCount(product);
   const productHref = `/products/${productId}`;
   const isCatalog = variant === "catalog";
   const isRelated = variant === "related";
@@ -182,7 +180,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               {Array.from({ length: 5 }, (_, index) => (
                 <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
               ))}
-              <strong>{rating.toFixed(1)}</strong>
+              <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
             </p>
           </div>
         ) : null}
@@ -196,7 +194,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
             {Array.from({ length: 5 }, (_, index) => (
               <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
             ))}
-            <strong>{rating.toFixed(1)}</strong>
+            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
           </p>
         ) : null}
       </div>

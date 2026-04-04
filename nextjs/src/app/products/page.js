@@ -9,6 +9,7 @@ import {
   deriveCategories,
   fetchProducts,
   formatCategoryLabel,
+  getProductRating,
   getProductStock,
 } from "@/lib/products";
 
@@ -56,10 +57,6 @@ function getInitialCatalogFilters() {
     search: params.get("q") || "",
     category: params.get("category") || "all",
   };
-}
-
-function getProductRating(product) {
-  return Number(product?.rating ?? product?.averageRating ?? 0);
 }
 
 function getProductPrice(product) {

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import ProductCard from "@/components/products/product-card";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
-import { canonicalCategory, DEFAULT_STOREFRONT_CATEGORIES, deriveCategories, fetchProducts, pickFeaturedProducts } from "@/lib/products";
+import { canonicalCategory, DEFAULT_STOREFRONT_CATEGORIES, deriveCategories, fetchProducts, getProductRating, pickFeaturedProducts } from "@/lib/products";
 import { asArray } from "@/lib/resource";
 
 function normalizeBanner(item) {
@@ -89,7 +89,7 @@ function getBestSellerScore(product) {
       product?.salesCount ??
       product?.orderCount ??
       product?.numSales ??
-      product?.rating ??
+      getProductRating(product) ??
       0
   );
 }
@@ -98,7 +98,7 @@ function getFeaturedScore(product) {
   return Number(
     (product?.isFeatured ? 1000 : 0) +
       (product?.featured ? 1000 : 0) +
-      Number(product?.rating ?? 0) * 10
+      getProductRating(product) * 10
   );
 }
 
