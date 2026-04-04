@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
 
@@ -56,6 +56,9 @@ export default function SiteHeader() {
   const { count } = useCart();
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileMenuButtonRef = useRef(null);
+  const mobileMenuCloseButtonRef = useRef(null);
+  const previousMobileOpenRef = useRef(false);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -84,6 +87,19 @@ export default function SiteHeader() {
       document.body.style.width = previousBodyWidth;
       window.scrollTo(0, scrollY);
     };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      mobileMenuCloseButtonRef.current?.focus();
+      previousMobileOpenRef.current = true;
+      return;
+    }
+
+    if (previousMobileOpenRef.current) {
+      mobileMenuButtonRef.current?.focus();
+      previousMobileOpenRef.current = false;
+    }
   }, [mobileOpen]);
 
   const onSearchSubmit = (event) => {
@@ -129,7 +145,15 @@ export default function SiteHeader() {
           </nav>
 
           <div className="header-icon-actions">
-            <button type="button" className="icon-button icon-button--mobile" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+            <button
+              ref={mobileMenuButtonRef}
+              type="button"
+              className="icon-button icon-button--mobile"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation-menu"
+            >
               <span />
               <span />
               <span />
@@ -157,12 +181,23 @@ export default function SiteHeader() {
         </div>
       </div>
 
-      <div className={mobileOpen ? "mobile-menu is-open" : "mobile-menu"} aria-hidden={mobileOpen ? "false" : "true"}>
+      <div
+        id="mobile-navigation-menu"
+        className={mobileOpen ? "mobile-menu is-open" : "mobile-menu"}
+        aria-hidden={mobileOpen ? undefined : true}
+        inert={mobileOpen ? undefined : ""}
+      >
         <div className="mobile-menu__header">
           <Link href="/" className="brand-mark">
             <Image src="/logo.png" alt="Deetech" width={170} height={48} className="brand-mark__image" priority />
           </Link>
-          <button type="button" className="mobile-menu__close" onClick={() => setMobileOpen(false)} aria-label="Close menu">
+          <button
+            ref={mobileMenuCloseButtonRef}
+            type="button"
+            className="mobile-menu__close"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
             <span />
             <span />
           </button>
