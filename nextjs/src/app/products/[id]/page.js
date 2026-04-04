@@ -65,6 +65,7 @@ export default function ProductDetailPage() {
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
+  const [previewOpen, setPreviewOpen] = useState(false);
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   useEffect(() => {
@@ -89,7 +90,33 @@ export default function ProductDetailPage() {
     setActiveImage(0);
     setActiveTab("description");
     setQty(1);
+    setPreviewOpen(false);
   }, [product?._id]);
+
+  useEffect(() => {
+    if (!previewOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setPreviewOpen(false);
+      }
+      if (event.key === "ArrowLeft") {
+        setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1));
+      }
+      if (event.key === "ArrowRight") {
+        setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1));
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [previewOpen, images.length]);
 
   if (status === "loading") {
     return <main className="shell page-section"><div className="panel">Loading product...</div></main>;
@@ -128,7 +155,14 @@ export default function ProductDetailPage() {
         <div className="product-gallery panel">
           <div className="product-gallery__main">
             {currentImage ? (
-              <img src={currentImage} alt={product.name} />
+              <button
+                type="button"
+                className="product-gallery__preview-trigger"
+                onClick={() => setPreviewOpen(true)}
+                aria-label="Tap to preview product image"
+              >
+                <img src={currentImage} alt={product.name} />
+              </button>
             ) : (
               <div className="product-card__placeholder">No image</div>
             )}
@@ -287,6 +321,47 @@ export default function ProductDetailPage() {
             ))}
           </div>
         </section>
+      ) : null}
+
+      {previewOpen && currentImage ? (
+        <div className="product-preview" role="dialog" aria-modal="true" aria-label="Product image preview">
+          <button type="button" className="product-preview__close" onClick={() => setPreviewOpen(false)} aria-label="Close preview">
+            ×
+          </button>
+          <button
+            type="button"
+            className="product-preview__arrow product-preview__arrow--left"
+            onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+            aria-label="Previous preview image"
+          >
+            &lsaquo;
+          </button>
+          <div className="product-preview__stage">
+            <img src={currentImage} alt={product.name} />
+          </div>
+          <button
+            type="button"
+            className="product-preview__arrow product-preview__arrow--right"
+            onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+            aria-label="Next preview image"
+          >
+            &rsaquo;
+          </button>
+
+          <div className="product-preview__thumbs" aria-label="Preview images">
+            {images.map((image, index) => (
+              <button
+                key={`preview-${image}-${index}`}
+                type="button"
+                className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
+                onClick={() => setActiveImage(index)}
+                aria-label={`Preview image ${index + 1}`}
+              >
+                <img src={image} alt={`${product.name} preview ${index + 1}`} />
+              </button>
+            ))}
+          </div>
+        </div>
       ) : null}
     </main>
   );
