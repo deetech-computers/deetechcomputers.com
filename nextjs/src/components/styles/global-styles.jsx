@@ -587,13 +587,32 @@ button, input, select, textarea { font: inherit; }
 .disabled-field { background: #f5f7fb; color: var(--muted); }
 .filters-panel { grid-template-columns: 1.6fr 220px; margin-bottom: 20px; }
 .shop-hero {
-  display: grid; gap: 10px; margin-bottom: 18px;
-  padding: 26px 20px; background:
-    radial-gradient(circle at top right, rgba(217, 164, 65, 0.16), transparent 28%),
-    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,230,0.95));
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 4px 0 8px;
+  text-align: center;
+  background: transparent;
 }
 .shop-hero h1 {
-  margin: 0; max-width: 14ch; font-size: clamp(2rem, 7vw, 3.4rem); line-height: 1.02;
+  margin: 0;
+  font-size: clamp(1.7rem, 5vw, 2.2rem);
+  line-height: 1.08;
+  font-weight: 700;
+}
+.shop-hero__crumbs {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.shop-hero__crumbs a:hover {
+  color: var(--text);
 }
 .shop-layout {
   display: grid; gap: 14px;
@@ -1173,7 +1192,7 @@ button, input, select, textarea { font: inherit; }
     padding-bottom: 96px;
   }
   .shop-hero {
-    padding: 22px 16px;
+    padding: 2px 0 6px;
   }
   .shop-layout {
     gap: 12px;

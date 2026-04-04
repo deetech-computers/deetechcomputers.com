@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
@@ -514,11 +515,12 @@ export default function ProductsPage() {
 
   return (
     <main className="shell page-section shop-page">
-      <section className="shop-hero panel">
-        <p className="section-kicker">Shop</p>
-        <h1>Find the exact product you want with richer filters and faster sorting.</h1>
-        <p className="hero-copy">
-          Search, sort, and drill down by category, brand, stock, promotions, ratings, and detailed product specs.
+      <section className="shop-hero" aria-label="Shop page heading">
+        <h1>Shop</h1>
+        <p className="shop-hero__crumbs">
+          <Link href="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <span>Shop</span>
         </p>
       </section>
 
