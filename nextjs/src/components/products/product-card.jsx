@@ -43,28 +43,6 @@ function getSummary(product) {
   return String(source).replace(/\s+/g, " ").trim();
 }
 
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="M12 21.35 10.55 20C5.4 15.24 2 12.09 2 8.25 2 5.1 4.42 2.75 7.5 2.75c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.35 5.5 5.5 0 3.84-3.4 6.99-8.55 11.76L12 21.35Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function ShareIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.6 2.6 0 0 0 0-1.39l7-4.11A2.99 2.99 0 1 0 15 5a3 3 0 0 0 .04.49l-7 4.11a3 3 0 1 0 0 4.8l7.13 4.19c-.08.22-.13.46-.13.71a3 3 0 1 0 3-3Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 function CartIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -74,6 +52,10 @@ function CartIcon() {
       />
     </svg>
   );
+}
+
+function ActionIcon({ src, alt }) {
+  return <img src={src} alt={alt} className="product-card__icon-asset" loading="lazy" />;
 }
 
 export default function ProductCard({ product, onAddToCart, variant = "default" }) {
@@ -135,6 +117,24 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
     }
   }
 
+  async function handleCopyLink() {
+    if (typeof window === "undefined") return;
+
+    const url = `${window.location.origin}${productHref}`;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        pushToast("Product link copied", "success");
+        return;
+      }
+
+      pushToast("Copy is not available on this device", "warning");
+    } catch {
+      pushToast("Could not copy the product link right now", "warning");
+    }
+  }
+
   function handleAddToCart() {
     if (typeof onAddToCart === "function") {
       onAddToCart(product);
@@ -163,7 +163,15 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-pressed={wishlisted}
               onClick={toggleWishlist}
             >
-              <HeartIcon />
+              <ActionIcon src="/icons/wishlist.png" alt="" />
+            </button>
+            <button
+              type="button"
+              className="product-card__icon-button"
+              aria-label="Copy product link"
+              onClick={handleCopyLink}
+            >
+              <ActionIcon src="/icons/copy.png" alt="" />
             </button>
             <button
               type="button"
@@ -171,7 +179,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               aria-label="Share product"
               onClick={handleShare}
             >
-              <ShareIcon />
+              <ActionIcon src="/icons/share.png" alt="" />
             </button>
           </div>
         ) : null}

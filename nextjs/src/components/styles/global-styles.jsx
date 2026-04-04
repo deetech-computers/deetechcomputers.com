@@ -674,14 +674,15 @@ button, input, select, textarea { font: inherit; }
   display: grid; place-items: center; padding: 8px;
 }
 .product-card--catalog .product-card__media {
-  padding: 12px;
-  background: linear-gradient(180deg, #fffdfa 0%, #f6f1e8 100%);
+  padding: 0;
+  background: #ffffff;
+  aspect-ratio: 1 / 1.08;
 }
 .product-card__image-shell {
   width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden;
 }
 .product-card--catalog .product-card__image-shell {
-  border-radius: 18px;
+  border-radius: 22px 22px 0 0;
 }
 .product-card__media img, .product-detail img {
   width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
@@ -719,14 +720,14 @@ button, input, select, textarea { font: inherit; }
   font-size: 1.02rem; font-weight: 800; color: #171513;
 }
 .product-card__actions {
-  position: absolute; top: 12px; right: 12px; z-index: 2;
+  position: absolute; top: 12px; right: 10px; z-index: 2;
   display: grid; gap: 8px;
 }
 .product-card__icon-button {
-  width: 38px; height: 38px; border: 1px solid rgba(27, 25, 22, 0.08); border-radius: 999px;
+  width: 44px; height: 44px; border: 1px solid rgba(27, 25, 22, 0.06); border-radius: 999px;
   background: rgba(255, 255, 255, 0.92); color: var(--text);
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
-  box-shadow: 0 8px 24px rgba(27, 25, 22, 0.12);
+  box-shadow: 0 10px 28px rgba(27, 25, 22, 0.14);
   transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
 }
 .product-card__icon-button:hover {
@@ -738,6 +739,9 @@ button, input, select, textarea { font: inherit; }
 .product-card__icon-button svg,
 .product-card__cart-button svg {
   width: 1rem; height: 1rem;
+}
+.product-card__icon-asset {
+  width: 18px; height: 18px; object-fit: contain; display: block;
 }
 .product-card__footer {
   padding: 0 12px 14px;
@@ -1052,7 +1056,7 @@ button, input, select, textarea { font: inherit; }
     margin-bottom: 12px; font-size: 0.82rem;
   }
   .product-card--catalog .product-card__media {
-    padding: 10px;
+    padding: 0;
   }
   .product-card--catalog .product-card__body {
     padding: 11px 11px 8px;
@@ -1067,7 +1071,10 @@ button, input, select, textarea { font: inherit; }
     top: 10px; right: 10px;
   }
   .product-card__icon-button {
-    width: 34px; height: 34px;
+    width: 42px; height: 42px;
+  }
+  .product-card__icon-asset {
+    width: 17px; height: 17px;
   }
   .product-card__footer {
     padding: 0 11px 12px;
