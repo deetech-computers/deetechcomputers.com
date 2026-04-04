@@ -118,10 +118,11 @@ button, input, select, textarea { font: inherit; }
   display: grid; place-items: center;
 }
 .mobile-menu {
-  position: fixed; inset: 0; z-index: 999; background: #ffffff;
+  position: fixed; inset: 0; z-index: 2147483647; background: #ffffff;
   padding: max(18px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
   display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px;
   min-height: 100dvh; width: 100vw; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; isolation: isolate; touch-action: pan-y;
   opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0, -16px, 0);
   transition: opacity 220ms ease, transform 220ms ease, visibility 220ms ease;
 }
