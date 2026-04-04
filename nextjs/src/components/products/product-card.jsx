@@ -36,6 +36,7 @@ function getRating(product) {
 function getSummary(product) {
   const source =
     product?.shortDescription ||
+    product?.short_description ||
     product?.description ||
     product?.name ||
     "Shop this product";
@@ -69,12 +70,16 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const rating = getRating(product);
   const productHref = `/products/${productId}`;
   const isCatalog = variant === "catalog";
+  const brand = String(product?.brand || "Deetech").trim();
+  const category = String(product?.category || "General").trim();
+  const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
+  const summary = getSummary(product);
   const sharePayload = useMemo(
     () => ({
       title: product?.name || "Deetech product",
-      text: getSummary(product),
+      text: summary,
     }),
-    [product]
+    [product, summary]
   );
 
   function toggleWishlist() {
@@ -153,55 +158,63 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
             </div>
           </div>
         </Link>
-
-        {isCatalog ? (
-          <div className="product-card__actions" aria-label="Product actions">
-            <button
-              type="button"
-              className={`product-card__icon-button${wishlisted ? " is-active" : ""}`}
-              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-              aria-pressed={wishlisted}
-              onClick={toggleWishlist}
-            >
-              <ActionIcon src="/icons/wishlist.svg" alt="" />
-            </button>
-            <button
-              type="button"
-              className="product-card__icon-button"
-              aria-label="Copy product link"
-              onClick={handleCopyLink}
-            >
-              <ActionIcon src="/icons/copy.svg" alt="" />
-            </button>
-            <button
-              type="button"
-              className="product-card__icon-button"
-              aria-label="Share product"
-              onClick={handleShare}
-            >
-              <ActionIcon src="/icons/share.svg" alt="" />
-            </button>
-          </div>
-        ) : null}
       </div>
 
       <div className="product-card__body">
-        <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
-          {Array.from({ length: 5 }, (_, index) => (
-            <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
-          ))}
-        </p>
+        <div className="product-card__meta">
+          <span className="product-card__eyebrow">{brand}</span>
+          <span className={stock > 0 ? "product-card__stock is-in-stock" : "product-card__stock is-out-of-stock"}>
+            {stock > 0 ? "In stock" : "Out of stock"}
+          </span>
+        </div>
         <Link href={productHref} className="product-card__title-link">
-          <h3>{getSummary(product)}</h3>
+          <h3>{product?.name || "Product"}</h3>
         </Link>
+        <p className="product-card__description">{summary}</p>
+        <div className="product-card__details">
+          <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+            ))}
+            <strong>{rating.toFixed(1)}</strong>
+          </p>
+          <span className="product-card__category">{category}</span>
+        </div>
         <p className="product-card__price">{formatCurrency(price)}</p>
       </div>
 
       {isCatalog ? (
         <div className="product-card__footer">
-          <button type="button" className="product-card__cart-button" onClick={handleAddToCart}>
+          <div className="product-card__footer-actions" aria-label="Product actions">
+            <button
+              type="button"
+              className={`product-card__icon-button product-card__icon-button--footer${wishlisted ? " is-active" : ""}`}
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={wishlisted}
+              onClick={toggleWishlist}
+            >
+              <ActionIcon src="/icons/wishlist.png" alt="" />
+            </button>
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Copy product link"
+              onClick={handleCopyLink}
+            >
+              <ActionIcon src="/icons/copy.png" alt="" />
+            </button>
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Share product"
+              onClick={handleShare}
+            >
+              <ActionIcon src="/icons/share.png" alt="" />
+            </button>
+          </div>
+          <button type="button" className="product-card__cart-button" onClick={handleAddToCart} disabled={stock < 1}>
             <CartIcon />
-            <span>Add to cart</span>
+            <span>{stock > 0 ? "Add to cart" : "Unavailable"}</span>
           </button>
         </div>
       ) : null}
