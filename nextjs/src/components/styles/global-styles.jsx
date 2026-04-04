@@ -910,13 +910,14 @@ button, input, select, textarea { font: inherit; }
   text-transform: none;
 }
 .product-card--related .product-card__price {
-  color: #c64b2b;
+  color: #1f1d1b;
   font-size: 0.92rem;
   font-weight: 800;
 }
 .product-card--related .product-card__rating {
-  justify-content: flex-end;
+  justify-content: flex-start;
   font-size: 0.62rem;
+  margin-top: 2px;
 }
 .product-card--related .product-card__rating strong {
   display: none;
@@ -1109,7 +1110,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__price {
   margin: 0;
-  color: #c64b2b;
+  color: #1f1d1b;
   font-size: 1.5rem;
   font-weight: 800;
 }
