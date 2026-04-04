@@ -120,24 +120,6 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
     }
   }
 
-  async function handleCopyLink() {
-    if (typeof window === "undefined") return;
-
-    const url = `${window.location.origin}${productHref}`;
-
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        pushToast("Product link copied", "success");
-        return;
-      }
-
-      pushToast("Copy is not available on this device", "warning");
-    } catch {
-      pushToast("Could not copy the product link right now", "warning");
-    }
-  }
-
   function handleAddToCart() {
     if (typeof onAddToCart === "function") {
       onAddToCart(product);
@@ -195,14 +177,6 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               onClick={toggleWishlist}
             >
               <ActionIcon src="/icons/wishlist.png" alt="" />
-            </button>
-            <button
-              type="button"
-              className="product-card__icon-button product-card__icon-button--footer"
-              aria-label="Copy product link"
-              onClick={handleCopyLink}
-            >
-              <ActionIcon src="/icons/copy.png" alt="" />
             </button>
           </div>
         </div>
