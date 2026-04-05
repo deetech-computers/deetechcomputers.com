@@ -636,15 +636,16 @@ export async function getEmailHealthStatus() {
 }
 export function getEmailProviderInfo() {
   const smtpPort = Number(SMTP_PORT) || 587;
+  const orderEmailJsConfigured = canUseOrderEmailJs();
   return {
-    provider: "smtp_nodemailer",
+    provider: orderEmailJsConfigured ? "emailjs_backend" : "smtp_nodemailer",
     smtpHost: SMTP_HOST || "",
     smtpPort,
     smtpSecure: smtpPort === 465,
     smtpUser: SMTP_USER || "",
     smtpPassSet: Boolean(SMTP_PASS),
     hasTransporter: Boolean(transporter),
-    orderEmailJsConfigured: canUseOrderEmailJs(),
+    orderEmailJsConfigured,
     resetEmailJsConfigured: Boolean(EMAILJS_PUBLIC_KEY && EMAILJS_RESET_SERVICE_ID && EMAILJS_RESET_TEMPLATE_ID && EMAILJS_PRIVATE_KEY),
     resetEmailJsPrivateKeySet: Boolean(EMAILJS_PRIVATE_KEY),
     environment: NODE_ENV,
