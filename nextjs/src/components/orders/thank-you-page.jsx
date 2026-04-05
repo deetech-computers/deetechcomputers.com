@@ -63,9 +63,18 @@ function downloadInvoice(order, summary) {
 
 export default function ThankYouPage() {
   const [order, setOrder] = useState(null);
+  const [arriving, setArriving] = useState(false);
 
   useEffect(() => {
     setOrder(readLastOrder());
+    if (typeof window !== "undefined") {
+      const shouldAnimate =
+        window.sessionStorage.getItem("deetech-order-complete-animate") === "1";
+      if (shouldAnimate) {
+        setArriving(true);
+        window.sessionStorage.removeItem("deetech-order-complete-animate");
+      }
+    }
     return () => {
       clearLastOrder();
     };
@@ -98,7 +107,7 @@ export default function ThankYouPage() {
         </p>
       </section>
 
-      <section className="order-complete shellless">
+      <section className={arriving ? "order-complete order-complete--arriving shellless" : "order-complete shellless"}>
         <section className="order-complete__intro">
           <div className="order-complete__check" aria-hidden="true">{"\u2713"}</div>
           <h2>Your order is completed!</h2>

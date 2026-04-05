@@ -27,6 +27,7 @@ export default function CheckoutPaymentPage() {
   const { token, isAuthenticated } = useAuth();
   const { pushToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [rewarding, setRewarding] = useState(false);
   const [proofUploading, setProofUploading] = useState(false);
   const [affiliateState, setAffiliateState] = useState({
     status: "idle",
@@ -299,6 +300,11 @@ export default function CheckoutPaymentPage() {
       clearCheckoutDraft();
       clearCart();
       pushToast("Order placed successfully", "success");
+      setRewarding(true);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem("deetech-order-complete-animate", "1");
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, 1400));
       router.push("/order-completed");
     } catch (error) {
       pushToast(error.message || "Unable to place order", "error");
@@ -332,6 +338,17 @@ export default function CheckoutPaymentPage() {
 
   return (
     <main className="shell page-section">
+      {rewarding ? (
+        <div className="checkout-success-transition" aria-live="polite">
+          <div className="checkout-success-transition__halo" aria-hidden="true" />
+          <div className="checkout-success-transition__card">
+            <div className="checkout-success-transition__check" aria-hidden="true">{"\u2713"}</div>
+            <strong>Payment confirmed</strong>
+            <p>Your order is being wrapped up beautifully.</p>
+          </div>
+        </div>
+      ) : null}
+
       <section className="checkout-hero">
         <h1>Checkout</h1>
         <p className="checkout-hero__crumbs">
