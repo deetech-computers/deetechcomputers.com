@@ -2836,6 +2836,7 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid #e3ddd3;
   background: #fff;
   overflow: hidden;
+  border-radius: 28px;
 }
 .faq-card.is-open {
   background: #184f27;
@@ -2888,6 +2889,7 @@ button, input, select, textarea { font: inherit; }
   color: #fff;
   text-align: center;
   box-shadow: 0 22px 44px rgba(24, 79, 39, 0.16);
+  border-radius: 30px;
 }
 .faq-support-card__icon {
   width: 78px;
@@ -2920,6 +2922,7 @@ button, input, select, textarea { font: inherit; }
   color: #1f1d1b;
   font-weight: 700;
   text-decoration: none;
+  border-radius: 999px;
 }
 .thankyou-panel, .thankyou-summary { display: grid; gap: 18px; }
 .thankyou-items-panel { display: grid; gap: 12px; }
@@ -4018,6 +4021,9 @@ button, input, select, textarea { font: inherit; }
   .faq-showcase__layout {
     grid-template-columns: 1fr;
   }
+  .faq-card {
+    border-radius: 24px;
+  }
   .faq-card__question {
     padding: 20px 18px;
     font-size: 1.02rem;
@@ -4027,6 +4033,7 @@ button, input, select, textarea { font: inherit; }
   }
   .faq-support-card {
     padding: 28px 20px;
+    border-radius: 26px;
   }
   .orders-summary,
   .order-list__product-grid,
