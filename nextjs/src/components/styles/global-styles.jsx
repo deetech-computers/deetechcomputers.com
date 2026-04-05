@@ -1478,6 +1478,8 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: 40px minmax(0, 1fr) 40px;
   align-items: center;
   gap: 10px;
+  width: min(100%, 540px);
+  justify-self: center;
 }
 .product-preview__thumb-arrow {
   width: 40px;
@@ -1499,6 +1501,7 @@ button, input, select, textarea { font: inherit; }
   scroll-behavior: smooth;
   scrollbar-width: none;
   min-width: 0;
+  justify-content: center;
 }
 .product-preview__thumb-rail::-webkit-scrollbar {
   display: none;
@@ -2114,6 +2117,7 @@ button, input, select, textarea { font: inherit; }
   .product-preview__thumbs {
     grid-template-columns: 28px minmax(0, 1fr) 28px;
     gap: 8px;
+    width: min(100%, 340px);
   }
   .product-preview__thumb-arrow {
     width: 28px;
