@@ -835,55 +835,48 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <aside className="product-review-form product-review-form--full">
-                <h3>{myReview ? "Update your review" : "Write a review"}</h3>
-                <p>{isAuthenticated ? "Share your real experience to help other customers buy with confidence." : "Login to write a review. Guests can still browse all customer reviews."}</p>
-                <form className="auth-form" onSubmit={handleReviewSubmit}>
-                  <label>
-                    <span>Rating</span>
-                    <select
-                      className="field"
-                      value={reviewForm.rating}
-                      onChange={(event) => setReviewForm((current) => ({ ...current, rating: Number(event.target.value) }))}
-                      disabled={!isAuthenticated}
-                    >
-                      {[5, 4, 3, 2, 1].map((value) => (
-                        <option key={value} value={value}>{value} Star{value === 1 ? "" : "s"}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    <span>Review title</span>
-                    <input
-                      className="field"
-                      value={reviewForm.title}
-                      onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
-                      placeholder="Summarize your experience"
-                      disabled={!isAuthenticated}
-                    />
-                  </label>
-                  <label>
-                    <span>Your review</span>
-                    <textarea
-                      className="field"
-                      rows="5"
-                      value={reviewForm.comment}
-                      onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-                      placeholder="Tell other customers what stood out to you"
-                      disabled={!isAuthenticated}
-                    />
-                  </label>
-                  {isAuthenticated ? (
+              {isAuthenticated ? (
+                <aside className="product-review-form product-review-form--full">
+                  <h3>{myReview ? "Update your review" : "Write a review"}</h3>
+                  <p>Share your real experience to help other customers buy with confidence.</p>
+                  <form className="auth-form" onSubmit={handleReviewSubmit}>
+                    <label>
+                      <span>Rating</span>
+                      <select
+                        className="field"
+                        value={reviewForm.rating}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, rating: Number(event.target.value) }))}
+                      >
+                        {[5, 4, 3, 2, 1].map((value) => (
+                          <option key={value} value={value}>{value} Star{value === 1 ? "" : "s"}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Review title</span>
+                      <input
+                        className="field"
+                        value={reviewForm.title}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
+                        placeholder="Summarize your experience"
+                      />
+                    </label>
+                    <label>
+                      <span>Your review</span>
+                      <textarea
+                        className="field"
+                        rows="5"
+                        value={reviewForm.comment}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
+                        placeholder="Tell other customers what stood out to you"
+                      />
+                    </label>
                     <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
                       {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
                     </button>
-                  ) : (
-                    <button type="button" className="ghost-button product-review-form__submit" onClick={() => router.push("/login")}>
-                      Login to review
-                    </button>
-                  )}
-                </form>
-              </aside>
+                  </form>
+                </aside>
+              ) : null}
             </div>
           ) : null}
         </div>
