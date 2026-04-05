@@ -2900,6 +2900,8 @@ button, input, select, textarea { font: inherit; }
   justify-items: center;
   gap: 16px;
   padding: 34px 26px;
+  position: sticky;
+  top: 120px;
   background: #184f27;
   color: #fff;
   text-align: center;
@@ -4051,6 +4053,8 @@ button, input, select, textarea { font: inherit; }
     padding: 0 22px;
   }
   .faq-support-card {
+    position: static;
+    top: auto;
     padding: 28px 20px;
     border-radius: 26px;
   }
