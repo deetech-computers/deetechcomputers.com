@@ -29,6 +29,7 @@ export default function SiteFooter() {
             <li><Link href="/edit-account">Edit Profile</Link></li>
             <li><Link href="/orders">Orders</Link></li>
             <li><Link href="/messages">Messages</Link></li>
+            <li><Link href="/wishlist">Wishlist</Link></li>
             <li><Link href="/cart">Cart</Link></li>
           </ul>
         </div>
