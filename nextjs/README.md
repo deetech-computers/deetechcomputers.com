@@ -9,6 +9,8 @@ It is the clean deployment target for Vercel and should be treated as its own fr
 Production:
 
 - `DEETECH_API_ORIGIN=https://deetechcomputers-com.onrender.com`
+- `NEXT_PUBLIC_SITE_URL=https://deetechcomputers-com.vercel.app`
+- `NEXT_PUBLIC_DEETECH_ASSET_BASE=https://deetechcomputers-com.onrender.com`
 
 Local development:
 
@@ -37,4 +39,10 @@ The backend for production is expected to be the Render service at:
 
 ```text
 https://deetechcomputers-com.onrender.com
+```
+
+The live frontend storefront URL is:
+
+```text
+https://deetechcomputers-com.vercel.app
 ```

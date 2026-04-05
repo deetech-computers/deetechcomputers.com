@@ -1,4 +1,11 @@
-const assetBase = process.env.NEXT_PUBLIC_DEETECH_ASSET_BASE || "";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://deetechcomputers-com.vercel.app";
+
+const assetBase =
+  process.env.NEXT_PUBLIC_DEETECH_ASSET_BASE ||
+  (process.env.NODE_ENV === "production"
+    ? "https://deetechcomputers-com.onrender.com"
+    : "");
 
 export const BASE_URL = assetBase;
 export const API_BASE = "/api";

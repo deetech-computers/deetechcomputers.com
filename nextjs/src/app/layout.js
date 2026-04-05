@@ -2,10 +2,22 @@ import AppProviders from "@/components/providers/app-providers";
 import SiteFooter from "@/components/layout/site-footer";
 import SiteHeader from "@/components/layout/site-header";
 import GlobalStyles from "@/components/styles/global-styles";
+import { APP_NAME, SITE_URL } from "@/lib/config";
 
 export const metadata = {
-  title: "Deetech Computers",
+  metadataBase: new URL(SITE_URL),
+  title: APP_NAME,
   description: "Standalone Next.js storefront for Deetech Computers.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: APP_NAME,
+    description: "Standalone Next.js storefront for Deetech Computers.",
+    url: SITE_URL,
+    siteName: APP_NAME,
+    type: "website",
+  },
 };
 
 export const viewport = {
