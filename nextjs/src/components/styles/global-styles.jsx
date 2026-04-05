@@ -1098,8 +1098,9 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 24px;
+  padding: 0;
   border: 0;
+  border-radius: 28px;
 }
 .product-gallery__preview-trigger {
   width: 100%;
@@ -1112,7 +1113,7 @@ button, input, select, textarea { font: inherit; }
 .product-gallery__main img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 .product-gallery__selector {
@@ -1139,20 +1140,23 @@ button, input, select, textarea { font: inherit; }
   gap: 12px;
 }
 .product-gallery__thumb {
-  border: 1px solid #e6dfd3;
+  border: 1px solid #ddd2c1;
   background: #ffffff;
-  padding: 10px;
+  padding: 0;
   cursor: pointer;
   min-height: 84px;
+  overflow: hidden;
+  border-radius: 24px;
 }
 .product-gallery__thumb.is-active {
-  border-color: var(--brand-strong);
+  border-color: #23201b;
+  box-shadow: inset 0 0 0 1px #23201b;
 }
 .product-gallery__thumb img {
   width: 100%;
   height: 100%;
   aspect-ratio: 1 / 1;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 .product-summary {
@@ -1289,9 +1293,34 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__meta p {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .product-summary__meta strong {
   color: var(--text);
+}
+.product-summary__stock-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.product-summary__stock-badge.is-in-stock {
+  color: #2ca66a;
+  border-color: rgba(44, 166, 106, 0.48);
+  background: rgba(44, 166, 106, 0.08);
+}
+.product-summary__stock-badge.is-out-of-stock {
+  color: #b42318;
+  border-color: rgba(180, 35, 24, 0.35);
+  background: rgba(180, 35, 24, 0.08);
 }
 .product-summary__actions {
   display: flex;
@@ -1350,7 +1379,11 @@ button, input, select, textarea { font: inherit; }
   grid-template-rows: 56px minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
-  padding: 16px 12px 22px;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  padding: 16px 20px 22px;
 }
 .product-preview__close {
   grid-column: 3;
@@ -1371,19 +1404,23 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   place-items: center;
   min-height: 0;
+  width: 100%;
+  height: 100%;
 }
 .product-preview__stage img {
-  width: min(100%, 720px);
-  max-height: 72vh;
+  width: min(100%, 1200px);
+  max-width: 100%;
+  max-height: calc(100dvh - 180px);
   object-fit: contain;
   display: block;
+  border-radius: 28px;
 }
 .product-preview__arrow {
   width: 56px;
   height: 56px;
   border: 0;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.18);
+  border-radius: 18px;
+  background: #184d22;
   color: #ffffff;
   font-size: 2rem;
   line-height: 1;
@@ -1411,19 +1448,21 @@ button, input, select, textarea { font: inherit; }
 .product-preview__thumb {
   width: 74px;
   height: 74px;
-  border: 1px solid #d8d0c3;
+  border: 1px solid #ddd2c1;
   background: #fff;
-  padding: 6px;
+  padding: 0;
   cursor: pointer;
+  overflow: hidden;
+  border-radius: 18px;
 }
 .product-preview__thumb.is-active {
-  border-color: #273f8f;
-  box-shadow: inset 0 0 0 1px #273f8f;
+  border-color: #184d22;
+  box-shadow: inset 0 0 0 1px #184d22;
 }
 .product-preview__thumb img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 .product-tabs {
@@ -1960,7 +1999,7 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.82rem;
   }
   .product-gallery__main {
-    padding: 14px;
+    padding: 0;
   }
   .product-gallery__selector {
     grid-template-columns: 24px minmax(0, 1fr) 24px;
@@ -2001,7 +2040,7 @@ button, input, select, textarea { font: inherit; }
   }
   .product-preview__stage img {
     width: 100%;
-    max-height: 62vh;
+    max-height: calc(100dvh - 170px);
   }
   .product-preview__thumbs {
     gap: 8px;

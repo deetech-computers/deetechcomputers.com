@@ -285,7 +285,12 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!previewOpen) return undefined;
 
+    const scrollY = window.scrollY;
     const previousOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
         setPreviewOpen(false);
@@ -298,11 +303,20 @@ export default function ProductDetailPage() {
       }
     };
 
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
       document.body.style.overflow = previousOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [images.length, previewOpen]);
@@ -598,7 +612,12 @@ export default function ProductDetailPage() {
 
           <div className="product-summary__meta">
             <p><strong>Category:</strong> {categoryLabel}</p>
-            <p><strong>Stock:</strong> {stock > 0 ? `${stock} available` : "Out of stock"}</p>
+            <p>
+              <strong>Stock:</strong>
+              <span className={stock > 0 ? "product-summary__stock-badge is-in-stock" : "product-summary__stock-badge is-out-of-stock"}>
+                {stock > 0 ? "In Stock" : "Out of Stock"}
+              </span>
+            </p>
           </div>
 
           <div className="product-summary__social">
