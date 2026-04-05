@@ -4,15 +4,61 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { clearLastOrder, readLastOrder } from "@/lib/order-confirmation";
 import { formatCurrency } from "@/lib/format";
+import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 
 function paymentLabel(value) {
   if (value === "mtn") return "MTN Mobile Money";
-  if (value === "vodafone") return "Telecel/Vodafone Cash";
+  if (value === "vodafone") return "Telecel Cash";
   if (value === "bank") return "Bank Transfer";
   if (value === "hubtel") return "Hubtel";
-  if (value === "momo") return "Mobile Money";
-  if (value === "cash") return "Cash on delivery";
   return value || "N/A";
+}
+
+function formatDate(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return "TBD";
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function downloadInvoice(order, summary) {
+  if (typeof window === "undefined" || !order || !summary) return;
+  const lines = [
+    "DEETECH COMPUTERS INVOICE",
+    `Order ID: ${order.orderId || order.reference || "N/A"}`,
+    `Transaction ID: ${order.transactionId || "N/A"}`,
+    `Payment Method: ${paymentLabel(order.paymentMethod)}`,
+    `Order Date: ${formatDate(order.date)}`,
+    `Estimated Delivery: ${formatDate(order.estimatedDeliveryDate)}`,
+    "",
+    "Items:",
+    ...summary.items.map((item) => {
+      const qty = Number(item.quantity || item.qty || 1);
+      const price = Number(item.price || 0);
+      return `- ${item.name || "Product"} x${qty}: ${formatCurrency(qty * price)}`;
+    }),
+    "",
+    `Subtotal: ${formatCurrency(summary.subtotal)}`,
+    `Shipping: ${summary.shipping === 0 ? "FREE" : formatCurrency(summary.shipping)}`,
+    `Total: ${formatCurrency(summary.total)}`,
+    "",
+    `Customer Email: ${order.email || "N/A"}`,
+    `Customer Phone: ${order.phone || "N/A"}`,
+    `Delivery Address: ${[order.address, order.city].filter(Boolean).join(", ") || "N/A"}`,
+  ];
+
+  const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `deetech-invoice-${order.orderId || order.reference || "order"}.txt`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.URL.revokeObjectURL(url);
 }
 
 export default function ThankYouPage() {
@@ -38,70 +84,119 @@ export default function ThankYouPage() {
       shipping,
       subtotal,
       total: Number(order.total || 0),
-      date: order.date ? new Date(order.date) : new Date(),
     };
   }, [order]);
 
   return (
-    <main className="shell page-section narrow-shell">
-      <section className="panel thankyou-panel">
-        <p className="section-kicker">Order placed successfully</p>
-        <h1>{order?.reference ? `Order Confirmed #${order.reference}` : "Order Successful!"}</h1>
-        <p className="hero-copy">
-          {order
-            ? "We'll contact you soon. Your reference number and order summary are below."
-            : "Your order has already been processed. Thank you."}
+    <main className="shell page-section">
+      <section className="checkout-hero">
+        <h1>Order Completed</h1>
+        <p className="checkout-hero__crumbs">
+          <Link href="/">Home</Link>
+          <span>/</span>
+          <span>Order Completed</span>
         </p>
+      </section>
 
-        {summary ? (
-          <div className="thankyou-summary">
-            <div className="thankyou-meta-grid">
-              <div className="data-item">
-                <strong>Reference</strong>
-                <p>#{order.reference || "N/A"}</p>
-              </div>
-              <div className="data-item">
-                <strong>Date</strong>
-                <p>{Number.isNaN(summary.date.getTime()) ? "-" : summary.date.toLocaleDateString("en-GB")}</p>
-              </div>
-              <div className="data-item">
-                <strong>Payment</strong>
-                <p>{paymentLabel(order.paymentMethod)}</p>
-              </div>
-            </div>
+      <section className="order-complete shellless">
+        <section className="order-complete__intro">
+          <div className="order-complete__check" aria-hidden="true">✓</div>
+          <h2>Your order is completed!</h2>
+          <p>Thank you. Your order has been received.</p>
+        </section>
 
-            <div className="panel thankyou-items-panel">
-              <h2>Order Items</h2>
-              <div className="data-list">
+        {order && summary ? (
+          <>
+            <section className="order-complete__meta">
+              <div>
+                <span>Order ID</span>
+                <strong>#{order.orderId || order.reference || "N/A"}</strong>
+              </div>
+              <div>
+                <span>Payment Method</span>
+                <strong>{paymentLabel(order.paymentMethod)}</strong>
+              </div>
+              <div>
+                <span>Transaction ID</span>
+                <strong>{order.transactionId || "N/A"}</strong>
+              </div>
+              <div>
+                <span>Estimated Delivery Date</span>
+                <strong>{formatDate(order.estimatedDeliveryDate)}</strong>
+              </div>
+              <button
+                type="button"
+                className="order-complete__invoice"
+                onClick={() => downloadInvoice(order, summary)}
+              >
+                Download Invoice
+              </button>
+            </section>
+
+            <section className="panel order-complete__details">
+              <div className="order-complete__details-head">
+                <h2>Order Details</h2>
+              </div>
+
+              <div className="order-complete__table-head">
+                <span>Products</span>
+                <span>Sub Total</span>
+              </div>
+
+              <div className="order-complete__items">
                 {summary.items.map((item, index) => {
                   const qty = Number(item.quantity || item.qty || 1);
                   const price = Number(item.price || 0);
                   return (
-                    <div key={`${item.name}-${index}`} className="data-item thankyou-item-row">
-                      <div>
-                        <strong>{item.name || "Product"}</strong>
-                        <p className="hero-copy">Qty {qty}</p>
+                    <article key={`${item.name}-${index}`} className="order-complete__item">
+                      <div className="order-complete__product">
+                        <div className="order-complete__thumb">
+                          {resolveProductImage(item.image) ? (
+                            <img src={resolveProductImage(item.image)} alt={item.name || "Product"} />
+                          ) : (
+                            <div className="product-card__placeholder">No image</div>
+                          )}
+                        </div>
+                        <div className="order-complete__product-copy">
+                          <strong>{item.name || "Product"}</strong>
+                          <small>{formatCategoryLabel(item.category || "Product")}</small>
+                        </div>
                       </div>
-                      <strong>{formatCurrency(qty * price)}</strong>
-                    </div>
+                      <strong className="order-complete__price">{formatCurrency(qty * price)}</strong>
+                    </article>
                   );
                 })}
               </div>
-            </div>
 
-            <div className="panel thankyou-items-panel">
-              <h2>Order Summary</h2>
-              <div className="data-list">
-                <div className="data-item thankyou-line"><span>Subtotal</span><strong>{formatCurrency(summary.subtotal)}</strong></div>
-                <div className="data-item thankyou-line"><span>Delivery</span><strong>{summary.shipping === 0 ? "FREE" : formatCurrency(summary.shipping)}</strong></div>
-                <div className="data-item thankyou-line"><span>Total</span><strong>{formatCurrency(summary.total)}</strong></div>
-                <div className="data-item thankyou-line"><span>Email</span><strong>{order.email || "N/A"}</strong></div>
-                <div className="data-item thankyou-line"><span>Phone</span><strong>{order.phone || "N/A"}</strong></div>
-                <div className="data-item thankyou-line"><span>Address</span><strong>{[order.address, order.city].filter(Boolean).join(", ") || "N/A"}</strong></div>
+              <div className="order-complete__totals">
+                <div className="order-complete__totals-line">
+                  <span>Shipping</span>
+                  <strong>{summary.shipping === 0 ? formatCurrency(0) : formatCurrency(summary.shipping)}</strong>
+                </div>
+                <div className="order-complete__totals-line">
+                  <span>Taxes</span>
+                  <strong>{formatCurrency(0)}</strong>
+                </div>
+                <div className="order-complete__totals-line">
+                  <span>Coupon Discount</span>
+                  <strong>{formatCurrency(Math.max(0, summary.subtotal + summary.shipping - summary.total) * -1)}</strong>
+                </div>
               </div>
+
+              <div className="order-complete__total">
+                <span>Total</span>
+                <strong>{formatCurrency(summary.total)}</strong>
+              </div>
+            </section>
+          </>
+        ) : (
+          <section className="panel order-complete__details">
+            <div className="order-complete__details-head">
+              <h2>Order Details</h2>
             </div>
-          </div>
-        ) : null}
+            <p className="hero-copy">Your order has already been processed. Please check your email for the confirmation details.</p>
+          </section>
+        )}
 
         <div className="hero-actions">
           <Link href="/products" className="primary-link">Continue Shopping</Link>

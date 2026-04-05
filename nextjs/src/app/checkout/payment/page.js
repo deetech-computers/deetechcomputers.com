@@ -271,16 +271,23 @@ export default function CheckoutPaymentPage() {
       const order = result?.order || {};
       writeLastOrder({
         reference: result?.orderId || order?._id || clientOrderRef,
+        orderId: result?.orderId || order?._id || clientOrderRef,
+        transactionId: clientOrderRef,
         date: order?.createdAt || new Date().toISOString(),
+        estimatedDeliveryDate: new Date(
+          new Date(order?.createdAt || Date.now()).getTime() + 3 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         paymentMethod: form.paymentMethod,
         total: Number(order?.totalPrice || total),
         subtotal,
         shipping,
         items: items.map((item) => ({
           name: item.name,
+          category: item.category || item.categoryName || "Product",
           quantity: item.qty,
           qty: item.qty,
           price: Number(item.price || 0),
+          image: item.image || "",
         })),
         email: form.shippingEmail,
         phone: form.mobileNumber,
@@ -291,7 +298,7 @@ export default function CheckoutPaymentPage() {
       clearCheckoutDraft();
       clearCart();
       pushToast("Order placed successfully", "success");
-      router.push("/thankyou");
+      router.push("/order-completed");
     } catch (error) {
       pushToast(error.message || "Unable to place order", "error");
     } finally {

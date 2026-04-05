@@ -2525,6 +2525,160 @@ button, input, select, textarea { font: inherit; }
 .thankyou-panel, .thankyou-summary { display: grid; gap: 18px; }
 .thankyou-items-panel { display: grid; gap: 12px; }
 .thankyou-item-row, .thankyou-line { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.order-complete {
+  display: grid;
+  gap: 28px;
+}
+.order-complete__intro {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 32px 0 8px;
+}
+.order-complete__check {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #c9962f;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.order-complete__intro h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+.order-complete__intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.order-complete__meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 0;
+  background: #184d22;
+  color: #fff;
+  padding: 18px 28px;
+  border-radius: 16px;
+  align-items: center;
+}
+.order-complete__meta > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding-right: 20px;
+  border-right: 1px solid rgba(255,255,255,0.18);
+}
+.order-complete__meta > div:last-of-type {
+  border-right: 0;
+}
+.order-complete__meta span {
+  color: rgba(255,255,255,0.82);
+}
+.order-complete__meta strong {
+  color: #fff;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.order-complete__invoice {
+  justify-self: end;
+  min-height: 56px;
+  padding: 0 28px;
+  border-radius: 999px;
+  border: 0;
+  background: #fff;
+  color: #1f1d1b;
+  font-weight: 600;
+  cursor: pointer;
+}
+.order-complete__details {
+  display: grid;
+  gap: 20px;
+  padding: 28px 30px;
+}
+.order-complete__details-head {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #ece5d9;
+}
+.order-complete__details-head h2 {
+  margin: 0;
+}
+.order-complete__table-head,
+.order-complete__item,
+.order-complete__totals-line,
+.order-complete__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.order-complete__table-head {
+  font-weight: 600;
+}
+.order-complete__items {
+  display: grid;
+  gap: 18px;
+}
+.order-complete__item {
+  padding-bottom: 16px;
+}
+.order-complete__product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.order-complete__thumb {
+  width: 74px;
+  height: 74px;
+  overflow: hidden;
+  background: #f6f1e7;
+  flex: 0 0 auto;
+}
+.order-complete__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.order-complete__product-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.order-complete__product-copy strong,
+.order-complete__price {
+  color: #1f1d1b;
+}
+.order-complete__product-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.order-complete__product-copy small {
+  color: var(--muted);
+}
+.order-complete__totals {
+  display: grid;
+  gap: 18px;
+  padding: 18px 0;
+  border-top: 1px solid #ece5d9;
+  border-bottom: 1px solid #ece5d9;
+}
+.order-complete__total {
+  font-size: 1.1rem;
+}
+.order-complete__total strong {
+  font-size: 1.2rem;
+}
 @media (min-width: 1100px) {
   .header-inner {
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -2641,6 +2795,9 @@ button, input, select, textarea { font: inherit; }
   .checkout-summary {
     position: sticky;
     top: 108px;
+  }
+  .order-complete__details {
+    padding: 28px 32px;
   }
 }
 @media (min-width: 641px) and (max-width: 899px) {
@@ -2801,6 +2958,40 @@ button, input, select, textarea { font: inherit; }
   }
   .checkout-summary__line strong {
     max-width: 150px;
+  }
+  .order-complete__meta {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 18px 16px;
+  }
+  .order-complete__meta > div {
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .order-complete__meta > div:last-of-type {
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .order-complete__invoice {
+    justify-self: stretch;
+  }
+  .order-complete__details {
+    padding: 18px 16px;
+  }
+  .order-complete__table-head {
+    display: none;
+  }
+  .order-complete__item,
+  .order-complete__totals-line,
+  .order-complete__total {
+    align-items: flex-start;
+  }
+  .order-complete__item {
+    flex-direction: column;
+  }
+  .order-complete__price {
+    align-self: flex-end;
   }
   .cart-table {
     padding: 0;
