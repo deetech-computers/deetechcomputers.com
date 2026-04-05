@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/format";
 import { getProductRating, getProductReviewCount, resolveProductImage } from "@/lib/products";
 import { useToast } from "@/components/providers/toast-provider";
 import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
 
 const WISHLIST_STORAGE_KEY = "deetech:wishlist";
 
@@ -63,6 +64,7 @@ function ActionIcon({ src, alt }) {
 export default function ProductCard({ product, onAddToCart, variant = "default" }) {
   const { pushToast } = useToast();
   const { items } = useCart();
+  const { isAuthenticated } = useAuth();
   const productId = String(product?._id || product?.id || "");
   const [wishlisted, setWishlisted] = useState(() =>
     productId ? readWishlist().includes(productId) : false
@@ -108,6 +110,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
 
   function toggleWishlist() {
     if (!productId) return;
+    if (!isAuthenticated) {
+      pushToast("Login required to use wishlist", "info");
+      return;
+    }
 
     const nextWishlist = wishlisted
       ? readWishlist().filter((item) => item !== productId)

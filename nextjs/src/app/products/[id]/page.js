@@ -6,8 +6,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import { formatCurrency } from "@/lib/format";
+import { API_BASE } from "@/lib/config";
+import { requestJson } from "@/lib/http";
+import { requestWithToken } from "@/lib/resource";
 import {
   canonicalCategory,
   fetchProductById,
@@ -46,6 +50,27 @@ function getProductDescription(product) {
     product?.short_description ||
     "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
   );
+}
+
+function getReviewAverage(reviews) {
+  const ratings = (reviews || [])
+    .map((review) => Number(review?.rating))
+    .filter((value) => Number.isFinite(value) && value > 0);
+
+  if (!ratings.length) return 0;
+  return ratings.reduce((sum, value) => sum + value, 0) / ratings.length;
+}
+
+function getReviewBreakdown(reviews) {
+  return [5, 4, 3, 2, 1].map((stars) => {
+    const count = (reviews || []).filter((review) => Number(review?.rating) === stars).length;
+    const total = reviews?.length || 0;
+    return {
+      stars,
+      count,
+      percentage: total ? (count / total) * 100 : 0,
+    };
+  });
 }
 
 const WISHLIST_STORAGE_KEY = "deetech:wishlist";
@@ -142,9 +167,15 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { addItem } = useCart();
+  const { token, isAuthenticated } = useAuth();
   const { pushToast } = useToast();
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [myReview, setMyReview] = useState(null);
+  const [reviewSort, setReviewSort] = useState("newest");
+  const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "" });
+  const [reviewStatus, setReviewStatus] = useState("idle");
   const [qty, setQty] = useState(1);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -177,6 +208,33 @@ export default function ProductDetailPage() {
       });
   }, [productId]);
 
+  useEffect(() => {
+    if (!productId) return;
+
+    requestJson(`${API_BASE}/reviews/product/${productId}`)
+      .then((items) => {
+        setReviews(Array.isArray(items) ? items : []);
+      })
+      .catch(() => {
+        setReviews([]);
+      });
+  }, [productId]);
+
+  useEffect(() => {
+    if (!productId || !isAuthenticated || !token) {
+      setMyReview(null);
+      return;
+    }
+
+    requestWithToken(`${API_BASE}/reviews/my/${productId}`, token)
+      .then((item) => {
+        setMyReview(item || null);
+      })
+      .catch(() => {
+        setMyReview(null);
+      });
+  }, [isAuthenticated, productId, token]);
+
   const images = useMemo(() => getProductImages(product), [product]);
   const currentImage = images[activeImage] || images[0] || "";
 
@@ -187,6 +245,19 @@ export default function ProductDetailPage() {
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlist().includes(String(product._id)) : false);
   }, [product?._id]);
+
+  useEffect(() => {
+    if (!myReview) {
+      setReviewForm({ rating: 5, title: "", comment: "" });
+      return;
+    }
+
+    setReviewForm({
+      rating: Math.max(1, Math.min(5, Number(myReview?.rating) || 5)),
+      title: String(myReview?.title || ""),
+      comment: String(myReview?.comment || ""),
+    });
+  }, [myReview]);
 
   useEffect(() => {
     if (!previewOpen) return undefined;
@@ -225,10 +296,22 @@ export default function ProductDetailPage() {
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
   const productSpecs = getProductSpecs(product).filter(([, value]) => String(value || "").trim());
   const description = getProductDescription(product);
-  const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
+  const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
-  const reviewCount = getProductReviewCount(product);
-  const reviews = Array.isArray(product?.reviews) ? product.reviews : [];
+  const reviewCount = reviews.length || getProductReviewCount(product);
+  const reviewBreakdown = getReviewBreakdown(reviews);
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (reviewSort === "oldest") {
+      return new Date(a?.createdAt || 0).getTime() - new Date(b?.createdAt || 0).getTime();
+    }
+    if (reviewSort === "highest") {
+      return Number(b?.rating || 0) - Number(a?.rating || 0);
+    }
+    if (reviewSort === "lowest") {
+      return Number(a?.rating || 0) - Number(b?.rating || 0);
+    }
+    return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
+  });
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
@@ -316,12 +399,63 @@ export default function ProductDetailPage() {
   function handleWishlist() {
     const currentId = String(product?._id || productId || "");
     if (!currentId) return;
+    if (!isAuthenticated) {
+      pushToast("Login required to use wishlist", "info");
+      return;
+    }
     const nextWishlist = wishlisted
       ? readWishlist().filter((item) => item !== currentId)
       : Array.from(new Set([...readWishlist(), currentId]));
     writeWishlist(nextWishlist);
     setWishlisted(nextWishlist.includes(currentId));
     pushToast(wishlisted ? "Removed from wishlist" : "Saved to wishlist", wishlisted ? "info" : "success");
+  }
+
+  async function handleReviewSubmit(event) {
+    event.preventDefault();
+
+    if (!isAuthenticated || !token) {
+      pushToast("Login required to write a review", "info");
+      return;
+    }
+
+    const payload = {
+      rating: Math.max(1, Math.min(5, Number(reviewForm.rating) || 5)),
+      title: String(reviewForm.title || "").trim(),
+      comment: String(reviewForm.comment || "").trim(),
+    };
+
+    if (payload.title.length < 2 || payload.comment.length < 3) {
+      pushToast("Please complete the review title and comment", "warning");
+      return;
+    }
+
+    setReviewStatus("saving");
+
+    try {
+      const saved = myReview?._id
+        ? await requestWithToken(`${API_BASE}/reviews/${myReview._id}`, token, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          })
+        : await requestWithToken(`${API_BASE}/reviews/${productId}`, token, {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+
+      const nextReview = saved || null;
+      setMyReview(nextReview);
+      setReviews((current) => {
+        const others = current.filter((item) => String(item?._id) !== String(nextReview?._id));
+        return nextReview ? [nextReview, ...others] : others;
+      });
+      setActiveTab("reviews");
+      setReviewStatus("idle");
+      pushToast(myReview ? "Review updated" : "Review submitted", "success");
+    } catch (submitError) {
+      setReviewStatus("idle");
+      pushToast(submitError.message || "Could not save review", "warning");
+    }
   }
 
   return (
@@ -517,16 +651,129 @@ export default function ProductDetailPage() {
 
           {activeTab === "reviews" ? (
             <div className="product-tabs__panel">
-              {reviews.length ? (
-                reviews.map((review, index) => (
-                  <article key={review?._id || index} className="product-review">
-                    <strong>{review?.name || "Customer"}</strong>
-                    <p>{review?.comment || review?.message || "No review text provided."}</p>
-                  </article>
-                ))
-              ) : (
-                <p>No reviews yet. Be the first to share your experience with this product.</p>
-              )}
+              <div className="product-review-overview">
+                <div className="product-review-overview__score">
+                  <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
+                  <span>Out of 5</span>
+                  <p className="product-card__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
+                    ))}
+                  </p>
+                  <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
+                </div>
+
+                <div className="product-review-overview__bars">
+                  {reviewBreakdown.map((item) => (
+                    <div key={item.stars} className="product-review-bar">
+                      <span>{item.stars} Star</span>
+                      <div className="product-review-bar__track">
+                        <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
+                      </div>
+                      <strong>{item.count}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="product-review-actions">
+                <div className="product-review-actions__copy">
+                  <h3>Customer reviews</h3>
+                  <p>{reviewCount ? `Showing ${sortedReviews.length} review${sortedReviews.length === 1 ? "" : "s"}` : "No reviews yet. Be the first to share your experience with this product."}</p>
+                </div>
+                <label className="product-review-actions__sort">
+                  <span>Sort by</span>
+                  <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="highest">Highest rating</option>
+                    <option value="lowest">Lowest rating</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="product-review-shell">
+                <div className="product-review-list">
+                  {sortedReviews.length ? (
+                    sortedReviews.map((review, index) => (
+                      <article key={review?._id || index} className="product-review">
+                        <div className="product-review__header">
+                          <div>
+                            <strong>{review?.user?.name || review?.name || "Customer"}</strong>
+                            <span className="product-review__verified">Verified</span>
+                          </div>
+                          <time>{new Date(review?.createdAt || Date.now()).toLocaleDateString()}</time>
+                        </div>
+                        <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
+                          ))}
+                          <strong>{Number(review?.rating || 0).toFixed(1)}</strong>
+                        </p>
+                        <h4>{review?.title || "Customer review"}</h4>
+                        <p>{review?.comment || review?.message || "No review text provided."}</p>
+                        {review?.image_url ? (
+                          <div className="product-review__media">
+                            <img src={resolveProductImage(review.image_url)} alt={review?.title || "Review upload"} />
+                          </div>
+                        ) : null}
+                      </article>
+                    ))
+                  ) : (
+                    <p>No reviews yet. Be the first to share your experience with this product.</p>
+                  )}
+                </div>
+
+                <aside className="product-review-form">
+                  <h3>{myReview ? "Update your review" : "Write a review"}</h3>
+                  <p>{isAuthenticated ? "Share your real experience to help other customers buy with confidence." : "Login to write a review. Guests can still browse all customer reviews."}</p>
+                  <form className="auth-form" onSubmit={handleReviewSubmit}>
+                    <label>
+                      <span>Rating</span>
+                      <select
+                        className="field"
+                        value={reviewForm.rating}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, rating: Number(event.target.value) }))}
+                        disabled={!isAuthenticated}
+                      >
+                        {[5, 4, 3, 2, 1].map((value) => (
+                          <option key={value} value={value}>{value} Star{value === 1 ? "" : "s"}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Review title</span>
+                      <input
+                        className="field"
+                        value={reviewForm.title}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
+                        placeholder="Summarize your experience"
+                        disabled={!isAuthenticated}
+                      />
+                    </label>
+                    <label>
+                      <span>Your review</span>
+                      <textarea
+                        className="field"
+                        rows="5"
+                        value={reviewForm.comment}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
+                        placeholder="Tell other customers what stood out to you"
+                        disabled={!isAuthenticated}
+                      />
+                    </label>
+                    {isAuthenticated ? (
+                      <button type="submit" className="primary-button" disabled={reviewStatus === "saving"}>
+                        {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
+                      </button>
+                    ) : (
+                      <button type="button" className="ghost-button" onClick={() => router.push("/login")}>
+                        Login to review
+                      </button>
+                    )}
+                  </form>
+                </aside>
+              </div>
             </div>
           ) : null}
         </div>
