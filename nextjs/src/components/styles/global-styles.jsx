@@ -2628,13 +2628,82 @@ button, input, select, textarea { font: inherit; }
   box-shadow: 0 14px 34px rgba(145, 114, 61, 0.14);
 }
 .checkout-success-transition__badge--success {
-  background: linear-gradient(135deg, #d7a643, #ba8224);
-  box-shadow: 0 14px 34px rgba(186, 130, 36, 0.28);
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255,255,255,0.4), transparent 26%),
+    linear-gradient(135deg, #f5e8c6, #ddb76b);
+  box-shadow: 0 14px 34px rgba(186, 130, 36, 0.24);
 }
 .checkout-success-transition__check {
   color: #fff;
   font-size: 2.35rem;
   font-weight: 700;
+}
+.checkout-success-transition__celebration {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: inline-block;
+}
+.checkout-success-transition__cone {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 28px solid #b9821f;
+  transform: translateX(-50%) rotate(16deg);
+  filter: drop-shadow(0 7px 14px rgba(120, 78, 17, 0.16));
+}
+.checkout-success-transition__cone::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: -28px;
+  width: 18px;
+  height: 24px;
+  background:
+    repeating-linear-gradient(
+      -32deg,
+      rgba(255,255,255,0.9) 0 4px,
+      rgba(255,255,255,0.05) 4px 8px
+    );
+  clip-path: polygon(0 0, 100% 8%, 76% 100%, 18% 100%);
+}
+.checkout-success-transition__burst {
+  position: absolute;
+  inset: 0;
+  animation: checkoutBurstFloat 1.05s ease-in-out infinite;
+}
+.checkout-success-transition__burst::before,
+.checkout-success-transition__burst::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+}
+.checkout-success-transition__burst::before {
+  left: 11px;
+  top: 4px;
+  width: 34px;
+  height: 22px;
+  background:
+    radial-gradient(circle at 18% 64%, #f59e0b 0 2px, transparent 3px),
+    radial-gradient(circle at 46% 24%, #0a9b8a 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 56%, #e25d2f 0 2px, transparent 3px),
+    radial-gradient(circle at 92% 26%, #1f1d1b 0 2px, transparent 3px);
+}
+.checkout-success-transition__burst::after {
+  left: 16px;
+  top: 16px;
+  width: 26px;
+  height: 2px;
+  background: linear-gradient(90deg, #d99a26, #0a9b8a 48%, #db6d39);
+  box-shadow:
+    -8px -9px 0 #d99a26,
+    5px -11px 0 #0a9b8a,
+    14px -3px 0 #db6d39;
+  transform: rotate(-14deg);
 }
 .checkout-success-transition__spinner {
   width: 34px;
@@ -2644,16 +2713,17 @@ button, input, select, textarea { font: inherit; }
   border-top-color: #a77a2a;
   animation: checkoutSuccessSpin 0.85s linear infinite;
 }
-.checkout-success-transition__card strong {
+.checkout-success-transition__title {
   font-size: clamp(1.35rem, 3vw, 1.8rem);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.checkout-success-transition__card p {
+.checkout-success-transition__message {
   margin: 0;
-  max-width: 28ch;
+  max-width: 31ch;
   color: var(--muted);
   text-align: center;
+  line-height: 1.6;
 }
 .checkout-summary__items {
   display: grid;
@@ -2942,6 +3012,15 @@ button, input, select, textarea { font: inherit; }
   50% {
     transform: scale(1.04);
     opacity: 1;
+  }
+}
+@keyframes checkoutBurstFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.98);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.02);
   }
 }
 @keyframes checkoutSuccessSpin {
@@ -3285,6 +3364,10 @@ button, input, select, textarea { font: inherit; }
   .checkout-success-transition__badge {
     width: 78px;
     height: 78px;
+  }
+  .checkout-success-transition__celebration {
+    width: 50px;
+    height: 50px;
   }
   .checkout-success-transition__spinner {
     width: 30px;

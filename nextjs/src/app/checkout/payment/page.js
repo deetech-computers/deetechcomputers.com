@@ -360,18 +360,21 @@ export default function CheckoutPaymentPage() {
               aria-hidden="true"
             >
               {transitionStage === "success" ? (
-                <span className="checkout-success-transition__check">{"\u2713"}</span>
+                <span className="checkout-success-transition__celebration">
+                  <span className="checkout-success-transition__burst" />
+                  <span className="checkout-success-transition__cone" />
+                </span>
               ) : (
                 <span className="checkout-success-transition__spinner" />
               )}
             </div>
-            <strong>
-              {transitionStage === "success" ? "Payment confirmed" : "Processing your order"}
+            <strong className="checkout-success-transition__title">
+              {transitionStage === "success" ? "Thank you for your purchase" : "Processing your order"}
             </strong>
-            <p>
+            <p className="checkout-success-transition__message">
               {transitionStage === "success"
-                ? "Everything is set. We are taking you to your completed order."
-                : "Thank you for your purchase. We are validating your payment and preparing your order details."}
+                ? "Everything is set. Your order is underway and we are preparing your completed receipt."
+                : "Please hold on while we validate your payment, save your order, and prepare your completion page."}
             </p>
           </div>
         </div>
