@@ -4,28 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/format";
 import { getProductRating, getProductReviewCount, resolveProductImage } from "@/lib/products";
+import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import { useToast } from "@/components/providers/toast-provider";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
-
-const WISHLIST_STORAGE_KEY = "deetech:wishlist";
-
-function readWishlist() {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.map((item) => String(item)) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeWishlist(items) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
-}
 
 function getImageAlt(product) {
   return product?.name || product?.title || "Product image";
@@ -67,7 +49,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const { isAuthenticated } = useAuth();
   const productId = String(product?._id || product?.id || "");
   const [wishlisted, setWishlisted] = useState(() =>
-    productId ? readWishlist().includes(productId) : false
+    productId ? readWishlistIds().includes(productId) : false
   );
   const [justAdded, setJustAdded] = useState(false);
   const highlightTimerRef = useRef(null);
@@ -115,12 +97,8 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
       return;
     }
 
-    const nextWishlist = wishlisted
-      ? readWishlist().filter((item) => item !== productId)
-      : Array.from(new Set([...readWishlist(), productId]));
-
-    writeWishlist(nextWishlist);
-    setWishlisted(nextWishlist.includes(productId));
+    const nextWishlist = wishlisted ? removeWishlistEntry(productId) : addWishlistEntry(productId);
+    setWishlisted(nextWishlist.some((item) => item.id === productId));
     pushToast(
       wishlisted ? "Removed from wishlist" : "Saved to wishlist",
       wishlisted ? "info" : "success"

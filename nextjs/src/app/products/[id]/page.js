@@ -12,6 +12,7 @@ import { formatCurrency } from "@/lib/format";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
+import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import {
   canonicalCategory,
   fetchProductById,
@@ -96,29 +97,12 @@ function getReviewerInitials(name) {
   return (parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CU").slice(0, 2);
 }
 
-const WISHLIST_STORAGE_KEY = "deetech:wishlist";
 const SOCIAL_LINKS = [
   { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
   { label: "WhatsApp", href: "https://wa.me/message/WEYXKNNA6KXXL1", icon: "whatsapp" },
   { label: "Facebook", href: "https://www.facebook.com/share/19NkhoTCdi/?mibextid=wwXIfr", icon: "facebook" },
   { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
 ];
-
-function readWishlist() {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.map((item) => String(item)) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeWishlist(items) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
-}
 
 function ProductActionIcon({ name }) {
   if (name === "copy") {
@@ -268,7 +252,7 @@ export default function ProductDetailPage() {
     setActiveTab("description");
     setQty(1);
     setPreviewOpen(false);
-    setWishlisted(product?._id ? readWishlist().includes(String(product._id)) : false);
+    setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
 
   useEffect(() => {
@@ -478,11 +462,8 @@ export default function ProductDetailPage() {
       pushToast("Login required to use wishlist", "info");
       return;
     }
-    const nextWishlist = wishlisted
-      ? readWishlist().filter((item) => item !== currentId)
-      : Array.from(new Set([...readWishlist(), currentId]));
-    writeWishlist(nextWishlist);
-    setWishlisted(nextWishlist.includes(currentId));
+    const nextWishlist = wishlisted ? removeWishlistEntry(currentId) : addWishlistEntry(currentId);
+    setWishlisted(nextWishlist.some((item) => item.id === currentId));
     pushToast(wishlisted ? "Removed from wishlist" : "Saved to wishlist", wishlisted ? "info" : "success");
   }
 
