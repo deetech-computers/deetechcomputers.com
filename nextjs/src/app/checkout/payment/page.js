@@ -324,10 +324,10 @@ export default function CheckoutPaymentPage() {
         );
       }
       await new Promise((resolve) => window.setTimeout(resolve, SUCCESS_FLOOR_MS));
-      clearCart();
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "instant" });
       }
+      clearCart();
       router.push("/order-completed");
     } catch (error) {
       setTransitionStage("idle");

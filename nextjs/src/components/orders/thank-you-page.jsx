@@ -61,7 +61,7 @@ function downloadInvoice(order, summary) {
   window.URL.revokeObjectURL(url);
 }
 
-export default function ThankYouPage() {
+export default function OrderCompletedPage() {
   const [order, setOrder] = useState(null);
   const [arriving, setArriving] = useState(false);
   const [pageReady, setPageReady] = useState(false);
