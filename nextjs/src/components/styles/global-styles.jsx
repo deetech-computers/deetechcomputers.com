@@ -2296,6 +2296,7 @@ button, input, select, textarea { font: inherit; }
 .checkout-customer-grid div {
   display: grid;
   gap: 4px;
+  min-width: 0;
 }
 .checkout-customer-grid span {
   font-size: 0.88rem;
@@ -2303,6 +2304,11 @@ button, input, select, textarea { font: inherit; }
 }
 .checkout-customer-grid strong {
   color: #1f1d1b;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .checkout-customer-grid__full {
   grid-column: 1 / -1;
@@ -2375,6 +2381,7 @@ button, input, select, textarea { font: inherit; }
   gap: 18px;
   padding: 22px 24px;
   border: 1px solid #ece5d9;
+  align-self: start;
 }
 .checkout-summary__lines {
   display: grid;
@@ -2398,6 +2405,14 @@ button, input, select, textarea { font: inherit; }
 .checkout-summary__total strong,
 .checkout-summary__item strong {
   color: #1f1d1b;
+}
+.checkout-summary__line strong {
+  min-width: 0;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
 }
 .checkout-summary__actions {
   display: grid;
@@ -2623,6 +2638,10 @@ button, input, select, textarea { font: inherit; }
   .shop-drawer {
     display: none !important;
   }
+  .checkout-summary {
+    position: sticky;
+    top: 108px;
+  }
 }
 @media (min-width: 641px) and (max-width: 899px) {
   .shop-page {
@@ -2721,6 +2740,7 @@ button, input, select, textarea { font: inherit; }
   }
   .checkout-summary {
     padding: 18px 16px;
+    position: static;
   }
   .checkout-payment__option {
     min-height: 76px;
@@ -2750,6 +2770,9 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 1fr;
     gap: 12px;
   }
+  .checkout-customer-grid strong {
+    max-width: 100%;
+  }
   .checkout-payment__proof-preview {
     grid-template-columns: 1fr;
   }
@@ -2766,6 +2789,9 @@ button, input, select, textarea { font: inherit; }
   }
   .checkout-summary__item strong {
     font-size: 0.9rem;
+  }
+  .checkout-summary__line strong {
+    max-width: 150px;
   }
   .cart-table {
     padding: 0;

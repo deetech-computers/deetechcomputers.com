@@ -36,7 +36,7 @@ export const PAYMENT_METHODS = [
     id: "vodafone",
     label: "Telecel Cash",
     helper: "Telecel / Vodafone merchant transfer",
-    logo: "/payment/telecel.svg",
+    logo: "/payment/telecel.png",
     lines: [
       "Merchant ID: 451444",
       "Account Name: DEETEK 360 Enterprise (DEETECH COMPUTERS)",
@@ -47,7 +47,7 @@ export const PAYMENT_METHODS = [
     id: "hubtel",
     label: "Hubtel",
     helper: "Quick shortcode payment",
-    logo: "/payment/hubtel.svg",
+    logo: "/payment/hubtel.png",
     lines: [
       "Dial: *713*5964#",
       "Account Name: DEETEK 360 Enterprise (DEETECH COMPUTERS)",
@@ -58,7 +58,7 @@ export const PAYMENT_METHODS = [
     id: "bank",
     label: "Bank Transfer",
     helper: "Direct transfer to our business account",
-    logo: "/payment/calbank.svg",
+    logo: "/payment/calbank.png",
     lines: [
       "Bank: CALBANK",
       "Account Number: 1400009398769",
