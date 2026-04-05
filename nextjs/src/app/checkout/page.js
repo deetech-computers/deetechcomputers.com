@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import { formatCurrency } from "@/lib/format";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
+import { requestJson } from "@/lib/http";
 
 const CHECKOUT_DRAFT_KEY = "deetech:checkout-phase-one";
 const GHANA_REGIONS = [
@@ -56,6 +57,13 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const { pushToast } = useToast();
   const [phaseSaved, setPhaseSaved] = useState(false);
+  const [affiliateState, setAffiliateState] = useState({
+    status: "idle",
+    message: "",
+    ownerName: "",
+    commissionRate: 0,
+  });
+  const fieldRefs = useRef({});
 
   const initialName = splitName(user?.name);
   const [form, setForm] = useState({
@@ -67,6 +75,7 @@ export default function CheckoutPage() {
     deliveryRegion: "",
     mobileNumber: user?.phone || "",
     shippingEmail: user?.email || "",
+    affiliateCode: "",
     useShippingForBilling: true,
     billingAddress: "",
   });
@@ -95,6 +104,74 @@ export default function CheckoutPage() {
     writeDraft(form);
   }, [form]);
 
+  useEffect(() => {
+    const code = String(form.affiliateCode || "").trim();
+
+    if (!code) {
+      setAffiliateState({
+        status: "idle",
+        message: "",
+        ownerName: "",
+        commissionRate: 0,
+      });
+      return;
+    }
+
+    if (code.length < 4) {
+      setAffiliateState({
+        status: "idle",
+        message: "Affiliate code must be at least 4 characters.",
+        ownerName: "",
+        commissionRate: 0,
+      });
+      return;
+    }
+
+    let ignore = false;
+    const timer = window.setTimeout(async () => {
+      setAffiliateState((current) => ({
+        ...current,
+        status: "validating",
+        message: "Checking affiliate code...",
+      }));
+
+      try {
+        const result = await requestJson("/api/affiliates/validate-code", {
+          method: "POST",
+          body: JSON.stringify({ code }),
+        });
+
+        if (ignore) return;
+
+        setAffiliateState({
+          status: "valid",
+          message: `Affiliate code linked to ${result.ownerName}`,
+          ownerName: result.ownerName || "",
+          commissionRate: Number(result.commissionRate || 0),
+        });
+
+        if (result.code && result.code !== code) {
+          setForm((current) =>
+            current.affiliateCode === code ? { ...current, affiliateCode: result.code } : current
+          );
+        }
+      } catch (error) {
+        if (ignore) return;
+        setAffiliateState({
+          status: "invalid",
+          message: error.message || "Affiliate code not found",
+          ownerName: "",
+          commissionRate: 0,
+        });
+      }
+    }, 450);
+
+    return () => {
+      ignore = true;
+      window.clearTimeout(timer);
+    };
+  }, [form.affiliateCode]);
+
   const itemCount = useMemo(
     () => items.reduce((sum, item) => sum + Number(item.qty || 0), 0),
     [items]
@@ -108,6 +185,21 @@ export default function CheckoutPage() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  function registerFieldRef(key) {
+    return (element) => {
+      fieldRefs.current[key] = element;
+    };
+  }
+
+  function focusField(key) {
+    const element = fieldRefs.current[key];
+    if (!element) return;
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.setTimeout(() => {
+      element.focus?.();
+    }, 120);
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     if (!items.length) {
@@ -116,17 +208,42 @@ export default function CheckoutPage() {
     }
 
     const requiredFields = [
-      form.firstName,
-      form.lastName,
-      form.shippingAddress,
-      form.shippingCity,
-      form.deliveryRegion,
-      form.mobileNumber,
-      form.shippingEmail,
+      ["firstName", form.firstName],
+      ["lastName", form.lastName],
+      ["shippingAddress", form.shippingAddress],
+      ["shippingCity", form.shippingCity],
+      ["deliveryRegion", form.deliveryRegion],
+      ["mobileNumber", form.mobileNumber],
+      ["shippingEmail", form.shippingEmail],
     ];
 
-    if (requiredFields.some((value) => !String(value || "").trim())) {
+    if (!form.useShippingForBilling) {
+      requiredFields.push(["billingAddress", form.billingAddress]);
+    }
+
+    const firstMissing = requiredFields.find(([, value]) => !String(value || "").trim());
+    if (firstMissing) {
       pushToast("Please complete the required billing details", "warning");
+      focusField(firstMissing[0]);
+      return;
+    }
+
+    if (String(form.affiliateCode || "").trim()) {
+      if (affiliateState.status === "validating") {
+        pushToast("Please wait while the affiliate code is being checked", "info");
+        focusField("affiliateCode");
+        return;
+      }
+      if (affiliateState.status !== "valid") {
+        pushToast("Please enter a valid affiliate code or clear it", "warning");
+        focusField("affiliateCode");
+        return;
+      }
+    }
+
+    if (!form.useShippingForBilling && !String(form.billingAddress || "").trim()) {
+      pushToast("Please provide the billing address", "warning");
+      focusField("billingAddress");
       return;
     }
 
@@ -170,12 +287,12 @@ export default function CheckoutPage() {
             <form className="checkout-fields" onSubmit={handleSubmit}>
               <label className="checkout-field">
                 <span>First Name *</span>
-                <input className="field" value={form.firstName} onChange={(event) => updateField("firstName", event.target.value)} placeholder="Ex. John" required />
+                <input ref={registerFieldRef("firstName")} className="field" value={form.firstName} onChange={(event) => updateField("firstName", event.target.value)} placeholder="Ex. John" required />
               </label>
 
               <label className="checkout-field">
                 <span>Last Name *</span>
-                <input className="field" value={form.lastName} onChange={(event) => updateField("lastName", event.target.value)} placeholder="Ex. Doe" required />
+                <input ref={registerFieldRef("lastName")} className="field" value={form.lastName} onChange={(event) => updateField("lastName", event.target.value)} placeholder="Ex. Doe" required />
               </label>
 
               <label className="checkout-field checkout-field--full">
@@ -185,17 +302,17 @@ export default function CheckoutPage() {
 
               <label className="checkout-field checkout-field--full">
                 <span>Street Address *</span>
-                <input className="field" value={form.shippingAddress} onChange={(event) => updateField("shippingAddress", event.target.value)} placeholder="Enter Street Address" required />
+                <input ref={registerFieldRef("shippingAddress")} className="field" value={form.shippingAddress} onChange={(event) => updateField("shippingAddress", event.target.value)} placeholder="Enter Street Address" required />
               </label>
 
               <label className="checkout-field">
                 <span>City *</span>
-                <input className="field" value={form.shippingCity} onChange={(event) => updateField("shippingCity", event.target.value)} placeholder="Select City" required />
+                <input ref={registerFieldRef("shippingCity")} className="field" value={form.shippingCity} onChange={(event) => updateField("shippingCity", event.target.value)} placeholder="Select City" required />
               </label>
 
               <label className="checkout-field">
                 <span>State / Region *</span>
-                <select className="field" value={form.deliveryRegion} onChange={(event) => updateField("deliveryRegion", event.target.value)} required>
+                <select ref={registerFieldRef("deliveryRegion")} className="field" value={form.deliveryRegion} onChange={(event) => updateField("deliveryRegion", event.target.value)} required>
                   <option value="">Select Region</option>
                   {GHANA_REGIONS.map((region) => (
                     <option key={region} value={region}>{region}</option>
@@ -205,12 +322,29 @@ export default function CheckoutPage() {
 
               <label className="checkout-field">
                 <span>Phone *</span>
-                <input className="field" value={form.mobileNumber} onChange={(event) => updateField("mobileNumber", event.target.value)} placeholder="Enter Phone Number" required />
+                <input ref={registerFieldRef("mobileNumber")} className="field" value={form.mobileNumber} onChange={(event) => updateField("mobileNumber", event.target.value)} placeholder="Enter Phone Number" required />
               </label>
 
               <label className="checkout-field checkout-field--full">
                 <span>Email *</span>
-                <input className="field" type="email" value={form.shippingEmail} onChange={(event) => updateField("shippingEmail", event.target.value)} placeholder="Enter Email Address" required />
+                <input ref={registerFieldRef("shippingEmail")} className="field" type="email" value={form.shippingEmail} onChange={(event) => updateField("shippingEmail", event.target.value)} placeholder="Enter Email Address" required />
+              </label>
+
+              <label className="checkout-field checkout-field--full">
+                <span>Affiliate Code</span>
+                <input
+                  ref={registerFieldRef("affiliateCode")}
+                  className={`field ${affiliateState.status === "invalid" ? "field--invalid" : ""} ${affiliateState.status === "valid" ? "field--valid" : ""}`}
+                  value={form.affiliateCode}
+                  onChange={(event) => updateField("affiliateCode", event.target.value.toUpperCase())}
+                  placeholder="Enter Affiliate Code"
+                />
+                {affiliateState.message ? (
+                  <small className={`checkout-affiliate__status is-${affiliateState.status}`}>
+                    {affiliateState.message}
+                    {affiliateState.status === "valid" && affiliateState.commissionRate ? ` (${affiliateState.commissionRate}% commission link active)` : ""}
+                  </small>
+                ) : null}
               </label>
 
               <div className="checkout-delivery checkout-field checkout-field--full">
@@ -238,7 +372,7 @@ export default function CheckoutPage() {
               {!form.useShippingForBilling ? (
                 <label className="checkout-field checkout-field--full">
                   <span>Billing Address *</span>
-                  <input className="field" value={form.billingAddress} onChange={(event) => updateField("billingAddress", event.target.value)} placeholder="Enter Billing Address" />
+                  <input ref={registerFieldRef("billingAddress")} className="field" value={form.billingAddress} onChange={(event) => updateField("billingAddress", event.target.value)} placeholder="Enter Billing Address" />
                 </label>
               ) : null}
 

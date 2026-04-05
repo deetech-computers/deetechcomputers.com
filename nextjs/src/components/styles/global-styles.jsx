@@ -2106,6 +2106,26 @@ button, input, select, textarea { font: inherit; }
   padding-left: 20px;
   padding-right: 20px;
 }
+.checkout-field .field.field--invalid {
+  border-color: rgba(180, 35, 24, 0.45);
+  box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.08);
+}
+.checkout-field .field.field--valid {
+  border-color: rgba(24, 77, 34, 0.38);
+  box-shadow: 0 0 0 4px rgba(24, 77, 34, 0.08);
+}
+.checkout-affiliate__status {
+  font-size: 0.84rem;
+}
+.checkout-affiliate__status.is-valid {
+  color: #184d22;
+}
+.checkout-affiliate__status.is-invalid {
+  color: #b42318;
+}
+.checkout-affiliate__status.is-validating {
+  color: var(--muted);
+}
 .checkout-delivery {
   gap: 14px;
 }
