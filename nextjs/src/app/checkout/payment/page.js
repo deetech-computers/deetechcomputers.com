@@ -306,7 +306,6 @@ export default function CheckoutPaymentPage() {
       });
 
       clearCheckoutDraft();
-      clearCart();
       pushToast("Order placed successfully", "success");
       const processingElapsed = Date.now() - processingStart;
       if (processingElapsed < PROCESSING_FLOOR_MS) {
@@ -325,6 +324,10 @@ export default function CheckoutPaymentPage() {
         );
       }
       await new Promise((resolve) => window.setTimeout(resolve, SUCCESS_FLOOR_MS));
+      clearCart();
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
       router.push("/order-completed");
     } catch (error) {
       setTransitionStage("idle");
@@ -334,7 +337,7 @@ export default function CheckoutPaymentPage() {
     }
   }
 
-  if (!items.length) {
+  if (!items.length && transitionStage === "idle") {
     return (
       <main className="shell page-section">
         <section className="panel cart-empty">

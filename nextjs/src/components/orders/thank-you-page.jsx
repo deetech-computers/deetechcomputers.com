@@ -68,6 +68,10 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    if (typeof window !== "undefined") {
       const savedOrder = readLastOrder();
       setOrder(savedOrder);
       const shouldAnimate =
