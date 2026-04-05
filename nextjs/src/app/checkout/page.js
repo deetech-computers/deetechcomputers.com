@@ -1,15 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import { formatCurrency } from "@/lib/format";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
+import { writeLastOrder } from "@/lib/order-confirmation";
 import { requestJson } from "@/lib/http";
+import { requestWithToken } from "@/lib/resource";
 
-const CHECKOUT_DRAFT_KEY = "deetech:checkout-phase-one";
+const CHECKOUT_DRAFT_KEY = "deetech:checkout-draft";
 const GHANA_REGIONS = [
   "Greater Accra",
   "Ashanti",
@@ -27,6 +30,54 @@ const GHANA_REGIONS = [
   "Bono",
   "Bono East",
   "Ahafo",
+];
+
+const PAYMENT_METHODS = [
+  {
+    id: "mtn",
+    label: "MTN Mobile Money",
+    helper: "Merchant and direct MoMo payment",
+    logo: "/payment/mtn.svg",
+    lines: [
+      "Merchant Number (ID): 694988",
+      "Merchant Name: Deetek 360 Enterprise (DEETECH COMPUTERS)",
+      "MoMo Number: 0591755964",
+      "Account Name: Daniel Adjei Mensah (DEETECH COMPUTERS)",
+    ],
+  },
+  {
+    id: "vodafone",
+    label: "Telecel Cash",
+    helper: "Telecel / Vodafone merchant transfer",
+    logo: "/payment/telecel.svg",
+    lines: [
+      "Merchant ID: 451444",
+      "Account Name: DEETEK 360 Enterprise (DEETECH COMPUTERS)",
+      "Use your Telecel Cash app or shortcode and upload the successful transaction screen.",
+    ],
+  },
+  {
+    id: "hubtel",
+    label: "Hubtel",
+    helper: "Quick shortcode payment",
+    logo: "/payment/hubtel.svg",
+    lines: [
+      "Dial: *713*5964#",
+      "Account Name: DEETEK 360 Enterprise (DEETECH COMPUTERS)",
+      "After payment, upload the confirmation screen as proof.",
+    ],
+  },
+  {
+    id: "bank",
+    label: "Bank Transfer",
+    helper: "Direct transfer to our business account",
+    logo: "/payment/calbank.svg",
+    lines: [
+      "Bank: CALBANK",
+      "Account Number: 1400009398769",
+      "Account Name: DEETEK 360 Enterprise (DEETECH COMPUTERS)",
+    ],
+  },
 ];
 
 function splitName(name) {
@@ -52,11 +103,47 @@ function writeDraft(value) {
   window.localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(value));
 }
 
+function clearDraft() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+}
+
+function buildClientOrderRef() {
+  if (typeof window !== "undefined" && window.crypto?.randomUUID) {
+    return `dc-${window.crypto.randomUUID()}`;
+  }
+  return `dc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function isPhaseOneComplete(form) {
+  return [
+    form.firstName,
+    form.lastName,
+    form.shippingAddress,
+    form.shippingCity,
+    form.deliveryRegion,
+    form.mobileNumber,
+    form.shippingEmail,
+  ].every((value) => String(value || "").trim());
+}
+
+function buildOrderItems(items) {
+  return items
+    .map((item) => ({
+      product: String(item.productId || item._id || ""),
+      qty: Number(item.qty || 0),
+    }))
+    .filter((item) => item.product && item.qty > 0);
+}
+
 export default function CheckoutPage() {
-  const { items, subtotal } = useCart();
-  const { user } = useAuth();
+  const router = useRouter();
+  const { items, subtotal, clearCart } = useCart();
+  const { user, token, isAuthenticated } = useAuth();
   const { pushToast } = useToast();
   const [phaseSaved, setPhaseSaved] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [proofUploading, setProofUploading] = useState(false);
   const [affiliateState, setAffiliateState] = useState({
     status: "idle",
     message: "",
@@ -78,12 +165,20 @@ export default function CheckoutPage() {
     affiliateCode: "",
     useShippingForBilling: true,
     billingAddress: "",
+    paymentMethod: "mtn",
+    paymentProofUrl: "",
+    paymentProofName: "",
+    paymentProofStorage: "",
+    clientOrderRef: "",
   });
 
   useEffect(() => {
     const draft = readDraft();
     if (!draft) return;
     setForm((current) => ({ ...current, ...draft }));
+    if (isPhaseOneComplete({ ...form, ...draft })) {
+      setPhaseSaved(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -179,9 +274,17 @@ export default function CheckoutPage() {
   const shipping = 0;
   const taxes = 0;
   const total = subtotal + shipping + taxes;
+  const phaseOneReady = useMemo(() => isPhaseOneComplete(form), [form]);
+  const canShowPaymentPhase = phaseSaved || phaseOneReady;
+  const activePaymentMethod =
+    PAYMENT_METHODS.find((method) => method.id === form.paymentMethod) || PAYMENT_METHODS[0];
 
   function updateField(key, value) {
     setPhaseSaved(false);
+    setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function updatePaymentField(key, value) {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
@@ -197,16 +300,11 @@ export default function CheckoutPage() {
     element.scrollIntoView({ behavior: "smooth", block: "center" });
     window.setTimeout(() => {
       element.focus?.();
+      element.click?.();
     }, 120);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    if (!items.length) {
-      pushToast("Your cart is empty", "warning");
-      return;
-    }
-
+  function validatePhaseOne() {
     const requiredFields = [
       ["firstName", form.firstName],
       ["lastName", form.lastName],
@@ -225,30 +323,201 @@ export default function CheckoutPage() {
     if (firstMissing) {
       pushToast("Please complete the required billing details", "warning");
       focusField(firstMissing[0]);
-      return;
+      return false;
     }
 
     if (String(form.affiliateCode || "").trim()) {
       if (affiliateState.status === "validating") {
         pushToast("Please wait while the affiliate code is being checked", "info");
         focusField("affiliateCode");
-        return;
+        return false;
       }
       if (affiliateState.status !== "valid") {
         pushToast("Please enter a valid affiliate code or clear it", "warning");
         focusField("affiliateCode");
-        return;
+        return false;
       }
     }
 
     if (!form.useShippingForBilling && !String(form.billingAddress || "").trim()) {
       pushToast("Please provide the billing address", "warning");
       focusField("billingAddress");
+      return false;
+    }
+
+    return true;
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    if (!items.length) {
+      pushToast("Your cart is empty", "warning");
       return;
     }
 
+    if (!validatePhaseOne()) return;
+
     setPhaseSaved(true);
-    pushToast("Checkout phase one saved. Payment step comes next.", "success");
+    pushToast("Billing details saved. Continue with payment method and proof upload.", "success");
+    window.setTimeout(() => {
+      document.getElementById("checkout-payment-step")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 120);
+  }
+
+  async function handleProofUpload(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      pushToast("Please upload an image file for your payment proof", "warning");
+      event.target.value = "";
+      return;
+    }
+
+    const body = new FormData();
+    body.append("image", file);
+
+    setProofUploading(true);
+    try {
+      const result = await requestJson("/api/upload/payment-proof", {
+        method: "POST",
+        body,
+      });
+
+      setForm((current) => ({
+        ...current,
+        paymentProofUrl: result.imageUrl || "",
+        paymentProofName: file.name,
+        paymentProofStorage: result.storage || "",
+      }));
+      pushToast("Payment proof uploaded successfully", "success");
+    } catch (error) {
+      pushToast(error.message || "Failed to upload payment proof", "error");
+    } finally {
+      setProofUploading(false);
+      event.target.value = "";
+    }
+  }
+
+  function clearProof() {
+    setForm((current) => ({
+      ...current,
+      paymentProofUrl: "",
+      paymentProofName: "",
+      paymentProofStorage: "",
+    }));
+  }
+
+  async function handleConfirmPayment() {
+    if (!items.length) {
+      pushToast("Your cart is empty", "warning");
+      return;
+    }
+
+    if (!validatePhaseOne()) return;
+
+    if (!form.paymentMethod) {
+      pushToast("Please choose a payment method", "warning");
+      focusField("paymentMethod");
+      return;
+    }
+
+    if (proofUploading) {
+      pushToast("Please wait for the payment proof upload to finish", "info");
+      return;
+    }
+
+    if (!form.paymentProofUrl) {
+      pushToast("Please upload your payment proof before confirming", "warning");
+      focusField("paymentProof");
+      return;
+    }
+
+    const orderItems = buildOrderItems(items);
+    if (!orderItems.length) {
+      pushToast("Your cart items are not ready for checkout", "warning");
+      return;
+    }
+
+    const clientOrderRef = form.clientOrderRef || buildClientOrderRef();
+    if (!form.clientOrderRef) {
+      setForm((current) => ({ ...current, clientOrderRef }));
+    }
+
+    const shippingName = [form.firstName, form.lastName].filter(Boolean).join(" ").trim();
+
+    const commonPayload = {
+      orderItems,
+      paymentMethod: form.paymentMethod,
+      deliveryRegion: form.deliveryRegion,
+      mobileNumber: form.mobileNumber.trim(),
+      clientOrderRef,
+      paymentScreenshotUrl: form.paymentProofUrl,
+      affiliateCode: String(form.affiliateCode || "").trim() || undefined,
+    };
+
+    const payload =
+      isAuthenticated && token
+        ? {
+            ...commonPayload,
+            shippingName,
+            shippingEmail: form.shippingEmail.trim(),
+            shippingAddress: form.shippingAddress.trim(),
+            shippingCity: form.shippingCity.trim(),
+          }
+        : {
+            ...commonPayload,
+            guestName: shippingName,
+            guestEmail: form.shippingEmail.trim(),
+            guestAddress: form.shippingAddress.trim(),
+            guestCity: form.shippingCity.trim(),
+          };
+
+    setSubmitting(true);
+    try {
+      const result =
+        isAuthenticated && token
+          ? await requestWithToken("/api/orders", token, {
+              method: "POST",
+              body: JSON.stringify(payload),
+            })
+          : await requestJson("/api/orders/guest", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+
+      const order = result?.order || {};
+      writeLastOrder({
+        reference: result?.orderId || order?._id || clientOrderRef,
+        date: order?.createdAt || new Date().toISOString(),
+        paymentMethod: form.paymentMethod,
+        total: Number(order?.totalPrice || total),
+        subtotal,
+        shipping,
+        items: items.map((item) => ({
+          name: item.name,
+          quantity: item.qty,
+          qty: item.qty,
+          price: Number(item.price || 0),
+        })),
+        email: form.shippingEmail,
+        phone: form.mobileNumber,
+        address: form.shippingAddress,
+        city: form.shippingCity,
+      });
+
+      clearDraft();
+      clearCart();
+      pushToast("Order placed successfully", "success");
+      router.push("/thankyou");
+    } catch (error) {
+      pushToast(error.message || "Unable to place order", "error");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (!items.length) {
@@ -381,6 +650,81 @@ export default function CheckoutPage() {
                 <button type="submit" className="checkout-summary__button">Proceed to Payment</button>
               </div>
             </form>
+
+            {canShowPaymentPhase ? (
+              <section id="checkout-payment-step" className="checkout-payment">
+                <div className="checkout-form__header">
+                  <h2>Select Payment Method</h2>
+                  <p>Select a manual payment channel, complete the transfer, then upload your proof of payment.</p>
+                </div>
+
+                <div className="checkout-payment__methods">
+                  {PAYMENT_METHODS.map((method) => (
+                    <button
+                      key={method.id}
+                      ref={method.id === form.paymentMethod ? registerFieldRef("paymentMethod") : undefined}
+                      type="button"
+                      className={method.id === form.paymentMethod ? "checkout-payment__option is-active" : "checkout-payment__option"}
+                      onClick={() => updatePaymentField("paymentMethod", method.id)}
+                    >
+                      <span className="checkout-payment__radio" aria-hidden="true" />
+                      <img src={method.logo} alt={method.label} className="checkout-payment__logo" />
+                      <span className="checkout-payment__copy">
+                        <strong>{method.label}</strong>
+                        <small>{method.helper}</small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="checkout-payment__details">
+                  <div className="checkout-payment__instruction-card">
+                    <div className="checkout-payment__instruction-head">
+                      <img src={activePaymentMethod.logo} alt={activePaymentMethod.label} className="checkout-payment__logo checkout-payment__logo--large" />
+                      <div>
+                        <h3>{activePaymentMethod.label}</h3>
+                        <p>Use the exact DEETECH payment details below, then upload your transaction screenshot.</p>
+                      </div>
+                    </div>
+                    <div className="checkout-payment__instruction-grid">
+                      {activePaymentMethod.lines.map((line) => (
+                        <div key={line} className="checkout-payment__instruction-block">{line}</div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="checkout-payment__upload-card">
+                    <div className="checkout-payment__upload-head">
+                      <h3>Upload Proof of Payment</h3>
+                      <p>Your order is created only after the payment proof is uploaded and confirmed.</p>
+                    </div>
+
+                    {form.paymentProofUrl ? (
+                      <div className="checkout-payment__proof-preview">
+                        <div className="checkout-payment__proof-thumb">
+                          <img src={resolveProductImage(form.paymentProofUrl)} alt={form.paymentProofName || "Payment proof"} />
+                        </div>
+                        <div className="checkout-payment__proof-meta">
+                          <strong>{form.paymentProofName || "Payment proof uploaded"}</strong>
+                          <small>{form.paymentProofStorage ? `Stored in ${form.paymentProofStorage}` : "Upload complete"}</small>
+                        </div>
+                        <button type="button" className="checkout-payment__secondary" onClick={clearProof}>
+                          Remove
+                        </button>
+                      </div>
+                    ) : null}
+
+                    <label className="checkout-payment__upload" ref={registerFieldRef("paymentProof")}>
+                      <input type="file" accept="image/*" onChange={handleProofUpload} />
+                      <span className="checkout-payment__upload-button">
+                        {proofUploading ? "Uploading proof..." : form.paymentProofUrl ? "Replace payment proof" : "Upload payment proof"}
+                      </span>
+                      <small className="checkout-payment__helper">Accepted: screenshot or clear image of the successful payment receipt.</small>
+                    </label>
+                  </div>
+                </div>
+              </section>
+            ) : null}
           </section>
 
           <aside className="checkout-summary panel">
@@ -402,11 +746,36 @@ export default function CheckoutPage() {
                 <span>Taxes</span>
                 <strong>{formatCurrency(taxes)}</strong>
               </div>
+              {canShowPaymentPhase ? (
+                <>
+                  <div className="checkout-summary__line">
+                    <span>Payment Method</span>
+                    <strong>{activePaymentMethod.label}</strong>
+                  </div>
+                  <div className="checkout-summary__line">
+                    <span>Proof Upload</span>
+                    <strong>{form.paymentProofUrl ? "Uploaded" : "Required"}</strong>
+                  </div>
+                </>
+              ) : null}
             </div>
             <div className="checkout-summary__total">
               <span>Total</span>
               <strong>{formatCurrency(total)}</strong>
             </div>
+            {canShowPaymentPhase ? (
+              <div className="checkout-summary__actions">
+                <button
+                  type="button"
+                  className="checkout-summary__button"
+                  onClick={handleConfirmPayment}
+                  disabled={submitting || proofUploading}
+                >
+                  {submitting ? "Confirming Order..." : "Confirm Payment"}
+                </button>
+                <p className="checkout-summary__note">Manual payment plus proof upload completes the order.</p>
+              </div>
+            ) : null}
             <div className="checkout-summary__items">
               {items.map((item) => (
                 <article key={item.productId || item._id} className="checkout-summary__item">
