@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/products/product-card";
+import { useCart } from "@/hooks/use-cart";
+import { useToast } from "@/components/providers/toast-provider";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { canonicalCategory, DEFAULT_STOREFRONT_CATEGORIES, deriveCategories, fetchProducts, getProductRating, pickFeaturedProducts } from "@/lib/products";
@@ -111,11 +113,19 @@ function sortByNewest(products) {
 }
 
 export default function HomePage() {
+  const { addItem } = useCart();
+  const { pushToast } = useToast();
   const [products, setProducts] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [banner, setBanner] = useState(null);
   const [productTab, setProductTab] = useState("popular");
+
+  function handleAddToCart(product) {
+    if (!product) return;
+    addItem(product, 1);
+    pushToast(`${product.name || "Product"} added to cart`, "success");
+  }
 
   useEffect(() => {
     fetchProducts()
@@ -360,7 +370,7 @@ export default function HomePage() {
         {status === "ready" && (
           <div className="product-grid">
             {visibleProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
             ))}
           </div>
         )}
