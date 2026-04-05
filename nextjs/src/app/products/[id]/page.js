@@ -73,6 +73,29 @@ function getReviewBreakdown(reviews) {
   });
 }
 
+function getReviewTimeLabel(value) {
+  const timestamp = new Date(value || Date.now()).getTime();
+  const diff = Date.now() - timestamp;
+  const day = 24 * 60 * 60 * 1000;
+  const month = 30 * day;
+
+  if (diff < day) return "Today";
+  if (diff < 2 * day) return "1 day ago";
+  if (diff < month) return `${Math.max(1, Math.floor(diff / day))} days ago`;
+  if (diff < 2 * month) return "1 month ago";
+  return `${Math.max(2, Math.floor(diff / month))} months ago`;
+}
+
+function getReviewerInitials(name) {
+  const parts = String(name || "Customer")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2);
+
+  return (parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CU").slice(0, 2);
+}
+
 const WISHLIST_STORAGE_KEY = "deetech:wishlist";
 const SOCIAL_LINKS = [
   { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
@@ -678,8 +701,8 @@ export default function ProductDetailPage() {
 
               <div className="product-review-actions">
                 <div className="product-review-actions__copy">
-                  <h3>Customer reviews</h3>
-                  <p>{reviewCount ? `Showing ${sortedReviews.length} review${sortedReviews.length === 1 ? "" : "s"}` : "No reviews yet. Be the first to share your experience with this product."}</p>
+                  <h3>Review List</h3>
+                  <p>{reviewCount ? `Showing 1-${sortedReviews.length} of ${reviewCount} results` : "No reviews yet. Be the first to share your experience with this product."}</p>
                 </div>
                 <label className="product-review-actions__sort">
                   <span>Sort by</span>
@@ -695,85 +718,93 @@ export default function ProductDetailPage() {
               <div className="product-review-shell">
                 <div className="product-review-list">
                   {sortedReviews.length ? (
-                    sortedReviews.map((review, index) => (
-                      <article key={review?._id || index} className="product-review">
-                        <div className="product-review__header">
-                          <div>
-                            <strong>{review?.user?.name || review?.name || "Customer"}</strong>
-                            <span className="product-review__verified">Verified</span>
+                    sortedReviews.map((review, index) => {
+                      const reviewerName = review?.user?.name || review?.name || "Customer";
+                      return (
+                        <article key={review?._id || index} className="product-review">
+                          <div className="product-review__header">
+                            <div className="product-review__identity">
+                              <div className="product-review__avatar" aria-hidden="true">
+                                {getReviewerInitials(reviewerName)}
+                              </div>
+                              <div>
+                                <strong>{reviewerName}</strong>
+                                <span className="product-review__verified">(Verified)</span>
+                              </div>
+                            </div>
+                            <time>{getReviewTimeLabel(review?.createdAt)}</time>
                           </div>
-                          <time>{new Date(review?.createdAt || Date.now()).toLocaleDateString()}</time>
-                        </div>
-                        <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
-                          {Array.from({ length: 5 }, (_, index) => (
-                            <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
-                          ))}
-                          <strong>{Number(review?.rating || 0).toFixed(1)}</strong>
-                        </p>
-                        <h4>{review?.title || "Customer review"}</h4>
-                        <p>{review?.comment || review?.message || "No review text provided."}</p>
-                        {review?.image_url ? (
-                          <div className="product-review__media">
-                            <img src={resolveProductImage(review.image_url)} alt={review?.title || "Review upload"} />
-                          </div>
-                        ) : null}
-                      </article>
-                    ))
+                          <h4>{review?.title || "Customer review"}</h4>
+                          <p>{review?.comment || review?.message || "No review text provided."}</p>
+                          <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
+                            {Array.from({ length: 5 }, (_, index) => (
+                              <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
+                            ))}
+                            <strong>{Number(review?.rating || 0).toFixed(1)}</strong>
+                          </p>
+                          {review?.image_url ? (
+                            <div className="product-review__media">
+                              <img src={resolveProductImage(review.image_url)} alt={review?.title || "Review upload"} />
+                            </div>
+                          ) : null}
+                        </article>
+                      );
+                    })
                   ) : (
                     <p>No reviews yet. Be the first to share your experience with this product.</p>
                   )}
                 </div>
-
-                <aside className="product-review-form">
-                  <h3>{myReview ? "Update your review" : "Write a review"}</h3>
-                  <p>{isAuthenticated ? "Share your real experience to help other customers buy with confidence." : "Login to write a review. Guests can still browse all customer reviews."}</p>
-                  <form className="auth-form" onSubmit={handleReviewSubmit}>
-                    <label>
-                      <span>Rating</span>
-                      <select
-                        className="field"
-                        value={reviewForm.rating}
-                        onChange={(event) => setReviewForm((current) => ({ ...current, rating: Number(event.target.value) }))}
-                        disabled={!isAuthenticated}
-                      >
-                        {[5, 4, 3, 2, 1].map((value) => (
-                          <option key={value} value={value}>{value} Star{value === 1 ? "" : "s"}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
-                      <span>Review title</span>
-                      <input
-                        className="field"
-                        value={reviewForm.title}
-                        onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
-                        placeholder="Summarize your experience"
-                        disabled={!isAuthenticated}
-                      />
-                    </label>
-                    <label>
-                      <span>Your review</span>
-                      <textarea
-                        className="field"
-                        rows="5"
-                        value={reviewForm.comment}
-                        onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-                        placeholder="Tell other customers what stood out to you"
-                        disabled={!isAuthenticated}
-                      />
-                    </label>
-                    {isAuthenticated ? (
-                      <button type="submit" className="primary-button" disabled={reviewStatus === "saving"}>
-                        {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
-                      </button>
-                    ) : (
-                      <button type="button" className="ghost-button" onClick={() => router.push("/login")}>
-                        Login to review
-                      </button>
-                    )}
-                  </form>
-                </aside>
               </div>
+
+              <aside className="product-review-form product-review-form--full">
+                <h3>{myReview ? "Update your review" : "Write a review"}</h3>
+                <p>{isAuthenticated ? "Share your real experience to help other customers buy with confidence." : "Login to write a review. Guests can still browse all customer reviews."}</p>
+                <form className="auth-form" onSubmit={handleReviewSubmit}>
+                  <label>
+                    <span>Rating</span>
+                    <select
+                      className="field"
+                      value={reviewForm.rating}
+                      onChange={(event) => setReviewForm((current) => ({ ...current, rating: Number(event.target.value) }))}
+                      disabled={!isAuthenticated}
+                    >
+                      {[5, 4, 3, 2, 1].map((value) => (
+                        <option key={value} value={value}>{value} Star{value === 1 ? "" : "s"}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Review title</span>
+                    <input
+                      className="field"
+                      value={reviewForm.title}
+                      onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
+                      placeholder="Summarize your experience"
+                      disabled={!isAuthenticated}
+                    />
+                  </label>
+                  <label>
+                    <span>Your review</span>
+                    <textarea
+                      className="field"
+                      rows="5"
+                      value={reviewForm.comment}
+                      onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
+                      placeholder="Tell other customers what stood out to you"
+                      disabled={!isAuthenticated}
+                    />
+                  </label>
+                  {isAuthenticated ? (
+                    <button type="submit" className="primary-button" disabled={reviewStatus === "saving"}>
+                      {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
+                    </button>
+                  ) : (
+                    <button type="button" className="ghost-button" onClick={() => router.push("/login")}>
+                      Login to review
+                    </button>
+                  )}
+                </form>
+              </aside>
             </div>
           ) : null}
         </div>
