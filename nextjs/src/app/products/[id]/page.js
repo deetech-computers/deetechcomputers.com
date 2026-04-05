@@ -795,11 +795,11 @@ export default function ProductDetailPage() {
                     />
                   </label>
                   {isAuthenticated ? (
-                    <button type="submit" className="primary-button" disabled={reviewStatus === "saving"}>
+                    <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
                       {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
                     </button>
                   ) : (
-                    <button type="button" className="ghost-button" onClick={() => router.push("/login")}>
+                    <button type="button" className="ghost-button product-review-form__submit" onClick={() => router.push("/login")}>
                       Login to review
                     </button>
                   )}

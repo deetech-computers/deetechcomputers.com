@@ -1639,6 +1639,13 @@ button, input, select, textarea { font: inherit; }
   min-height: 128px;
   resize: vertical;
 }
+.product-review-form__submit {
+  width: fit-content;
+  min-width: 0;
+  padding: 12px 28px;
+  border-radius: 999px;
+  justify-self: start;
+}
 .related-products {
   margin-top: 44px;
   display: grid;
