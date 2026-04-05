@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+﻿import nodemailer from "nodemailer";
 import {
   SMTP_HOST,
   SMTP_PORT,
@@ -8,7 +8,10 @@ import {
   FRONTEND_URL,
   BACKEND_PUBLIC_URL,
   NODE_ENV,
+  EMAILJS_SERVICE_ID,
   EMAILJS_PUBLIC_KEY,
+  EMAILJS_ORDER_TEMPLATE_ID,
+  EMAILJS_ADMIN_ORDER_TEMPLATE_ID,
   EMAILJS_RESET_SERVICE_ID,
   EMAILJS_RESET_TEMPLATE_ID,
   EMAILJS_PRIVATE_KEY,
@@ -57,6 +60,16 @@ function paymentMethodLabel(method) {
   return map[String(method || "").toLowerCase()] || (method || "N/A");
 }
 
+function canUseOrderEmailJs() {
+  return Boolean(
+    EMAILJS_SERVICE_ID &&
+      EMAILJS_PUBLIC_KEY &&
+      EMAILJS_PRIVATE_KEY &&
+      EMAILJS_ORDER_TEMPLATE_ID &&
+      EMAILJS_ADMIN_ORDER_TEMPLATE_ID
+  );
+}
+
 function trimTrailingSlash(value = "") {
   return String(value || "").replace(/\/$/, "");
 }
@@ -87,6 +100,51 @@ function orderItemsForEmail(items = []) {
     name: item.name || item.product?.name || String(item.product || "Product"),
     price: Number(item.price || 0),
   }));
+}
+
+function buildOrderItemsForEmailJs(items = []) {
+  return items.map((item) => {
+    const quantity = Number(item?.qty || item?.quantity || 0);
+    const price = Number(item?.price || 0);
+    const name =
+      item?.name ||
+      item?.product?.name ||
+      (typeof item?.product === "string" ? item.product : "Product");
+
+    return {
+      id:
+        item?.product?._id ||
+        item?.product?.id ||
+        (typeof item?.product === "string" ? item.product : "N/A"),
+      name,
+      quantity,
+      price,
+      subtotal: quantity * price,
+    };
+  });
+}
+
+async function sendEmailJsTemplate(templateId, templateParams) {
+  const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: templateId,
+      user_id: EMAILJS_PUBLIC_KEY,
+      accessToken: EMAILJS_PRIVATE_KEY,
+      template_params: templateParams,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(
+      `EmailJS order send failed (${response.status}): ${errorText || "Unknown error"}`
+    );
+  }
 }
 
 function initTransporter() {
@@ -164,7 +222,7 @@ export async function sendWelcomeEmail(to, name = "") {
           <p style="margin-bottom:0;">If you ever need assistance, reply to this email or contact us on <strong>${escapeHtml(SUPPORT_PHONE)}</strong>.</p>
         </div>
         <div style="background:#f3f4f6;padding:16px;text-align:center;font-size:13px;color:#6b7280;">
-          ${COMPANY_NAME} � ${escapeHtml(SUPPORT_EMAIL)} � ${escapeHtml(SUPPORT_PHONE)}
+          ${COMPANY_NAME} • ${escapeHtml(SUPPORT_EMAIL)} • ${escapeHtml(SUPPORT_PHONE)}
         </div>
       </div>
     </div>
@@ -180,6 +238,70 @@ export async function sendWelcomeEmail(to, name = "") {
 }
 
 export async function sendOrderNotification(to, orderDetails = {}) {
+  if (canUseOrderEmailJs()) {
+    const websiteUrl =
+      trimTrailingSlash(FRONTEND_URL) || "https://deetechcomputers-com.vercel.app";
+    const created = formatDateTime(orderDetails.createdAt);
+    const orderItems = buildOrderItemsForEmailJs(orderDetails.orderItems || []);
+    const totalItems = orderItems.length;
+    const totalQuantity = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+    const orderItemsBlocks = orderItems
+      .map(
+        (item) => `
+          <div style="margin-bottom: 12px; padding: 12px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #007bff;">
+            <strong style="color: #333;">${escapeHtml(item.name)}</strong>
+            <div style="font-size: 13px; color: #666; margin: 4px 0;">ID: ${escapeHtml(item.id)}</div>
+            <div style="font-size: 13px;">
+              <span style="color: #333;">Quantity:</span> ${item.quantity} x
+              <span style="color: #333;">GH₵ ${item.price.toFixed(2)}</span> =
+              <strong style="color: #d9534f;">GH₵ ${item.subtotal.toFixed(2)}</strong>
+            </div>
+          </div>`
+      )
+      .join("");
+
+    await sendEmailJsTemplate(EMAILJS_ADMIN_ORDER_TEMPLATE_ID, {
+      email: to,
+      to_email: to,
+      to_name: COMPANY_NAME,
+      admin_name: COMPANY_NAME,
+      order_id: String(orderDetails.id || "N/A"),
+      customer_name: orderDetails.customerName || "Customer",
+      customer_email: orderDetails.customerEmail || "",
+      customer_phone: orderDetails.mobileNumber || "",
+      order_total: `GH₵ ${Number(orderDetails.totalPrice || 0).toFixed(2)}`,
+      order_items: orderItemsBlocks || "<div>No items listed</div>",
+      order_date: created.date,
+      order_time: created.time,
+      payment_method: paymentMethodLabel(orderDetails.paymentMethod),
+      delivery_address: `${orderDetails.deliveryAddress || ""}, ${orderDetails.deliveryRegion || ""}`.replace(
+        /^,\s*|\s*,\s*$/g,
+        ""
+      ),
+      shipping_method: "Free Nationwide Delivery",
+      subject: `NEW ORDER #${orderDetails.id || "N/A"} - ACTION REQUIRED`,
+      customer_notes: orderDetails.guestNotes || "No special instructions",
+      order_status: orderDetails.orderStatus || "NEW ORDER",
+      view_order_url: `${websiteUrl}/order-completed`,
+      total_items: totalItems,
+      total_quantity: totalQuantity,
+      platform: "Website",
+      order_urgency: "HIGH PRIORITY",
+      action_required: "Process & Confirm",
+      estimated_delivery: "Within 3-5 days",
+      payment_status: orderDetails.paymentStatus || "Pending",
+      customer_address: `${orderDetails.deliveryAddress || ""}, ${orderDetails.deliveryRegion || ""}`.replace(
+        /^,\s*|\s*,\s*$/g,
+        ""
+      ),
+      support_email: SUPPORT_EMAIL,
+      support_phone: SUPPORT_PHONE,
+      support_whatsapp: "233591755964",
+      website_url: websiteUrl,
+    });
+    return true;
+  }
+
   const items = orderItemsForEmail(orderDetails.orderItems || []);
   const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
   const created = formatDateTime(orderDetails.createdAt);
@@ -259,6 +381,53 @@ export async function sendOrderNotification(to, orderDetails = {}) {
 }
 
 export async function sendOrderConfirmation(to, orderDetails = {}) {
+  if (canUseOrderEmailJs()) {
+    const websiteUrl =
+      trimTrailingSlash(FRONTEND_URL) || "https://deetechcomputers-com.vercel.app";
+    const orderId = String(orderDetails.id || "N/A");
+    const orderItems = buildOrderItemsForEmailJs(orderDetails.orderItems || []);
+    const orderItemsRows = orderItems
+      .map(
+        (item) => `<tr>
+          <td width="50%" style="padding:8px 0 8px 5px; font-size:12px;">${escapeHtml(item.name)}</td>
+          <td width="20%" align="center" style="padding:8px 0; font-size:12px;">${item.quantity}</td>
+          <td width="30%" align="right" style="padding:8px 5px 8px 0; font-size:12px;">GH₵ ${item.subtotal.toFixed(2)}</td>
+        </tr>`
+      )
+      .join("");
+    const created = formatDateTime(orderDetails.createdAt);
+
+    await sendEmailJsTemplate(EMAILJS_ORDER_TEMPLATE_ID, {
+      email: to,
+      to_email: to,
+      to_name: orderDetails.customerName || "Valued Customer",
+      customer_name: orderDetails.customerName || "Customer",
+      customer_email: to,
+      customer_phone: orderDetails.mobileNumber || "",
+      order_id: orderId,
+      order_subtotal: Number(orderDetails.totalPrice || 0).toFixed(2),
+      order_total: Number(orderDetails.totalPrice || 0).toFixed(2),
+      currency_symbol: "GH₵ ",
+      order_items: orderItemsRows || "<tr><td colspan='3'>No items listed</td></tr>",
+      order_date: created.date,
+      payment_method: paymentMethodLabel(orderDetails.paymentMethod),
+      delivery_address: `${orderDetails.deliveryAddress || ""}, ${orderDetails.deliveryRegion || ""}`.replace(
+        /^,\s*|\s*,\s*$/g,
+        ""
+      ),
+      company_name: COMPANY_NAME,
+      support_email: SUPPORT_EMAIL,
+      support_phone: SUPPORT_PHONE,
+      current_year: String(new Date().getFullYear()),
+      website_url: websiteUrl,
+      order_tracking_url: `${websiteUrl}/order-completed`,
+      estimated_delivery: "24 hours Delivery",
+      shipping_method: "Free Nationwide Delivery",
+      subject: `Order Confirmation #${orderId} - ${COMPANY_NAME}`,
+    });
+    return true;
+  }
+
   const items = orderItemsForEmail(orderDetails.orderItems || []);
   const created = formatDateTime(orderDetails.createdAt);
   const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
@@ -475,11 +644,12 @@ export function getEmailProviderInfo() {
     smtpUser: SMTP_USER || "",
     smtpPassSet: Boolean(SMTP_PASS),
     hasTransporter: Boolean(transporter),
-    frontendEmailJsActiveOnCheckout: true,
+    orderEmailJsConfigured: canUseOrderEmailJs(),
     resetEmailJsConfigured: Boolean(EMAILJS_PUBLIC_KEY && EMAILJS_RESET_SERVICE_ID && EMAILJS_RESET_TEMPLATE_ID && EMAILJS_PRIVATE_KEY),
     resetEmailJsPrivateKeySet: Boolean(EMAILJS_PRIVATE_KEY),
     environment: NODE_ENV,
   };
 }
+
 
 
