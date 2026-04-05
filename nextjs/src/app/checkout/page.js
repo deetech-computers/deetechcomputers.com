@@ -62,16 +62,13 @@ export default function CheckoutPage() {
     firstName: initialName.firstName,
     lastName: initialName.lastName,
     companyName: "",
-    country: "Ghana",
     shippingAddress: user?.address || "",
     shippingCity: user?.city || "",
     deliveryRegion: "",
-    zipCode: "",
     mobileNumber: user?.phone || "",
     shippingEmail: user?.email || "",
     useShippingForBilling: true,
     billingAddress: "",
-    paymentMethod: "mtn",
   });
 
   useEffect(() => {
@@ -187,11 +184,6 @@ export default function CheckoutPage() {
               </label>
 
               <label className="checkout-field checkout-field--full">
-                <span>Country *</span>
-                <input className="field" value={form.country} onChange={(event) => updateField("country", event.target.value)} placeholder="Select Country" required />
-              </label>
-
-              <label className="checkout-field checkout-field--full">
                 <span>Street Address *</span>
                 <input className="field" value={form.shippingAddress} onChange={(event) => updateField("shippingAddress", event.target.value)} placeholder="Enter Street Address" required />
               </label>
@@ -209,11 +201,6 @@ export default function CheckoutPage() {
                     <option key={region} value={region}>{region}</option>
                   ))}
                 </select>
-              </label>
-
-              <label className="checkout-field">
-                <span>Zip Code</span>
-                <input className="field" value={form.zipCode} onChange={(event) => updateField("zipCode", event.target.value)} placeholder="Enter Zip Code" />
               </label>
 
               <label className="checkout-field">
@@ -254,16 +241,6 @@ export default function CheckoutPage() {
                   <input className="field" value={form.billingAddress} onChange={(event) => updateField("billingAddress", event.target.value)} placeholder="Enter Billing Address" />
                 </label>
               ) : null}
-
-              <label className="checkout-field checkout-field--full">
-                <span>Preferred Payment Channel *</span>
-                <select className="field" value={form.paymentMethod} onChange={(event) => updateField("paymentMethod", event.target.value)}>
-                  <option value="mtn">MTN Mobile Money</option>
-                  <option value="vodafone">Telecel / Vodafone Cash</option>
-                  <option value="bank">Bank Transfer</option>
-                  <option value="hubtel">Hubtel</option>
-                </select>
-              </label>
 
               <div className="checkout-phase-action checkout-field checkout-field--full">
                 {phaseSaved ? <p className="checkout-phase-action__message">Billing details saved for phase two payment.</p> : null}
