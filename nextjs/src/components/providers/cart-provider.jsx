@@ -112,15 +112,16 @@ export function CartProvider({ children }) {
   };
 
   const updateQuantity = (productId, qty) => {
-    if (Number(qty) <= 0) {
-      removeItem(productId);
-      return;
-    }
-
     setItems((current) =>
       current.map((item) =>
         String(item.productId || item._id) === String(productId)
-          ? { ...item, qty: normalizeQty(qty) }
+          ? {
+              ...item,
+              qty: Math.min(
+                normalizeQty(qty),
+                Number(item.countInStock) > 0 ? Number(item.countInStock) : 99
+              ),
+            }
           : item
       )
     );
