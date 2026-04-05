@@ -509,18 +509,40 @@ export default function ProductDetailPage() {
 
       <section className="product-detail-view">
         <div className="product-gallery panel">
-          <button
-            type="button"
-            className="product-gallery__main product-gallery__main--interactive"
-            onClick={() => setPreviewOpen(true)}
-            aria-label="Tap to preview product image"
-          >
-            {currentImage ? (
-              <img src={currentImage} alt={product.name} />
-            ) : (
-              <div className="product-card__placeholder">No image</div>
-            )}
-          </button>
+          <div className="product-gallery__stage">
+            <button
+              type="button"
+              className="product-gallery__main product-gallery__main--interactive"
+              onClick={() => setPreviewOpen(true)}
+              aria-label="Tap to preview product image"
+            >
+              {currentImage ? (
+                <img src={currentImage} alt={product.name} />
+              ) : (
+                <div className="product-card__placeholder">No image</div>
+              )}
+            </button>
+            {images.length > 1 ? (
+              <>
+                <button
+                  type="button"
+                  className="product-gallery__stage-arrow product-gallery__stage-arrow--left"
+                  onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+                  aria-label="Previous product image"
+                >
+                  &lsaquo;
+                </button>
+                <button
+                  type="button"
+                  className="product-gallery__stage-arrow product-gallery__stage-arrow--right"
+                  onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+                  aria-label="Next product image"
+                >
+                  &rsaquo;
+                </button>
+              </>
+            ) : null}
+          </div>
 
           {images.length ? (
             <div className="product-gallery__selector" aria-label="Product images">
