@@ -3,142 +3,86 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-const categories = [
-  { value: "all", label: "All Questions" },
-  { value: "ordering", label: "Ordering" },
-  { value: "payment", label: "Payment" },
-  { value: "delivery", label: "Delivery" },
-  { value: "warranty", label: "Warranty and Returns" },
-  { value: "account", label: "Account" },
-  { value: "affiliates", label: "Affiliates" },
-  { value: "support", label: "Support" },
-];
-
 const items = [
-  ["ordering", "How do I place an order?", 'You can place an order directly on our website by selecting your desired product, clicking "Add to Cart," and completing checkout. You can also contact us on WhatsApp for direct assistance.'],
-  ["ordering", "Can I order without creating an account?", "Yes. You can check out as a guest, but creating an account helps with order tracking, history, and faster checkout."],
-  ["ordering", "How do I know my order was successful?", "After placing your order, you will receive a confirmation message or email. Our team may also contact you to verify before delivery."],
-  ["payment", "What payment methods do you accept?", "We accept mobile money (MTN and Telecel), Hubtel payments, and bank transfers. In-person payment at our Kumasi office is also available for verified customers."],
-  ["payment", "Is payment required before delivery?", "Yes. Full payment is required before delivery for online orders. For bulk or verified repeat customers, partial payment options may be available."],
-  ["payment", "Is my payment information secure?", "Yes. Payments are processed through trusted channels such as Hubtel and official mobile money APIs. DEETECH COMPUTERS does not store your financial details."],
-  ["delivery", "Do you offer nationwide delivery?", "Yes. We deliver to all regions of Ghana through trusted logistics partners. Delivery time is typically 8 to 24 hours depending on location."],
-  ["delivery", "How much does delivery cost?", "Delivery is free for most orders. In rare cases such as remote areas or special product types, a small delivery fee may apply and will be communicated before payment."],
-  ["delivery", "Can I track my delivery?", "Yes. Once shipped, you receive a tracking update or a call from our delivery agent with estimated delivery time."],
-  ["warranty", "Do you provide warranty on products?", "Yes. Laptops and electronics come with warranty periods depending on brand and product type. Warranty covers manufacturing defects."],
-  ["warranty", "Can I return or exchange a product?", "Yes. You can return or exchange a product within the allowed return window if it is defective or not as described, and still in acceptable condition."],
-  ["warranty", "What items are not eligible for return?", "Items damaged by customer misuse, software issues caused by user actions, and accessories without manufacturing faults are not eligible for return."],
-  ["account", "Why should I create a DEETECH account?", "An account helps you manage orders, track delivery, save favorite products, and use faster checkout on future purchases."],
-  ["account", "I forgot my password. What should I do?", "Use the Forgot Password page or the reset option on the login page, then follow the secure reset instructions sent to your email."],
-  ["affiliates", "How does the DEETECH Affiliate Program work?", "Affiliates earn commission for qualified sales through their referral links. Visit the Affiliates page to start."],
-  ["affiliates", "When and how do affiliates get paid?", "Affiliate commissions are processed through mobile money or bank transfer once sales are confirmed and cleared."],
-  ["support", "How do I contact customer support?", "Contact support via email at deetechcomputers01@gmail.com, WhatsApp at +233 591755964, or phone at +233 509673406."],
-  ["support", "What are your working hours?", "Our support and delivery team are available Monday to Saturday, 8:00 AM to 7:00 PM. Sunday responses may be delayed."],
-  ["support", "Where is DEETECH COMPUTERS located?", "Our main office is in Kumasi, serving Ashanti Region and customers across Ghana through nationwide delivery."],
-].map(([category, question, answer]) => ({ category, question, answer }));
+  ["What types of products do you offer?", "We offer laptops, desktops, monitors, accessories, networking gear, printers, gaming devices, and selected mobile devices based on current stock and verified quality."],
+  ["Do you offer any discounts or promotions?", "Yes. We run seasonal promotions, bundle offers, affiliate campaigns, and selected product discounts. Active offers are usually visible on the products page and during checkout."],
+  ["How can I provide feedback about my experience?", "You can send feedback through our contact page, WhatsApp, email, or messages area. We take customer reviews and service feedback seriously because they help us improve delivery and support."],
+  ["What payment methods do you accept?", "We accept MTN Mobile Money, Telecel Cash, Hubtel, and bank transfer. After payment, customers upload proof so the order can be confirmed and processed quickly."],
+  ["Do you offer customer support?", "Yes. DEETECH support is available for product questions, order help, payment issues, warranty guidance, and after-sales assistance through phone, email, and WhatsApp."],
+  ["How do I track my order?", "Once your order is confirmed, you can open the Track Order page from your account to follow the progress from order placed to delivery."],
+  ["Can I order without creating an account?", "Yes. Guest checkout is available, but creating an account gives you easier order history, wishlist access, and tracking for each purchase."],
+  ["Do you provide warranty on products?", "Yes. Warranty depends on the product type and brand. Eligible products include warranty coverage against manufacturing faults based on the stated terms."],
+].map(([question, answer]) => ({ question, answer }));
+
+function SupportIcon() {
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M44 18c8.3 0 15 6.3 15 14 0 4.3-2.1 8.3-5.6 10.9V50l-7.5-4.2c-.6.1-1.3.2-1.9.2-8.3 0-15-6.3-15-14s6.7-14 15-14Z" fill="#c89a33" />
+      <path d="M28 12C16.4 12 7 20.5 7 31c0 5.9 2.8 11.3 7.5 14.9V55l10.3-5.8c1 .2 2.1.3 3.2.3 11.6 0 21-8.5 21-19S39.6 12 28 12Z" fill="#fff" stroke="#184f27" strokeWidth="2.4" strokeLinejoin="round" />
+      <circle cx="22" cy="31" r="2.6" fill="#184f27" />
+      <circle cx="29" cy="31" r="2.6" fill="#184f27" />
+      <circle cx="36" cy="31" r="2.6" fill="#184f27" />
+    </svg>
+  );
+}
 
 export default function FaqPage() {
-  const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [openQuestions, setOpenQuestions] = useState({});
+  const [openQuestion, setOpenQuestion] = useState(items[1]?.question || items[0]?.question || "");
 
-  const visibleItems = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    return items.filter((item) => {
-      const categoryMatch = activeCategory === "all" || item.category === activeCategory;
-      const text = `${item.question} ${item.answer}`.toLowerCase();
-      const searchMatch = !normalizedQuery || text.includes(normalizedQuery);
-      return categoryMatch && searchMatch;
-    });
-  }, [activeCategory, query]);
+  const visibleItems = useMemo(() => items, []);
 
   return (
     <main className="shell page-section content-page">
-      <section className="panel content-hero">
-        <p className="section-kicker">FAQ</p>
-        <h1>FAQ and Help Center</h1>
-        <p className="hero-copy">Find detailed answers to questions about orders, payments, delivery, warranty, and support.</p>
-        <input
-          className="field faq-search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search for answers..."
-          aria-label="Search FAQ answers"
-        />
-      </section>
-
-      <section className="faq-actions-grid">
-        <Link href="/orders" className="panel faq-action-card">
-          <h2>Track Your Order Status</h2>
-          <p>Check your order status and delivery updates.</p>
-        </Link>
-        <a href="https://wa.me/233591755964" target="_blank" rel="noreferrer" className="panel faq-action-card">
-          <h2>Live Support Chat</h2>
-          <p>Get instant help from our support team.</p>
-        </a>
-        <div className="panel faq-action-card">
-          <h2>Policy Guides</h2>
-          <p>Read our warranty and return policies.</p>
-          <div className="stack-actions">
-            <Link href="/warranty" className="ghost-link">Warranty Terms</Link>
-            <Link href="/return-refund" className="ghost-link">Return and Refund</Link>
-          </div>
+      <section className="faq-showcase">
+        <div className="faq-showcase__intro">
+          <p className="section-kicker">FAQs</p>
+          <h1>
+            Question? <span>Look here.</span>
+          </h1>
         </div>
-      </section>
 
-      <section className="faq-categories">
-        {categories.map((category) => (
-          <button
-            key={category.value}
-            type="button"
-            className={activeCategory === category.value ? "ghost-button faq-chip active" : "ghost-button faq-chip"}
-            onClick={() => setActiveCategory(category.value)}
-          >
-            {category.label}
-          </button>
-        ))}
-      </section>
-
-      <section className="faq-results-meta">
-        <span>{visibleItems.length} {visibleItems.length === 1 ? "question" : "questions"} found</span>
-      </section>
-
-      <section className="faq-list">
-        {visibleItems.map((item) => {
-          const isOpen = Boolean(openQuestions[item.question]);
-          return (
-            <article key={item.question} className={isOpen ? "panel faq-item open" : "panel faq-item"}>
-              <button
-                type="button"
-                className="faq-question"
-                onClick={() =>
-                  setOpenQuestions((current) => ({ ...current, [item.question]: !current[item.question] }))
-                }
-              >
-                <span>{item.question}</span>
-                <span>{isOpen ? "-" : "+"}</span>
-              </button>
-              {isOpen ? (
-                <div className="faq-answer">
-                  <p>{item.answer}</p>
-                  {item.question === "I forgot my password. What should I do?" ? (
-                    <Link href="/forgot-password" className="primary-link">
-                      Open Forgot Password
-                    </Link>
+        <div className="faq-showcase__layout">
+          <section className="faq-showcase__list">
+            {visibleItems.map((item) => {
+              const isOpen = openQuestion === item.question;
+              return (
+                <article key={item.question} className={isOpen ? "faq-card is-open" : "faq-card"}>
+                  <button
+                    type="button"
+                    className="faq-card__question"
+                    onClick={() => setOpenQuestion((current) => (current === item.question ? "" : item.question))}
+                    aria-expanded={isOpen}
+                  >
+                    <span>{item.question}</span>
+                    <span className="faq-card__toggle" aria-hidden="true">
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+                  {isOpen ? (
+                    <div className="faq-card__answer">
+                      <p>{item.answer}</p>
+                      {item.question === "How do I track my order?" ? (
+                        <Link href="/orders" className="ghost-link">
+                          Open Track Order
+                        </Link>
+                      ) : null}
+                    </div>
                   ) : null}
-                </div>
-              ) : null}
-            </article>
-          );
-        })}
-      </section>
+                </article>
+              );
+            })}
+          </section>
 
-      <section className="panel content-cta">
-        <h2>Still Need Help?</h2>
-        <p>Our support team is available for payment, delivery, order, and technical assistance.</p>
-        <div className="hero-actions">
-          <a href="mailto:deetechcomputers01@gmail.com" className="primary-link">Email Support</a>
-          <a href="https://wa.me/233591755964" target="_blank" rel="noreferrer" className="ghost-link">WhatsApp Chat</a>
-          <a href="tel:+233591755964" className="ghost-link">Phone Call</a>
+          <aside className="faq-support-card">
+            <div className="faq-support-card__icon">
+              <SupportIcon />
+            </div>
+            <h2>You have different questions?</h2>
+            <p>Our team will answer all your questions. We ensure a quick response.</p>
+            <Link href="/contact" className="faq-support-card__button">
+              Contact Us
+            </Link>
+          </aside>
         </div>
       </section>
     </main>
