@@ -2877,8 +2877,23 @@ button, input, select, textarea { font: inherit; }
 .faq-card__answer p {
   margin: 0;
 }
-.faq-card__answer .ghost-link {
-  color: #fff;
+.faq-track-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: #fff;
+  color: #184f27;
+  border: 1px solid rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(11, 18, 13, 0.16);
+}
+.faq-track-link:hover {
+  background: #f7f5ef;
 }
 .faq-support-card {
   display: grid;
@@ -4030,6 +4045,10 @@ button, input, select, textarea { font: inherit; }
   }
   .faq-card__answer {
     padding: 0 18px 20px;
+  }
+  .faq-track-link {
+    min-height: 50px;
+    padding: 0 22px;
   }
   .faq-support-card {
     padding: 28px 20px;

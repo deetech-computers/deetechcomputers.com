@@ -55,14 +55,14 @@ export default function FaqPage() {
                   >
                     <span>{item.question}</span>
                     <span className="faq-card__toggle" aria-hidden="true">
-                      {isOpen ? "−" : "+"}
+                      {isOpen ? "-" : "+"}
                     </span>
                   </button>
                   {isOpen ? (
                     <div className="faq-card__answer">
                       <p>{item.answer}</p>
                       {item.question === "How do I track my order?" ? (
-                        <Link href="/orders" className="ghost-link">
+                        <Link href="/orders" className="faq-track-link">
                           Open Track Order
                         </Link>
                       ) : null}
