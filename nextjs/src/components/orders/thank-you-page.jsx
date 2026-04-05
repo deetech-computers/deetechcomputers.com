@@ -67,24 +67,53 @@ export default function ThankYouPage() {
   const [pageReady, setPageReady] = useState(false);
 
   useEffect(() => {
-    setOrder(readLastOrder());
     if (typeof window !== "undefined") {
+      const savedOrder = readLastOrder();
+      setOrder(savedOrder);
       const shouldAnimate =
         window.sessionStorage.getItem("deetech-order-complete-animate") === "1";
+      const shouldHold =
+        window.sessionStorage.getItem("deetech-order-complete-pending") === "1";
       if (shouldAnimate) {
         setArriving(true);
         window.sessionStorage.removeItem("deetech-order-complete-animate");
       }
-      const frame = window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
+
+      const imageUrls = Array.isArray(savedOrder?.items)
+        ? savedOrder.items
+            .map((item) => resolveProductImage(item.image))
+            .filter(Boolean)
+        : [];
+
+      let cancelled = false;
+
+      const imageTasks = imageUrls.map(
+        (url) =>
+          new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+          })
+      );
+
+      const settle = async () => {
+        await Promise.allSettled(imageTasks);
+        await new Promise((resolve) => window.setTimeout(resolve, shouldHold ? 360 : 120));
+        if (!cancelled) {
           setPageReady(true);
-        });
-      });
+          window.sessionStorage.removeItem("deetech-order-complete-pending");
+        }
+      };
+
+      settle();
+
       return () => {
-        window.cancelAnimationFrame(frame);
+        cancelled = true;
         clearLastOrder();
       };
     }
+    setOrder(readLastOrder());
     setPageReady(true);
     return () => {
       clearLastOrder();
