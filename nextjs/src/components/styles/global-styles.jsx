@@ -2281,6 +2281,32 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 12px;
 }
+.checkout-customer-card {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid #ece5d9;
+  background: #fff;
+}
+.checkout-customer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+.checkout-customer-grid div {
+  display: grid;
+  gap: 4px;
+}
+.checkout-customer-grid span {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.checkout-customer-grid strong {
+  color: #1f1d1b;
+}
+.checkout-customer-grid__full {
+  grid-column: 1 / -1;
+}
 .checkout-payment__instruction-block {
   padding: 14px 16px;
   background: #faf7f1;
@@ -2339,6 +2365,10 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid #e0d6c8;
   background: #ffffff;
   color: #1f1d1b;
+}
+.checkout-payment__secondary--inline {
+  width: fit-content;
+  text-decoration: none;
 }
 .checkout-summary {
   display: grid;
@@ -2712,6 +2742,13 @@ button, input, select, textarea { font: inherit; }
   .checkout-payment__instruction-card,
   .checkout-payment__upload-card {
     padding: 18px 16px;
+  }
+  .checkout-customer-card {
+    padding: 18px 16px;
+  }
+  .checkout-customer-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .checkout-payment__proof-preview {
     grid-template-columns: 1fr;
