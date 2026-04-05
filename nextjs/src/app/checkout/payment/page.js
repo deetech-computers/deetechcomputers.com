@@ -23,7 +23,7 @@ import { requestWithToken } from "@/lib/resource";
 
 export default function CheckoutPaymentPage() {
   const PROCESSING_FLOOR_MS = 1800;
-  const SUCCESS_FLOOR_MS = 2400;
+  const SUCCESS_FLOOR_MS = 3000;
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const { token, isAuthenticated } = useAuth();
@@ -318,6 +318,11 @@ export default function CheckoutPaymentPage() {
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem("deetech-order-complete-animate", "1");
         window.sessionStorage.setItem("deetech-order-complete-pending", "1");
+        await new Promise((resolve) =>
+          window.requestAnimationFrame(() =>
+            window.requestAnimationFrame(resolve)
+          )
+        );
       }
       await new Promise((resolve) => window.setTimeout(resolve, SUCCESS_FLOOR_MS));
       router.push("/order-completed");

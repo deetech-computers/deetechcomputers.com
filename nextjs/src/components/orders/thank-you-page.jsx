@@ -99,7 +99,12 @@ export default function ThankYouPage() {
 
       const settle = async () => {
         await Promise.allSettled(imageTasks);
-        await new Promise((resolve) => window.setTimeout(resolve, shouldHold ? 360 : 120));
+        await new Promise((resolve) =>
+          window.requestAnimationFrame(() =>
+            window.requestAnimationFrame(resolve)
+          )
+        );
+        await new Promise((resolve) => window.setTimeout(resolve, shouldHold ? 420 : 140));
         if (!cancelled) {
           setPageReady(true);
           window.sessionStorage.removeItem("deetech-order-complete-pending");
@@ -138,10 +143,13 @@ export default function ThankYouPage() {
 
   if (!pageReady) {
     return (
-      <main className="shell page-section">
-        <section className="panel cart-empty">
-          <h2>Preparing your completed order...</h2>
-          <p className="hero-copy">Final touches are loading before we show your receipt.</p>
+      <main className="page-section">
+        <section className="order-complete-pending" aria-live="polite">
+          <div className="order-complete-pending__card">
+            <div className="order-complete-pending__spinner" aria-hidden="true" />
+            <h2>Preparing your completed order...</h2>
+            <p>Final touches are loading before we reveal your receipt.</p>
+          </div>
         </section>
       </main>
     );

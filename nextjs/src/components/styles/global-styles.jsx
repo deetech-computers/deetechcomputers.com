@@ -2991,6 +2991,42 @@ button, input, select, textarea { font: inherit; }
 .order-complete__total strong {
   font-size: 1.2rem;
 }
+.order-complete-pending {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top, rgba(201, 150, 47, 0.14), transparent 32%),
+    #fbf8f2;
+}
+.order-complete-pending__card {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(92vw, 420px);
+  padding: 34px 26px;
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(193, 169, 132, 0.26);
+  box-shadow: 0 24px 70px rgba(45, 32, 10, 0.12);
+  text-align: center;
+}
+.order-complete-pending__card h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+.order-complete-pending__card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.order-complete-pending__spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 3px solid rgba(124, 95, 44, 0.16);
+  border-top-color: #a77a2a;
+  animation: checkoutSuccessSpin 0.85s linear infinite;
+}
 @keyframes checkoutSuccessFade {
   0% {
     opacity: 0;
