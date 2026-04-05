@@ -52,7 +52,7 @@ export default function CartPage() {
           <Link href="/products" className="primary-link">Browse products</Link>
         </section>
       ) : (
-        <>
+        <section className="cart-shell">
           <div className="cart-layout cart-layout--page">
             <section className="cart-table panel">
               <header className="cart-table__head" aria-hidden="true">
@@ -157,7 +157,7 @@ export default function CartPage() {
               Clear Shopping Cart
             </button>
           </section>
-        </>
+        </section>
       )}
     </main>
   );

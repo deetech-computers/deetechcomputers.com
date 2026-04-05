@@ -1800,16 +1800,26 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: 1.8fr 320px;
   align-items: start;
 }
+.cart-shell {
+  display: grid;
+  gap: 0;
+  background: #ffffff;
+  padding: 28px;
+}
 .cart-layout--page {
   gap: 28px;
 }
 .cart-table,
 .cart-summary {
   border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
 }
 .cart-table {
   display: grid;
   gap: 0;
+  border: 0;
+  padding: 0;
 }
 .cart-table__head {
   display: grid;
@@ -1925,6 +1935,7 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 18px;
   padding: 22px 24px;
+  border: 1px solid #ece5d9;
 }
 .cart-summary h2 {
   font-size: 1.05rem;
@@ -1973,6 +1984,7 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 18px;
   flex-wrap: wrap;
+  background: #ffffff;
 }
 .cart-actions-bar__coupon {
   display: flex;
@@ -2254,6 +2266,10 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.92rem;
     gap: 8px;
   }
+  .cart-shell {
+    gap: 18px;
+    padding: 16px 14px 20px;
+  }
   .cart-table {
     padding: 0;
   }
@@ -2263,7 +2279,7 @@ button, input, select, textarea { font: inherit; }
   .cart-row {
     grid-template-columns: 26px minmax(0, 1fr);
     gap: 12px;
-    padding: 18px 0;
+    padding: 18px 0 16px;
   }
   .cart-row__product {
     grid-column: 2;
@@ -2285,25 +2301,56 @@ button, input, select, textarea { font: inherit; }
   .cart-row__subtotal {
     grid-column: 2;
   }
+  .cart-row__price::before,
+  .cart-row__subtotal::before {
+    display: inline-block;
+    margin-right: 8px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cart-row__price::before {
+    content: "Price";
+  }
+  .cart-row__subtotal::before {
+    content: "Subtotal";
+  }
   .cart-row__price,
   .cart-row__subtotal {
     font-size: 0.94rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
   .cart-row__qty {
-    width: 132px;
+    width: 100%;
+    max-width: 154px;
   }
   .cart-summary {
-    padding: 18px;
+    padding: 18px 16px;
   }
   .cart-actions-bar {
     align-items: stretch;
+    margin-top: 6px;
+    padding-top: 18px;
+    gap: 14px;
   }
   .cart-actions-bar__coupon {
     width: 100%;
+    display: grid;
+    gap: 10px;
   }
   .cart-actions-bar__input,
   .cart-actions-bar__apply {
     width: 100%;
+  }
+  .cart-actions-bar__clear {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0 0;
   }
   .product-grid {
     border-top-color: #d9d0c2;
