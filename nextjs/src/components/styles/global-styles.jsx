@@ -3027,6 +3027,261 @@ button, input, select, textarea { font: inherit; }
   border-top-color: #a77a2a;
   animation: checkoutSuccessSpin 0.85s linear infinite;
 }
+.orders-shell {
+  display: grid;
+  gap: 22px;
+}
+.orders-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.orders-summary > div {
+  display: grid;
+  gap: 6px;
+}
+.orders-summary span,
+.order-list__meta span,
+.track-order-top__meta span,
+.track-order-product__meta span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.orders-summary strong {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+}
+.orders-list {
+  display: grid;
+  gap: 18px;
+}
+.order-list__card {
+  display: grid;
+  gap: 18px;
+}
+.order-list__head,
+.order-list__meta,
+.order-list__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.order-list__head strong {
+  font-size: 1.05rem;
+}
+.order-list__head p,
+.order-list__more {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+.order-list__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(19, 87, 44, 0.08);
+  color: #13572c;
+  font-weight: 700;
+}
+.order-list__status--pending {
+  background: rgba(167, 122, 42, 0.12);
+  color: #8b5e12;
+}
+.order-list__status--processing {
+  background: rgba(18, 86, 109, 0.1);
+  color: #12566d;
+}
+.order-list__status--shipped {
+  background: rgba(19, 87, 44, 0.1);
+  color: #13572c;
+}
+.order-list__status--delivered {
+  background: rgba(11, 102, 67, 0.14);
+  color: #0b6643;
+}
+.order-list__status--cancelled {
+  background: rgba(159, 45, 45, 0.12);
+  color: #9f2d2d;
+}
+.order-list__products {
+  display: grid;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.order-list__products h3,
+.track-order-top__header h2,
+.track-order-products__head h2 {
+  margin: 0;
+}
+.order-list__product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.order-list__product-chip,
+.track-order-product {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+.order-list__product-thumb,
+.track-order-product__thumb {
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  background: #f6efe3;
+}
+.order-list__product-thumb img,
+.track-order-product__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.order-list__product-copy,
+.track-order-product__copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.order-list__product-copy strong,
+.track-order-product__copy strong {
+  color: #1f1d1b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.order-list__product-copy span,
+.track-order-product__copy span {
+  color: var(--muted);
+}
+.order-list__meta {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.order-list__meta > div {
+  display: grid;
+  gap: 4px;
+}
+.track-order-shell {
+  display: grid;
+  gap: 24px;
+}
+.track-order-top {
+  display: grid;
+  gap: 26px;
+}
+.track-order-top__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.track-order-top__header p {
+  margin: 8px 0 0;
+  color: #3a352d;
+  font-size: 1.15rem;
+}
+.track-order-top__meta {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  text-align: right;
+}
+.track-order-top__meta strong {
+  font-size: 1.12rem;
+}
+.track-order-progress {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+}
+.track-order-progress__line {
+  position: absolute;
+  left: calc(10% + 22px);
+  right: calc(10% + 22px);
+  top: 57px;
+  height: 6px;
+  background: #ece8df;
+  z-index: 0;
+}
+.track-order-progress__fill {
+  display: block;
+  height: 100%;
+  background: #184f27;
+}
+.track-order-step {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.track-order-step__icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #c9c5bb;
+}
+.track-order-step__icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+.track-order-step strong {
+  font-size: 0.98rem;
+  color: #2a241d;
+}
+.track-order-step span {
+  color: #5b544b;
+  line-height: 1.5;
+}
+.track-order-step.is-done .track-order-step__icon,
+.track-order-step.is-active .track-order-step__icon {
+  color: #184f27;
+}
+.track-order-step.is-done strong,
+.track-order-step.is-active strong {
+  color: #184f27;
+}
+.track-order-products {
+  display: grid;
+  gap: 22px;
+}
+.track-order-products__head {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.track-order-products__list {
+  display: grid;
+}
+.track-order-product {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.track-order-product:last-child {
+  border-bottom: 0;
+}
+.track-order-product__meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  text-align: right;
+}
+.track-order-product__meta strong {
+  font-size: 1rem;
+  color: #1f1d1b;
+}
 @keyframes checkoutSuccessFade {
   0% {
     opacity: 0;
@@ -3651,6 +3906,49 @@ button, input, select, textarea { font: inherit; }
     width: 100%;
   }
   .wishlist-actions__clear {
+    width: 100%;
+    text-align: center;
+  }
+  .orders-summary,
+  .order-list__product-grid,
+  .track-order-progress {
+    grid-template-columns: 1fr;
+  }
+  .order-list__head,
+  .order-list__meta,
+  .track-order-top__header {
+    flex-direction: column;
+    align-items: start;
+  }
+  .track-order-top__meta,
+  .track-order-product__meta {
+    justify-items: start;
+    text-align: left;
+  }
+  .track-order-progress__line {
+    display: none;
+  }
+  .track-order-step {
+    grid-template-columns: 58px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    text-align: left;
+  }
+  .track-order-step strong,
+  .track-order-step span {
+    grid-column: 2;
+  }
+  .track-order-step__icon {
+    grid-row: span 2;
+  }
+  .track-order-product,
+  .order-list__product-chip {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .track-order-product__meta {
+    grid-column: 2;
+  }
+  .order-list__actions .primary-link {
     width: 100%;
     text-align: center;
   }

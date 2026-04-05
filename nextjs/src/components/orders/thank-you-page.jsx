@@ -271,6 +271,9 @@ export default function OrderCompletedPage() {
         )}
 
         <div className="hero-actions">
+          {order?.orderId || order?.reference ? (
+            <Link href={`/orders/${order.orderId || order.reference}`} className="primary-link">Track Order</Link>
+          ) : null}
           <Link href="/products" className="primary-link">Continue Shopping</Link>
           <Link href="/" className="ghost-link">Go Home</Link>
         </div>

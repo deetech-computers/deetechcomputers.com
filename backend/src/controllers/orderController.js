@@ -751,6 +751,19 @@ export async function getMyOrders(req, res) {
   res.json(orders);
 }
 
+// Get logged-in user's single order
+export async function getMyOrderById(req, res) {
+  const order = await Order.findOne({ _id: req.params.id, user: req.user._id })
+    .populate("orderItems.product", "name price brand category images image");
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  res.json(order);
+}
+
 // Get all orders (admin only)
 export async function getAllOrders(req, res) {
   const orders = await Order.find()

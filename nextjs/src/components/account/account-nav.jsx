@@ -19,7 +19,11 @@ export default function AccountNav() {
   return (
     <nav className="account-nav" aria-label="Account navigation">
       {items.map(([href, label]) => (
-        <Link key={href} href={href} className={pathname === href ? "active" : ""}>
+        <Link
+          key={href}
+          href={href}
+          className={pathname === href || (href === "/orders" && pathname?.startsWith("/orders/")) ? "active" : ""}
+        >
           {label}
         </Link>
       ))}

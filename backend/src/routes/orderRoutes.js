@@ -5,6 +5,7 @@ import {
   createOrder,
   createGuestOrder,
   getMyOrders,
+  getMyOrderById,
   getAllOrders,
   updateOrderToPaid,
   updateOrderToDelivered,
@@ -28,6 +29,7 @@ router.post("/guest", asyncHandler(createGuestOrder));
 
 // Get current user's orders
 router.route("/myorders").get(protect, asyncHandler(getMyOrders));
+router.route("/myorders/:id").get(protect, asyncHandler(getMyOrderById));
 
 // Mark as paid (admin only)
 router.route("/:id/pay").put(protect, admin, asyncHandler(updateOrderToPaid));
