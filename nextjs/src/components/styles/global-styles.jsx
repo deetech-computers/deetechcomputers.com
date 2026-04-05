@@ -2525,7 +2525,7 @@ button, input, select, textarea { font: inherit; }
 .thankyou-panel, .thankyou-summary { display: grid; gap: 18px; }
 .thankyou-items-panel { display: grid; gap: 12px; }
 .thankyou-item-row, .thankyou-line { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-@media (min-width: 900px) {
+@media (min-width: 1100px) {
   .header-inner {
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 28px;
@@ -2696,6 +2696,15 @@ button, input, select, textarea { font: inherit; }
   .category-tile--compact {
     grid-column: span 3;
     min-height: auto;
+  }
+}
+@media (max-width: 1099px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .checkout-summary {
+    position: static;
   }
 }
 @media (max-width: 980px) {
