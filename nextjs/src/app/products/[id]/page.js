@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
@@ -207,6 +207,8 @@ export default function ProductDetailPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+  const thumbnailRailRef = useRef(null);
+  const previewThumbnailRailRef = useRef(null);
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   useEffect(() => {
@@ -321,6 +323,24 @@ export default function ProductDetailPage() {
     };
   }, [images.length, previewOpen]);
 
+  function scrollThumbnailRail(direction) {
+    const rail = thumbnailRailRef.current;
+    if (!rail) return;
+    rail.scrollBy({
+      left: direction * Math.max(rail.clientWidth * 0.72, 180),
+      behavior: "smooth",
+    });
+  }
+
+  function scrollPreviewThumbnailRail(direction) {
+    const rail = previewThumbnailRailRef.current;
+    if (!rail) return;
+    rail.scrollBy({
+      left: direction * Math.max(rail.clientWidth * 0.55, 150),
+      behavior: "smooth",
+    });
+  }
+
   if (status === "loading") {
     return <main className="shell page-section"><div className="panel">Loading product...</div></main>;
   }
@@ -381,17 +401,35 @@ export default function ProductDetailPage() {
           </button>
 
           <div className="product-preview__thumbs" aria-label="Preview images">
-            {images.map((image, index) => (
-              <button
-                key={`preview-${image}-${index}`}
-                type="button"
-                className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
-                onClick={() => setActiveImage(index)}
-                aria-label={`Preview image ${index + 1}`}
-              >
-                <img src={image} alt={`${product.name} preview ${index + 1}`} />
-              </button>
-            ))}
+            <button
+              type="button"
+              className="product-preview__thumb-arrow"
+              onClick={() => scrollPreviewThumbnailRail(-1)}
+              aria-label="Scroll preview images left"
+            >
+              &lsaquo;
+            </button>
+            <div ref={previewThumbnailRailRef} className="product-preview__thumb-rail">
+              {images.map((image, index) => (
+                <button
+                  key={`preview-${image}-${index}`}
+                  type="button"
+                  className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
+                  onClick={() => setActiveImage(index)}
+                  aria-label={`Preview image ${index + 1}`}
+                >
+                  <img src={image} alt={`${product.name} preview ${index + 1}`} />
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="product-preview__thumb-arrow"
+              onClick={() => scrollPreviewThumbnailRail(1)}
+              aria-label="Scroll preview images right"
+            >
+              &rsaquo;
+            </button>
           </div>
         </div>,
         document.body
@@ -549,12 +587,12 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 className="product-gallery__arrow"
-                onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
-                aria-label="Previous product image"
+                onClick={() => scrollThumbnailRail(-1)}
+                aria-label="Scroll product images left"
               >
                 &lsaquo;
               </button>
-              <div className="product-gallery__thumbs">
+              <div ref={thumbnailRailRef} className="product-gallery__thumbs">
                 {images.map((image, index) => (
                   <button
                     key={`${image}-${index}`}
@@ -570,8 +608,8 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 className="product-gallery__arrow"
-                onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
-                aria-label="Next product image"
+                onClick={() => scrollThumbnailRail(1)}
+                aria-label="Scroll product images right"
               >
                 &rsaquo;
               </button>
