@@ -7,8 +7,8 @@ import { requestJson } from "@/lib/http";
 const contactCards = [
   {
     title: "Address",
-    detail: "Kumasi, Ashanti Region, Ghana",
-    subdetail: "Nationwide delivery across Ghana",
+    detail: "Kumasi Adum, Asempa Building",
+    subdetail: "Kumasi Bantama",
     icon: "location",
   },
   {
@@ -199,9 +199,7 @@ export default function ContactPage() {
 
           <aside className="contact-visual">
             <div className="contact-visual__frame">
-              <div className="contact-visual__logo-wrap">
-                <img src="/logo.png" alt="DEETECH Computers" className="contact-visual__logo" />
-              </div>
+              <img src="/logo.png" alt="DEETECH Computers" className="contact-visual__logo" />
               <div className="contact-visual__content">
                 <p className="contact-visual__eyebrow">Support That Responds</p>
                 <h2>We help with orders, payments, delivery, warranty, and product questions.</h2>
@@ -237,7 +235,7 @@ export default function ContactPage() {
         <section className="contact-map">
           <iframe
             title="DEETECH location map"
-            src="https://www.google.com/maps?q=Kumasi%2C%20Ghana&z=12&output=embed"
+            src="https://www.google.com/maps?q=Kumasi%20Adum%20Asempa%20Building%2C%20Ghana&z=14&output=embed"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />

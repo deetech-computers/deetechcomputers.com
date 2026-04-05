@@ -3011,6 +3011,7 @@ button, input, select, textarea { font: inherit; }
   position: relative;
   min-height: 100%;
   display: grid;
+  justify-items: center;
   align-content: start;
   gap: 22px;
   padding: 34px 28px;
@@ -3021,17 +3022,8 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid #eadfce;
   overflow: hidden;
 }
-.contact-visual__logo-wrap {
-  width: 126px;
-  height: 126px;
-  border-radius: 36px;
-  background: rgba(255,255,255,0.72);
-  display: grid;
-  place-items: center;
-  box-shadow: 0 18px 30px rgba(123, 84, 25, 0.12);
-}
 .contact-visual__logo {
-  width: 90px;
+  width: 146px;
   max-width: 100%;
   height: auto;
   display: block;
@@ -3040,6 +3032,7 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 12px;
   max-width: 30rem;
+  justify-items: start;
 }
 .contact-visual__eyebrow {
   margin: 0;
@@ -4314,13 +4307,8 @@ button, input, select, textarea { font: inherit; }
     padding: 26px 20px 86px;
     border-radius: 26px;
   }
-  .contact-visual__logo-wrap {
-    width: 104px;
-    height: 104px;
-    border-radius: 28px;
-  }
   .contact-visual__logo {
-    width: 74px;
+    width: 118px;
   }
   .contact-visual__content h2 {
     font-size: 1.65rem;
