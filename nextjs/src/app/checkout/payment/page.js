@@ -57,6 +57,10 @@ export default function CheckoutPaymentPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    router.prefetch?.("/order-completed");
+  }, [router]);
+
+  useEffect(() => {
     const draft = readCheckoutDraft();
     if (!draft || !isPhaseOneComplete(draft)) {
       pushToast("Please complete phase one before payment", "warning");
@@ -258,6 +262,7 @@ export default function CheckoutPaymentPage() {
 
     setSubmitting(true);
     setTransitionStage("processing");
+    const processingStart = Date.now();
     try {
       const result =
         isAuthenticated && token
@@ -301,11 +306,18 @@ export default function CheckoutPaymentPage() {
       clearCheckoutDraft();
       clearCart();
       pushToast("Order placed successfully", "success");
+      const processingElapsed = Date.now() - processingStart;
+      const processingFloor = 1350;
+      if (processingElapsed < processingFloor) {
+        await new Promise((resolve) =>
+          window.setTimeout(resolve, processingFloor - processingElapsed)
+        );
+      }
       setTransitionStage("success");
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem("deetech-order-complete-animate", "1");
       }
-      await new Promise((resolve) => window.setTimeout(resolve, 1550));
+      await new Promise((resolve) => window.setTimeout(resolve, 1650));
       router.push("/order-completed");
     } catch (error) {
       setTransitionStage("idle");

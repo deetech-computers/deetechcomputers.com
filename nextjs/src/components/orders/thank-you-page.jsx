@@ -64,6 +64,7 @@ function downloadInvoice(order, summary) {
 export default function ThankYouPage() {
   const [order, setOrder] = useState(null);
   const [arriving, setArriving] = useState(false);
+  const [pageReady, setPageReady] = useState(false);
 
   useEffect(() => {
     setOrder(readLastOrder());
@@ -74,7 +75,17 @@ export default function ThankYouPage() {
         setArriving(true);
         window.sessionStorage.removeItem("deetech-order-complete-animate");
       }
+      const frame = window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          setPageReady(true);
+        });
+      });
+      return () => {
+        window.cancelAnimationFrame(frame);
+        clearLastOrder();
+      };
     }
+    setPageReady(true);
     return () => {
       clearLastOrder();
     };
@@ -95,6 +106,17 @@ export default function ThankYouPage() {
       total: Number(order.total || 0),
     };
   }, [order]);
+
+  if (!pageReady) {
+    return (
+      <main className="shell page-section">
+        <section className="panel cart-empty">
+          <h2>Preparing your completed order...</h2>
+          <p className="hero-copy">Final touches are loading before we show your receipt.</p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="shell page-section">
