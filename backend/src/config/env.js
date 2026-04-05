@@ -46,6 +46,10 @@ export const EMAILJS_ADMIN_ORDER_TEMPLATE_ID =
 export const EMAILJS_RESET_SERVICE_ID = process.env.EMAILJS_RESET_SERVICE_ID || "";
 export const EMAILJS_RESET_TEMPLATE_ID = process.env.EMAILJS_RESET_TEMPLATE_ID || "";
 export const EMAILJS_PRIVATE_KEY = process.env.EMAILJS_PRIVATE_KEY || "";
+export const EMAILJS_RESET_PUBLIC_KEY =
+  process.env.EMAILJS_RESET_PUBLIC_KEY || process.env.EMAILJS_PUBLIC_KEY || "";
+export const EMAILJS_RESET_PRIVATE_KEY =
+  process.env.EMAILJS_RESET_PRIVATE_KEY || process.env.EMAILJS_PRIVATE_KEY || "";
 
 // Cloudinary (optional in local dev, expected in production media hosting)
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "";

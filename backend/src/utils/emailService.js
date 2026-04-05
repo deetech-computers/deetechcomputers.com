@@ -15,6 +15,8 @@ import {
   EMAILJS_RESET_SERVICE_ID,
   EMAILJS_RESET_TEMPLATE_ID,
   EMAILJS_PRIVATE_KEY,
+  EMAILJS_RESET_PUBLIC_KEY,
+  EMAILJS_RESET_PRIVATE_KEY,
 } from "../config/env.js";
 import logger from "./logger.js";
 
@@ -521,10 +523,10 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
 
 export async function sendPasswordResetEmail(to, resetUrl) {
   const emailJsConfigured = Boolean(
-    EMAILJS_PUBLIC_KEY &&
+    EMAILJS_RESET_PUBLIC_KEY &&
       EMAILJS_RESET_SERVICE_ID &&
       EMAILJS_RESET_TEMPLATE_ID &&
-      EMAILJS_PRIVATE_KEY
+      EMAILJS_RESET_PRIVATE_KEY
   );
 
   if (!emailJsConfigured) {
@@ -552,8 +554,8 @@ export async function sendPasswordResetEmail(to, resetUrl) {
       body: JSON.stringify({
         service_id: EMAILJS_RESET_SERVICE_ID,
         template_id: EMAILJS_RESET_TEMPLATE_ID,
-        user_id: EMAILJS_PUBLIC_KEY,
-        accessToken: EMAILJS_PRIVATE_KEY,
+        user_id: EMAILJS_RESET_PUBLIC_KEY,
+        accessToken: EMAILJS_RESET_PRIVATE_KEY,
         template_params: {
           email: to,
           to_email: to,
@@ -646,8 +648,13 @@ export function getEmailProviderInfo() {
     smtpPassSet: Boolean(SMTP_PASS),
     hasTransporter: Boolean(transporter),
     orderEmailJsConfigured,
-    resetEmailJsConfigured: Boolean(EMAILJS_PUBLIC_KEY && EMAILJS_RESET_SERVICE_ID && EMAILJS_RESET_TEMPLATE_ID && EMAILJS_PRIVATE_KEY),
-    resetEmailJsPrivateKeySet: Boolean(EMAILJS_PRIVATE_KEY),
+    resetEmailJsConfigured: Boolean(
+      EMAILJS_RESET_PUBLIC_KEY &&
+        EMAILJS_RESET_SERVICE_ID &&
+        EMAILJS_RESET_TEMPLATE_ID &&
+        EMAILJS_RESET_PRIVATE_KEY
+    ),
+    resetEmailJsPrivateKeySet: Boolean(EMAILJS_RESET_PRIVATE_KEY),
     environment: NODE_ENV,
   };
 }
