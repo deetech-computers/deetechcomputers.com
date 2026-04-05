@@ -87,20 +87,33 @@ export default function CartPage() {
                       </div>
                     </div>
                     <p className="cart-row__price">{formatCurrency(item.price)}</p>
-                    <div className="cart-row__qty">
-                      <button type="button" onClick={() => updateQuantity(item.productId || item._id, Number(item.qty || 1) - 1)} aria-label={`Decrease ${item.name} quantity`}>
-                        -
-                      </button>
-                      <input
-                        className="cart-row__qty-input"
-                        type="number"
-                        min="1"
-                        value={item.qty}
-                        onChange={(event) => updateQuantity(item.productId || item._id, Number(event.target.value || 1))}
-                        aria-label={`${item.name} quantity`}
-                      />
-                      <button type="button" onClick={() => updateQuantity(item.productId || item._id, Number(item.qty || 1) + 1)} aria-label={`Increase ${item.name} quantity`}>
-                        +
+                    <div className="cart-row__controls">
+                      <div className="cart-row__qty">
+                        <button type="button" onClick={() => updateQuantity(item.productId || item._id, Number(item.qty || 1) - 1)} aria-label={`Decrease ${item.name} quantity`}>
+                          -
+                        </button>
+                        <input
+                          className="cart-row__qty-input"
+                          type="number"
+                          min="1"
+                          value={item.qty}
+                          onChange={(event) => updateQuantity(item.productId || item._id, Number(event.target.value || 1))}
+                          aria-label={`${item.name} quantity`}
+                        />
+                        <button type="button" onClick={() => updateQuantity(item.productId || item._id, Number(item.qty || 1) + 1)} aria-label={`Increase ${item.name} quantity`}>
+                          +
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        className="cart-row__remove-mobile"
+                        onClick={() => removeItem(item.productId || item._id)}
+                        aria-label={`Remove ${item.name} from cart`}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v8h-2V9Zm4 0h2v8h-2V9ZM7 9h2v8H7V9Zm-1 11h12l1-13H5l1 13Z" fill="currentColor" />
+                        </svg>
+                        <span>Remove</span>
                       </button>
                     </div>
                     <p className="cart-row__subtotal">{formatCurrency(Number(item.price || 0) * Number(item.qty || 0))}</p>

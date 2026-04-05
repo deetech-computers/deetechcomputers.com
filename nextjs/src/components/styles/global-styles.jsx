@@ -1898,6 +1898,9 @@ button, input, select, textarea { font: inherit; }
   font-size: 1rem;
   font-weight: 500;
 }
+.cart-row__controls {
+  display: contents;
+}
 .cart-row__qty {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) 48px;
@@ -1930,6 +1933,9 @@ button, input, select, textarea { font: inherit; }
 .cart-row__qty-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+.cart-row__remove-mobile {
+  display: none;
 }
 .cart-summary {
   display: grid;
@@ -2297,7 +2303,7 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.84rem;
   }
   .cart-row__price,
-  .cart-row__qty,
+  .cart-row__controls,
   .cart-row__subtotal {
     grid-column: 2;
   }
@@ -2325,9 +2331,35 @@ button, input, select, textarea { font: inherit; }
     justify-content: space-between;
     gap: 12px;
   }
+  .cart-row__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
   .cart-row__qty {
     width: 100%;
     max-width: 154px;
+  }
+  .cart-row__remove {
+    display: none;
+  }
+  .cart-row__remove-mobile {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #e5ddd0;
+    background: #fff;
+    color: #1f1d1b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .cart-row__remove-mobile svg {
+    width: 16px;
+    height: 16px;
   }
   .cart-summary {
     padding: 18px 16px;
