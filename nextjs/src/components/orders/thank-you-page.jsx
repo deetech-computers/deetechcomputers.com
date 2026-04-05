@@ -100,7 +100,7 @@ export default function ThankYouPage() {
 
       <section className="order-complete shellless">
         <section className="order-complete__intro">
-          <div className="order-complete__check" aria-hidden="true">✓</div>
+          <div className="order-complete__check" aria-hidden="true">{"\u2713"}</div>
           <h2>Your order is completed!</h2>
           <p>Thank you. Your order has been received.</p>
         </section>

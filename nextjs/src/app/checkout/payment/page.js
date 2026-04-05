@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
+import { APP_NAME, SITE_URL } from "@/lib/config";
+import { sendOrderEmailsViaEmailJs } from "@/lib/emailjs-order";
 import { formatCurrency } from "@/lib/format";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { writeLastOrder } from "@/lib/order-confirmation";
@@ -269,6 +271,38 @@ export default function CheckoutPaymentPage() {
             });
 
       const order = result?.order || {};
+
+      try {
+        const emailResult = await sendOrderEmailsViaEmailJs({
+          savedOrder: {
+            ...order,
+            orderId: result?.orderId || order?._id || clientOrderRef,
+            totalPrice: Number(order?.totalPrice || total),
+          },
+          items: items.map((item) => ({
+            id: item.productId || item._id || "",
+            name: item.name,
+            quantity: item.qty,
+            qty: item.qty,
+            price: Number(item.price || 0),
+          })),
+          customerName: shippingName,
+          customerEmail: form.shippingEmail,
+          customerPhone: form.mobileNumber.trim(),
+          address: form.shippingAddress.trim(),
+          city: form.shippingCity.trim(),
+          paymentMethod: activePaymentMethod.label,
+          notes: "",
+          websiteUrl: SITE_URL,
+          companyName: APP_NAME,
+        });
+        if (emailResult?.skipped) {
+          pushToast("Order saved, but EmailJS is not configured yet", "warning");
+        }
+      } catch (emailError) {
+        pushToast("Order saved, but the confirmation email could not be sent yet", "warning");
+      }
+
       writeLastOrder({
         reference: result?.orderId || order?._id || clientOrderRef,
         orderId: result?.orderId || order?._id || clientOrderRef,

@@ -2678,6 +2678,8 @@ button, input, select, textarea { font: inherit; }
 .order-complete {
   display: grid;
   gap: 28px;
+  background: #ffffff;
+  padding: 28px 30px 40px;
 }
 .order-complete__intro {
   display: grid;
@@ -3113,6 +3115,9 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 18px 16px;
+  }
+  .order-complete {
+    padding: 18px 16px 24px;
   }
   .order-complete__meta > div {
     padding-right: 0;
