@@ -27,7 +27,7 @@ export default function CheckoutPaymentPage() {
   const { token, isAuthenticated } = useAuth();
   const { pushToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [rewarding, setRewarding] = useState(false);
+  const [transitionStage, setTransitionStage] = useState("idle");
   const [proofUploading, setProofUploading] = useState(false);
   const [affiliateState, setAffiliateState] = useState({
     status: "idle",
@@ -257,6 +257,7 @@ export default function CheckoutPaymentPage() {
           };
 
     setSubmitting(true);
+    setTransitionStage("processing");
     try {
       const result =
         isAuthenticated && token
@@ -300,13 +301,14 @@ export default function CheckoutPaymentPage() {
       clearCheckoutDraft();
       clearCart();
       pushToast("Order placed successfully", "success");
-      setRewarding(true);
+      setTransitionStage("success");
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem("deetech-order-complete-animate", "1");
       }
-      await new Promise((resolve) => window.setTimeout(resolve, 1400));
+      await new Promise((resolve) => window.setTimeout(resolve, 1550));
       router.push("/order-completed");
     } catch (error) {
+      setTransitionStage("idle");
       pushToast(error.message || "Unable to place order", "error");
     } finally {
       setSubmitting(false);
@@ -338,13 +340,39 @@ export default function CheckoutPaymentPage() {
 
   return (
     <main className="shell page-section">
-      {rewarding ? (
-        <div className="checkout-success-transition" aria-live="polite">
+      {transitionStage !== "idle" ? (
+        <div
+          className={
+            transitionStage === "success"
+              ? "checkout-success-transition checkout-success-transition--success"
+              : "checkout-success-transition"
+          }
+          aria-live="polite"
+        >
           <div className="checkout-success-transition__halo" aria-hidden="true" />
           <div className="checkout-success-transition__card">
-            <div className="checkout-success-transition__check" aria-hidden="true">{"\u2713"}</div>
-            <strong>Payment confirmed</strong>
-            <p>Your order is being wrapped up beautifully.</p>
+            <div
+              className={
+                transitionStage === "success"
+                  ? "checkout-success-transition__badge checkout-success-transition__badge--success"
+                  : "checkout-success-transition__badge"
+              }
+              aria-hidden="true"
+            >
+              {transitionStage === "success" ? (
+                <span className="checkout-success-transition__check">{"\u2713"}</span>
+              ) : (
+                <span className="checkout-success-transition__spinner" />
+              )}
+            </div>
+            <strong>
+              {transitionStage === "success" ? "Payment confirmed" : "Processing your order"}
+            </strong>
+            <p>
+              {transitionStage === "success"
+                ? "Everything is set. We are taking you to your completed order."
+                : "Thank you for your purchase. We are validating your payment and preparing your order details."}
+            </p>
           </div>
         </div>
       ) : null}

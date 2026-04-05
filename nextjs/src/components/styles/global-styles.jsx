@@ -2594,6 +2594,9 @@ button, input, select, textarea { font: inherit; }
   backdrop-filter: blur(10px);
   animation: checkoutSuccessFade 1.2s ease forwards;
 }
+.checkout-success-transition--success {
+  animation-duration: 1.45s;
+}
 .checkout-success-transition__halo {
   position: absolute;
   width: min(58vw, 560px);
@@ -2614,18 +2617,32 @@ button, input, select, textarea { font: inherit; }
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 26px 80px rgba(45, 32, 10, 0.14);
 }
-.checkout-success-transition__check {
+.checkout-success-transition__badge {
   width: 86px;
   height: 86px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
+  background: linear-gradient(135deg, #f4ead4, #efe0bc);
+  box-shadow: 0 14px 34px rgba(145, 114, 61, 0.14);
+}
+.checkout-success-transition__badge--success {
   background: linear-gradient(135deg, #d7a643, #ba8224);
+  box-shadow: 0 14px 34px rgba(186, 130, 36, 0.28);
+}
+.checkout-success-transition__check {
   color: #fff;
   font-size: 2.35rem;
   font-weight: 700;
-  box-shadow: 0 14px 34px rgba(186, 130, 36, 0.28);
+}
+.checkout-success-transition__spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 3px solid rgba(124, 95, 44, 0.16);
+  border-top-color: #a77a2a;
+  animation: checkoutSuccessSpin 0.85s linear infinite;
 }
 .checkout-success-transition__card strong {
   font-size: clamp(1.35rem, 3vw, 1.8rem);
@@ -2925,6 +2942,14 @@ button, input, select, textarea { font: inherit; }
   50% {
     transform: scale(1.04);
     opacity: 1;
+  }
+}
+@keyframes checkoutSuccessSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 @keyframes orderCompleteRise {
@@ -3253,9 +3278,17 @@ button, input, select, textarea { font: inherit; }
     padding: 28px 20px;
   }
   .checkout-success-transition__check {
+    width: auto;
+    height: auto;
+    font-size: 2rem;
+  }
+  .checkout-success-transition__badge {
     width: 78px;
     height: 78px;
-    font-size: 2rem;
+  }
+  .checkout-success-transition__spinner {
+    width: 30px;
+    height: 30px;
   }
   .checkout-summary__line strong {
     max-width: 150px;
