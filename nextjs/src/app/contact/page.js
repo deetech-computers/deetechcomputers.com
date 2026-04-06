@@ -43,6 +43,19 @@ const supportHighlights = [
   },
 ];
 
+const shopLocations = [
+  {
+    id: "bantama-shop-nhis",
+    label: "Bantama Shop (NHIS)",
+    mapQuery: "Kumasi Bantama NHIS, Ghana",
+  },
+  {
+    id: "adum-shop",
+    label: "Adum Shop",
+    mapQuery: "Kumasi Adum Asempa Building, Ghana",
+  },
+];
+
 function ContactIcon({ name }) {
   if (name === "location") {
     return (
@@ -99,11 +112,14 @@ export default function ContactPage() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: "", text: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(shopLocations[0]?.id || "");
 
   const fullName = useMemo(
     () => `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
     [form.firstName, form.lastName]
   );
+  const activeLocation =
+    shopLocations.find((location) => location.id === selectedLocation) || shopLocations[0];
 
   function updateField(key, value) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -156,6 +172,12 @@ export default function ContactPage() {
         <div className="contact-layout">
           <section className="contact-form-panel">
             <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="contact-form__intro">
+                <p className="contact-form__eyebrow">Support Form</p>
+                <h2>Tell us what you need help with.</h2>
+                <p>Orders, payments, delivery questions, warranty support, and product guidance all come through here.</p>
+              </div>
+
               <div className="contact-form__grid">
                 <label className="contact-form__field">
                   <span>First Name *</span>
@@ -204,6 +226,10 @@ export default function ContactPage() {
                 <p className="contact-visual__eyebrow">Support That Responds</p>
                 <h2>We help with orders, payments, delivery, warranty, and product questions.</h2>
                 <p>Message us and our team will guide you quickly through the best next step for your issue or request.</p>
+                <div className="contact-visual__meta">
+                  <span>Kumasi Adum, Asempa Building</span>
+                  <span>Mon - Sat, 8:00 AM - 7:00 PM</span>
+                </div>
               </div>
               <div className="contact-visual__actions">
                 <a href="https://wa.me/233591755964" target="_blank" rel="noreferrer" className="contact-visual__link">
@@ -232,13 +258,33 @@ export default function ContactPage() {
           ))}
         </section>
 
+        <section className="contact-map-section">
+          <div className="contact-map-section__intro">
+            <p className="contact-map-section__eyebrow">Visit a Branch</p>
+            <h2>Find the DEETECH location that works best for you.</h2>
+          </div>
+          <div className="contact-map-selector" role="tablist" aria-label="Select shop location">
+            {shopLocations.map((location) => (
+              <button
+                key={location.id}
+                type="button"
+                className={location.id === activeLocation.id ? "contact-map-selector__button is-active" : "contact-map-selector__button"}
+                onClick={() => setSelectedLocation(location.id)}
+                aria-pressed={location.id === activeLocation.id}
+              >
+                {location.label}
+              </button>
+            ))}
+          </div>
+
         <section className="contact-map">
           <iframe
             title="DEETECH location map"
-            src="https://www.google.com/maps?q=Kumasi%20Adum%20Asempa%20Building%2C%20Ghana&z=14&output=embed"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(activeLocation.mapQuery)}&z=14&output=embed`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
+        </section>
         </section>
 
         <section className="contact-highlights">
