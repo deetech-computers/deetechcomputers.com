@@ -1,0 +1,343 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { formatCurrency } from "@/lib/format";
+import { getProductRating, getProductReviewCount, resolveProductImage } from "@/lib/products";
+import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
+import { useToast } from "@/components/providers/toast-provider";
+import StableImage from "@/components/ui/stable-image";
+import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
+
+function getImageAlt(product) {
+  return product?.name || product?.title || "Product image";
+}
+
+function getSummary(product) {
+  const source =
+    product?.shortDescription ||
+    product?.short_description ||
+    product?.description ||
+    product?.name ||
+    "Shop this product";
+
+  return String(source).replace(/\s+/g, " ").trim();
+}
+
+function getCategoryLabel(product) {
+  return String(product?.category || "").replace(/[_-]+/g, " ").trim() || "Products";
+}
+
+function CartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2ZM7.17 14h9.96c.75 0 1.4-.41 1.74-1.03L22 7.5V5H6.21l-.94-2H2v2h2l3.6 7.59-1.35 2.44A1.98 1.98 0 0 0 8 18h12v-2H8l1.17-2Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function ActionIcon({ src, alt }) {
+  return (
+    <StableImage
+      src={src}
+      alt={alt}
+      className="product-card__icon-asset"
+      loading="eager"
+      decoding="async"
+      fetchPriority="high"
+      width={20}
+      height={20}
+      fallback={<span className="product-card__icon-fallback" aria-hidden="true" />}
+    />
+  );
+}
+
+export default function ProductCard({ product, onAddToCart, variant = "default" }) {
+  const { pushToast } = useToast();
+  const { items } = useCart();
+  const { isAuthenticated } = useAuth();
+  const productId = String(product?._id || product?.id || "");
+  const [wishlisted, setWishlisted] = useState(() =>
+    productId ? readWishlistIds().includes(productId) : false
+  );
+  const [justAdded, setJustAdded] = useState(false);
+  const highlightTimerRef = useRef(null);
+  const image = resolveProductImage(product.images?.[0] || product.image);
+  const hoverImage = resolveProductImage(product.images?.[1] || "");
+  const hasHoverImage = Boolean(hoverImage);
+  const price = Number(product?.price || 0);
+  const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
+  const rating = Math.round(ratingValue);
+  const reviewCount = getProductReviewCount(product);
+  const productHref = `/products/${productId}`;
+  const isCatalog = variant === "catalog";
+  const isRelated = variant === "related";
+  const isHome = variant === "default";
+  const imageShellRef = useRef(null);
+  const [shouldLoadImage, setShouldLoadImage] = useState(false);
+  const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
+  const summary = getSummary(product);
+  const categoryLabel = getCategoryLabel(product);
+  const sharePayload = useMemo(
+    () => ({
+      title: product?.name || "Deetech product",
+      text: summary,
+    }),
+    [product, summary]
+  );
+  const cartQuantity = useMemo(
+    () =>
+      items.reduce((sum, item) => {
+        const itemId = String(item?.productId || item?._id || "");
+        return itemId === productId ? sum + Number(item?.qty || 0) : sum;
+      }, 0),
+    [items, productId]
+  );
+  const isInCart = cartQuantity > 0;
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimerRef.current) {
+        window.clearTimeout(highlightTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (shouldLoadImage || typeof window === "undefined" || !imageShellRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadImage(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin: "360px 0px" }
+    );
+
+    observer.observe(imageShellRef.current);
+
+    return () => observer.disconnect();
+  }, [shouldLoadImage]);
+
+  function toggleWishlist() {
+    if (!productId) return;
+    if (!isAuthenticated) {
+      pushToast("Login required to use wishlist", "info");
+      return;
+    }
+
+    const nextWishlist = wishlisted ? removeWishlistEntry(productId) : addWishlistEntry(productId);
+    setWishlisted(nextWishlist.some((item) => item.id === productId));
+    pushToast(
+      wishlisted ? "Removed from wishlist" : "Saved to wishlist",
+      wishlisted ? "info" : "success"
+    );
+  }
+
+  async function handleShare() {
+    if (typeof window === "undefined") return;
+
+    const url = `${window.location.origin}${productHref}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ ...sharePayload, url });
+        pushToast("Product shared", "success");
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        pushToast("Product link copied", "success");
+        return;
+      }
+
+      pushToast("Sharing is not available on this device", "warning");
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+      pushToast("Could not share this product right now", "warning");
+    }
+  }
+
+  async function handleCopy() {
+    if (typeof window === "undefined") return;
+
+    const url = `${window.location.origin}${productHref}`;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        pushToast("Product link copied", "success");
+        return;
+      }
+
+      pushToast("Copy is not available on this device", "warning");
+    } catch {
+      pushToast("Could not copy this product link right now", "warning");
+    }
+  }
+
+  function handleAddToCart() {
+    if (typeof onAddToCart === "function") {
+      onAddToCart(product);
+      setJustAdded(true);
+      if (highlightTimerRef.current) {
+        window.clearTimeout(highlightTimerRef.current);
+      }
+      highlightTimerRef.current = window.setTimeout(() => {
+        setJustAdded(false);
+      }, 1800);
+    } else {
+      pushToast("Open the product to add it from here", "info");
+    }
+  }
+
+  return (
+    <article className={`product-card${isCatalog ? " product-card--catalog" : ""}${isRelated ? " product-card--related" : ""}${isHome ? " product-card--home" : ""}`}>
+      <div className="product-card__media-wrap">
+        <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
+          <div className="product-card__media">
+            <div className="product-card__image-shell" ref={imageShellRef}>
+              {image && shouldLoadImage ? (
+                <>
+                  <StableImage
+                    src={image}
+                    alt={getImageAlt(product)}
+                    className={`product-card__image product-card__image--primary${hasHoverImage ? " has-hover-image" : ""}`}
+                    width="420"
+                    height="420"
+                  />
+                  {hasHoverImage ? (
+                    <StableImage
+                      src={hoverImage}
+                      alt={`${getImageAlt(product)} alternate view`}
+                      className="product-card__image product-card__image--secondary"
+                      width="420"
+                      height="420"
+                    />
+                  ) : null}
+                </>
+              ) : image ? (
+                <div
+                  className="product-card__placeholder product-card__placeholder--image"
+                  aria-hidden="true"
+                />
+              ) : (
+                <div className="product-card__placeholder">No image</div>
+              )}
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      <div className="product-card__body">
+        {isRelated ? (
+          <div className="product-card__meta-row">
+            <p className="product-card__category">{categoryLabel}</p>
+            <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+              {Array.from({ length: 5 }, (_, index) => (
+                <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+              ))}
+              <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
+            </p>
+          </div>
+        ) : null}
+        <Link href={productHref} className="product-card__title-link">
+          <h3>{product?.name || "Product"}</h3>
+        </Link>
+        <p className="product-card__description">{isRelated ? summary : summary}</p>
+        <p className="product-card__price">{formatCurrency(price)}</p>
+        {!isRelated ? (
+          <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+            ))}
+            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
+          </p>
+        ) : null}
+      </div>
+
+      {isCatalog ? (
+        <div className="product-card__footer">
+          <div className="product-card__footer-actions" aria-label="Product actions">
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Share product"
+              onClick={handleShare}
+            >
+              <ActionIcon src="/icons/share.svg" alt="" />
+            </button>
+            <button
+              type="button"
+              className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
+              onClick={handleAddToCart}
+              disabled={stock < 1}
+              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+            >
+              <CartIcon />
+              <span>
+                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`product-card__icon-button product-card__icon-button--footer${wishlisted ? " is-active" : ""}`}
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={wishlisted}
+              onClick={toggleWishlist}
+            >
+              <ActionIcon src="/icons/wishlist.svg" alt="" />
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {isHome ? (
+        <div className="product-card__footer product-card__footer--reveal">
+          <div className="product-card__footer-actions" aria-label="Homepage product actions">
+            <button
+              type="button"
+              className="product-card__icon-button product-card__icon-button--footer"
+              aria-label="Share product"
+              onClick={handleShare}
+            >
+              <ActionIcon src="/icons/share.svg" alt="" />
+            </button>
+            <button
+              type="button"
+              className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
+              onClick={handleAddToCart}
+              disabled={stock < 1}
+              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+            >
+              <CartIcon />
+              <span>
+                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+              </span>
+            </button>
+            <button
+              type="button"
+              className={`product-card__icon-button product-card__icon-button--footer${wishlisted ? " is-active" : ""}`}
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={wishlisted}
+              onClick={toggleWishlist}
+            >
+              <ActionIcon src="/icons/wishlist.svg" alt="" />
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </article>
+  );
+}
