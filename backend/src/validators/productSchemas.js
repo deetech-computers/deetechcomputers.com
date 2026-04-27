@@ -12,6 +12,8 @@ export const createProductSchema = Joi.object({
     )
     .optional(),
   price: Joi.number().positive().required(),
+  discountPrice: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+  discountPreset: Joi.string().valid("none", "instant", "24h", "72h", "168h").optional(),
   countInStock: Joi.number().integer().min(0).required(),
   category: Joi.string().required(),
   subCategory: Joi.string().allow(""),
@@ -37,6 +39,8 @@ export const updateProductSchema = Joi.object({
     )
     .optional(),
   price: Joi.number().positive(),
+  discountPrice: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+  discountPreset: Joi.string().valid("none", "instant", "24h", "72h", "168h").optional(),
   countInStock: Joi.number().integer().min(0),
   category: Joi.string(),
   subCategory: Joi.string().allow(""),

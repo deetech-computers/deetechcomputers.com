@@ -12,6 +12,7 @@ import {
   deriveCategoryBrandStats,
   fetchProducts,
   formatCategoryLabel,
+  getProductPrice,
   getStorefrontCategoryLabel,
   getProductRating,
   getProductStock,
@@ -59,10 +60,6 @@ function labelize(value) {
     .replace(/\s+/g, " ")
     .trim()
     .replace(/\b\w/g, (match) => match.toUpperCase());
-}
-
-function getProductPrice(product) {
-  return Number(product?.price || 0);
 }
 
 function getProductTimestamp(product) {

@@ -17,7 +17,7 @@ import {
   upsertServerCartItem,
   writeStoredCart,
 } from "@/lib/cart";
-import { getProductStock } from "@/lib/products";
+import { getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { useAuth } from "./auth-provider";
 import { useToast } from "./toast-provider";
 
@@ -107,8 +107,8 @@ export function CartProvider({ children }) {
           _id: id,
           productId: id,
           name: product.name,
-          price: product.price,
-          image: product.images?.[0] || product.image || "",
+          price: getProductPrice(product),
+          image: resolveProductImage(product.images?.[0] || product.image || ""),
           countInStock: stock,
           qty: serverQty,
         });

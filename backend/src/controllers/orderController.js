@@ -16,6 +16,7 @@ import {
 import { sendOrderNotification, sendOrderConfirmation } from "../utils/emailService.js";
 import { initiateHubtelCheckout } from "../utils/hubtelService.js";
 import { deleteStoredMedia } from "../utils/mediaStorage.js";
+import { getProductPricing } from "../utils/productPricing.js";
 
 async function processOrderItems(orderItems, session) {
   let total = 0;
@@ -45,7 +46,7 @@ async function processOrderItems(orderItems, session) {
       throw new Error(`Not enough stock for ${product.name}`);
     }
 
-    const price = product.price;
+    const price = Number(getProductPricing(product).currentPrice || 0);
 
     total += qty * price;
     processedItems.push({

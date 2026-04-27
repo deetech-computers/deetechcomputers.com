@@ -10,7 +10,7 @@ import { useToast } from "@/components/providers/toast-provider";
 import { API_BASE, API_BASE_AUTH, API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
-import { fetchProducts, formatCategoryLabel, getProductStock, resolveProductImage } from "@/lib/products";
+import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { formatCurrency } from "@/lib/format";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { readWishlistEntries } from "@/lib/wishlist";
@@ -783,7 +783,7 @@ export default function AccountPageClient() {
               id: entry.id,
               name: product?.name || "Product",
               category: formatCategoryLabel(product?.category || "Product"),
-              price: Number(product?.price || 0),
+              price: getProductPrice(product),
               image: resolveProductImage(product?.images?.[0] || product?.image),
               inStock: getProductStock(product) > 0,
             };

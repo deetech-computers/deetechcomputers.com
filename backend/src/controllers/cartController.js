@@ -8,7 +8,7 @@ import Product from "../models/Product.js";
 export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id })
-      .populate("items.product", "name price images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
       .lean();
 
     if (!cart) {
@@ -57,7 +57,7 @@ export const addToCart = async (req, res) => {
 
     await cart.save();
     const updatedCart = await Cart.findById(cart._id)
-      .populate("items.product", "name price images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
       .lean();
 
     res.json(updatedCart);
@@ -83,7 +83,7 @@ export const removeFromCart = async (req, res) => {
 
     await cart.save();
     const updatedCart = await Cart.findById(cart._id)
-      .populate("items.product", "name price images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
       .lean();
 
     res.json(updatedCart);

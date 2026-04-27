@@ -7,6 +7,7 @@ import {
   readProductSnapshotProducts,
   findProductInSnapshotById,
 } from "../utils/productSnapshot.js";
+import { getProductPricing } from "../utils/productPricing.js";
 
 const BRANDS_BY_CATEGORY = {
   laptops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
@@ -143,6 +144,80 @@ function parseExistingImagesInput(input) {
   return uniqueImages([raw]);
 }
 
+function parseDiscountConfig(body, basePriceInput, existingProduct = null) {
+  const basePrice = Number(basePriceInput);
+  const discountPreset = String(body?.discountPreset || "none").trim().toLowerCase();
+  const discountPriceRaw = body?.discountPrice;
+  const hasDiscountPrice =
+    discountPriceRaw !== undefined &&
+    discountPriceRaw !== null &&
+    String(discountPriceRaw).trim() !== "";
+  const discountPrice = hasDiscountPrice ? Number(discountPriceRaw) : 0;
+
+  if (!Number.isFinite(basePrice) || basePrice <= 0) {
+    throw new Error("Product price must be a valid positive amount");
+  }
+
+  if (!hasDiscountPrice || discountPreset === "none") {
+    return {
+      discountPrice: null,
+      discountMode: "none",
+      discountStartsAt: null,
+      discountEndsAt: null,
+    };
+  }
+
+  if (!Number.isFinite(discountPrice) || discountPrice <= 0) {
+    throw new Error("Discount price must be greater than zero");
+  }
+
+  if (discountPrice >= basePrice) {
+    throw new Error("Discount price must be lower than the normal price");
+  }
+
+  if (discountPreset === "instant") {
+    return {
+      discountPrice,
+      discountMode: "instant",
+      discountStartsAt: new Date(),
+      discountEndsAt: null,
+    };
+  }
+
+  const durationMap = {
+    "24h": 24,
+    "72h": 72,
+    "168h": 168,
+  };
+  const durationHours = durationMap[discountPreset];
+  if (!durationHours) {
+    throw new Error("Invalid discount timing selected");
+  }
+
+  if (durationHours > 168) {
+    throw new Error("Timed discounts cannot exceed 7 days");
+  }
+
+  const now = new Date();
+  const nextEnd = new Date(now.getTime() + durationHours * 60 * 60 * 1000);
+  const existingPricing = existingProduct ? getProductPricing(existingProduct) : null;
+  const shouldPreserveWindow =
+    existingPricing?.isTimedDiscount &&
+    Number(existingPricing.discountPrice || 0) === discountPrice &&
+    existingPricing.discountEndsAt;
+
+  return {
+    discountPrice,
+    discountMode: "timed",
+    discountStartsAt: shouldPreserveWindow
+      ? existingPricing.discountStartsAt || now
+      : now,
+    discountEndsAt: shouldPreserveWindow
+      ? existingPricing.discountEndsAt
+      : nextEnd,
+  };
+}
+
 async function refreshProductSnapshotNonBlocking() {
   try {
     await rebuildProductSnapshot();
@@ -183,6 +258,13 @@ export const createProduct = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error(error.message);
   }
+  let discountConfig;
+  try {
+    discountConfig = parseDiscountConfig(req.body, req.body.price);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
 
   const product = new Product({
     name: req.body.name,
@@ -190,6 +272,10 @@ export const createProduct = asyncHandler(async (req, res) => {
     description: req.body.description,
     specs: parseSpecsInput(req.body.specs),
     price: req.body.price,
+    discountPrice: discountConfig.discountPrice,
+    discountMode: discountConfig.discountMode,
+    discountStartsAt: discountConfig.discountStartsAt,
+    discountEndsAt: discountConfig.discountEndsAt,
     countInStock: req.body.countInStock,
     brand,
     category,
@@ -270,6 +356,15 @@ export const updateProduct = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 
+  const nextPrice = req.body.price ?? product.price;
+  let discountConfig;
+  try {
+    discountConfig = parseDiscountConfig(req.body, nextPrice, product);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+
   product.name = req.body.name || product.name;
   if (req.body.short_description !== undefined) {
     product.short_description = String(req.body.short_description || "").trim();
@@ -278,7 +373,11 @@ export const updateProduct = asyncHandler(async (req, res) => {
   if (req.body.specs !== undefined) {
     product.specs = parseSpecsInput(req.body.specs);
   }
-  product.price = req.body.price ?? product.price;
+  product.price = nextPrice;
+  product.discountPrice = discountConfig.discountPrice;
+  product.discountMode = discountConfig.discountMode;
+  product.discountStartsAt = discountConfig.discountStartsAt;
+  product.discountEndsAt = discountConfig.discountEndsAt;
   product.countInStock = req.body.countInStock ?? product.countInStock;
   product.brand = nextBrand;
   product.category = nextCategory;

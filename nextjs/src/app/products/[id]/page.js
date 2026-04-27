@@ -20,11 +20,16 @@ import {
   fetchProductById,
   fetchProducts,
   formatCategoryLabel,
+  getProductDiscountPercent,
+  getProductOriginalPrice,
+  getProductPrice,
   getProductRating,
   getProductReviewCount,
   getProductStock,
+  isProductDiscountActive,
   resolveProductImage,
 } from "@/lib/products";
+import { getProductPricing } from "@/lib/product-pricing";
 
 function getProductImages(product) {
   const images = Array.isArray(product?.images) ? product.images : [];
@@ -432,6 +437,11 @@ export default function ProductDetailPage() {
   }
 
   const stock = getProductStock(product);
+  const pricing = getProductPricing(product);
+  const hasDiscount = isProductDiscountActive(product);
+  const currentPrice = getProductPrice(product);
+  const originalPrice = getProductOriginalPrice(product);
+  const discountPercent = getProductDiscountPercent(product);
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
   const productSpecs = getProductSpecs(product).filter(([, value]) => String(value || "").trim());
   const description = getProductDescription(product);
@@ -737,7 +747,18 @@ export default function ProductDetailPage() {
             <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
             <small>{reviewCount > 0 ? `(${reviewCount} reviews)` : "(0 reviews)"}</small>
           </div>
-          <p className="product-summary__price">{formatCurrency(product.price)}</p>
+          <div className="product-summary__price-group">
+            {hasDiscount && discountPercent > 0 ? (
+              <span className="product-summary__discount-badge">Save {discountPercent}%</span>
+            ) : null}
+            {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
+            <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
+            {pricing.isTimedDiscount && pricing.discountEndsAt ? (
+              <p className="product-summary__discount-note">
+                Offer ends {formatDateTime(pricing.discountEndsAt)}
+              </p>
+            ) : null}
+          </div>
           <p className="product-summary__copy">{description}</p>
 
           <div className="product-summary__buy">

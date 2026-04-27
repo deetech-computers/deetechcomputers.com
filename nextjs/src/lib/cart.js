@@ -1,5 +1,6 @@
 import { API_BASE_CART } from "./config";
 import { requestJson } from "./http";
+import { getProductPrice, resolveProductImage } from "./products";
 
 const CART_KEY = "cart";
 const CART_REMOVED_KEY = "cart_removed_ids";
@@ -102,8 +103,8 @@ export function normalizeServerCart(payload) {
       productId: id,
       qty: normalizeQty(item.qty || 1),
       name: product.name,
-      price: product.price,
-      image: product.images?.[0] || product.image || "",
+      price: getProductPrice(product),
+      image: resolveProductImage(product.images?.[0] || product.image || ""),
       countInStock:
         product.countInStock ?? product.stock_quantity ?? product.stock ?? 0,
     };

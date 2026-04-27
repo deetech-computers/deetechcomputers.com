@@ -3,7 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/format";
-import { getProductRating, getProductReviewCount, resolveProductImage } from "@/lib/products";
+import {
+  getProductDiscountPercent,
+  getProductOriginalPrice,
+  getProductPrice,
+  getProductRating,
+  getProductReviewCount,
+  isProductDiscountActive,
+  resolveProductImage,
+} from "@/lib/products";
 import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import { useToast } from "@/components/providers/toast-provider";
 import StableImage from "@/components/ui/stable-image";
@@ -69,7 +77,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const image = resolveProductImage(product.images?.[0] || product.image);
   const hoverImage = resolveProductImage(product.images?.[1] || "");
   const hasHoverImage = Boolean(hoverImage);
-  const price = Number(product?.price || 0);
+  const price = getProductPrice(product);
+  const originalPrice = getProductOriginalPrice(product);
+  const hasDiscount = isProductDiscountActive(product);
+  const discountPercent = getProductDiscountPercent(product);
   const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = getProductReviewCount(product);
@@ -205,6 +216,9 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   return (
     <article className={`product-card${isCatalog ? " product-card--catalog" : ""}${isRelated ? " product-card--related" : ""}${isHome ? " product-card--home" : ""}`}>
       <div className="product-card__media-wrap">
+        {hasDiscount && discountPercent > 0 ? (
+          <span className="product-card__discount-badge">-{discountPercent}%</span>
+        ) : null}
         <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
           <div className="product-card__media">
             <div className="product-card__image-shell" ref={imageShellRef}>
@@ -256,7 +270,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
           <h3>{product?.name || "Product"}</h3>
         </Link>
         <p className="product-card__description">{isRelated ? summary : summary}</p>
-        <p className="product-card__price">{formatCurrency(price)}</p>
+        <div className="product-card__price-wrap">
+          {hasDiscount ? <p className="product-card__price-old">{formatCurrency(originalPrice)}</p> : null}
+          <p className="product-card__price">{formatCurrency(price)}</p>
+        </div>
         {!isRelated ? (
           <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
             {Array.from({ length: 5 }, (_, index) => (

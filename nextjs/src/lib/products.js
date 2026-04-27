@@ -1,5 +1,6 @@
 import { API_BASE_PRODUCTS, BASE_URL } from "./config";
 import { requestJson } from "./http";
+import { getProductPricing } from "./product-pricing";
 
 export const DEFAULT_STOREFRONT_CATEGORIES = [
   { slug: "laptops", label: "Laptops & Desktops" },
@@ -50,7 +51,19 @@ export function getProductStock(product) {
 }
 
 export function getProductPrice(product) {
-  return Number(product?.price || 0);
+  return Number(getProductPricing(product).currentPrice || 0);
+}
+
+export function getProductOriginalPrice(product) {
+  return Number(getProductPricing(product).originalPrice || 0);
+}
+
+export function getProductDiscountPercent(product) {
+  return Number(getProductPricing(product).discountPercent || 0);
+}
+
+export function isProductDiscountActive(product) {
+  return Boolean(getProductPricing(product).isDiscountActive);
 }
 
 export function getProductReviewCount(product) {

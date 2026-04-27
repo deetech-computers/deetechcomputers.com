@@ -36,6 +36,10 @@ function normalizeProduct(product) {
     category: String(product.category || "").trim(),
     subCategory: String(product.subCategory || "").trim(),
     price: Number(product.price || 0),
+    discountPrice: product.discountPrice == null ? null : Number(product.discountPrice || 0),
+    discountMode: String(product.discountMode || "none").trim().toLowerCase(),
+    discountStartsAt: product.discountStartsAt || null,
+    discountEndsAt: product.discountEndsAt || null,
     countInStock: Number(product.countInStock || 0),
     isFeatured: Boolean(product.isFeatured),
     homeSections: Array.isArray(product.homeSections)
@@ -53,7 +57,7 @@ function normalizeProduct(product) {
 export async function buildProductSnapshotPayload() {
   const products = await Product.find({})
     .select(
-      "_id name short_description description specs brand category subCategory price countInStock isFeatured homeSections image_url images sold createdAt updatedAt"
+      "_id name short_description description specs brand category subCategory price discountPrice discountMode discountStartsAt discountEndsAt countInStock isFeatured homeSections image_url images sold createdAt updatedAt"
     )
     .lean();
 

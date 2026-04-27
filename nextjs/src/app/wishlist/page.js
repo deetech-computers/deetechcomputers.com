@@ -9,7 +9,7 @@ import EmptyState from "@/components/ui/empty-state";
 import { useToast } from "@/components/providers/toast-provider";
 import { SITE_URL } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
-import { fetchProducts, formatCategoryLabel, getProductStock, resolveProductImage } from "@/lib/products";
+import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import {
   clearWishlistEntries,
   readWishlistEntries,
@@ -74,7 +74,7 @@ export default function WishlistPage() {
           entry,
           product,
           id: entry.id,
-          price: Number(product?.price || 0),
+          price: getProductPrice(product),
           inStock: getProductStock(product) > 0,
           dateLabel: formatDateLabel(entry.addedAt),
           image: resolveProductImage(product?.images?.[0] || product?.image),

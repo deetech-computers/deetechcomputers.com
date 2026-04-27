@@ -109,6 +109,35 @@ const SUPPORT_REPLY_EMOJIS = [
   "\u{1F4DE}",
 ];
 
+const PRODUCT_DISCOUNT_PRESET_OPTIONS = [
+  ["none", "No discount"],
+  ["instant", "Instant discount"],
+  ["24h", "Timed discount - 24 hours"],
+  ["72h", "Timed discount - 3 days"],
+  ["168h", "Timed discount - 7 days"],
+];
+
+function resolveDiscountPreset(product) {
+  const mode = String(product?.discountMode || "none").trim().toLowerCase();
+  const discountPrice = Number(product?.discountPrice || 0);
+  if (!Number.isFinite(discountPrice) || discountPrice <= 0) return "none";
+  if (mode === "instant") return "instant";
+  if (mode !== "timed") return "none";
+
+  const start = product?.discountStartsAt ? new Date(product.discountStartsAt) : null;
+  const end = product?.discountEndsAt ? new Date(product.discountEndsAt) : null;
+  if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "none";
+  }
+  if (end.getTime() <= Date.now()) {
+    return "none";
+  }
+  const diffHours = Math.round((end.getTime() - start.getTime()) / (60 * 60 * 1000));
+  if (diffHours <= 24) return "24h";
+  if (diffHours <= 72) return "72h";
+  return "168h";
+}
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -603,6 +632,7 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
     const existing = Array.isArray(initial?.homeSections) ? initial.homeSections : [];
     return [...new Set(existing.filter(Boolean).map(canonicalHomeSectionKey).filter(Boolean))];
   });
+  const [discountPreset, setDiscountPreset] = useState(resolveDiscountPreset(initial));
 
   function toggleHomeSection(key) {
     setSelectedSections((current) =>
@@ -639,6 +669,22 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
       <div className="admin-form__split">
         <input className="field" name="price" defaultValue={initial?.price || ""} placeholder="Price" type="number" min="0" step="0.01" required />
         <input className="field" name="countInStock" defaultValue={initial?.countInStock ?? ""} placeholder="Stock" type="number" min="0" required />
+      </div>
+      <div className="admin-form__split">
+        <input
+          className="field"
+          name="discountPrice"
+          defaultValue={initial?.discountPrice ?? ""}
+          placeholder="Discount price (optional)"
+          type="number"
+          min="0"
+          step="0.01"
+        />
+        <select className="field" name="discountPreset" value={discountPreset} onChange={(event) => setDiscountPreset(event.target.value)}>
+          {PRODUCT_DISCOUNT_PRESET_OPTIONS.map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
       </div>
       <div className="admin-form__split">
         <input className="field" name="image_url" defaultValue={initial?.image_url || initial?.images?.[0] || ""} placeholder="Main image URL" />

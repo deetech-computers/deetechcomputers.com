@@ -20,6 +20,7 @@ import {
   deriveCategoryBrandStats,
   fetchProducts,
   formatCategoryLabel,
+  getProductPrice,
   resolveProductImage,
 } from "@/lib/products";
 
@@ -519,7 +520,7 @@ export default function SiteHeader() {
             id: String(product?._id || product?.id || entry.id),
             name: String(product?.name || "Saved product"),
             image: product?.images?.[0] || product?.image || "",
-            price: Number(product?.price || 0),
+            price: getProductPrice(product),
           };
         })
         .filter(Boolean)
@@ -1001,7 +1002,7 @@ export default function SiteHeader() {
                       {String(product?.short_description || product?.description || "").trim() ||
                         String(product?.brand || formatCategoryLabel(product?.category || "Product")).toUpperCase()}
                     </p>
-                    {formatSearchPrice(product?.price) ? <b>{formatSearchPrice(product?.price)}</b> : null}
+                    {formatSearchPrice(getProductPrice(product)) ? <b>{formatSearchPrice(getProductPrice(product))}</b> : null}
                   </div>
                 </Link>
               ))}

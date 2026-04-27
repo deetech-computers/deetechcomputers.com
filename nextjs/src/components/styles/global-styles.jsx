@@ -2806,6 +2806,24 @@ button, input, select, textarea { font: inherit; }
 .product-card__media-wrap {
   position: relative;
 }
+.product-card__discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #d92626;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 20px rgba(217, 38, 38, 0.22);
+}
 .product-card--home {
   position: relative;
   overflow: hidden;
@@ -2952,6 +2970,17 @@ button, input, select, textarea { font: inherit; }
 .product-card__description {
   margin: 0; font-size: 0.72rem; line-height: 1.45; color: #817567;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.product-card__price-wrap {
+  display: grid;
+  gap: 2px;
+}
+.product-card__price-old {
+  margin: 0;
+  color: #8f8a80;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: line-through;
 }
 .product-card__price {
   margin: 0; color: #1f1d1b; font-size: 0.95rem; font-weight: 700;
@@ -3236,6 +3265,37 @@ button, input, select, textarea { font: inherit; }
   color: #1f1d1b;
   font-size: 1.5rem;
   font-weight: 800;
+}
+.product-summary__price-group {
+  display: grid;
+  gap: 6px;
+}
+.product-summary__price-old {
+  margin: 0;
+  color: #8f8a80;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: line-through;
+}
+.product-summary__discount-badge {
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #d92626;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.product-summary__discount-note {
+  margin: 0;
+  color: #5e6675;
+  font-size: 0.86rem;
+  font-weight: 500;
 }
 .product-summary__copy {
   margin: 0;
