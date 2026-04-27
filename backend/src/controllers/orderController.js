@@ -1,5 +1,6 @@
 // backend/src/controllers/orderController.js
 import Order from "../models/Order.js";
+import OrderAttemptLog from "../models/OrderAttemptLog.js";
 import Product from "../models/Product.js";
 import DiscountCode from "../models/DiscountCode.js";
 import Affiliate from "../models/Affiliate.js";
@@ -138,6 +139,106 @@ function toHubtelClientReference(raw) {
   if (cleaned && cleaned.length <= 36) return cleaned;
   if (cleaned) return cleaned.slice(0, 36);
   return generateHubtelSafeReference();
+}
+
+function getRequestIp(req) {
+  return String(
+    req?.headers?.["x-forwarded-for"] ||
+      req?.ip ||
+      req?.socket?.remoteAddress ||
+      ""
+  )
+    .split(",")[0]
+    .trim();
+}
+
+function getRequestUserAgent(req) {
+  return String(req?.headers?.["user-agent"] || "").trim().slice(0, 500);
+}
+
+function countOrderItems(orderItems) {
+  return (Array.isArray(orderItems) ? orderItems : []).reduce(
+    (sum, item) => sum + Math.max(0, Number(item?.qty || 0)),
+    0
+  );
+}
+
+function buildOrderAttemptFingerprint({
+  userId,
+  guestEmail,
+  shippingEmail,
+  mobileNumber,
+  paymentMethod,
+  paymentFlow,
+  orderItems,
+}) {
+  const items = (Array.isArray(orderItems) ? orderItems : [])
+    .map((item) => ({
+      product: String(item?.product || item?._id || "").trim(),
+      qty: Number(item?.qty || 0),
+    }))
+    .filter((item) => item.product && Number.isFinite(item.qty))
+    .sort((a, b) => {
+      if (a.product === b.product) return a.qty - b.qty;
+      return a.product.localeCompare(b.product);
+    });
+
+  const fingerprintSource = JSON.stringify({
+    userId: String(userId || "").trim(),
+    guestEmail: String(guestEmail || "").trim().toLowerCase(),
+    shippingEmail: String(shippingEmail || "").trim().toLowerCase(),
+    mobileNumber: String(mobileNumber || "").trim(),
+    paymentMethod: String(paymentMethod || "").trim().toLowerCase(),
+    paymentFlow: String(paymentFlow || "").trim().toLowerCase(),
+    items,
+  });
+
+  return crypto.createHash("sha256").update(fingerprintSource).digest("hex").slice(0, 24);
+}
+
+async function writeOrderAttemptLog({
+  req,
+  order = null,
+  user = null,
+  scope = "system",
+  stage,
+  outcome,
+  clientOrderRef = "",
+  attemptFingerprint = "",
+  paymentMethod = "",
+  paymentFlow = "",
+  itemCount = 0,
+  totalPrice = 0,
+  shippingEmail = "",
+  guestEmail = "",
+  mobileNumber = "",
+  reason = "",
+  metadata = undefined,
+}) {
+  try {
+    await OrderAttemptLog.create({
+      order: order?._id || order || undefined,
+      user: user?._id || user || undefined,
+      scope,
+      stage,
+      outcome,
+      clientOrderRef: String(clientOrderRef || "").trim() || undefined,
+      attemptFingerprint: String(attemptFingerprint || "").trim() || undefined,
+      paymentMethod: String(paymentMethod || "").trim() || undefined,
+      paymentFlow: String(paymentFlow || "").trim() || undefined,
+      itemCount: Number.isFinite(Number(itemCount)) ? Number(itemCount) : 0,
+      totalPrice: Number.isFinite(Number(totalPrice)) ? Number(totalPrice) : 0,
+      shippingEmail: String(shippingEmail || "").trim().toLowerCase() || undefined,
+      guestEmail: String(guestEmail || "").trim().toLowerCase() || undefined,
+      mobileNumber: String(mobileNumber || "").trim() || undefined,
+      ipAddress: getRequestIp(req) || undefined,
+      userAgent: getRequestUserAgent(req) || undefined,
+      reason: String(reason || "").trim() || undefined,
+      metadata,
+    });
+  } catch (logError) {
+    console.warn("Order attempt audit log skipped:", logError?.message || logError);
+  }
 }
 
 function timingSafeEqualText(a, b) {
@@ -584,6 +685,14 @@ export async function createOrder(req, res) {
   try {
     payload = req.body?.order ? JSON.parse(req.body.order) : req.body;
   } catch {
+    await writeOrderAttemptLog({
+      req,
+      user: req.user,
+      scope: "authenticated",
+      stage: "failed",
+      outcome: "invalid_payload",
+      reason: "Invalid order payload",
+    });
     res.status(400);
     throw new Error("Invalid order payload");
   }
@@ -651,6 +760,33 @@ export async function createOrder(req, res) {
     normalizedPaymentFlow === "auto"
       ? toHubtelClientReference(trimmedOrderRef)
       : trimmedOrderRef || undefined;
+  const attemptFingerprint = buildOrderAttemptFingerprint({
+    userId: req.user?._id,
+    shippingEmail,
+    mobileNumber: cleanMobile,
+    paymentMethod,
+    paymentFlow: normalizedPaymentFlow,
+    orderItems,
+  });
+
+  await writeOrderAttemptLog({
+    req,
+    user: req.user,
+    scope: "authenticated",
+    stage: "received",
+    outcome: "accepted",
+    clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
+    attemptFingerprint,
+    paymentMethod,
+    paymentFlow: normalizedPaymentFlow,
+    itemCount: countOrderItems(orderItems),
+    shippingEmail,
+    mobileNumber: cleanMobile,
+    metadata: {
+      hasPaymentScreenshot: Boolean(screenshotUrl),
+      deliveryRegion: String(deliveryRegion || "").trim(),
+    },
+  });
 
   if (trimmedOrderRef) {
     const existingOrder = await Order.findOne({
@@ -658,6 +794,23 @@ export async function createOrder(req, res) {
       clientOrderRef: trimmedOrderRef,
     }).sort({ createdAt: -1 });
     if (existingOrder) {
+      await writeOrderAttemptLog({
+        req,
+        order: existingOrder,
+        user: req.user,
+        scope: "authenticated",
+        stage: "duplicate_returned",
+        outcome: "existing_order_returned",
+        clientOrderRef: trimmedOrderRef,
+        attemptFingerprint,
+        paymentMethod,
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        totalPrice: Number(existingOrder.totalPrice || 0),
+        shippingEmail,
+        mobileNumber: cleanMobile,
+        reason: "Repeated clientOrderRef for authenticated checkout",
+      });
       return res.status(200).json({
         message: "Order already submitted",
         order: existingOrder,
@@ -722,6 +875,23 @@ export async function createOrder(req, res) {
       paymentScreenshotUrl: normalizedPaymentFlow === "manual" ? screenshotUrl : "",
     });
 
+    await writeOrderAttemptLog({
+      req,
+      order,
+      user: req.user,
+      scope: "authenticated",
+      stage: "created",
+      outcome: "order_created",
+      clientOrderRef: order.clientOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      totalPrice: Number(order.totalPrice || 0),
+      shippingEmail: order.shippingEmail,
+      mobileNumber: order.mobileNumber,
+    });
+
     if (normalizedPaymentFlow === "auto") {
       if (Number(discounted.total || 0) <= 0) {
         throw new Error("Order total must be greater than zero for Hubtel automatic checkout.");
@@ -755,6 +925,26 @@ export async function createOrder(req, res) {
       order.paymentGatewayStatus = "initiated";
       order.paymentGatewayPayload = hubtel;
       await order.save();
+
+      await writeOrderAttemptLog({
+        req,
+        order,
+        user: req.user,
+        scope: "authenticated",
+        stage: "gateway_initiated",
+        outcome: "hubtel_checkout_ready",
+        clientOrderRef: order.clientOrderRef,
+        attemptFingerprint,
+        paymentMethod,
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        totalPrice: Number(order.totalPrice || 0),
+        shippingEmail: order.shippingEmail,
+        mobileNumber: order.mobileNumber,
+        metadata: {
+          gatewayReference: order.paymentGatewayReference,
+        },
+      });
     }
 
     if (usedDiscount) {
@@ -796,6 +986,23 @@ export async function createOrder(req, res) {
         clientOrderRef: trimmedOrderRef,
       }).sort({ createdAt: -1 });
       if (existingOrder) {
+        await writeOrderAttemptLog({
+          req,
+          order: existingOrder,
+          user: req.user,
+          scope: "authenticated",
+          stage: "duplicate_returned",
+          outcome: "unique_index_duplicate",
+          clientOrderRef: trimmedOrderRef,
+          attemptFingerprint,
+          paymentMethod,
+          paymentFlow: normalizedPaymentFlow,
+          itemCount: countOrderItems(orderItems),
+          totalPrice: Number(existingOrder.totalPrice || 0),
+          shippingEmail,
+          mobileNumber: cleanMobile,
+          reason: "Duplicate clientOrderRef caught by unique index",
+        });
         return res.status(200).json({
           message: "Order already submitted",
           order: existingOrder,
@@ -804,6 +1011,21 @@ export async function createOrder(req, res) {
         });
       }
     }
+    await writeOrderAttemptLog({
+      req,
+      user: req.user,
+      scope: "authenticated",
+      stage: "failed",
+      outcome: "order_rejected",
+      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      shippingEmail,
+      mobileNumber: cleanMobile,
+      reason: err?.message || "Order creation failed",
+    });
     if (reservedStock.length) {
       await rollbackStockAdjustments(reservedStock);
     }
@@ -825,6 +1047,13 @@ export async function createGuestOrder(req, res) {
   try {
     payload = req.body.order ? JSON.parse(req.body.order) : req.body;
   } catch {
+    await writeOrderAttemptLog({
+      req,
+      scope: "guest",
+      stage: "failed",
+      outcome: "invalid_payload",
+      reason: "Invalid guest order payload",
+    });
     res.status(400);
     throw new Error("Invalid order payload");
   }
@@ -875,6 +1104,14 @@ export async function createGuestOrder(req, res) {
     normalizedPaymentFlow === "auto"
       ? toHubtelClientReference(trimmedOrderRef)
       : trimmedOrderRef || undefined;
+  const attemptFingerprint = buildOrderAttemptFingerprint({
+    guestEmail,
+    shippingEmail,
+    mobileNumber: cleanMobile,
+    paymentMethod,
+    paymentFlow: normalizedPaymentFlow,
+    orderItems,
+  });
 
   if (normalizedPaymentFlow !== "auto" && !screenshotUrl) {
     res.status(400);
@@ -890,6 +1127,23 @@ export async function createGuestOrder(req, res) {
       ],
     }).sort({ createdAt: -1 });
     if (existingGuestOrder) {
+      await writeOrderAttemptLog({
+        req,
+        order: existingGuestOrder,
+        scope: "guest",
+        stage: "duplicate_returned",
+        outcome: "existing_order_returned",
+        clientOrderRef: trimmedOrderRef,
+        attemptFingerprint,
+        paymentMethod,
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        totalPrice: Number(existingGuestOrder.totalPrice || 0),
+        shippingEmail,
+        guestEmail,
+        mobileNumber: cleanMobile,
+        reason: "Repeated clientOrderRef for guest checkout",
+      });
       return res.status(200).json({
         message: "Order already submitted",
         order: existingGuestOrder,
@@ -902,6 +1156,25 @@ export async function createGuestOrder(req, res) {
   let reservedStock = [];
   let usedDiscount = null;
   try {
+    await writeOrderAttemptLog({
+      req,
+      scope: "guest",
+      stage: "received",
+      outcome: "accepted",
+      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      shippingEmail,
+      guestEmail,
+      mobileNumber: cleanMobile,
+      metadata: {
+        hasPaymentScreenshot: Boolean(screenshotUrl),
+        deliveryRegion: String(deliveryRegion || "").trim(),
+      },
+    });
+
     const { total, processedItems } = await processOrderItems(orderItems);
     const discounted = await applyDiscount(discountCode, total, null);
     const affiliate = await resolveAffiliateByCode(affiliateCode, null);
@@ -959,6 +1232,23 @@ export async function createGuestOrder(req, res) {
       paymentScreenshotUrl: normalizedPaymentFlow === "manual" ? screenshotUrl : "",
     });
 
+    await writeOrderAttemptLog({
+      req,
+      order,
+      scope: "guest",
+      stage: "created",
+      outcome: "order_created",
+      clientOrderRef: order.clientOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      totalPrice: Number(order.totalPrice || 0),
+      shippingEmail: order.shippingEmail,
+      guestEmail: order.guestEmail,
+      mobileNumber: order.mobileNumber,
+    });
+
     if (normalizedPaymentFlow === "auto") {
       if (Number(discounted.total || 0) <= 0) {
         throw new Error("Order total must be greater than zero for Hubtel automatic checkout.");
@@ -992,6 +1282,26 @@ export async function createGuestOrder(req, res) {
       order.paymentGatewayStatus = "initiated";
       order.paymentGatewayPayload = hubtel;
       await order.save();
+
+      await writeOrderAttemptLog({
+        req,
+        order,
+        scope: "guest",
+        stage: "gateway_initiated",
+        outcome: "hubtel_checkout_ready",
+        clientOrderRef: order.clientOrderRef,
+        attemptFingerprint,
+        paymentMethod,
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        totalPrice: Number(order.totalPrice || 0),
+        shippingEmail: order.shippingEmail,
+        guestEmail: order.guestEmail,
+        mobileNumber: order.mobileNumber,
+        metadata: {
+          gatewayReference: order.paymentGatewayReference,
+        },
+      });
     }
 
     if (usedDiscount) {
@@ -1032,6 +1342,23 @@ export async function createGuestOrder(req, res) {
         clientOrderRef: trimmedOrderRef,
       }).sort({ createdAt: -1 });
       if (existingGuestOrder) {
+        await writeOrderAttemptLog({
+          req,
+          order: existingGuestOrder,
+          scope: "guest",
+          stage: "duplicate_returned",
+          outcome: "unique_index_duplicate",
+          clientOrderRef: trimmedOrderRef,
+          attemptFingerprint,
+          paymentMethod,
+          paymentFlow: normalizedPaymentFlow,
+          itemCount: countOrderItems(orderItems),
+          totalPrice: Number(existingGuestOrder.totalPrice || 0),
+          shippingEmail,
+          guestEmail,
+          mobileNumber: cleanMobile,
+          reason: "Duplicate clientOrderRef caught by unique index",
+        });
         return res.status(200).json({
           message: "Order already submitted",
           order: existingGuestOrder,
@@ -1040,6 +1367,21 @@ export async function createGuestOrder(req, res) {
         });
       }
     }
+    await writeOrderAttemptLog({
+      req,
+      scope: "guest",
+      stage: "failed",
+      outcome: "order_rejected",
+      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      shippingEmail,
+      guestEmail,
+      mobileNumber: cleanMobile,
+      reason: err?.message || "Guest order creation failed",
+    });
     if (reservedStock.length) {
       await rollbackStockAdjustments(reservedStock);
     }
@@ -1073,11 +1415,26 @@ export async function handleHubtelCallback(req, res) {
   ).trim();
 
   if (!clientReference) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "system",
+      stage: "callback",
+      outcome: "ignored_missing_reference",
+      reason: "Hubtel callback received without client reference",
+    });
     return res.status(200).json({ ok: true, ignored: true });
   }
 
   const order = await Order.findOne({ clientOrderRef: clientReference }).sort({ createdAt: -1 });
   if (!order) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "system",
+      stage: "callback",
+      outcome: "ignored_missing_order",
+      clientOrderRef: clientReference,
+      reason: "Hubtel callback received for unknown order reference",
+    });
     return res.status(200).json({ ok: true, ignored: true });
   }
 
@@ -1109,6 +1466,25 @@ export async function handleHubtelCallback(req, res) {
   }
 
   await order.save();
+  await writeOrderAttemptLog({
+    req,
+    order,
+    user: order.user,
+    scope: order.user ? "authenticated" : "guest",
+    stage: "callback",
+    outcome: isSuccess ? "paid" : order.paymentStatus,
+    clientOrderRef: clientReference,
+    paymentMethod: order.paymentMethod,
+    paymentFlow: order.paymentFlow,
+    itemCount: countOrderItems(order.orderItems),
+    totalPrice: Number(order.totalPrice || 0),
+    shippingEmail: order.shippingEmail,
+    guestEmail: order.guestEmail,
+    mobileNumber: order.mobileNumber,
+    metadata: {
+      gatewayStatus: order.paymentGatewayStatus,
+    },
+  });
   try {
     await ensureReferralSyncedForOrder(order);
   } catch (referralError) {
@@ -1145,9 +1521,34 @@ export async function getHubtelPaymentStatus(req, res) {
     .populate("orderItems.product", "name brand category images image");
 
   if (!order) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "system",
+      stage: "status_check",
+      outcome: "missing_order",
+      clientOrderRef: clientReference,
+      reason: "Hubtel status check requested for unknown order reference",
+    });
     res.status(404);
     throw new Error("Order not found");
   }
+
+  await writeOrderAttemptLog({
+    req,
+    order,
+    user: order.user,
+    scope: order.user ? "authenticated" : "guest",
+    stage: "status_check",
+    outcome: "status_returned",
+    clientOrderRef: clientReference,
+    paymentMethod: order.paymentMethod,
+    paymentFlow: order.paymentFlow,
+    itemCount: countOrderItems(order.orderItems),
+    totalPrice: Number(order.totalPrice || 0),
+    shippingEmail: order.shippingEmail,
+    guestEmail: order.guestEmail,
+    mobileNumber: order.mobileNumber,
+  });
 
   return res.json({
     clientReference,
@@ -1218,6 +1619,24 @@ export async function getAllOrders(req, res) {
     .populate("user", "name email")
     .populate("orderItems.product", "name price brand");
   res.json(orders);
+}
+
+export async function getRecentOrderAttempts(req, res) {
+  const limit = Math.min(200, Math.max(1, Number(req.query?.limit || 50)));
+  const clientOrderRef = String(req.query?.clientOrderRef || "").trim();
+  const attemptFingerprint = String(req.query?.attemptFingerprint || "").trim();
+
+  const query = {};
+  if (clientOrderRef) query.clientOrderRef = clientOrderRef;
+  if (attemptFingerprint) query.attemptFingerprint = attemptFingerprint;
+
+  const attempts = await OrderAttemptLog.find(query)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .populate("user", "name email")
+    .populate("order", "_id paymentMethod paymentFlow paymentStatus orderStatus totalPrice createdAt");
+
+  res.json(attempts);
 }
 
 // Mark order as paid (admin only)

@@ -7,6 +7,7 @@ import {
   getMyOrders,
   getMyOrderById,
   getAllOrders,
+  getRecentOrderAttempts,
   updateOrderToPaid,
   updateOrderToDelivered,
   updateOrderStatus,
@@ -30,6 +31,7 @@ router
 router.post("/guest", asyncHandler(createGuestOrder));
 router.post("/hubtel/callback", asyncHandler(handleHubtelCallback));
 router.get("/hubtel/status/:clientReference", asyncHandler(getHubtelPaymentStatus));
+router.get("/attempts", protect, admin, asyncHandler(getRecentOrderAttempts));
 
 // Get current user's orders
 router.route("/myorders").get(protect, asyncHandler(getMyOrders));
