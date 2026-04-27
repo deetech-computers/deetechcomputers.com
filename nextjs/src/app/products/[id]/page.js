@@ -94,6 +94,18 @@ function getReviewTimeLabel(value) {
   return `${Math.max(2, Math.floor(diff / month))} months ago`;
 }
 
+function formatDateTime(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return "N/A";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 function getReviewerInitials(name) {
   const parts = String(name || "Customer")
     .trim()
