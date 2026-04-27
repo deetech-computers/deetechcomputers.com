@@ -345,7 +345,12 @@ async function ensureOrderStockReserved(order) {
 }
 
 async function releaseOrderStockReservation(order) {
-  if (!order || !order.stockReserved) return false;
+  if (!order) return false;
+  const shouldAssumeLegacyReservedStock =
+    !order.stockReserved &&
+    order.orderStatus !== "cancelled" &&
+    order.paymentStatus !== "failed";
+  if (!order.stockReserved && !shouldAssumeLegacyReservedStock) return false;
   const adjustments = buildOrderStockAdjustments(order);
   if (!adjustments.length) {
     order.stockReserved = false;
