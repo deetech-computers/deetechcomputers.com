@@ -84,6 +84,7 @@ const orderSchema = new mongoose.Schema(
     shippingAddress: { type: String, trim: true },
     shippingCity: { type: String, trim: true },
     clientOrderRef: { type: String, trim: true },
+    attemptFingerprint: { type: String, trim: true },
     totalPrice: {
       type: Number,
       required: true,
@@ -119,6 +120,9 @@ const orderSchema = new mongoose.Schema(
 // Index for faster lookups
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ affiliate: 1, createdAt: -1 });
+orderSchema.index({ user: 1, attemptFingerprint: 1, createdAt: -1 });
+orderSchema.index({ guestEmail: 1, attemptFingerprint: 1, createdAt: -1 });
+orderSchema.index({ shippingEmail: 1, attemptFingerprint: 1, createdAt: -1 });
 orderSchema.index({ clientOrderRef: 1 }, {
   unique: true,
   partialFilterExpression: { clientOrderRef: { $exists: true, $type: "string" } },

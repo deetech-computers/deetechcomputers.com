@@ -356,6 +356,49 @@ async function releaseOrderStockReservation(order) {
   return true;
 }
 
+function buildRecentDuplicateWindowDate() {
+  return new Date(Date.now() - 10 * 60 * 1000);
+}
+
+async function findRecentDuplicateOrder({
+  userId = null,
+  shippingEmail = "",
+  guestEmail = "",
+  attemptFingerprint = "",
+}) {
+  const fingerprint = String(attemptFingerprint || "").trim();
+  if (!fingerprint) return null;
+
+  const createdAt = { $gte: buildRecentDuplicateWindowDate() };
+  const activeStates = {
+    orderStatus: { $ne: "cancelled" },
+    paymentStatus: { $ne: "failed" },
+  };
+
+  if (userId) {
+    return Order.findOne({
+      user: userId,
+      attemptFingerprint: fingerprint,
+      createdAt,
+      ...activeStates,
+    }).sort({ createdAt: -1 });
+  }
+
+  const emailConditions = [];
+  const normalizedGuestEmail = String(guestEmail || "").trim().toLowerCase();
+  const normalizedShippingEmail = String(shippingEmail || "").trim().toLowerCase();
+  if (normalizedGuestEmail) emailConditions.push({ guestEmail: normalizedGuestEmail });
+  if (normalizedShippingEmail) emailConditions.push({ shippingEmail: normalizedShippingEmail });
+  if (!emailConditions.length) return null;
+
+  return Order.findOne({
+    attemptFingerprint: fingerprint,
+    createdAt,
+    ...activeStates,
+    $or: emailConditions,
+  }).sort({ createdAt: -1 });
+}
+
 async function applyDiscount(codeRaw, total, userId, session) {
   const code = String(codeRaw || "").trim().toUpperCase();
   if (!code) return { total, discount: null };
@@ -791,7 +834,7 @@ export async function createOrder(req, res) {
   if (trimmedOrderRef) {
     const existingOrder = await Order.findOne({
       user: req.user._id,
-      clientOrderRef: trimmedOrderRef,
+      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
     }).sort({ createdAt: -1 });
     if (existingOrder) {
       await writeOrderAttemptLog({
@@ -818,6 +861,37 @@ export async function createOrder(req, res) {
         checkoutUrl: existingOrder.paymentGatewayCheckoutUrl || undefined,
       });
     }
+  }
+
+  const existingFingerprintOrder = await findRecentDuplicateOrder({
+    userId: req.user._id,
+    shippingEmail,
+    attemptFingerprint,
+  });
+  if (existingFingerprintOrder) {
+    await writeOrderAttemptLog({
+      req,
+      order: existingFingerprintOrder,
+      user: req.user,
+      scope: "authenticated",
+      stage: "duplicate_returned",
+      outcome: "fingerprint_duplicate",
+      clientOrderRef: existingFingerprintOrder.clientOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      totalPrice: Number(existingFingerprintOrder.totalPrice || 0),
+      shippingEmail,
+      mobileNumber: cleanMobile,
+      reason: "Recent matching checkout fingerprint returned existing order",
+    });
+    return res.status(200).json({
+      message: "Order already submitted",
+      order: existingFingerprintOrder,
+      orderId: existingFingerprintOrder._id,
+      checkoutUrl: existingFingerprintOrder.paymentGatewayCheckoutUrl || undefined,
+    });
   }
 
   let reservedStock = [];
@@ -859,6 +933,7 @@ export async function createOrder(req, res) {
       shippingAddress,
       shippingCity,
       clientOrderRef: resolvedClientOrderRef,
+      attemptFingerprint,
       totalPrice: discounted.total,
       paymentStatus: "pending",
       orderStatus: "pending",
@@ -983,7 +1058,7 @@ export async function createOrder(req, res) {
     if (err?.code === 11000 && trimmedOrderRef) {
       const existingOrder = await Order.findOne({
         user: req.user._id,
-        clientOrderRef: trimmedOrderRef,
+        clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
       }).sort({ createdAt: -1 });
       if (existingOrder) {
         await writeOrderAttemptLog({
@@ -1120,7 +1195,7 @@ export async function createGuestOrder(req, res) {
 
   if (trimmedOrderRef) {
     const existingGuestOrder = await Order.findOne({
-      clientOrderRef: trimmedOrderRef,
+      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
       $or: [
         { guestEmail: String(guestEmail || "").trim() },
         { shippingEmail: String(shippingEmail || "").trim() },
@@ -1151,6 +1226,37 @@ export async function createGuestOrder(req, res) {
         checkoutUrl: existingGuestOrder.paymentGatewayCheckoutUrl || undefined,
       });
     }
+  }
+
+  const existingGuestFingerprintOrder = await findRecentDuplicateOrder({
+    shippingEmail,
+    guestEmail,
+    attemptFingerprint,
+  });
+  if (existingGuestFingerprintOrder) {
+    await writeOrderAttemptLog({
+      req,
+      order: existingGuestFingerprintOrder,
+      scope: "guest",
+      stage: "duplicate_returned",
+      outcome: "fingerprint_duplicate",
+      clientOrderRef: existingGuestFingerprintOrder.clientOrderRef,
+      attemptFingerprint,
+      paymentMethod,
+      paymentFlow: normalizedPaymentFlow,
+      itemCount: countOrderItems(orderItems),
+      totalPrice: Number(existingGuestFingerprintOrder.totalPrice || 0),
+      shippingEmail,
+      guestEmail,
+      mobileNumber: cleanMobile,
+      reason: "Recent matching guest checkout fingerprint returned existing order",
+    });
+    return res.status(200).json({
+      message: "Order already submitted",
+      order: existingGuestFingerprintOrder,
+      orderId: existingGuestFingerprintOrder._id,
+      checkoutUrl: existingGuestFingerprintOrder.paymentGatewayCheckoutUrl || undefined,
+    });
   }
 
   let reservedStock = [];
@@ -1211,6 +1317,7 @@ export async function createGuestOrder(req, res) {
       shippingAddress: shippingAddress || guestAddress,
       shippingCity: shippingCity || guestCity,
       clientOrderRef: resolvedClientOrderRef,
+      attemptFingerprint,
       totalPrice: discounted.total,
       paymentStatus: "pending",
       orderStatus: "pending",
@@ -1339,7 +1446,7 @@ export async function createGuestOrder(req, res) {
   } catch (err) {
     if (err?.code === 11000 && trimmedOrderRef) {
       const existingGuestOrder = await Order.findOne({
-        clientOrderRef: trimmedOrderRef,
+        clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
       }).sort({ createdAt: -1 });
       if (existingGuestOrder) {
         await writeOrderAttemptLog({

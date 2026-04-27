@@ -71,6 +71,7 @@ export default function CheckoutPaymentPage() {
   const [ready, setReady] = useState(false);
   const hubtelFinalizedRef = useRef(false);
   const submitLockRef = useRef(false);
+  const clientOrderRefRef = useRef("");
 
   function buildEstimatedDelivery(dateInput) {
     const base = new Date(dateInput || Date.now());
@@ -116,6 +117,7 @@ export default function CheckoutPaymentPage() {
       return;
     }
     setForm((current) => ({ ...current, ...draft }));
+    clientOrderRefRef.current = String(draft?.clientOrderRef || "").trim();
     setReady(true);
   }, [pushToast, router]);
 
@@ -126,12 +128,17 @@ export default function CheckoutPaymentPage() {
 
   useEffect(() => {
     if (!ready) return;
-    if (String(form.clientOrderRef || "").trim()) return;
+    if (String(form.clientOrderRef || "").trim()) {
+      clientOrderRefRef.current = String(form.clientOrderRef || "").trim();
+      return;
+    }
+    const stableRef = clientOrderRefRef.current || buildClientOrderRef();
+    clientOrderRefRef.current = stableRef;
     setForm((current) => {
       if (String(current.clientOrderRef || "").trim()) return current;
       return {
         ...current,
-        clientOrderRef: buildClientOrderRef(),
+        clientOrderRef: stableRef,
       };
     });
   }, [form.clientOrderRef, ready]);
@@ -451,7 +458,11 @@ export default function CheckoutPaymentPage() {
       return;
     }
 
-    const clientOrderRef = String(form.clientOrderRef || "").trim() || buildClientOrderRef();
+    const clientOrderRef =
+      clientOrderRefRef.current ||
+      String(form.clientOrderRef || "").trim() ||
+      buildClientOrderRef();
+    clientOrderRefRef.current = clientOrderRef;
     if (!String(form.clientOrderRef || "").trim()) {
       setForm((current) => ({ ...current, clientOrderRef }));
     }

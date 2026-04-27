@@ -96,10 +96,7 @@ export function clearCheckoutDraft() {
 }
 
 export function buildClientOrderRef() {
-  if (typeof window !== "undefined" && window.crypto?.randomUUID) {
-    return `dc-${window.crypto.randomUUID()}`;
-  }
-  return `dc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `dc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export function isPhaseOneComplete(form) {
