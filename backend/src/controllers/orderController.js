@@ -224,6 +224,37 @@ async function rollbackStockAdjustments(adjustments = []) {
   }
 }
 
+function buildOrderStockAdjustments(order) {
+  const items = Array.isArray(order?.orderItems) ? order.orderItems : [];
+  return items
+    .map((item) => ({
+      productId: item?.product?._id || item?.product,
+      qty: Number(item?.qty || 0),
+    }))
+    .filter((item) => item.productId && Number.isInteger(item.qty) && item.qty > 0);
+}
+
+async function ensureOrderStockReserved(order) {
+  if (!order || order.stockReserved) return false;
+  const adjustments = buildOrderStockAdjustments(order);
+  if (!adjustments.length) return false;
+  await reserveStockAdjustments(adjustments);
+  order.stockReserved = true;
+  return true;
+}
+
+async function releaseOrderStockReservation(order) {
+  if (!order || !order.stockReserved) return false;
+  const adjustments = buildOrderStockAdjustments(order);
+  if (!adjustments.length) {
+    order.stockReserved = false;
+    return false;
+  }
+  await rollbackStockAdjustments(adjustments);
+  order.stockReserved = false;
+  return true;
+}
+
 async function applyDiscount(codeRaw, total, userId, session) {
   const code = String(codeRaw || "").trim().toUpperCase();
   if (!code) return { total, discount: null };
@@ -679,6 +710,7 @@ export async function createOrder(req, res) {
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
+      stockReserved: true,
       discountCode: discounted.discount?.code,
       discountPercent: discounted.discount?.percent,
       discountAmount: discounted.discount?.amount || 0,
@@ -910,6 +942,7 @@ export async function createGuestOrder(req, res) {
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
+      stockReserved: true,
       discountCode: discounted.discount?.code,
       discountPercent: discounted.discount?.percent,
       discountAmount: discounted.discount?.amount || 0,
@@ -1058,6 +1091,7 @@ export async function handleHubtelCallback(req, res) {
   order.paymentGatewayPayload = payload;
 
   if (isSuccess) {
+    await ensureOrderStockReserved(order);
     order.paymentStatus = "paid";
     order.orderStatus = order.orderStatus === "pending" ? "processing" : order.orderStatus;
     if (!order.paidAt) order.paidAt = new Date();
@@ -1065,6 +1099,7 @@ export async function handleHubtelCallback(req, res) {
       order.estimatedDeliveryDate = defaultEstimatedDeliveryFrom(order.paidAt);
     }
   } else if (statusText === "failed" || statusText === "cancelled" || responseCode === "1001") {
+    await releaseOrderStockReservation(order);
     order.paymentStatus = "failed";
     order.orderStatus = "cancelled";
     order.isDelivered = false;
@@ -1193,6 +1228,7 @@ export async function updateOrderToPaid(req, res) {
     throw new Error("Order not found");
   }
 
+  await ensureOrderStockReserved(order);
   order.paymentStatus = "paid";
   order.paidAt = new Date();
   if (!order.estimatedDeliveryDate) {
@@ -1243,6 +1279,7 @@ export async function updateOrderStatus(req, res) {
       order.paymentStatus = "pending";
     }
     if (["processing", "shipped", "delivered"].includes(status)) {
+      await ensureOrderStockReserved(order);
       order.paymentStatus = "paid";
       if (!order.paidAt) order.paidAt = new Date();
       if (!order.estimatedDeliveryDate) {
@@ -1250,6 +1287,7 @@ export async function updateOrderStatus(req, res) {
       }
     }
     if (status === "cancelled") {
+      await releaseOrderStockReservation(order);
       order.paymentStatus = "failed";
       order.isDelivered = false;
       order.deliveredAt = null;
@@ -1291,6 +1329,7 @@ export async function updateOrderPaymentStatus(req, res) {
 
   order.paymentStatus = paymentStatus;
   if (paymentStatus === "paid") {
+    await ensureOrderStockReserved(order);
     if (!order.paidAt) order.paidAt = new Date();
     if (order.orderStatus === "pending") {
       order.orderStatus = "processing";
@@ -1301,6 +1340,7 @@ export async function updateOrderPaymentStatus(req, res) {
   }
 
   if (paymentStatus === "failed") {
+    await releaseOrderStockReservation(order);
     order.orderStatus = "cancelled";
     order.isDelivered = false;
     order.deliveredAt = null;
@@ -1339,6 +1379,8 @@ export async function deleteOrder(req, res) {
 
   const orderId = order._id;
   const proofUrl = order.paymentScreenshotUrl;
+
+  await releaseOrderStockReservation(order);
 
   // Remove linked referral history for this order only.
   await Referral.deleteOne({ order: orderId });

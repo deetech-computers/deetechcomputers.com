@@ -105,6 +105,10 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    stockReserved: {
+      type: Boolean,
+      default: false,
+    },
     estimatedDeliveryDate: Date,
     deliveredAt: Date,
     paidAt: Date,

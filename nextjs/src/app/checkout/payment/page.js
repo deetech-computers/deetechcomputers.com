@@ -70,6 +70,7 @@ export default function CheckoutPaymentPage() {
   });
   const [ready, setReady] = useState(false);
   const hubtelFinalizedRef = useRef(false);
+  const submitLockRef = useRef(false);
 
   function buildEstimatedDelivery(dateInput) {
     const base = new Date(dateInput || Date.now());
@@ -122,6 +123,18 @@ export default function CheckoutPaymentPage() {
     if (!ready) return;
     writeCheckoutDraft(form);
   }, [form, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    if (String(form.clientOrderRef || "").trim()) return;
+    setForm((current) => {
+      if (String(current.clientOrderRef || "").trim()) return current;
+      return {
+        ...current,
+        clientOrderRef: buildClientOrderRef(),
+      };
+    });
+  }, [form.clientOrderRef, ready]);
 
   useEffect(() => {
     if (!ready) return;
@@ -400,6 +413,10 @@ export default function CheckoutPaymentPage() {
   }
 
   async function handleConfirmPayment() {
+    if (submitLockRef.current || submitting) {
+      return;
+    }
+
     if (!items.length) {
       pushToast("Your cart is empty", "warning");
       return;
@@ -434,7 +451,10 @@ export default function CheckoutPaymentPage() {
       return;
     }
 
-    const clientOrderRef = form.clientOrderRef || buildClientOrderRef();
+    const clientOrderRef = String(form.clientOrderRef || "").trim() || buildClientOrderRef();
+    if (!String(form.clientOrderRef || "").trim()) {
+      setForm((current) => ({ ...current, clientOrderRef }));
+    }
     const shippingName = [form.firstName, form.lastName].filter(Boolean).join(" ").trim();
     const selectedPaymentMethodId = form.paymentMethod;
     const commonPayload = {
@@ -467,6 +487,7 @@ export default function CheckoutPaymentPage() {
             guestCity: form.shippingCity.trim(),
           };
 
+    submitLockRef.current = true;
     setSubmitting(true);
     hubtelFinalizedRef.current = false;
     setTransitionStage("processing");
@@ -594,6 +615,7 @@ export default function CheckoutPaymentPage() {
       console.error("Checkout order error:", error);
       pushToast(error.message || "Unable to place order", "error");
     } finally {
+      submitLockRef.current = false;
       setSubmitting(false);
     }
   }
