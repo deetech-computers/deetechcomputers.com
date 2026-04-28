@@ -10,10 +10,10 @@ import {
   GHANA_REGIONS,
   isPhaseOneComplete,
   readCheckoutDraft,
-  splitName,
   writeCheckoutDraft,
+  splitName,
 } from "@/lib/checkout";
-import { readAffiliateCode } from "@/lib/affiliate-attribution";
+import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -64,6 +64,7 @@ export default function CheckoutPage() {
     const nextDraft = { ...(draft || {}) };
 
     if (normalizedUrlCode) {
+      saveAffiliateAttribution(normalizedUrlCode, "checkout-url");
       nextDraft.affiliateCode = normalizedUrlCode;
     } else if (!String(nextDraft.affiliateCode || "").trim() && normalizedStoredCode) {
       nextDraft.affiliateCode = normalizedStoredCode;

@@ -69,7 +69,9 @@ export default function RootLayout({ children }) {
       <body>
         <AppProviders>
           <div className="app-shell">
-            <AffiliateLinkCapture />
+            <Suspense fallback={null}>
+              <AffiliateLinkCapture />
+            </Suspense>
             <Suspense fallback={null}>
               <UserBehaviorTracker />
             </Suspense>

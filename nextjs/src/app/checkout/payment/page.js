@@ -19,6 +19,7 @@ import {
   readCheckoutDraft,
   writeCheckoutDraft,
 } from "@/lib/checkout";
+import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 
@@ -111,13 +112,29 @@ export default function CheckoutPaymentPage() {
 
   useEffect(() => {
     const draft = readCheckoutDraft();
-    if (!draft || !isPhaseOneComplete(draft)) {
+    const affiliateFromStorage = readAffiliateCode();
+    const affiliateFromUrl =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("affiliate")
+        : "";
+    const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
+    const normalizedStoredCode = String(affiliateFromStorage || "").trim().toUpperCase();
+    const nextDraft = { ...(draft || {}) };
+
+    if (normalizedUrlCode) {
+      saveAffiliateAttribution(normalizedUrlCode, "payment-url");
+      nextDraft.affiliateCode = normalizedUrlCode;
+    } else if (!String(nextDraft.affiliateCode || "").trim() && normalizedStoredCode) {
+      nextDraft.affiliateCode = normalizedStoredCode;
+    }
+
+    if (!Object.keys(nextDraft).length || !isPhaseOneComplete(nextDraft)) {
       pushToast("Please complete phase one before payment", "warning");
       router.replace("/checkout");
       return;
     }
-    setForm((current) => ({ ...current, ...draft }));
-    clientOrderRefRef.current = String(draft?.clientOrderRef || "").trim();
+    setForm((current) => ({ ...current, ...nextDraft }));
+    clientOrderRefRef.current = String(nextDraft?.clientOrderRef || "").trim();
     setReady(true);
   }, [pushToast, router]);
 

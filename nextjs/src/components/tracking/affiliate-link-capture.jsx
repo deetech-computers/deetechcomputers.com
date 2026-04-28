@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { getAffiliateCodeFromSearchParams, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 
 export default function AffiliateLinkCapture() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryKey = searchParams?.toString() || "";
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -13,7 +15,7 @@ export default function AffiliateLinkCapture() {
     const code = getAffiliateCodeFromSearchParams(params);
     if (!code) return;
     saveAffiliateAttribution(code, "url");
-  }, [pathname]);
+  }, [pathname, queryKey]);
 
   return null;
 }
