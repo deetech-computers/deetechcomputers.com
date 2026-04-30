@@ -11,6 +11,30 @@ export const createProductSchema = Joi.object({
       Joi.object().pattern(Joi.string(), Joi.string().allow(""))
     )
     .optional(),
+  upgradeSpecs: Joi.alternatives()
+    .try(
+      Joi.string().allow(""),
+      Joi.object({
+        enabled: Joi.boolean().optional(),
+        ramOptions: Joi.array()
+          .items(
+            Joi.object({
+              label: Joi.string().allow("").required(),
+              priceDelta: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+            })
+          )
+          .optional(),
+        storageOptions: Joi.array()
+          .items(
+            Joi.object({
+              label: Joi.string().allow("").required(),
+              priceDelta: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+            })
+          )
+          .optional(),
+      })
+    )
+    .optional(),
   price: Joi.number().positive().required(),
   discountPrice: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
   discountPreset: Joi.string().valid("none", "instant", "24h", "72h", "168h").optional(),
@@ -36,6 +60,30 @@ export const updateProductSchema = Joi.object({
     .try(
       Joi.string().allow(""),
       Joi.object().pattern(Joi.string(), Joi.string().allow(""))
+    )
+    .optional(),
+  upgradeSpecs: Joi.alternatives()
+    .try(
+      Joi.string().allow(""),
+      Joi.object({
+        enabled: Joi.boolean().optional(),
+        ramOptions: Joi.array()
+          .items(
+            Joi.object({
+              label: Joi.string().allow("").required(),
+              priceDelta: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+            })
+          )
+          .optional(),
+        storageOptions: Joi.array()
+          .items(
+            Joi.object({
+              label: Joi.string().allow("").required(),
+              priceDelta: Joi.alternatives().try(Joi.number().min(0), Joi.string().allow("")).optional(),
+            })
+          )
+          .optional(),
+      })
     )
     .optional(),
   price: Joi.number().positive(),

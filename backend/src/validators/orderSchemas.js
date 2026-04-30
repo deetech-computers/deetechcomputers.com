@@ -10,6 +10,10 @@ export const createOrderSchema = Joi.object({
       Joi.object({
         product: Joi.string().hex().length(24).required(),
         qty: Joi.number().integer().min(1).required(),
+        selectedUpgrades: Joi.object({
+          ram: Joi.string().allow(""),
+          storage: Joi.string().allow(""),
+        }).optional(),
       })
     )
     .min(1)
@@ -45,6 +49,10 @@ export const createGuestOrderSchema = Joi.object({
       Joi.object({
         product: Joi.string().hex().length(24).required(),
         qty: Joi.number().integer().min(1).required(),
+        selectedUpgrades: Joi.object({
+          ram: Joi.string().allow(""),
+          storage: Joi.string().allow(""),
+        }).optional(),
       })
     )
     .min(1)

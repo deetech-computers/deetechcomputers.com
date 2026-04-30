@@ -30,6 +30,13 @@ import {
   resolveProductImage,
 } from "@/lib/products";
 import { getProductPricing } from "@/lib/product-pricing";
+import {
+  applyUpgradeSelectionToSpecs,
+  getProductDisplayPricing,
+  hasProductUpgradeSpecs,
+  normalizeProductUpgradeSpecs,
+  normalizeUpgradeSelection,
+} from "@/lib/product-upgrades";
 
 function getProductImages(product) {
   const images = Array.isArray(product?.images) ? product.images : [];
@@ -206,6 +213,7 @@ export default function ProductDetailPage() {
   const [reviewFormOpen, setReviewFormOpen] = useState(true);
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
   const [qty, setQty] = useState(1);
+  const [selectedUpgrades, setSelectedUpgrades] = useState({});
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
@@ -307,6 +315,7 @@ export default function ProductDetailPage() {
     setActiveImage(0);
     setActiveTab("description");
     setQty(1);
+    setSelectedUpgrades({});
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
@@ -450,12 +459,18 @@ export default function ProductDetailPage() {
 
   const stock = getProductStock(product);
   const pricing = getProductPricing(product);
-  const hasDiscount = isProductDiscountActive(product);
-  const currentPrice = getProductPrice(product);
-  const originalPrice = getProductOriginalPrice(product);
-  const discountPercent = getProductDiscountPercent(product);
+  const upgradeSpecs = normalizeProductUpgradeSpecs(product?.upgradeSpecs);
+  const hasUpgradeableSpecs = hasProductUpgradeSpecs(product);
+  const displayPricing = getProductDisplayPricing(product, selectedUpgrades);
+  const hasDiscount = displayPricing.hasDiscount;
+  const currentPrice = displayPricing.currentPrice;
+  const originalPrice = displayPricing.originalPrice;
+  const discountPercent = displayPricing.discountPercent;
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
-  const productSpecs = getProductSpecs(product).filter(([, value]) => String(value || "").trim());
+  const productSpecs = applyUpgradeSelectionToSpecs(
+    getProductSpecs(product).filter(([, value]) => String(value || "").trim()),
+    selectedUpgrades
+  );
   const description = getProductDescription(product);
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
@@ -771,6 +786,86 @@ export default function ProductDetailPage() {
               </p>
             ) : null}
           </div>
+          {hasUpgradeableSpecs ? (
+            <div className="product-summary__upgrades">
+              <div className="product-summary__upgrade-head">
+                <strong>Upgrade specs</strong>
+                <small>Select only if you want a higher configuration.</small>
+              </div>
+              {upgradeSpecs.ramOptions.length ? (
+                <div className="product-summary__upgrade-group">
+                  <span>RAM</span>
+                  <div className="product-summary__upgrade-options">
+                    <button
+                      type="button"
+                      className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                      onClick={() =>
+                        setSelectedUpgrades((current) => {
+                          const next = { ...current };
+                          delete next.ram;
+                          return next;
+                        })
+                      }
+                    >
+                      Original
+                    </button>
+                    {upgradeSpecs.ramOptions.map((option) => (
+                      <button
+                        key={`ram-${option.label}`}
+                        type="button"
+                        className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                        onClick={() =>
+                          setSelectedUpgrades((current) => ({
+                            ...current,
+                            ram: option.label,
+                          }))
+                        }
+                      >
+                        <span>{option.label}</span>
+                        {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {upgradeSpecs.storageOptions.length ? (
+                <div className="product-summary__upgrade-group">
+                  <span>Storage</span>
+                  <div className="product-summary__upgrade-options">
+                    <button
+                      type="button"
+                      className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                      onClick={() =>
+                        setSelectedUpgrades((current) => {
+                          const next = { ...current };
+                          delete next.storage;
+                          return next;
+                        })
+                      }
+                    >
+                      Original
+                    </button>
+                    {upgradeSpecs.storageOptions.map((option) => (
+                      <button
+                        key={`storage-${option.label}`}
+                        type="button"
+                        className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                        onClick={() =>
+                          setSelectedUpgrades((current) => ({
+                            ...current,
+                            storage: option.label,
+                          }))
+                        }
+                      >
+                        <span>{option.label}</span>
+                        {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
           <p className="product-summary__copy">{description}</p>
 
           <div className="product-summary__buy">
@@ -791,7 +886,12 @@ export default function ProductDetailPage() {
                 +
               </button>
             </div>
-            <button type="button" className="primary-button product-summary__cart" disabled={stock < 1} onClick={() => addItem(product, qty)}>
+            <button
+              type="button"
+              className="primary-button product-summary__cart"
+              disabled={stock < 1}
+              onClick={() => addItem(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) })}
+            >
               {stock < 1 ? "Out of stock" : "Add to cart"}
             </button>
           </div>

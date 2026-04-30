@@ -17,6 +17,17 @@ const orderSchema = new mongoose.Schema(
         },
         qty: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true, min: 0 }, // price at time of order
+        selectedUpgrades: {
+          signature: { type: String, trim: true, default: "" },
+          ram: {
+            label: { type: String, trim: true, default: "" },
+            priceDelta: { type: Number, min: 0, default: 0 },
+          },
+          storage: {
+            label: { type: String, trim: true, default: "" },
+            priceDelta: { type: Number, min: 0, default: 0 },
+          },
+        },
       },
     ],
     paymentMethod: {

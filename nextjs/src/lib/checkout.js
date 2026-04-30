@@ -116,6 +116,7 @@ export function buildOrderItems(items) {
     .map((item) => ({
       product: String(item.productId || item._id || ""),
       qty: Number(item.qty || 0),
+      selectedUpgrades: item.selectedUpgrades || {},
     }))
     .filter((item) => item.product && item.qty > 0);
 }

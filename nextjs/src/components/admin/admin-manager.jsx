@@ -10,6 +10,7 @@ import StableImage from "@/components/ui/stable-image";
 import { formatCurrency } from "@/lib/format";
 import { requestWithToken, asArray } from "@/lib/resource";
 import { resolveProductImage } from "@/lib/products";
+import { normalizeProductUpgradeSpecs } from "@/lib/product-upgrades";
 
 const PRODUCT_CATEGORIES = [
   ["laptops", "Laptops and Desktops"],
@@ -623,6 +624,103 @@ function buildUserInsights(users = [], orders = [], reviews = [], tickets = []) 
   return insights;
 }
 
+function normalizeUpgradeOptionDraft(item = {}) {
+  return {
+    id: String(item?.id || item?._id || Math.random().toString(36).slice(2, 10)),
+    label: String(item?.label || "").trim(),
+    priceDelta: item?.priceDelta == null || item?.priceDelta === "" ? "" : String(item.priceDelta),
+  };
+}
+
+function buildUpgradeDraft(options = []) {
+  return Array.isArray(options) && options.length
+    ? options.map((option) => normalizeUpgradeOptionDraft(option))
+    : [normalizeUpgradeOptionDraft()];
+}
+
+function serializeUpgradeSpecs(enabled, ramOptions, storageOptions) {
+  const cleanOptions = (items) =>
+    items
+      .map((item) => ({
+        label: String(item?.label || "").trim(),
+        priceDelta: Number(item?.priceDelta || 0),
+      }))
+      .filter((item) => item.label)
+      .map((item) => ({
+        label: item.label,
+        priceDelta: Number.isFinite(item.priceDelta) && item.priceDelta > 0 ? Number(item.priceDelta) : 0,
+      }));
+
+  const payload = {
+    enabled: Boolean(enabled),
+    ramOptions: cleanOptions(ramOptions),
+    storageOptions: cleanOptions(storageOptions),
+  };
+
+  if (!payload.enabled || (!payload.ramOptions.length && !payload.storageOptions.length)) {
+    return JSON.stringify({
+      enabled: false,
+      ramOptions: [],
+      storageOptions: [],
+    });
+  }
+
+  return JSON.stringify(payload);
+}
+
+function UpgradeOptionsEditor({ title, items, onChange, addLabel }) {
+  function updateItem(id, key, value) {
+    onChange(items.map((item) => (item.id === id ? { ...item, [key]: value } : item)));
+  }
+
+  function removeItem(id) {
+    const next = items.filter((item) => item.id !== id);
+    onChange(next.length ? next : [normalizeUpgradeOptionDraft()]);
+  }
+
+  function addItem() {
+    onChange([...items, normalizeUpgradeOptionDraft()]);
+  }
+
+  return (
+    <div className="admin-upgrade-editor">
+      <div className="admin-upgrade-editor__head">
+        <strong>{title}</strong>
+        <button type="button" className="ghost-button" onClick={addItem}>{addLabel}</button>
+      </div>
+      <div className="admin-upgrade-editor__rows">
+        {items.map((item, index) => (
+          <div key={item.id} className="admin-upgrade-editor__row">
+            <input
+              className="field"
+              value={item.label}
+              onChange={(event) => updateItem(item.id, "label", event.target.value)}
+              placeholder={title === "RAM options" ? `Option ${index + 1}: e.g. 16GB RAM` : `Option ${index + 1}: e.g. 512GB SSD`}
+            />
+            <input
+              className="field"
+              type="number"
+              min="0"
+              step="0.01"
+              value={item.priceDelta}
+              onChange={(event) => updateItem(item.id, "priceDelta", event.target.value)}
+              placeholder="Extra price"
+            />
+            <button
+              type="button"
+              className="ghost-button admin-upgrade-editor__remove"
+              onClick={() => removeItem(item.id)}
+              aria-label={`Remove ${title} option ${index + 1}`}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [category, setCategory] = useState(initial?.category || "laptops");
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
@@ -633,6 +731,11 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
     return [...new Set(existing.filter(Boolean).map(canonicalHomeSectionKey).filter(Boolean))];
   });
   const [discountPreset, setDiscountPreset] = useState(resolveDiscountPreset(initial));
+  const initialUpgradeSpecs = useMemo(() => normalizeProductUpgradeSpecs(initial?.upgradeSpecs), [initial?.upgradeSpecs]);
+  const [upgradeEditorOpen, setUpgradeEditorOpen] = useState(false);
+  const [upgradeEnabled, setUpgradeEnabled] = useState(Boolean(initialUpgradeSpecs.enabled));
+  const [ramOptions, setRamOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.ramOptions));
+  const [storageOptions, setStorageOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.storageOptions));
 
   function toggleHomeSection(key) {
     setSelectedSections((current) =>
@@ -717,6 +820,59 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
         placeholder="Specs (comma separated), e.g. Processor:i5, RAM:8GB, Storage:512GB SSD, Display:14-inch FHD"
         rows={4}
       />
+      <section className="admin-collapsible admin-upgrade-panel">
+        <button
+          type="button"
+          className="admin-collapsible__header"
+          onClick={() => setUpgradeEditorOpen((current) => !current)}
+          aria-expanded={upgradeEditorOpen}
+        >
+          <h2>Upgrade Specs (Optional)</h2>
+          <span className="admin-collapsible__icon">{upgradeEditorOpen ? "-" : "+"}</span>
+        </button>
+        {upgradeEditorOpen ? (
+          <div className="admin-collapsible__body admin-upgrade-panel__body">
+            <label className="admin-check">
+              <input
+                type="checkbox"
+                checked={upgradeEnabled}
+                onChange={(event) => setUpgradeEnabled(event.target.checked)}
+              />
+              <span>Enable upgrade options for this product</span>
+            </label>
+            <p className="admin-upgrade-panel__hint">
+              Use this only when a product has optional RAM or storage upgrades. Price changes are added on top of the current live product price.
+            </p>
+            <input
+              type="hidden"
+              name="upgradeSpecs"
+              value={serializeUpgradeSpecs(upgradeEnabled, ramOptions, storageOptions)}
+            />
+            {upgradeEnabled ? (
+              <div className="admin-upgrade-panel__grid">
+                <UpgradeOptionsEditor
+                  title="RAM options"
+                  items={ramOptions}
+                  onChange={setRamOptions}
+                  addLabel="Add RAM option"
+                />
+                <UpgradeOptionsEditor
+                  title="Storage options"
+                  items={storageOptions}
+                  onChange={setStorageOptions}
+                  addLabel="Add storage option"
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <input
+            type="hidden"
+            name="upgradeSpecs"
+            value={serializeUpgradeSpecs(upgradeEnabled, ramOptions, storageOptions)}
+          />
+        )}
+      </section>
       <label className="admin-check">
         <input type="checkbox" name="isFeatured" defaultChecked={Boolean(initial?.isFeatured)} />
         <span>Feature this product</span>

@@ -18,6 +18,11 @@ import { sendOrderNotification, sendOrderConfirmation } from "../utils/emailServ
 import { initiateHubtelCheckout } from "../utils/hubtelService.js";
 import { deleteStoredMedia } from "../utils/mediaStorage.js";
 import { getProductPricing } from "../utils/productPricing.js";
+import {
+  buildUpgradeSignature,
+  normalizeUpgradeSelection,
+  resolveProductUpgradeSelection,
+} from "../utils/productUpgrades.js";
 
 async function processOrderItems(orderItems, session) {
   let total = 0;
@@ -47,13 +52,30 @@ async function processOrderItems(orderItems, session) {
       throw new Error(`Not enough stock for ${product.name}`);
     }
 
-    const price = Number(getProductPricing(product).currentPrice || 0);
+    const resolvedUpgrades = resolveProductUpgradeSelection(
+      product,
+      item?.selectedUpgrades
+    );
+    const price =
+      Number(getProductPricing(product).currentPrice || 0) +
+      Number(resolvedUpgrades.totalDelta || 0);
 
     total += qty * price;
     processedItems.push({
       product: product._id,
       qty,
       price,
+      selectedUpgrades: {
+        signature: resolvedUpgrades.signature,
+        ram: {
+          label: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
+          priceDelta: Number(resolvedUpgrades.selectedUpgrades?.ram?.priceDelta || 0),
+        },
+        storage: {
+          label: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
+          priceDelta: Number(resolvedUpgrades.selectedUpgrades?.storage?.priceDelta || 0),
+        },
+      },
     });
   }
 
@@ -176,10 +198,14 @@ function buildOrderAttemptFingerprint({
     .map((item) => ({
       product: String(item?.product || item?._id || "").trim(),
       qty: Number(item?.qty || 0),
+      selectedUpgrades: buildUpgradeSignature(item?.selectedUpgrades),
     }))
     .filter((item) => item.product && Number.isFinite(item.qty))
     .sort((a, b) => {
-      if (a.product === b.product) return a.qty - b.qty;
+      if (a.product === b.product) {
+        if (a.selectedUpgrades === b.selectedUpgrades) return a.qty - b.qty;
+        return a.selectedUpgrades.localeCompare(b.selectedUpgrades);
+      }
       return a.product.localeCompare(b.product);
     });
 
@@ -512,11 +538,14 @@ function buildOrderItemsForEmail(order) {
       String(item?.product?.name || "").trim() ||
       String(item?.product || "").trim() ||
       "Product";
+    const ramLabel = String(item?.selectedUpgrades?.ram?.label || "").trim();
+    const storageLabel = String(item?.selectedUpgrades?.storage?.label || "").trim();
+    const upgradeLabel = [ramLabel, storageLabel].filter(Boolean).join(" / ");
     return {
       qty,
       quantity: qty,
       price,
-      name: productName,
+      name: upgradeLabel ? `${productName} (${upgradeLabel})` : productName,
       product: item?.product?._id || item?.product,
     };
   });

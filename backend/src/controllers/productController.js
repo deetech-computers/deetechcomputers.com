@@ -8,6 +8,7 @@ import {
   findProductInSnapshotById,
 } from "../utils/productSnapshot.js";
 import { getProductPricing } from "../utils/productPricing.js";
+import { normalizeProductUpgradeSpecsInput } from "../utils/productUpgrades.js";
 
 const BRANDS_BY_CATEGORY = {
   laptops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
@@ -276,6 +277,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     discountMode: discountConfig.discountMode,
     discountStartsAt: discountConfig.discountStartsAt,
     discountEndsAt: discountConfig.discountEndsAt,
+    upgradeSpecs: normalizeProductUpgradeSpecsInput(req.body.upgradeSpecs),
     countInStock: req.body.countInStock,
     brand,
     category,
@@ -372,6 +374,9 @@ export const updateProduct = asyncHandler(async (req, res) => {
   product.description = req.body.description || product.description;
   if (req.body.specs !== undefined) {
     product.specs = parseSpecsInput(req.body.specs);
+  }
+  if (req.body.upgradeSpecs !== undefined) {
+    product.upgradeSpecs = normalizeProductUpgradeSpecsInput(req.body.upgradeSpecs);
   }
   product.price = nextPrice;
   product.discountPrice = discountConfig.discountPrice;

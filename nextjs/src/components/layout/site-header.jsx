@@ -23,6 +23,7 @@ import {
   getProductPrice,
   resolveProductImage,
 } from "@/lib/products";
+import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: "admin" };
 const affiliateNavItem = { href: "/affiliates", label: "Affiliates", icon: "affiliates" };
@@ -578,11 +579,13 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
   }
 
-  function removeFromCartPreview(event, productId) {
+  function removeFromCartPreview(event, lineKey) {
     event.preventDefault();
     event.stopPropagation();
+    if (!lineKey) return;
+    const [productId] = String(lineKey).split("::");
     if (!productId) return;
-    removeCartItem(productId);
+    removeCartItem(productId, lineKey);
   }
 
   function removeFromWishlistPreview(event, productId) {
@@ -873,9 +876,10 @@ export default function SiteHeader() {
 
   function updateFromDrawer(item, nextQty) {
     const id = String(item?.productId || item?._id || item?.id || "");
+    const lineKey = String(item?.lineKey || id || "").trim();
     if (!id) return;
     const safeQty = Math.max(1, Number(nextQty || 1));
-    updateQuantity(id, safeQty);
+    updateQuantity(id, safeQty, lineKey);
   }
 
   function renderDesktopWishlistMenu() {
@@ -1350,11 +1354,13 @@ export default function SiteHeader() {
                     <div className="cart-feedback__items">
                       {cartItems.map((item, index) => {
                         const id = String(item?.productId || item?._id || item?.id || "");
+                        const lineKey = String(item?.lineKey || id || `${index}`);
                         const qty = Number(item?.qty || item?.quantity || 1);
                         const lineTotal = Number(item?.price || 0) * qty;
                         const maxStock = Number(item?.countInStock || 99);
+                        const upgradeLabel = formatSelectedUpgrades(item?.selectedUpgrades);
                         return (
-                          <article key={id || `${item?.name || "item"}-${index}`} className="cart-feedback__item">
+                          <article key={lineKey || `${item?.name || "item"}-${index}`} className="cart-feedback__item">
                             <Link href={id ? `/products/${id}` : "/cart"} className="cart-feedback__thumb" onClick={closeCartDrawer}>
                               <StableImage
                                 src={resolveProductImage(item?.image || item?.images?.[0])}
@@ -1368,6 +1374,7 @@ export default function SiteHeader() {
                                 <Link href={id ? `/products/${id}` : "/cart"} className="cart-feedback__name" onClick={closeCartDrawer}>
                                   {item?.name || "Product"}
                                 </Link>
+                                {upgradeLabel ? <p className="cart-feedback__variant">{upgradeLabel}</p> : null}
                                 <p className="cart-feedback__price">{formatCartPrice(lineTotal)}</p>
                               </div>
                               <div className="cart-feedback__bottom">
@@ -1391,7 +1398,7 @@ export default function SiteHeader() {
                                 <button
                                   type="button"
                                   className="cart-feedback__delete"
-                                  onClick={(event) => removeFromCartPreview(event, id)}
+                                  onClick={(event) => removeFromCartPreview(event, lineKey)}
                                   aria-label={`Remove ${item?.name || "item"} from cart`}
                                 >
                                   <ActionIcon name="delete" />

@@ -5874,6 +5874,55 @@ button, input, select, textarea { font: inherit; }
   border-radius: 10px;
   background: #fff;
 }
+.admin-upgrade-panel {
+  border: 1px solid rgba(24, 79, 39, 0.14);
+  border-radius: 18px;
+  background: rgba(24, 79, 39, 0.03);
+}
+.admin-upgrade-panel .admin-collapsible__header {
+  padding: 16px 18px;
+}
+.admin-upgrade-panel__body {
+  display: grid;
+  gap: 16px;
+}
+.admin-upgrade-panel__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.admin-upgrade-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.admin-upgrade-editor {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(24, 79, 39, 0.12);
+  background: #fff;
+}
+.admin-upgrade-editor__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-upgrade-editor__rows {
+  display: grid;
+  gap: 10px;
+}
+.admin-upgrade-editor__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(140px, 0.8fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+.admin-upgrade-editor__remove {
+  min-width: 88px;
+}
 .admin-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -11406,6 +11455,16 @@ button, input, select, textarea { font: inherit; }
   .account-support-chat__send {
     min-height: 46px;
     min-width: 64px;
+  }
+  .admin-upgrade-panel__grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-upgrade-editor__row {
+    grid-template-columns: 1fr;
+  }
+  .admin-upgrade-editor__remove,
+  .admin-upgrade-editor__head .ghost-button {
+    width: 100%;
   }
   .account-dashboard__section-head--row {
     grid-template-columns: 1fr;

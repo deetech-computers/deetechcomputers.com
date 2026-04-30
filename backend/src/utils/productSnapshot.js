@@ -40,6 +40,24 @@ function normalizeProduct(product) {
     discountMode: String(product.discountMode || "none").trim().toLowerCase(),
     discountStartsAt: product.discountStartsAt || null,
     discountEndsAt: product.discountEndsAt || null,
+    upgradeSpecs:
+      product.upgradeSpecs && typeof product.upgradeSpecs === "object"
+        ? {
+            enabled: Boolean(product.upgradeSpecs.enabled),
+            ramOptions: Array.isArray(product.upgradeSpecs.ramOptions)
+              ? product.upgradeSpecs.ramOptions.map((option) => ({
+                  label: String(option?.label || "").trim(),
+                  priceDelta: Number(option?.priceDelta || 0),
+                })).filter((option) => option.label)
+              : [],
+            storageOptions: Array.isArray(product.upgradeSpecs.storageOptions)
+              ? product.upgradeSpecs.storageOptions.map((option) => ({
+                  label: String(option?.label || "").trim(),
+                  priceDelta: Number(option?.priceDelta || 0),
+                })).filter((option) => option.label)
+              : [],
+          }
+        : { enabled: false, ramOptions: [], storageOptions: [] },
     countInStock: Number(product.countInStock || 0),
     isFeatured: Boolean(product.isFeatured),
     homeSections: Array.isArray(product.homeSections)
@@ -57,7 +75,7 @@ function normalizeProduct(product) {
 export async function buildProductSnapshotPayload() {
   const products = await Product.find({})
     .select(
-      "_id name short_description description specs brand category subCategory price discountPrice discountMode discountStartsAt discountEndsAt countInStock isFeatured homeSections image_url images sold createdAt updatedAt"
+      "_id name short_description description specs brand category subCategory price discountPrice discountMode discountStartsAt discountEndsAt upgradeSpecs countInStock isFeatured homeSections image_url images sold createdAt updatedAt"
     )
     .lean();
 

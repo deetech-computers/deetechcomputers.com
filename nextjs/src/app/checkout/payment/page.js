@@ -22,6 +22,7 @@ import {
 import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
+import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
 export default function CheckoutPaymentPage() {
   const PROCESSING_FLOOR_MS = 1800;
@@ -952,8 +953,10 @@ export default function CheckoutPaymentPage() {
               </p>
             </div>
             <div className="checkout-summary__items">
-              {items.map((item) => (
-                <article key={item.productId || item._id} className="checkout-summary__item">
+              {items.map((item) => {
+                const upgradeLabel = formatSelectedUpgrades(item?.selectedUpgrades);
+                return (
+                <article key={item.lineKey || item.productId || item._id} className="checkout-summary__item">
                   <div className="checkout-summary__thumb">
                     {resolveProductImage(item.image) ? (
                       <StableImage
@@ -969,11 +972,13 @@ export default function CheckoutPaymentPage() {
                   <div className="checkout-summary__item-copy">
                     <h3>{item.name}</h3>
                     <p>{formatCategoryLabel(item.category || item.categoryName || "Product")}</p>
+                    {upgradeLabel ? <small>{upgradeLabel}</small> : null}
                     <small>Qty {item.qty}</small>
                   </div>
                   <strong>{formatCurrency(Number(item.price || 0) * Number(item.qty || 0))}</strong>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </aside>
         </div>

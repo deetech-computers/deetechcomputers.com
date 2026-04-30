@@ -1,6 +1,11 @@
 // controllers/cartController.js
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
+import {
+  buildUpgradeSignature,
+  normalizeUpgradeSelection,
+  resolveProductUpgradeSelection,
+} from "../utils/productUpgrades.js";
 
 // @desc    Get logged-in user's cart
 // @route   GET /api/cart
@@ -8,7 +13,7 @@ import Product from "../models/Product.js";
 export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id })
-      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images upgradeSpecs")
       .lean();
 
     if (!cart) {
@@ -29,11 +34,14 @@ export const addToCart = async (req, res) => {
   try {
     const { productId } = req.params;
     let { qty } = req.body;
+    const selectedUpgrades = normalizeUpgradeSelection(req.body?.selectedUpgrades);
 
     qty = parseInt(qty) > 0 ? parseInt(qty) : 1;
 
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
+    const resolvedUpgrades = resolveProductUpgradeSelection(product, selectedUpgrades);
+    const lineKey = `${productId}::${resolvedUpgrades.signature || "base"}`;
     const availableStock = Number(product.countInStock ?? 0);
     if (qty > availableStock) {
       return res.status(400).json({ message: "Requested quantity exceeds available stock" });
@@ -46,18 +54,26 @@ export const addToCart = async (req, res) => {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item) => String(item.lineKey || "") === lineKey
     );
 
     if (existingItem) {
       existingItem.qty = qty; // Always overwrite with provided qty
     } else {
-      cart.items.push({ product: productId, qty });
+      cart.items.push({
+        product: productId,
+        qty,
+        lineKey,
+        selectedUpgrades: {
+          ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
+          storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
+        },
+      });
     }
 
     await cart.save();
     const updatedCart = await Cart.findById(cart._id)
-      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images upgradeSpecs")
       .lean();
 
     res.json(updatedCart);
@@ -73,17 +89,21 @@ export const addToCart = async (req, res) => {
 export const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.params;
+    const lineKey = String(req.query?.lineKey || "").trim();
 
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.json({ message: "Item removed from cart", items: [] });
 
     cart.items = cart.items.filter(
-      (item) => item.product.toString() !== productId
+      (item) =>
+        lineKey
+          ? String(item.lineKey || "") !== lineKey
+          : item.product.toString() !== productId
     );
 
     await cart.save();
     const updatedCart = await Cart.findById(cart._id)
-      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images")
+      .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images upgradeSpecs")
       .lean();
 
     res.json(updatedCart);

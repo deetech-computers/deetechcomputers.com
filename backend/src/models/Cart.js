@@ -15,6 +15,15 @@ const cartItemSchema = new mongoose.Schema(
       min: 1,
       default: 1,
     },
+    lineKey: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    selectedUpgrades: {
+      ram: { type: String, trim: true, default: "" },
+      storage: { type: String, trim: true, default: "" },
+    },
   },
   { _id: false } // no need for a separate _id for each item
 );

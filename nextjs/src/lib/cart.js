@@ -1,6 +1,11 @@
 import { API_BASE_CART } from "./config";
 import { requestJson } from "./http";
 import { getProductPrice, resolveProductImage } from "./products";
+import {
+  buildCartLineKey,
+  normalizeUpgradeSelection,
+  resolveProductUpgradeSelection,
+} from "./product-upgrades";
 
 const CART_KEY = "cart";
 const CART_REMOVED_KEY = "cart_removed_ids";
@@ -19,15 +24,22 @@ export function normalizeCartItems(items = []) {
   items.forEach((item) => {
     const id = String(item.productId || item._id || item.id || "");
     if (!id) return;
+    const normalizedUpgrades = normalizeUpgradeSelection(item.selectedUpgrades);
+    const lineKey =
+      String(item.lineKey || "").trim() ||
+      buildCartLineKey(id, normalizedUpgrades) ||
+      id;
 
     const normalized = {
       ...item,
       _id: item._id || item.productId || id,
       productId: item.productId || item._id || id,
+      lineKey,
+      selectedUpgrades: normalizedUpgrades,
       qty: normalizeQty(item.qty || item.quantity || 1),
     };
 
-    map.set(id, normalized);
+    map.set(lineKey, normalized);
   });
 
   return Array.from(map.values());
@@ -97,13 +109,22 @@ export function normalizeServerCart(payload) {
   return items.map((item) => {
     const product = item.product || {};
     const id = product._id || item.product;
+    const selectedUpgrades = normalizeUpgradeSelection(item?.selectedUpgrades);
+    const resolvedUpgrades = resolveProductUpgradeSelection(product, selectedUpgrades);
 
     return {
       _id: id,
       productId: id,
+      lineKey:
+        String(item?.lineKey || "").trim() ||
+        buildCartLineKey(id, selectedUpgrades),
+      selectedUpgrades: {
+        ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
+        storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
+      },
       qty: normalizeQty(item.qty || 1),
       name: product.name,
-      price: getProductPrice(product),
+      price: Number(getProductPrice(product) || 0) + Number(resolvedUpgrades.totalDelta || 0),
       image: resolveProductImage(product.images?.[0] || product.image || ""),
       countInStock:
         product.countInStock ?? product.stock_quantity ?? product.stock ?? 0,
@@ -142,19 +163,24 @@ export async function fetchServerCart(token) {
   return normalizeServerCart(payload);
 }
 
-export async function upsertServerCartItem(token, productId, qty) {
+export async function upsertServerCartItem(token, productId, payload) {
   await requestJson(`${API_BASE_CART}/${encodeURIComponent(productId)}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ qty: normalizeQty(qty) }),
+    body: JSON.stringify({
+      qty: normalizeQty(payload?.qty),
+      lineKey: String(payload?.lineKey || "").trim(),
+      selectedUpgrades: normalizeUpgradeSelection(payload?.selectedUpgrades),
+    }),
   });
-  unmarkRemovedCartItem(productId);
+  unmarkRemovedCartItem(String(payload?.lineKey || productId));
 }
 
-export async function removeServerCartItem(token, productId) {
-  await requestJson(`${API_BASE_CART}/${encodeURIComponent(productId)}`, {
+export async function removeServerCartItem(token, productId, lineKey = "") {
+  const search = lineKey ? `?lineKey=${encodeURIComponent(lineKey)}` : "";
+  await requestJson(`${API_BASE_CART}/${encodeURIComponent(productId)}${search}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

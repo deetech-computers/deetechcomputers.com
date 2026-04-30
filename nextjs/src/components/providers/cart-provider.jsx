@@ -18,6 +18,7 @@ import {
   writeStoredCart,
 } from "@/lib/cart";
 import { getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
+import { buildCartLineKey, resolveProductUpgradeSelection } from "@/lib/product-upgrades";
 import { useAuth } from "./auth-provider";
 import { useToast } from "./toast-provider";
 
@@ -80,17 +81,23 @@ export function CartProvider({ children }) {
     };
   }, [status]);
 
-  const addItem = (product, qty = 1) => {
+  const addItem = (product, qty = 1, options = {}) => {
     const id = String(product?._id || product?.productId || "");
     if (!id) return;
+    const resolvedUpgrades = resolveProductUpgradeSelection(product, options?.selectedUpgrades);
+    const selectedUpgrades = {
+      ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
+      storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
+    };
+    const lineKey = buildCartLineKey(id, selectedUpgrades);
 
     let toast = null;
     let serverQty = null;
-    unmarkRemovedCartItem(id);
+    unmarkRemovedCartItem(lineKey);
 
     setItems((current) => {
       const nextItems = [...current];
-      const index = nextItems.findIndex((item) => String(item.productId || item._id) === id);
+      const index = nextItems.findIndex((item) => String(item.lineKey || "") === lineKey);
       const stock = getProductStock(product) || 99;
 
       if (index >= 0) {
@@ -106,10 +113,12 @@ export function CartProvider({ children }) {
         nextItems.push({
           _id: id,
           productId: id,
+          lineKey,
           name: product.name,
-          price: getProductPrice(product),
+          price: Number(getProductPrice(product) || 0) + Number(resolvedUpgrades.totalDelta || 0),
           image: resolveProductImage(product.images?.[0] || product.image || ""),
           countInStock: stock,
+          selectedUpgrades,
           qty: serverQty,
         });
       }
@@ -128,6 +137,7 @@ export function CartProvider({ children }) {
         new CustomEvent(CART_ITEM_ADDED_EVENT, {
           detail: {
             productId: id,
+            lineKey,
             name: product?.name || "",
             qty: Number(serverQty || qty || 1),
           },
@@ -135,23 +145,30 @@ export function CartProvider({ children }) {
       );
     }
     if (token && serverQty) {
-      upsertServerCartItem(token, id, serverQty).catch(() => {});
+      upsertServerCartItem(token, id, {
+        qty: serverQty,
+        lineKey,
+        selectedUpgrades,
+      }).catch(() => {});
     }
   };
 
-  const updateQuantity = (productId, qty) => {
+  const updateQuantity = (productId, qty, lineKeyInput = "") => {
     const id = String(productId || "");
+    const lineKey = String(lineKeyInput || "").trim() || id;
     if (!id) return;
     let serverQty = null;
+    let selectedUpgrades = {};
 
     setItems((current) => {
       const nextItems = current.map((item) =>
-        String(item.productId || item._id) === id
+        String(item.lineKey || item.productId || item._id) === lineKey
           ? (() => {
               serverQty = Math.min(
                 normalizeQty(qty),
                 Number(item.countInStock) > 0 ? Number(item.countInStock) : 99
               );
+              selectedUpgrades = item.selectedUpgrades || {};
               return { ...item, qty: serverQty };
             })()
           : item
@@ -161,19 +178,24 @@ export function CartProvider({ children }) {
     });
 
     if (token && serverQty) {
-      upsertServerCartItem(token, id, serverQty).catch(() => {});
+      upsertServerCartItem(token, id, {
+        qty: serverQty,
+        lineKey,
+        selectedUpgrades,
+      }).catch(() => {});
     }
   };
 
-  const removeItem = (productId) => {
+  const removeItem = (productId, lineKeyInput = "") => {
     const id = String(productId || "");
+    const lineKey = String(lineKeyInput || "").trim() || id;
     if (!id) return;
     const isLastVisibleItem =
-      items.filter((item) => String(item.productId || item._id) !== id).length === 0;
+      items.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey).length === 0;
 
-    markRemovedCartItem(id);
+    markRemovedCartItem(lineKey);
     setItems((current) => {
-      const nextItems = current.filter((item) => String(item.productId || item._id) !== id);
+      const nextItems = current.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey);
       writeStoredCart(nextItems);
       return nextItems;
     });
@@ -181,14 +203,14 @@ export function CartProvider({ children }) {
       if (isLastVisibleItem) {
         clearServerCart(token).catch(() => {});
       } else {
-        removeServerCartItem(token, id).catch(() => {});
+        removeServerCartItem(token, id, lineKey).catch(() => {});
       }
     }
     pushToast("Item removed from cart", "info");
   };
 
   const clearCart = () => {
-    const productIds = items.map((item) => String(item.productId || item._id)).filter(Boolean);
+    const productIds = items.map((item) => String(item.lineKey || item.productId || item._id)).filter(Boolean);
     markRemovedCartItems(productIds);
     setItems([]);
     clearStoredCart();

@@ -1,6 +1,23 @@
 // backend/src/models/Product.js
 import mongoose from "mongoose";
 
+const upgradeOptionSchema = new mongoose.Schema(
+  {
+    label: { type: String, trim: true, required: true },
+    priceDelta: { type: Number, min: 0, default: 0 },
+  },
+  { _id: false }
+);
+
+const upgradeSpecsSchema = new mongoose.Schema(
+  {
+    enabled: { type: Boolean, default: false },
+    ramOptions: { type: [upgradeOptionSchema], default: [] },
+    storageOptions: { type: [upgradeOptionSchema], default: [] },
+  },
+  { _id: false }
+);
+
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -19,6 +36,7 @@ const productSchema = new mongoose.Schema(
     },
     discountStartsAt: { type: Date, default: null },
     discountEndsAt: { type: Date, default: null },
+    upgradeSpecs: { type: upgradeSpecsSchema, default: () => ({ enabled: false, ramOptions: [], storageOptions: [] }) },
     countInStock: { type: Number, required: true, default: 0 },
     isFeatured: { type: Boolean, default: false },
     homeSections: [{ type: String }],

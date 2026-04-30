@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/format";
 import { readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
+import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
 export default function CartPage() {
   const { items, subtotal, updateQuantity, removeItem, clearCart } = useCart();
@@ -157,8 +158,10 @@ export default function CartPage() {
               <div className="cart-list">
                 {items.map((item) => {
                   const productId = item.productId || item._id;
+                  const lineKey = item.lineKey || productId;
+                  const upgradeLabel = formatSelectedUpgrades(item.selectedUpgrades);
                   return (
-                    <article key={productId} className="cart-row">
+                    <article key={lineKey} className="cart-row">
                       <Link href={productId ? `/products/${productId}` : "/products"} className="cart-row__product">
                         <div className="cart-row__thumb">
                           <StableImage
@@ -171,12 +174,13 @@ export default function CartPage() {
                         <div className="cart-row__meta">
                           <h3>{item.name}</h3>
                           <p>{formatCategoryLabel(item.category || item.categoryName || "Product")}</p>
+                          {upgradeLabel ? <small>{upgradeLabel}</small> : null}
                         </div>
                       </Link>
                       <p className="cart-row__price">{formatCurrency(item.price)}</p>
                       <div className="cart-row__controls">
                         <div className="cart-row__qty">
-                          <button type="button" onClick={() => updateQuantity(productId, Number(item.qty || 1) - 1)} aria-label={`Decrease ${item.name} quantity`}>
+                          <button type="button" onClick={() => updateQuantity(productId, Number(item.qty || 1) - 1, lineKey)} aria-label={`Decrease ${item.name} quantity`}>
                             -
                           </button>
                           <input
@@ -184,17 +188,17 @@ export default function CartPage() {
                             type="number"
                             min="1"
                             value={item.qty}
-                            onChange={(event) => updateQuantity(productId, Number(event.target.value || 1))}
+                            onChange={(event) => updateQuantity(productId, Number(event.target.value || 1), lineKey)}
                             aria-label={`${item.name} quantity`}
                           />
-                          <button type="button" onClick={() => updateQuantity(productId, Number(item.qty || 1) + 1)} aria-label={`Increase ${item.name} quantity`}>
+                          <button type="button" onClick={() => updateQuantity(productId, Number(item.qty || 1) + 1, lineKey)} aria-label={`Increase ${item.name} quantity`}>
                             +
                           </button>
                         </div>
                         <button
                           type="button"
                           className="cart-row__remove-mobile"
-                          onClick={() => removeItem(productId)}
+                          onClick={() => removeItem(productId, lineKey)}
                           aria-label={`Remove ${item.name} from cart`}
                         >
                           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -208,7 +212,7 @@ export default function CartPage() {
                         <button
                           type="button"
                           className="cart-row__remove"
-                          onClick={() => removeItem(productId)}
+                          onClick={() => removeItem(productId, lineKey)}
                           aria-label={`Remove ${item.name} from cart`}
                         >
                           <svg viewBox="0 0 24 24" aria-hidden="true">
