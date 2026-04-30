@@ -66,6 +66,18 @@ export function CartProvider({ children }) {
     writeStoredCart(items);
   }, [items, status]);
 
+  async function restoreServerCartSnapshot(activeToken = token) {
+    if (!activeToken) return;
+    try {
+      const serverItems = await fetchServerCart(activeToken);
+      const normalized = normalizeCartItems(serverItems);
+      setItems(normalized);
+      writeStoredCart(normalized);
+    } catch {
+      setItems(readStoredCart());
+    }
+  }
+
   useEffect(() => {
     if (status !== "ready") return undefined;
 
@@ -150,7 +162,10 @@ export function CartProvider({ children }) {
         qty: serverQty,
         lineKey,
         selectedUpgrades,
-      }).catch(() => {});
+      }).catch(() => {
+        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
+        restoreServerCartSnapshot(token);
+      });
     }
   };
 
@@ -183,7 +198,10 @@ export function CartProvider({ children }) {
         qty: serverQty,
         lineKey,
         selectedUpgrades,
-      }).catch(() => {});
+      }).catch(() => {
+        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
+        restoreServerCartSnapshot(token);
+      });
     }
   };
 
@@ -202,9 +220,15 @@ export function CartProvider({ children }) {
     });
     if (token) {
       if (isLastVisibleItem) {
-        clearServerCart(token).catch(() => {});
+        clearServerCart(token).catch(() => {
+          pushToast("Cart sync issue detected. Refreshing cart.", "warning");
+          restoreServerCartSnapshot(token);
+        });
       } else {
-        removeServerCartItem(token, id, lineKey).catch(() => {});
+        removeServerCartItem(token, id, lineKey).catch(() => {
+          pushToast("Cart sync issue detected. Refreshing cart.", "warning");
+          restoreServerCartSnapshot(token);
+        });
       }
     }
     pushToast("Item removed from cart", "info");
@@ -216,7 +240,10 @@ export function CartProvider({ children }) {
     setItems([]);
     clearStoredCart();
     if (token) {
-      clearServerCart(token).catch(() => {});
+      clearServerCart(token).catch(() => {
+        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
+        restoreServerCartSnapshot(token);
+      });
     }
     pushToast("Cart cleared", "info");
   };
