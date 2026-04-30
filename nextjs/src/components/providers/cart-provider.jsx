@@ -94,6 +94,7 @@ export function CartProvider({ children }) {
     let toast = null;
     let serverQty = null;
     unmarkRemovedCartItem(lineKey);
+    unmarkRemovedCartItem(id);
 
     setItems((current) => {
       const nextItems = [...current];

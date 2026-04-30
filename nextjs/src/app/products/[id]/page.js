@@ -214,6 +214,7 @@ export default function ProductDetailPage() {
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
   const [qty, setQty] = useState(1);
   const [selectedUpgrades, setSelectedUpgrades] = useState({});
+  const [upgradePanelOpen, setUpgradePanelOpen] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
@@ -316,6 +317,7 @@ export default function ProductDetailPage() {
     setActiveTab("description");
     setQty(1);
     setSelectedUpgrades({});
+    setUpgradePanelOpen(false);
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
@@ -788,80 +790,92 @@ export default function ProductDetailPage() {
           </div>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">
-              <div className="product-summary__upgrade-head">
-                <strong>Upgrade specs</strong>
-                <small>Select only if you want a higher configuration.</small>
-              </div>
-              {upgradeSpecs.ramOptions.length ? (
-                <div className="product-summary__upgrade-group">
-                  <span>RAM</span>
-                  <div className="product-summary__upgrade-options">
-                    <button
-                      type="button"
-                      className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                      onClick={() =>
-                        setSelectedUpgrades((current) => {
-                          const next = { ...current };
-                          delete next.ram;
-                          return next;
-                        })
-                      }
-                    >
-                      Original
-                    </button>
-                    {upgradeSpecs.ramOptions.map((option) => (
-                      <button
-                        key={`ram-${option.label}`}
-                        type="button"
-                        className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                        onClick={() =>
-                          setSelectedUpgrades((current) => ({
-                            ...current,
-                            ram: option.label,
-                          }))
-                        }
-                      >
-                        <span>{option.label}</span>
-                        {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                      </button>
-                    ))}
-                  </div>
+              <button
+                type="button"
+                className={upgradePanelOpen ? "product-summary__upgrade-toggle is-open" : "product-summary__upgrade-toggle"}
+                onClick={() => setUpgradePanelOpen((current) => !current)}
+                aria-expanded={upgradePanelOpen}
+              >
+                <div className="product-summary__upgrade-head">
+                  <strong>Upgrade specs</strong>
+                  <small>Select only if you want a higher configuration.</small>
                 </div>
-              ) : null}
-              {upgradeSpecs.storageOptions.length ? (
-                <div className="product-summary__upgrade-group">
-                  <span>Storage</span>
-                  <div className="product-summary__upgrade-options">
-                    <button
-                      type="button"
-                      className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                      onClick={() =>
-                        setSelectedUpgrades((current) => {
-                          const next = { ...current };
-                          delete next.storage;
-                          return next;
-                        })
-                      }
-                    >
-                      Original
-                    </button>
-                    {upgradeSpecs.storageOptions.map((option) => (
-                      <button
-                        key={`storage-${option.label}`}
-                        type="button"
-                        className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                        onClick={() =>
-                          setSelectedUpgrades((current) => ({
-                            ...current,
-                            storage: option.label,
-                          }))
-                        }
-                      >
-                        <span>{option.label}</span>
-                        {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                      </button>
-                    ))}
-                  </div>
+                <span className="product-summary__upgrade-toggle-icon">{upgradePanelOpen ? "-" : "+"}</span>
+              </button>
+              {upgradePanelOpen ? (
+                <div className="product-summary__upgrade-body">
+                  {upgradeSpecs.ramOptions.length ? (
+                    <div className="product-summary__upgrade-group">
+                      <span>RAM</span>
+                      <div className="product-summary__upgrade-options">
+                        <button
+                          type="button"
+                          className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                          onClick={() =>
+                            setSelectedUpgrades((current) => {
+                              const next = { ...current };
+                              delete next.ram;
+                              return next;
+                            })
+                          }
+                        >
+                          <span>Original</span>
+                        </button>
+                        {upgradeSpecs.ramOptions.map((option) => (
+                          <button
+                            key={`ram-${option.label}`}
+                            type="button"
+                            className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                            onClick={() =>
+                              setSelectedUpgrades((current) => ({
+                                ...current,
+                                ram: option.label,
+                              }))
+                            }
+                          >
+                            <span>{option.label}</span>
+                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  {upgradeSpecs.storageOptions.length ? (
+                    <div className="product-summary__upgrade-group">
+                      <span>Storage</span>
+                      <div className="product-summary__upgrade-options">
+                        <button
+                          type="button"
+                          className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                          onClick={() =>
+                            setSelectedUpgrades((current) => {
+                              const next = { ...current };
+                              delete next.storage;
+                              return next;
+                            })
+                          }
+                        >
+                          <span>Original</span>
+                        </button>
+                        {upgradeSpecs.storageOptions.map((option) => (
+                          <button
+                            key={`storage-${option.label}`}
+                            type="button"
+                            className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                            onClick={() =>
+                              setSelectedUpgrades((current) => ({
+                                ...current,
+                                storage: option.label,
+                              }))
+                            }
+                          >
+                            <span>{option.label}</span>
+                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
             </div>

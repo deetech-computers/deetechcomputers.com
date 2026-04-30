@@ -3307,6 +3307,36 @@ button, input, select, textarea { font: inherit; }
     radial-gradient(circle at 92% 10%, rgba(13, 86, 218, 0.08), transparent 30%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.96) 100%);
 }
+.product-summary__upgrade-toggle {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+.product-summary__upgrade-toggle-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(13, 86, 218, 0.1);
+  color: #0d56da;
+  font-size: 1.1rem;
+  font-weight: 800;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.product-summary__upgrade-toggle:hover .product-summary__upgrade-toggle-icon,
+.product-summary__upgrade-toggle.is-open .product-summary__upgrade-toggle-icon {
+  background: #0d56da;
+  color: #fff;
+  transform: scale(1.03);
+}
 .product-summary__upgrade-head {
   display: grid;
   gap: 4px;
@@ -3325,6 +3355,10 @@ button, input, select, textarea { font: inherit; }
 .product-summary__upgrade-group {
   display: grid;
   gap: 10px;
+}
+.product-summary__upgrade-body {
+  display: grid;
+  gap: 16px;
 }
 .product-summary__upgrade-group > span {
   color: #1d2c44;
@@ -11836,6 +11870,13 @@ button, input, select, textarea { font: inherit; }
     padding: 15px;
     gap: 14px;
     border-radius: 18px;
+  }
+  .product-summary__upgrade-toggle {
+    gap: 10px;
+  }
+  .product-summary__upgrade-toggle-icon {
+    width: 30px;
+    height: 30px;
   }
   .product-summary__upgrade-options {
     gap: 8px;

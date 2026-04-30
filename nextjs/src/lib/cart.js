@@ -51,7 +51,11 @@ export function readStoredCart() {
     const parsed = JSON.parse(window.localStorage.getItem(CART_KEY) || "[]");
     const removedIds = readRemovedCartIds();
     return normalizeCartItems(Array.isArray(parsed) ? parsed : []).filter(
-      (item) => !removedIds.has(String(item.productId || item._id))
+      (item) => {
+        const lineKey = String(item.lineKey || "").trim();
+        const productId = String(item.productId || item._id || "").trim();
+        return !removedIds.has(lineKey || productId) && !removedIds.has(productId);
+      }
     );
   } catch {
     return [];
@@ -137,16 +141,18 @@ export function mergeCartItems(serverItems = [], localItems = []) {
   const removedIds = readRemovedCartIds();
 
   normalizeCartItems(serverItems).forEach((item) => {
-    const id = String(item.productId || item._id);
-    if (!removedIds.has(id)) {
-      map.set(id, item);
+    const id = String(item.productId || item._id || "");
+    const lineKey = String(item.lineKey || "").trim() || id;
+    if (!removedIds.has(lineKey) && !removedIds.has(id)) {
+      map.set(lineKey, item);
     }
   });
 
   normalizeCartItems(localItems).forEach((item) => {
-    const id = String(item.productId || item._id);
-    if (!removedIds.has(id)) {
-      map.set(id, item);
+    const id = String(item.productId || item._id || "");
+    const lineKey = String(item.lineKey || "").trim() || id;
+    if (!removedIds.has(lineKey) && !removedIds.has(id)) {
+      map.set(lineKey, item);
     }
   });
 
