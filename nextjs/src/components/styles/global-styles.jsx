@@ -3297,6 +3297,91 @@ button, input, select, textarea { font: inherit; }
   font-size: 0.86rem;
   font-weight: 500;
 }
+.product-summary__upgrades {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(13, 86, 218, 0.14);
+  background:
+    radial-gradient(circle at 92% 10%, rgba(13, 86, 218, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.96) 100%);
+}
+.product-summary__upgrade-head {
+  display: grid;
+  gap: 4px;
+}
+.product-summary__upgrade-head strong {
+  color: #10233f;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.product-summary__upgrade-head small {
+  color: #5e6675;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.product-summary__upgrade-group {
+  display: grid;
+  gap: 10px;
+}
+.product-summary__upgrade-group > span {
+  color: #1d2c44;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.product-summary__upgrade-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.product-summary__upgrade-chip {
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  border: 1px solid #d8e2f3;
+  background: #ffffff;
+  color: #122033;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  line-height: 1.1;
+  box-shadow: 0 10px 22px rgba(13, 86, 218, 0.06);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.product-summary__upgrade-chip:hover {
+  border-color: rgba(13, 86, 218, 0.38);
+  box-shadow: 0 12px 26px rgba(13, 86, 218, 0.12);
+  transform: translateY(-1px);
+}
+.product-summary__upgrade-chip span {
+  white-space: nowrap;
+}
+.product-summary__upgrade-chip small {
+  color: #0d56da;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.product-summary__upgrade-chip.is-active {
+  border-color: #0d56da;
+  background: linear-gradient(135deg, rgba(13, 86, 218, 0.08) 0%, rgba(13, 86, 218, 0.14) 100%);
+  color: #0b3476;
+  box-shadow: 0 14px 30px rgba(13, 86, 218, 0.14);
+}
+.product-summary__upgrade-chip.is-active small {
+  color: #083a92;
+}
 .product-summary__copy {
   margin: 0;
   color: var(--muted);
@@ -11746,6 +11831,23 @@ button, input, select, textarea { font: inherit; }
   }
   .product-summary__buy {
     grid-template-columns: 1fr;
+  }
+  .product-summary__upgrades {
+    padding: 15px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+  .product-summary__upgrade-options {
+    gap: 8px;
+  }
+  .product-summary__upgrade-chip {
+    min-height: 42px;
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+  }
+  .product-summary__upgrade-chip small {
+    font-size: 0.74rem;
   }
   .product-summary__social {
     gap: 10px;
