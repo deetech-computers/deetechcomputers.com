@@ -10819,8 +10819,9 @@ button, input, select, textarea { font: inherit; }
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 14px;
     gap: 12px;
-    border: 0;
-    background: transparent;
+    border-top: 1px solid #ece7de;
+    border-left: 1px solid #ece7de;
+    background: #fff;
     padding: 2px 14px 10px;
   }
   .homepage-products__mobile-rail::-webkit-scrollbar {
@@ -10829,6 +10830,7 @@ button, input, select, textarea { font: inherit; }
   .homepage-products__mobile-rail .product-card {
     flex: 0 0 min(68vw, 220px);
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     border: 1px solid #ece7de;
     display: grid;
   }

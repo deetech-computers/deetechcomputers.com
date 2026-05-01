@@ -479,8 +479,29 @@ export default function HomePage() {
   function scrollHomeSectionRail(sectionKey, direction) {
     const rail = homeSectionRailRefs.current[sectionKey];
     if (!rail) return;
-    rail.scrollBy({
-      left: direction * Math.max(rail.clientWidth * 0.82, 220),
+    const cards = Array.from(rail.querySelectorAll(".product-card"));
+    if (!cards.length) return;
+
+    const currentScroll = rail.scrollLeft;
+    const tolerance = 12;
+    let targetCard = null;
+
+    if (direction > 0) {
+      targetCard =
+        cards.find((card) => card.offsetLeft > currentScroll + tolerance) ||
+        cards[cards.length - 1];
+    } else {
+      const candidates = cards.filter((card) => card.offsetLeft < currentScroll - tolerance);
+      targetCard = candidates[candidates.length - 1] || cards[0];
+    }
+
+    if (!targetCard) return;
+
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+    const nextLeft = Math.max(0, Math.min(targetCard.offsetLeft, maxScroll));
+
+    rail.scrollTo({
+      left: nextLeft,
       behavior: "smooth",
     });
   }
@@ -766,7 +787,7 @@ export default function HomePage() {
 
                       <div
                         ref={(node) => setHomeSectionRailRef(section.key, node)}
-                        className="product-grid homepage-products__mobile-rail"
+                        className="homepage-products__mobile-rail"
                         onScroll={() => updateHomeSectionRailNav(section.key)}
                       >
                         {section.products.map((product) => (
