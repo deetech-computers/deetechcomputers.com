@@ -634,7 +634,11 @@ export default function AccountPageClient() {
     const allowed = new Set(["personal", "orders", "address", "messages", "affiliates", "wishlist", "reviews", "password", "logout"]);
     return allowed.has(value) ? value : "personal";
   };
-  const [activeSection, setActiveSection] = useState("personal");
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window === "undefined") return "personal";
+    const params = new URLSearchParams(window.location.search || "");
+    return normalizeTab((params.get("tab") || "").toLowerCase());
+  });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -796,7 +800,6 @@ export default function AccountPageClient() {
 
   useEffect(() => {
     if (!supportTickets.length) {
-      if (activeSection === "messages") setActiveSection("personal");
       return;
     }
     if (!activeSupportTicketId) {
