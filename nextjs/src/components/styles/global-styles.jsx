@@ -4049,7 +4049,7 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 18px;
   flex: 0 0 auto;
-  width: min(132px, 100%);
+  width: 100%;
 }
 .related-products__grid {
   display: grid;
