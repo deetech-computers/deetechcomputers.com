@@ -483,22 +483,18 @@ export default function HomePage() {
     if (!cards.length) return;
 
     const currentScroll = rail.scrollLeft;
-    const tolerance = 12;
-    let targetCard = null;
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+    const paddingLeft = Number.parseFloat(window.getComputedStyle(rail).paddingLeft || "0") || 0;
+    const positions = cards.map((card) => Math.max(0, Math.min(card.offsetLeft - paddingLeft, maxScroll)));
+    const tolerance = 18;
+    let nextLeft = currentScroll;
 
     if (direction > 0) {
-      targetCard =
-        cards.find((card) => card.offsetLeft > currentScroll + tolerance) ||
-        cards[cards.length - 1];
+      nextLeft = positions.find((position) => position > currentScroll + tolerance) ?? maxScroll;
     } else {
-      const candidates = cards.filter((card) => card.offsetLeft < currentScroll - tolerance);
-      targetCard = candidates[candidates.length - 1] || cards[0];
+      nextLeft =
+        [...positions].reverse().find((position) => position < currentScroll - tolerance) ?? 0;
     }
-
-    if (!targetCard) return;
-
-    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
-    const nextLeft = Math.max(0, Math.min(targetCard.offsetLeft, maxScroll));
 
     rail.scrollTo({
       left: nextLeft,
