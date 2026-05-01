@@ -4036,8 +4036,8 @@ button, input, select, textarea { font: inherit; }
 }
 .related-products__header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
 }
 .related-products__header::after {
@@ -4046,8 +4046,10 @@ button, input, select, textarea { font: inherit; }
 .related-products__controls {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 18px;
   flex: 0 0 auto;
+  width: min(132px, 100%);
 }
 .related-products__grid {
   display: grid;
