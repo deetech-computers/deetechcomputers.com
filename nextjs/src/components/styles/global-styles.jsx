@@ -3300,24 +3300,31 @@ button, input, select, textarea { font: inherit; }
 .product-summary__upgrades {
   display: grid;
   gap: 16px;
-  padding: 18px;
-  border-radius: 22px;
-  border: 1px solid rgba(13, 86, 218, 0.14);
-  background:
-    radial-gradient(circle at 92% 10%, rgba(13, 86, 218, 0.08), transparent 30%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.96) 100%);
+  padding: 18px 18px 16px;
+  border-radius: 20px;
+  border: 1px solid #dbe5f3;
+  background: #f8fbff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 .product-summary__upgrade-toggle {
   width: 100%;
-  border: 0;
-  padding: 0;
-  background: transparent;
+  border: 1px solid #cedbf0;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: #ffffff;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
   text-align: left;
   cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+.product-summary__upgrade-toggle:hover,
+.product-summary__upgrade-toggle.is-open {
+  border-color: #bdd0ea;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(15, 55, 122, 0.06);
 }
 .product-summary__upgrade-toggle-icon {
   width: 34px;
@@ -3325,21 +3332,22 @@ button, input, select, textarea { font: inherit; }
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: rgba(13, 86, 218, 0.1);
+  border: 1px solid #c9d8ef;
+  background: #f3f8ff;
   color: #0d56da;
   font-size: 1.1rem;
   font-weight: 800;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .product-summary__upgrade-toggle:hover .product-summary__upgrade-toggle-icon,
 .product-summary__upgrade-toggle.is-open .product-summary__upgrade-toggle-icon {
+  border-color: #0d56da;
   background: #0d56da;
   color: #fff;
-  transform: scale(1.03);
 }
 .product-summary__upgrade-head {
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 .product-summary__upgrade-head strong {
   color: #10233f;
@@ -3348,7 +3356,7 @@ button, input, select, textarea { font: inherit; }
   letter-spacing: -0.02em;
 }
 .product-summary__upgrade-head small {
-  color: #5e6675;
+  color: #536173;
   font-size: 0.86rem;
   line-height: 1.5;
 }
@@ -3359,6 +3367,7 @@ button, input, select, textarea { font: inherit; }
 .product-summary__upgrade-body {
   display: grid;
   gap: 16px;
+  padding-top: 2px;
 }
 .product-summary__upgrade-group > span {
   color: #1d2c44;
@@ -3376,7 +3385,7 @@ button, input, select, textarea { font: inherit; }
   min-height: 46px;
   padding: 10px 16px;
   border-radius: 16px;
-  border: 1px solid #d8e2f3;
+  border: 1px solid #d6e0ef;
   background: #ffffff;
   color: #122033;
   display: inline-flex;
@@ -3385,18 +3394,17 @@ button, input, select, textarea { font: inherit; }
   gap: 8px;
   font-weight: 700;
   line-height: 1.1;
-  box-shadow: 0 10px 22px rgba(13, 86, 218, 0.06);
+  box-shadow: none;
   transition:
     border-color 0.2s ease,
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    box-shadow 0.2s ease;
 }
 .product-summary__upgrade-chip:hover {
-  border-color: rgba(13, 86, 218, 0.38);
-  box-shadow: 0 12px 26px rgba(13, 86, 218, 0.12);
-  transform: translateY(-1px);
+  border-color: #b6c9e6;
+  background: #fbfdff;
+  box-shadow: 0 6px 14px rgba(15, 55, 122, 0.05);
 }
 .product-summary__upgrade-chip span {
   white-space: nowrap;
@@ -3409,9 +3417,9 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__upgrade-chip.is-active {
   border-color: #0d56da;
-  background: linear-gradient(135deg, rgba(13, 86, 218, 0.08) 0%, rgba(13, 86, 218, 0.14) 100%);
+  background: #eef5ff;
   color: #0b3476;
-  box-shadow: 0 14px 30px rgba(13, 86, 218, 0.14);
+  box-shadow: 0 8px 18px rgba(13, 86, 218, 0.1);
 }
 .product-summary__upgrade-chip.is-active small {
   color: #083a92;
