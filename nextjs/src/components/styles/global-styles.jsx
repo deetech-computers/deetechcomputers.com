@@ -4013,24 +4013,18 @@ button, input, select, textarea { font: inherit; }
 .related-products {
   margin-top: 44px;
   display: grid;
-  gap: 20px;
+  gap: 18px;
   overflow: visible;
   min-width: 0;
-  padding: 24px 22px 20px;
-  border: 1px solid #e4eaf3;
-  border-radius: 24px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 .related-products__header {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   overflow: visible;
   min-width: 0;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e8eef7;
 }
 .related-products__header::after {
   display: none;
@@ -4038,19 +4032,22 @@ button, input, select, textarea { font: inherit; }
 .related-products__header h2 {
   margin: 0;
   font-size: clamp(1.5rem, 3vw, 2rem);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: #111827;
   text-align: left;
   white-space: normal;
   overflow: visible;
   word-break: keep-all;
 }
+.related-products__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
 .related-products__controls {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 28px;
+  gap: 18px;
   flex: 0 0 auto;
   width: 100%;
 }
@@ -4077,7 +4074,7 @@ button, input, select, textarea { font: inherit; }
   width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 4px 0 8px;
+  padding: 2px 0 10px;
   gap: 14px;
   scroll-padding-inline: 0;
 }
@@ -4096,30 +4093,26 @@ button, input, select, textarea { font: inherit; }
   position: relative;
   top: auto;
   transform: none;
-  width: 42px;
-  height: 42px;
-  border: 1px solid #cfdced;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d8e1f0;
   border-radius: 999px;
-  background: #ffffff;
-  color: #0d56da;
-  font-size: 1.4rem;
-  font-weight: 700;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0e203f;
+  font-size: 1.5rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(13, 86, 218, 0.08);
-  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 10px 22px rgba(10, 31, 63, 0.15);
 }
 .related-products__arrow:hover {
   border-color: #0d56da;
-  background: #eef5ff;
-  color: #0a4aa8;
-  box-shadow: 0 8px 18px rgba(13, 86, 218, 0.12);
+  color: #0d56da;
 }
 .related-products__arrow:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
   box-shadow: none;
 }
