@@ -422,8 +422,33 @@ export default function ProductDetailPage() {
   function scrollRelatedRail(direction) {
     const rail = relatedRailRef.current;
     if (!rail) return;
-    rail.scrollBy({
-      left: direction * Math.max(rail.clientWidth * 0.82, 260),
+    const cards = Array.from(rail.querySelectorAll(".related-products__item"));
+    if (!cards.length) return;
+
+    const currentScroll = rail.scrollLeft;
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+    const tolerance = 18;
+    const isMobileRail = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
+    let nextLeft = currentScroll;
+
+    if (isMobileRail) {
+      const positions = cards.map((card) => Math.max(0, Math.min(card.offsetLeft, maxScroll)));
+      if (direction > 0) {
+        nextLeft = positions.find((position) => position > currentScroll + tolerance) ?? maxScroll;
+      } else {
+        nextLeft =
+          [...positions].reverse().find((position) => position < currentScroll - tolerance) ?? 0;
+      }
+    } else {
+      const pageWidth = Math.max(rail.clientWidth, 1);
+      nextLeft =
+        direction > 0
+          ? Math.min(maxScroll, currentScroll + pageWidth)
+          : Math.max(0, currentScroll - pageWidth);
+    }
+
+    rail.scrollTo({
+      left: nextLeft,
       behavior: "smooth",
     });
   }
@@ -1166,19 +1191,28 @@ export default function ProductDetailPage() {
         <section className="related-products">
           <div className="related-products__header">
             <h2>Related products</h2>
-          </div>
-          <div className="related-products__rail-wrap">
-            {relatedRailNav.left ? (
+            <div className="related-products__controls" aria-label="Related products navigation">
               <button
                 type="button"
                 className="related-products__arrow related-products__arrow--left"
                 onClick={() => scrollRelatedRail(-1)}
                 aria-label="Scroll related products left"
+                disabled={!relatedRailNav.left}
               >
                 &lsaquo;
               </button>
-            ) : null}
-
+              <button
+                type="button"
+                className="related-products__arrow related-products__arrow--right"
+                onClick={() => scrollRelatedRail(1)}
+                aria-label="Scroll related products right"
+                disabled={!relatedRailNav.right}
+              >
+                &rsaquo;
+              </button>
+            </div>
+          </div>
+          <div className="related-products__rail-wrap">
             <div ref={relatedRailRef} className="related-products__grid related-products__rail">
               {relatedProducts.map((item) => (
                 <div key={item._id} className="related-products__item">
@@ -1186,17 +1220,6 @@ export default function ProductDetailPage() {
                 </div>
               ))}
             </div>
-
-            {relatedRailNav.right ? (
-              <button
-                type="button"
-                className="related-products__arrow related-products__arrow--right"
-                onClick={() => scrollRelatedRail(1)}
-                aria-label="Scroll related products right"
-              >
-                &rsaquo;
-              </button>
-            ) : null}
           </div>
         </section>
       ) : null}
