@@ -5696,6 +5696,35 @@ button, input, select, textarea { font: inherit; }
   background: #252a33;
   border-bottom: 1px solid rgba(255,255,255,0.16);
 }
+.footer-payment-band {
+  background: #252a33;
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+}
+.footer-payment-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px 18px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(18, 24, 35, 0.14);
+  border-radius: 0;
+  margin: 18px auto 0;
+  max-width: 860px;
+}
+.footer-payment-strip__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.footer-payment-strip__item img {
+  width: auto;
+  max-width: 124px;
+  height: 42px;
+  object-fit: contain;
+}
 .footer-feature-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -10607,6 +10636,16 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 1fr;
     gap: 14px;
     padding: 16px 0;
+  }
+  .footer-payment-strip {
+    justify-content: flex-start;
+    gap: 8px 10px;
+    padding: 14px 12px;
+    margin-top: 14px;
+  }
+  .footer-payment-strip__item img {
+    max-width: 86px;
+    height: 30px;
   }
   .footer-feature-item__icon {
     width: 24px;

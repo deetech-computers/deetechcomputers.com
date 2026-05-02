@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -224,7 +225,7 @@ export default function SiteFooter() {
         { href: "/terms-of-use", label: "Terms & Conditions" },
         { href: "/privacy-policy", label: "Privacy Statement" },
         { href: "/warranty", label: "Warranty" },
-        { href: "/contact", label: "Technical Support" },
+        { href: "/contact", label: "Contact Support" },
         { href: "/about", label: "About DEETECH" },
       ],
     },
@@ -257,6 +258,12 @@ export default function SiteFooter() {
       title: "After Sale Service",
       subtitle: "Call: +233591755964",
     },
+  ];
+  const paymentMethods = [
+    { src: "/payment/hubtel.png", alt: "Hubtel accepted" },
+    { src: "/payment/mtn.svg", alt: "MTN Mobile Money accepted" },
+    { src: "/payment/telecel.png", alt: "Telecel Cash accepted" },
+    { src: "/payment/calbank.png", alt: "CalBank accepted" },
   ];
 
   const visibleFooterSections = useMemo(
@@ -294,6 +301,18 @@ export default function SiteFooter() {
               </div>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="footer-payment-band" aria-label="Accepted payment methods">
+        <div className="shell">
+          <div className="footer-payment-strip">
+            {paymentMethods.map((item) => (
+              <div key={item.src} className="footer-payment-strip__item">
+                <Image src={item.src} alt={item.alt} width={124} height={46} />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
