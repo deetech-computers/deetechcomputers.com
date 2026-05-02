@@ -5701,18 +5701,19 @@ button, input, select, textarea { font: inherit; }
   border-bottom: 1px solid rgba(255,255,255,0.16);
 }
 .footer-payment-strip {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: repeat(4, minmax(0, auto));
   align-items: center;
   justify-content: center;
   gap: 16px;
-  width: fit-content;
-  max-width: 100%;
+  width: auto;
+  max-width: none;
   padding: 16px 18px;
   background: #ffffff;
   border: 1px solid rgba(18, 24, 35, 0.14);
   border-radius: 0;
   margin: 18px auto 0;
+  white-space: nowrap;
 }
 .footer-payment-strip__item {
   display: inline-flex;
