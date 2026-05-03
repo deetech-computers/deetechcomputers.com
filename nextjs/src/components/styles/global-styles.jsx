@@ -10697,6 +10697,10 @@ button, input, select, textarea { font: inherit; }
     padding: 0 16px 14px;
     gap: 9px;
   }
+  .footer-links a {
+    display: block;
+    padding-inline: 10px;
+  }
   .footer-section[open] .footer-links {
     display: grid;
   }
