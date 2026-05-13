@@ -4197,7 +4197,7 @@ button, input, select, textarea { font: inherit; }
 }
 .cart-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) 120px 170px 120px;
+  grid-template-columns: minmax(0, 1.6fr) 120px 170px 148px;
   gap: 16px;
   align-items: center;
   padding: 24px 26px;
@@ -4207,28 +4207,32 @@ button, input, select, textarea { font: inherit; }
   border-bottom: 0;
 }
 .cart-row__remove {
-  border: 0;
-  background: transparent;
+  border: 1px solid rgba(13, 86, 218, 0.18);
+  background: #f7faff;
   color: #0d56da;
   cursor: pointer;
-  width: auto;
-  height: auto;
-  padding: 0;
-  border-radius: 0;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 6px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   line-height: 1.2;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
 .cart-row__remove svg {
   width: 14px;
   height: 14px;
+  flex: 0 0 auto;
 }
 .cart-row__remove:hover {
   color: #0a43ad;
+  background: #edf4ff;
+  border-color: rgba(13, 86, 218, 0.28);
 }
 .cart-row__subtotal-block {
   display: grid;
