@@ -10829,6 +10829,7 @@ button, input, select, textarea { font: inherit; }
   }
   .home-logo-marquee {
     margin: 4px auto 8px;
+    background: #ffffff;
   }
   .home-logo-marquee__track {
     animation-duration: 24s;
