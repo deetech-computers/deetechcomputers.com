@@ -219,25 +219,23 @@ export function CartProvider({ children }) {
     const id = String(productId || "");
     const lineKey = String(lineKeyInput || "").trim() || id;
     if (!id) return;
+    const targetItem = items.find(
+      (item) => String(item.lineKey || item.productId || item._id) === lineKey
+    );
+    if (!targetItem) return;
+
+    const stockLimit = Number(targetItem.countInStock) > 0 ? Number(targetItem.countInStock) : 99;
+    const requestedQty = normalizeQty(qty);
+    const nextQty = Math.min(requestedQty, stockLimit);
     let serverQty = null;
-    let selectedUpgrades = {};
-    let stockLimitMessage = "";
+    const selectedUpgrades = targetItem.selectedUpgrades || {};
 
     setItems((current) => {
       const nextItems = current.map((item) =>
         String(item.lineKey || item.productId || item._id) === lineKey
           ? (() => {
-              const stockLimit = Number(item.countInStock) > 0 ? Number(item.countInStock) : 99;
-              const requestedQty = normalizeQty(qty);
-              serverQty = Math.min(
-                requestedQty,
-                stockLimit
-              );
-              if (requestedQty > stockLimit) {
-                stockLimitMessage = getStockLimitMessage(stockLimit);
-              }
-              selectedUpgrades = item.selectedUpgrades || {};
-              return { ...item, qty: serverQty };
+              serverQty = nextQty;
+              return { ...item, qty: nextQty };
             })()
           : item
       );
@@ -245,8 +243,8 @@ export function CartProvider({ children }) {
       return nextItems;
     });
 
-    if (stockLimitMessage) {
-      pushToast(stockLimitMessage, "warning");
+    if (requestedQty > stockLimit) {
+      pushToast(getStockLimitMessage(stockLimit), "warning");
     }
 
     if (token && serverQty) {
