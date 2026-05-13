@@ -268,6 +268,11 @@ export function CartProvider({ children }) {
     const id = String(productId || "");
     const lineKey = String(lineKeyInput || "").trim() || id;
     if (!id) return;
+    const targetItem = items.find(
+      (item) => String(item.lineKey || item.productId || item._id) === lineKey
+    );
+    if (!targetItem) return;
+
     const isLastVisibleItem =
       items.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey).length === 0;
 
@@ -294,7 +299,8 @@ export function CartProvider({ children }) {
         });
       }
     }
-    pushToast("Item removed from cart", "info");
+    const productName = String(targetItem?.name || "").trim();
+    pushToast(productName ? `${productName} removed from cart` : "Item removed from cart", "info");
   };
 
   const clearCart = () => {
