@@ -686,9 +686,7 @@ export default function AccountPageClient({ initialTab = "" }) {
 
     const mediaQuery = window.matchMedia("(max-width: 980px)");
     const syncMobileMenuState = () => {
-      if (mediaQuery.matches) {
-        setMobileNavOpen(true);
-      } else {
+      if (!mediaQuery.matches) {
         setMobileNavOpen(false);
       }
     };
