@@ -7,6 +7,11 @@ export const metadata = createStaticRouteMetadata({
   description: "Manage your Deetech account, orders, wishlist, and profile details.",
 });
 
-export default function AccountPage() {
-  return <AccountPageClient />;
+export default async function AccountPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const initialTab = Array.isArray(resolvedSearchParams?.tab)
+    ? resolvedSearchParams.tab[0] || ""
+    : resolvedSearchParams?.tab || "";
+
+  return <AccountPageClient initialTab={initialTab} />;
 }

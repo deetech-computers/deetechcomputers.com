@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -642,9 +642,8 @@ function MessagesSection({
   );
 }
 
-export default function AccountPageClient() {
+export default function AccountPageClient({ initialTab = "" }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { pushToast } = useToast();
   const { isAuthenticated, logout, refreshProfile, saveProfile, status, token, user } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -680,7 +679,7 @@ export default function AccountPageClient() {
     confirmPassword: "",
   });
   const profileHydratedRef = useRef(false);
-  const activeSection = normalizeAccountTab((searchParams?.get("tab") || "").toLowerCase());
+  const activeSection = normalizeAccountTab(String(initialTab || "").toLowerCase());
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
