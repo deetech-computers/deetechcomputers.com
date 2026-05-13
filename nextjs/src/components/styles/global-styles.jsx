@@ -10831,6 +10831,9 @@ button, input, select, textarea { font: inherit; }
     margin: 0 auto 8px;
     background: #ffffff;
   }
+  .hero-banner {
+    box-shadow: none;
+  }
   .home-logo-marquee__track {
     animation-duration: 24s;
   }
