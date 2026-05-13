@@ -1401,7 +1401,7 @@ export default function SiteHeader() {
                                   <span>{qty}</span>
                                   <button
                                     type="button"
-                                    onClick={() => updateFromDrawer(item, Math.min(maxStock || 99, qty + 1))}
+                                    onClick={() => updateFromDrawer(item, qty + 1)}
                                     aria-label={`Increase quantity for ${item?.name || "item"}`}
                                   >
                                     +
