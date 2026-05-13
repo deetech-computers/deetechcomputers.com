@@ -34,6 +34,13 @@ function hasCartLine(items, lineKey) {
   return (items || []).some((item) => getCartItemLineKey(item) === target);
 }
 
+function getStockLimitMessage(stock) {
+  const available = Math.max(0, Number(stock || 0));
+  if (available <= 0) return "This product is out of stock.";
+  if (available === 1) return "Only 1 item is available for this product.";
+  return `Only ${available} items are available for this product.`;
+}
+
 export function CartProvider({ children }) {
   const { token, status: authStatus } = useAuth();
   const { pushToast } = useToast();
@@ -145,13 +152,18 @@ export function CartProvider({ children }) {
       if (index >= 0) {
         const nextQty = normalizeQty((nextItems[index].qty || 1) + qty);
         if (nextQty > stock) {
-          toast = { message: "You cannot add more than available stock", type: "warning" };
+          toast = { message: getStockLimitMessage(stock), type: "warning" };
           return current;
         }
         nextItems[index] = { ...nextItems[index], qty: nextQty };
         serverQty = nextQty;
       } else {
-        serverQty = normalizeQty(qty);
+        const requestedQty = normalizeQty(qty);
+        if (requestedQty > stock) {
+          toast = { message: getStockLimitMessage(stock), type: "warning" };
+          return current;
+        }
+        serverQty = requestedQty;
         nextItems.push({
           _id: id,
           productId: id,
@@ -209,23 +221,33 @@ export function CartProvider({ children }) {
     if (!id) return;
     let serverQty = null;
     let selectedUpgrades = {};
+    let stockLimitMessage = "";
 
     setItems((current) => {
       const nextItems = current.map((item) =>
         String(item.lineKey || item.productId || item._id) === lineKey
           ? (() => {
+              const stockLimit = Number(item.countInStock) > 0 ? Number(item.countInStock) : 99;
+              const requestedQty = normalizeQty(qty);
               serverQty = Math.min(
-                normalizeQty(qty),
-                Number(item.countInStock) > 0 ? Number(item.countInStock) : 99
+                requestedQty,
+                stockLimit
               );
+              if (requestedQty > stockLimit) {
+                stockLimitMessage = getStockLimitMessage(stockLimit);
+              }
               selectedUpgrades = item.selectedUpgrades || {};
               return { ...item, qty: serverQty };
             })()
           : item
-        );
+      );
       writeStoredCart(nextItems);
       return nextItems;
     });
+
+    if (stockLimitMessage) {
+      pushToast(stockLimitMessage, "warning");
+    }
 
     if (token && serverQty) {
       upsertServerCartItem(token, id, {
