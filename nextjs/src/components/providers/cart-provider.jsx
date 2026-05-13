@@ -24,6 +24,16 @@ import { useToast } from "./toast-provider";
 
 const CartContext = createContext(null);
 
+function getCartItemLineKey(item) {
+  return String(item?.lineKey || item?.productId || item?._id || "").trim();
+}
+
+function hasCartLine(items, lineKey) {
+  const target = String(lineKey || "").trim();
+  if (!target) return false;
+  return (items || []).some((item) => getCartItemLineKey(item) === target);
+}
+
 export function CartProvider({ children }) {
   const { token, status: authStatus } = useAuth();
   const { pushToast } = useToast();
@@ -75,6 +85,25 @@ export function CartProvider({ children }) {
       writeStoredCart(normalized);
     } catch {
       setItems(readStoredCart());
+    }
+  }
+
+  async function reconcileServerCartAfterFailure(activeToken, validate, warningMessage = "Cart sync issue detected. Refreshing cart.") {
+    if (!activeToken) return false;
+    try {
+      const serverItems = await fetchServerCart(activeToken);
+      const normalized = normalizeCartItems(serverItems);
+      const isValid = typeof validate === "function" ? validate(normalized) : false;
+      setItems(normalized);
+      writeStoredCart(normalized);
+      if (!isValid) {
+        pushToast(warningMessage, "warning");
+      }
+      return isValid;
+    } catch {
+      pushToast(warningMessage, "warning");
+      setItems(readStoredCart());
+      return false;
     }
   }
 
@@ -163,8 +192,13 @@ export function CartProvider({ children }) {
         lineKey,
         selectedUpgrades,
       }).catch(() => {
-        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
-        restoreServerCartSnapshot(token);
+        reconcileServerCartAfterFailure(
+          token,
+          (serverItems) =>
+            serverItems.some(
+              (item) => getCartItemLineKey(item) === lineKey && Number(item.qty || 0) === Number(serverQty || 0)
+            )
+        );
       });
     }
   };
@@ -199,8 +233,13 @@ export function CartProvider({ children }) {
         lineKey,
         selectedUpgrades,
       }).catch(() => {
-        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
-        restoreServerCartSnapshot(token);
+        reconcileServerCartAfterFailure(
+          token,
+          (serverItems) =>
+            serverItems.some(
+              (item) => getCartItemLineKey(item) === lineKey && Number(item.qty || 0) === Number(serverQty || 0)
+            )
+        );
       });
     }
   };
@@ -221,13 +260,17 @@ export function CartProvider({ children }) {
     if (token) {
       if (isLastVisibleItem) {
         clearServerCart(token).catch(() => {
-          pushToast("Cart sync issue detected. Refreshing cart.", "warning");
-          restoreServerCartSnapshot(token);
+          reconcileServerCartAfterFailure(
+            token,
+            (serverItems) => serverItems.length === 0
+          );
         });
       } else {
         removeServerCartItem(token, id, lineKey).catch(() => {
-          pushToast("Cart sync issue detected. Refreshing cart.", "warning");
-          restoreServerCartSnapshot(token);
+          reconcileServerCartAfterFailure(
+            token,
+            (serverItems) => !hasCartLine(serverItems, lineKey)
+          );
         });
       }
     }
@@ -241,8 +284,10 @@ export function CartProvider({ children }) {
     clearStoredCart();
     if (token) {
       clearServerCart(token).catch(() => {
-        pushToast("Cart sync issue detected. Refreshing cart.", "warning");
-        restoreServerCartSnapshot(token);
+        reconcileServerCartAfterFailure(
+          token,
+          (serverItems) => serverItems.length === 0
+        );
       });
     }
     pushToast("Cart cleared", "info");
