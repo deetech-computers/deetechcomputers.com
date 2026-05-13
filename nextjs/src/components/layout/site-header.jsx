@@ -1045,7 +1045,7 @@ export default function SiteHeader() {
       <header className="site-header">
         <div className="header-topbar">
           <div className="shell header-topbar__inner">
-            <span>Free shipping on all orders over GHS 100</span>
+            <span>Free shipping on all laptops</span>
             <span>Today's deal | Gift certificates</span>
           </div>
         </div>
