@@ -10828,7 +10828,7 @@ button, input, select, textarea { font: inherit; }
     padding-right: 0;
   }
   .home-logo-marquee {
-    margin: 4px auto 8px;
+    margin: 0 auto 8px;
     background: #ffffff;
   }
   .home-logo-marquee__track {
