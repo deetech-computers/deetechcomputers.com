@@ -186,14 +186,14 @@ export function CartProvider({ children }) {
     if (toast) {
       pushToast(toast.message, toast.type);
     }
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && serverQty) {
       window.dispatchEvent(
         new CustomEvent(CART_ITEM_ADDED_EVENT, {
           detail: {
             productId: id,
             lineKey,
             name: product?.name || "",
-            qty: Number(serverQty || qty || 1),
+            qty: Number(serverQty),
           },
         })
       );
