@@ -173,6 +173,7 @@ export default function WishlistPage() {
         <section className="wishlist-shell">
           <div className="wishlist-table panel">
             <header className="wishlist-table__head" aria-hidden="true">
+              <span></span>
               <span>Product</span>
               <span>Price</span>
               <span>Date Added</span>

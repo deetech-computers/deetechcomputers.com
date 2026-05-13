@@ -4197,7 +4197,7 @@ button, input, select, textarea { font: inherit; }
 }
 .cart-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) 120px 170px 148px;
+  grid-template-columns: minmax(0, 1.6fr) 120px 170px 120px;
   gap: 16px;
   align-items: center;
   padding: 24px 26px;
@@ -4207,32 +4207,28 @@ button, input, select, textarea { font: inherit; }
   border-bottom: 0;
 }
 .cart-row__remove {
-  border: 1px solid rgba(13, 86, 218, 0.18);
-  background: #f7faff;
+  border: 0;
+  background: transparent;
   color: #0d56da;
   cursor: pointer;
-  width: 100%;
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 999px;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1.2;
-  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
 .cart-row__remove svg {
   width: 14px;
   height: 14px;
-  flex: 0 0 auto;
 }
 .cart-row__remove:hover {
   color: #0a43ad;
-  background: #edf4ff;
-  border-color: rgba(13, 86, 218, 0.28);
 }
 .cart-row__subtotal-block {
   display: grid;
@@ -4425,7 +4421,7 @@ button, input, select, textarea { font: inherit; }
 }
 .wishlist-table__head {
   display: grid;
-  grid-template-columns: minmax(0, 1.8fr) 120px 160px 130px 160px;
+  grid-template-columns: 112px minmax(0, 1.8fr) 120px 160px 130px 160px;
   gap: 18px;
   align-items: center;
   padding: 18px 22px;
@@ -4439,7 +4435,7 @@ button, input, select, textarea { font: inherit; }
 }
 .wishlist-row {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1.8fr) 120px 160px 130px 160px;
+  grid-template-columns: 112px minmax(0, 1.8fr) 120px 160px 130px 160px;
   gap: 18px;
   align-items: center;
   padding: 22px 0;
@@ -4454,10 +4450,12 @@ button, input, select, textarea { font: inherit; }
   line-height: 1.1;
   cursor: pointer;
   min-height: 38px;
-  padding: 0 12px;
+  width: 100%;
+  padding: 0 14px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   white-space: nowrap;
 }
