@@ -200,7 +200,7 @@ export default function SiteFooter() {
         ? [
             { href: "/account", label: "My Account" },
             { href: "/account?tab=orders", label: "My Orders" },
-            { href: "/wishlist", label: "My Wishlist" },
+            { href: "/account?tab=wishlist", label: "My Wishlist" },
             { href: "/account?tab=address", label: "Manage Address" },
           ]
         : [

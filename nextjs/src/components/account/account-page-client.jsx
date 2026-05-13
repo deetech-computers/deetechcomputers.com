@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -28,6 +28,22 @@ const ACCOUNT_SECTIONS = [
   { id: "password", label: "Password Manager" },
   { id: "logout", label: "Logout" },
 ];
+
+const ALLOWED_ACCOUNT_TABS = new Set([
+  "personal",
+  "orders",
+  "address",
+  "messages",
+  "affiliates",
+  "wishlist",
+  "reviews",
+  "password",
+  "logout",
+]);
+
+function normalizeAccountTab(value) {
+  return ALLOWED_ACCOUNT_TABS.has(value) ? value : "personal";
+}
 
 function formatDate(value) {
   const date = value ? new Date(value) : null;
@@ -628,17 +644,9 @@ function MessagesSection({
 
 export default function AccountPageClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { pushToast } = useToast();
   const { isAuthenticated, logout, refreshProfile, saveProfile, status, token, user } = useAuth();
-  const normalizeTab = (value) => {
-    const allowed = new Set(["personal", "orders", "address", "messages", "affiliates", "wishlist", "reviews", "password", "logout"]);
-    return allowed.has(value) ? value : "personal";
-  };
-  const [activeSection, setActiveSection] = useState(() => {
-    if (typeof window === "undefined") return "personal";
-    const params = new URLSearchParams(window.location.search || "");
-    return normalizeTab((params.get("tab") || "").toLowerCase());
-  });
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -672,20 +680,7 @@ export default function AccountPageClient() {
     confirmPassword: "",
   });
   const profileHydratedRef = useRef(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const syncTabFromUrl = () => {
-      const params = new URLSearchParams(window.location.search || "");
-      const requestedTab = (params.get("tab") || "").toLowerCase();
-      setActiveSection(normalizeTab(requestedTab));
-    };
-
-    syncTabFromUrl();
-    window.addEventListener("popstate", syncTabFromUrl);
-    return () => window.removeEventListener("popstate", syncTabFromUrl);
-  }, []);
+  const activeSection = normalizeAccountTab((searchParams?.get("tab") || "").toLowerCase());
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -721,17 +716,12 @@ export default function AccountPageClient() {
     if (status !== "ready") return;
     if (!isAuthenticated || !token) {
       profileHydratedRef.current = false;
-      setLoadingProfile(false);
       return;
     }
     if (profileHydratedRef.current) return;
 
     profileHydratedRef.current = true;
     setLoadingProfile(true);
-
-    if (user) {
-      fillProfileForm(user);
-    }
 
     refreshProfile()
       .then((profile) => {
@@ -797,15 +787,6 @@ export default function AccountPageClient() {
       }
     });
   }, [isAuthenticated, status, token]);
-
-  useEffect(() => {
-    if (!supportTickets.length) {
-      return;
-    }
-    if (!activeSupportTicketId) {
-      setActiveSupportTicketId(supportTickets[0]?._id || "");
-    }
-  }, [activeSection, activeSupportTicketId, supportTickets]);
 
   function handleProfileFieldChange(field, value) {
     setProfileForm((current) => ({ ...current, [field]: value }));
@@ -898,6 +879,12 @@ export default function AccountPageClient() {
     }
   }
 
+  function handleSectionChange(section) {
+    const nextSection = normalizeAccountTab(String(section || "").toLowerCase());
+    const nextHref = nextSection === "personal" ? "/account" : `/account?tab=${encodeURIComponent(nextSection)}`;
+    router.replace(nextHref, { scroll: false });
+  }
+
   function handleSupportQuickReply(text) {
     const base = supportReplyDraft.trim();
     setSupportReplyDraft(base ? `${base}\n${text}` : text);
@@ -983,7 +970,7 @@ export default function AccountPageClient() {
     }
   }, [isAuthenticated, router, status]);
 
-  if (status === "loading" || loadingProfile) {
+  if (status === "loading" || (isAuthenticated && loadingProfile)) {
     return (
       <main className="shell page-section">
         <div className="panel">
@@ -1022,7 +1009,7 @@ export default function AccountPageClient() {
         <div className={mobileNavOpen ? "account-dashboard account-dashboard--mobile-nav-open" : "account-dashboard"}>
           <AccountSidebar
             activeSection={activeSection}
-            onChange={setActiveSection}
+            onChange={handleSectionChange}
             isAdmin={user?.role === "admin"}
             hasSupportTickets={supportTickets.length > 0}
             onMobileItemSelect={handleMobileSidebarItemSelect}
