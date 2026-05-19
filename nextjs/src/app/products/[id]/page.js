@@ -332,6 +332,14 @@ export default function ProductDetailPage() {
     setActiveTab("reviews");
     requestAnimationFrame(() => {
       tabsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (typeof window === "undefined") return;
+
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.delete("tab");
+      if (String(nextUrl.hash || "").toLowerCase() === "#reviews") {
+        nextUrl.hash = "";
+      }
+      window.history.replaceState({}, "", nextUrl.toString());
     });
   }, [product?._id, searchParams]);
 
