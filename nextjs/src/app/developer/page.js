@@ -5,7 +5,7 @@ const educationTimeline = [
   "Started junior high school at Cambridge International School, Suntreso, Kumasi",
   "Completed JHS at Prempeh JHS / Basic School in 2016",
   "Continued senior high school at OKESS SHS, Kumasi Tafo",
-  "Currently pursuing BSc Information Technology at the University of Cape Coast",
+  "Pursued BSc Information Technology at the University of Cape Coast",
 ];
 
 const coreSkills = [
@@ -59,7 +59,7 @@ export default function DeveloperPage() {
           <div className="developer-profile-intro__copy">
             <h2>Daniel Adjei Mensah</h2>
             <p>
-              My name is Daniel Adjei Mensah. I am a Level 400 student at the University of Cape Coast, where I am studying BSc Information Technology.
+              My name is Daniel Adjei Mensah. I am a Level 400 student at the University of Cape Coast, where I pursued BSc Information Technology. I am currently based in Kumasi Kenyasi.
             </p>
             <p>
               I enjoy building things that people can actually use. For me, development is not just about writing code. It is about solving problems well, paying attention to detail, and creating something that feels useful, clear, and reliable from beginning to end.
