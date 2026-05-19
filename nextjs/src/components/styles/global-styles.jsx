@@ -4110,7 +4110,7 @@ button, input, select, textarea { font: inherit; }
   width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 2px 0 0;
+  padding: 2px 0 10px;
   gap: 14px;
   scroll-padding-inline: 0;
 }
