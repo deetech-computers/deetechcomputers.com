@@ -685,14 +685,19 @@ export default function AccountPageClient({ initialTab = "" }) {
     if (typeof window === "undefined") return undefined;
 
     const mediaQuery = window.matchMedia("(max-width: 980px)");
+    const hasExplicitTab = Boolean(String(initialTab || "").trim());
     const syncMobileMenuState = () => {
+      if (mediaQuery.matches) {
+        setMobileNavOpen(!hasExplicitTab);
+        return;
+      }
       setMobileNavOpen(false);
     };
 
     syncMobileMenuState();
     mediaQuery.addEventListener("change", syncMobileMenuState);
     return () => mediaQuery.removeEventListener("change", syncMobileMenuState);
-  }, []);
+  }, [initialTab]);
 
   function fillProfileForm(profile) {
     const nextProfile = profile || {};
