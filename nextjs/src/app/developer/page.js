@@ -100,7 +100,7 @@ export default function DeveloperPage() {
             One thing I value about my growth is that it is not based only on theory. I am learning in school, but I am also applying what I learn by building real features and improving real user experiences.
           </p>
           <p>
-            I am a Level 400 student at UCC offering BSc Information Technology, and I am proficient in HTML, CSS, JavaScript, React, Next.js, MongoDB, and the wider set of tools needed to build, refine, and ship a project like this one.
+            I am an alumnus of UCC, where I pursued BSc Information Technology, and I am proficient in HTML, CSS, JavaScript, React, Next.js, MongoDB, and the wider set of tools needed to build, refine, and ship a project like this one.
           </p>
           <p>
             I also believe one of my strengths is how I work with people as well as code. I have good communication skills, strong problem-solving abilities, and an innovative mindset that helps me look for better ways to approach both technical and user-facing challenges.
