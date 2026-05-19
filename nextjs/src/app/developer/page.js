@@ -1,13 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const quickFacts = [
-  "Level 400 student at UCC",
-  "BSc Information Technology",
-  "React and Next.js developer",
-  "Intermediate in Cloud Engineering",
-];
-
 const educationTimeline = [
   "Started junior high school at Cambridge International School, Suntreso, Kumasi",
   "Completed JHS at Prempeh JHS / Basic School in 2016",
@@ -53,8 +46,8 @@ export default function DeveloperPage() {
           This page introduces the developer behind this platform, showing both who I am and the level of practical work I can deliver for businesses, brands, and clients who need modern web solutions.
         </p>
 
-        <section className="developer-hero-card">
-          <div className="developer-hero-card__photo">
+        <section className="developer-profile-intro">
+          <div className="developer-profile-intro__photo">
             <Image
               src="/developer/daniel-carta.jpg"
               alt="Daniel Carta standing outdoors at the University of Cape Coast"
@@ -63,32 +56,14 @@ export default function DeveloperPage() {
               priority
             />
           </div>
-
-          <div className="developer-hero-card__content">
-            <div className="developer-hero-card__copy">
-              <h2>Daniel Carta</h2>
-              <p>
-                I am a Level 400 student at the University of Cape Coast, currently studying BSc Information Technology and actively building real-world digital products.
-              </p>
-              <p>
-                My focus is not only writing code, but creating usable, polished, business-ready experiences that handle real customer journeys from discovery to payment and order completion.
-              </p>
-            </div>
-
-            <div className="developer-quick-facts" aria-label="Developer highlights">
-              {quickFacts.map((fact) => (
-                <span key={fact}>{fact}</span>
-              ))}
-            </div>
-
-            <div className="developer-contact-card">
-              <h3>Direct Contact</h3>
-              <p>If you want to discuss a project, collaboration, freelance work, or employment opportunity, you can reach me directly through email or phone.</p>
-              <div className="developer-contact-card__actions">
-                <a href="mailto:cartadaniel01@gmail.com">cartadaniel01@gmail.com</a>
-                <a href="tel:+2330509673406">+233 050 967 3406</a>
-              </div>
-            </div>
+          <div className="developer-profile-intro__copy">
+            <h2>Daniel Carta</h2>
+            <p>
+              I am a Level 400 student at the University of Cape Coast, currently studying BSc Information Technology and actively building real-world digital products.
+            </p>
+            <p>
+              My focus is not only writing code, but creating usable, polished, business-ready experiences that handle real customer journeys from discovery to payment and order completion.
+            </p>
           </div>
         </section>
 
@@ -116,6 +91,19 @@ export default function DeveloperPage() {
           </ul>
           <p>
             I also have intermediate experience in Cloud Engineering, which helps me think beyond code alone and consider deployment structure, reliability, scalability, and operational flow.
+          </p>
+        </section>
+
+        <section className="policy-content-section">
+          <h2>Highlights and Accolades</h2>
+          <p>
+            My current academic level, practical build experience, and the quality of this live project together reflect the standard of work I am growing into as a developer.
+          </p>
+          <p>
+            I am a Level 400 student at UCC offering BSc Information Technology, proficient in HTML, CSS, JavaScript, React, Next.js, MongoDB, and the broader tools used to plan, build, refine, and ship a project like this one.
+          </p>
+          <p>
+            I also bring intermediate Cloud Engineering knowledge, which strengthens how I think about hosting, deployment, system reliability, and real-world application delivery beyond just writing frontend code.
           </p>
         </section>
 
@@ -151,6 +139,20 @@ export default function DeveloperPage() {
           <p>
             For potential clients, collaborators, or employers, this page exists to make one thing clear: I am not only learning software development academically, I am actively applying it to build complete and useful digital products.
           </p>
+        </section>
+
+        <section className="policy-content-section developer-contact-section">
+          <h2>Contact and Availability</h2>
+          <p>
+            If you would like to discuss a project, freelance opportunity, collaboration, internship, or full-time role, you can reach me directly through email or phone.
+          </p>
+          <p>
+            I am open to conversations around business websites, e-commerce systems, frontend implementation, platform improvements, and payment-enabled web applications.
+          </p>
+          <div className="policy-cta-actions developer-contact-actions">
+            <a href="mailto:cartadaniel01@gmail.com">cartadaniel01@gmail.com</a>
+            <a href="tel:+2330509673406">+233 050 967 3406</a>
+          </div>
         </section>
 
         <section className="policy-content-section policy-content-section--cta developer-cta">

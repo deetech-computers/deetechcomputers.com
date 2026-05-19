@@ -8902,99 +8902,47 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 24px;
 }
-.developer-hero-card {
+.developer-profile-intro {
   display: grid;
-  grid-template-columns: minmax(260px, 420px) minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 32px);
-  align-items: start;
-  padding: clamp(20px, 3vw, 30px);
-  border: 1px solid #dbe4f0;
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at top right, rgba(10, 79, 207, 0.08), transparent 32%),
-    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  box-shadow: 0 18px 46px rgba(16, 52, 110, 0.08);
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+  padding: 8px 0 2px;
 }
-.developer-hero-card__photo {
-  border-radius: 24px;
+.developer-profile-intro__photo {
+  width: min(280px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
   overflow: hidden;
+  border: 6px solid #f2f6fd;
+  box-shadow: 0 18px 38px rgba(16, 52, 110, 0.12);
   background: #dfe9f8;
-  min-height: 100%;
 }
-.developer-hero-card__photo img {
+.developer-profile-intro__photo img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.developer-hero-card__content {
-  display: grid;
-  gap: 20px;
-}
-.developer-hero-card__copy {
+.developer-profile-intro__copy {
   display: grid;
   gap: 12px;
+  max-width: 72ch;
 }
-.developer-hero-card__copy h2 {
+.developer-profile-intro__copy h2 {
   margin: 0;
   font-size: clamp(1.8rem, 3vw, 2.8rem);
   line-height: 1.08;
   color: #162132;
 }
-.developer-hero-card__copy p {
+.developer-profile-intro__copy p {
   margin: 0;
 }
-.developer-quick-facts {
+.developer-contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-}
-.developer-quick-facts span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(10, 79, 207, 0.08);
-  border: 1px solid rgba(10, 79, 207, 0.15);
-  color: #0b4dac;
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-.developer-contact-card {
-  display: grid;
-  gap: 12px;
-  padding: 18px 20px;
-  border-radius: 22px;
-  background: #ffffff;
-  border: 1px solid #dbe4f0;
-}
-.developer-contact-card h3 {
-  margin: 0;
-  color: #162132;
-  font-size: 1.08rem;
-}
-.developer-contact-card p {
-  margin: 0;
-}
-.developer-contact-card__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.developer-contact-card__actions a {
-  text-decoration: none;
-  border: 1px solid #0a4fcf;
-  color: #0a4fcf;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-weight: 700;
-  background: #fff;
-}
-.developer-contact-card__actions a:hover {
-  background: #0a4fcf;
-  color: #fff;
+  justify-content: flex-start;
 }
 .developer-capability-section {
   display: grid;
@@ -10932,27 +10880,13 @@ button, input, select, textarea { font: inherit; }
     padding-left: 0;
     padding-right: 0;
   }
-  .developer-hero-card {
-    grid-template-columns: 1fr;
-    padding: 18px;
-    border-radius: 22px;
+  .developer-profile-intro__photo {
+    width: min(230px, 72vw);
   }
-  .developer-hero-card__photo {
-    max-width: 460px;
-    width: 100%;
-    margin: 0 auto;
-  }
-  .developer-hero-card__content {
-    gap: 16px;
-  }
-  .developer-contact-card {
-    padding: 16px;
-    border-radius: 18px;
-  }
-  .developer-contact-card__actions {
+  .developer-contact-actions {
     flex-direction: column;
   }
-  .developer-contact-card__actions a {
+  .developer-contact-actions a {
     justify-content: center;
   }
   .home-logo-marquee {
