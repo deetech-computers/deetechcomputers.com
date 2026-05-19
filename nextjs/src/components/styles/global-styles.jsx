@@ -10601,6 +10601,32 @@ button, input, select, textarea { font: inherit; }
     background: #171513; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
     box-shadow: none;
   }
+  .shop-drawer {
+    grid-template-columns: minmax(0, 1fr) min(420px, calc(100vw - 32px));
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    justify-items: stretch;
+    padding: 16px;
+    column-gap: 0;
+  }
+  .shop-drawer__header,
+  .shop-drawer__body {
+    grid-column: 2;
+  }
+  .shop-drawer__header {
+    border: 1px solid #e6dfd3;
+    border-bottom: 0;
+    border-radius: 22px 22px 0 0;
+    padding: 18px 20px 16px;
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
+  }
+  .shop-drawer__body {
+    border: 1px solid #e6dfd3;
+    border-top: 0;
+    border-radius: 0 0 22px 22px;
+    padding: 16px 20px 24px;
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
+  }
   .service-banner__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
