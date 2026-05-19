@@ -456,7 +456,7 @@ function ReviewsSection({ reviews }) {
           {reviews.slice(0, 3).map((review) => {
             const product = review?.product || {};
             const image = resolveProductImage(product?.images?.[0] || product?.image);
-            const productHref = product?._id ? `/products/${product._id}` : "/products";
+            const productHref = product?._id ? `/products/${product._id}?tab=reviews#reviews` : "/products";
             return (
               <article key={review._id} className="account-review-card panel">
                 <Link href={productHref} className="account-review-card__product">
