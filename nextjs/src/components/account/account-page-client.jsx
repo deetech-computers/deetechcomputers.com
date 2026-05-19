@@ -376,6 +376,16 @@ function AffiliateSection({ summary }) {
           <strong>{formatCurrency(Number(summary.earned || 0))}</strong>
           <p>{summary.referrals} referral{summary.referrals === 1 ? "" : "s"} recorded so far.</p>
         </div>
+        <div className="panel account-mini-card">
+          <span>Pending Commission</span>
+          <strong>{formatCurrency(Number(summary.pendingCommission || 0))}</strong>
+          <p>{summary.pendingReferrals} pending referral{summary.pendingReferrals === 1 ? "" : "s"} waiting to mature.</p>
+        </div>
+        <div className="panel account-mini-card">
+          <span>Successful Referrals</span>
+          <strong>{Number(summary.deliveredReferrals || 0)}</strong>
+          <p>{summary.cancelledReferrals} cancelled referral{summary.cancelledReferrals === 1 ? "" : "s"} recorded so far.</p>
+        </div>
       </div>
 
       <div className="account-dashboard__cta-row">
@@ -667,6 +677,10 @@ export default function AccountPageClient({ initialTab = "" }) {
     code: "",
     earned: 0,
     referrals: 0,
+    pendingCommission: 0,
+    pendingReferrals: 0,
+    deliveredReferrals: 0,
+    cancelledReferrals: 0,
   });
   const [reviews, setReviews] = useState([]);
   const [supportTickets, setSupportTickets] = useState([]);
@@ -753,6 +767,10 @@ export default function AccountPageClient({ initialTab = "" }) {
           code: payload?.affiliate?.code || payload?.affiliate?.affiliateCode || "",
           earned: Number(payload?.stats?.earnedCommission || payload?.affiliate?.earnedCommission || 0),
           referrals: Number(payload?.stats?.totalReferrals || payload?.referrals?.length || 0),
+          pendingCommission: Number(payload?.stats?.pendingCommission || 0),
+          pendingReferrals: Number(payload?.stats?.pendingReferrals || 0),
+          deliveredReferrals: Number(payload?.stats?.deliveredReferrals || 0),
+          cancelledReferrals: Number(payload?.stats?.cancelledReferrals || 0),
         });
       }
 
