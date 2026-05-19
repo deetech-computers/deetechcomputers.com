@@ -12120,7 +12120,7 @@ button, input, select, textarea { font: inherit; }
   }
   .product-preview__stage img {
     width: 100%;
-    max-height: calc(100dvh - 180px);
+    max-height: calc(100dvh - 220px);
   }
   .product-preview__thumbs {
     grid-template-columns: 28px minmax(0, 1fr) 28px;
