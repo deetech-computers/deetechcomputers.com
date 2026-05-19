@@ -5921,7 +5921,7 @@ button, input, select, textarea { font: inherit; }
   font-size: 0.92rem;
   line-height: 1.6;
 }
-.toast-stack { position: fixed; top: calc(env(safe-area-inset-top) + 92px); right: 16px; z-index: 140; display: grid; gap: 10px; }
+.toast-stack { position: fixed; top: calc(env(safe-area-inset-top) + 92px); left: 16px; z-index: 140; display: grid; gap: 10px; }
 .toast { min-width: 220px; max-width: 360px; padding: 12px 14px; border-radius: 16px; color: white; box-shadow: var(--shadow); }
 .toast--success { background: #0a9b8a; }
 .toast--info { background: #0f62fe; }
