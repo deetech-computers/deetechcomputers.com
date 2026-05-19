@@ -12192,7 +12192,7 @@ button, input, select, textarea { font: inherit; }
     box-shadow: none;
   }
   .shop-drawer {
-    display: block;
+    display: grid;
   }
   .shop-page {
     padding-bottom: calc(132px + env(safe-area-inset-bottom));
