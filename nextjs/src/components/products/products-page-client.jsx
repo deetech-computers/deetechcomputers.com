@@ -873,9 +873,14 @@ export default function ProductsPageClient({ initialFilters }) {
             <div className="shop-drawer" role="dialog" aria-modal="true" aria-label="Filter products">
               <div className="shop-drawer__header">
                 <h2>Filters</h2>
-                <button type="button" className="shop-drawer__close" onClick={() => setMobileFiltersOpen(false)}>
-                  Close
-                </button>
+                <div className="shop-drawer__actions">
+                  <button type="button" className="shop-drawer__apply" onClick={() => setMobileFiltersOpen(false)}>
+                    Apply
+                  </button>
+                  <button type="button" className="shop-drawer__close" onClick={() => setMobileFiltersOpen(false)}>
+                    Close
+                  </button>
+                </div>
               </div>
               <div className="shop-drawer__body">{renderFilterContent()}</div>
             </div>

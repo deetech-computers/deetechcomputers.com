@@ -2589,8 +2589,25 @@ button, input, select, textarea { font: inherit; }
 .shop-drawer__header h2 {
   margin: 0; font-size: 1.05rem;
 }
+.shop-drawer__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.shop-drawer__apply,
 .shop-drawer__close {
-  border: 0; background: transparent; color: #1f1d1b; font-weight: 700; cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: #1f1d1b;
+  font-weight: 700;
+  cursor: pointer;
+}
+.shop-drawer__apply {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #171513;
+  color: #fff;
 }
 .shop-drawer__body {
   background: #fff; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
