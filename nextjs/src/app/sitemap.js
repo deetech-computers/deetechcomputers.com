@@ -11,6 +11,7 @@ const staticRoutes = [
   "/products/printers",
   "/products/others",
   "/about",
+  "/developer",
   "/contact",
   "/faq",
   "/warranty",

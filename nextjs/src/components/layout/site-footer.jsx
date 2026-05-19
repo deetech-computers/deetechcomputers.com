@@ -217,6 +217,7 @@ export default function SiteFooter() {
       links: [
         { href: "/affiliates", label: "Affiliate Program" },
         { href: "/about", label: "About DEETECH" },
+        { href: "/developer", label: "Developer Profile" },
       ],
     },
     {
@@ -227,6 +228,7 @@ export default function SiteFooter() {
         { href: "/warranty", label: "Warranty" },
         { href: "/contact", label: "Contact Support" },
         { href: "/about", label: "About DEETECH" },
+        { href: "/developer", label: "Developer Profile" },
       ],
     },
   ];
