@@ -105,6 +105,35 @@ export default function DeveloperPage() {
           <p>
             I also believe one of my strengths is how I work with people as well as code. I have good communication skills, strong problem-solving abilities, and an innovative mindset that helps me look for better ways to approach both technical and user-facing challenges.
           </p>
+          <p>
+            I also bring a lot of patience and tolerance into the way I work. A big part of that comes from taking care of family and handling real responsibilities in life, which has taught me how to stay calm, keep going, and deal with people and situations with maturity.
+          </p>
+          <p>
+            I see myself as a good teammate and a good listener. I pay attention, I try to understand people well, and I like contributing in a way that helps the whole team move forward.
+          </p>
+        </section>
+
+        <section className="policy-content-section">
+          <h2>Motivation and Work Style</h2>
+          <p>
+            A good work environment motivates me a lot. I do my best work when there is mutual respect, focus, and a real sense that everyone is working toward something meaningful.
+          </p>
+          <p>
+            Clear goals also give me a strong heads-up on what I am doing and what is expected. Once I understand the direction clearly, it becomes easier for me to work with confidence, stay organized, and give my best effort.
+          </p>
+          <p>
+            I am also motivated by being able to help solve complex issues and bring strong ideas into a project or cause. I enjoy thinking through difficult problems and helping turn rough ideas into something clearer and more useful.
+          </p>
+        </section>
+
+        <section className="policy-content-section">
+          <h2>Core Values</h2>
+          <p>
+            Some of my simple core values are service to others and efficiency for people. I like work that is useful and practical, especially when it helps people save time, reduce stress, or get better results.
+          </p>
+          <p>
+            I do not like messes, whether in code, design, process, or communication. I naturally try to make things cleaner, more concise, and better explained, so that whatever I am working on feels more organized and easier for people to understand.
+          </p>
         </section>
 
         <section className="policy-content-section developer-capability-section">
