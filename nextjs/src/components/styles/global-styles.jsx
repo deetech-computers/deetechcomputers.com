@@ -5723,7 +5723,7 @@ button, input, select, textarea { font: inherit; }
 }
 .auth-hp-logo {
   width: auto;
-  height: 48px;
+  height: 64px;
   object-fit: contain;
   object-position: center;
   aspect-ratio: auto !important;
