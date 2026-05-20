@@ -14,7 +14,7 @@ const defaultOgImage = {
   height: 630,
   alt: "Deetech Computers",
 };
-const siteIconHref = "/logo-favicon.png?v=deetech-20260520d";
+const siteIconHref = "/favicon.jpg?v=deetech-20260520e";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -65,8 +65,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <GlobalStyles />
-        <link rel="icon" href={siteIconHref} type="image/png" />
-        <link rel="shortcut icon" href={siteIconHref} type="image/png" />
+        <link rel="icon" href={siteIconHref} type="image/jpeg" />
+        <link rel="shortcut icon" href={siteIconHref} type="image/jpeg" />
         <link rel="apple-touch-icon" href={siteIconHref} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
