@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { requestJson } from "@/lib/http";
+import { clearCompletedCheckoutState } from "@/lib/checkout";
 import { writeLastOrder } from "@/lib/order-confirmation";
 
 function buildEstimatedDelivery(dateInput) {
@@ -94,6 +95,7 @@ export default function HubtelPaymentSuccessClient() {
             });
 
             if (typeof window !== "undefined") {
+              clearCompletedCheckoutState();
               window.localStorage.removeItem("deetech-hubtel-pending");
               window.sessionStorage.setItem("deetech-order-complete-animate", "1");
               window.sessionStorage.setItem("deetech-order-complete-pending", "1");

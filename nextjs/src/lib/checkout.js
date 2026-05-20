@@ -1,3 +1,5 @@
+import { clearAffiliateAttribution } from "@/lib/affiliate-attribution";
+
 export const CHECKOUT_DRAFT_KEY = "deetech:checkout-draft";
 
 export const GHANA_REGIONS = [
@@ -93,6 +95,11 @@ export function writeCheckoutDraft(value) {
 export function clearCheckoutDraft() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+}
+
+export function clearCompletedCheckoutState() {
+  clearCheckoutDraft();
+  clearAffiliateAttribution();
 }
 
 export function buildClientOrderRef() {

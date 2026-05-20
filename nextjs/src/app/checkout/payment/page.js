@@ -14,7 +14,7 @@ import {
   PAYMENT_METHODS,
   buildClientOrderRef,
   buildOrderItems,
-  clearCheckoutDraft,
+  clearCompletedCheckoutState,
   isPhaseOneComplete,
   readCheckoutDraft,
   writeCheckoutDraft,
@@ -291,7 +291,7 @@ export default function CheckoutPaymentPage() {
       city: order?.shippingCity || order?.guestCity || pending?.city || "",
     });
 
-    clearCheckoutDraft();
+    clearCompletedCheckoutState();
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("deetech-hubtel-pending");
       window.sessionStorage.setItem("deetech-order-complete-animate", "1");
@@ -615,7 +615,7 @@ export default function CheckoutPaymentPage() {
         city: form.shippingCity,
       });
 
-      clearCheckoutDraft();
+      clearCompletedCheckoutState();
       pushToast("Order placed successfully", "success");
       const processingElapsed = Date.now() - processingStart;
       if (processingElapsed < PROCESSING_FLOOR_MS) {
