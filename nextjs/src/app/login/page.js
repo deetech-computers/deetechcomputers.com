@@ -38,7 +38,6 @@ export default function LoginPage() {
             <span className="auth-hp-logo-wrap" aria-hidden="true">
               <img className="auth-hp-logo" src="/logo.png" alt="" width="40" height="40" />
             </span>
-            <Link href="/register">Create account</Link>
           </header>
           <h1>Sign in</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
@@ -70,6 +69,7 @@ export default function LoginPage() {
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
               {submitting ? "Logging in..." : "Login"}
             </button>
+            <Link href="/register" className="auth-hp-link-row">Create account</Link>
             <Link href="/forgot-password" className="auth-hp-link-row">Forgot password?</Link>
           </form>
         </div>
