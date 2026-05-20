@@ -42,7 +42,6 @@ export default function RegisterPage() {
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
             <span className="auth-hp-head-spacer" aria-hidden="true" />
-            <Link href="/login">Sign in</Link>
           </header>
           <h1>Create account</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
@@ -72,6 +71,7 @@ export default function RegisterPage() {
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
               {submitting ? "Creating account..." : "Create"}
             </button>
+            <Link href="/login" className="auth-hp-link-row">Sign in</Link>
           </form>
         </div>
         <Link href="/privacy-policy" className="auth-hp-privacy">Privacy</Link>
