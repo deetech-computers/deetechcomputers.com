@@ -14,6 +14,7 @@ const defaultOgImage = {
   height: 630,
   alt: "Deetech Computers",
 };
+const siteIconHref = "/logo.png?v=deetech-20260520";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -23,9 +24,9 @@ export const metadata = {
   },
   description: "Standalone Next.js storefront for Deetech Computers.",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: siteIconHref,
+    shortcut: siteIconHref,
+    apple: siteIconHref,
   },
   openGraph: {
     title: APP_NAME,
@@ -64,9 +65,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <GlobalStyles />
-        <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="shortcut icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href={siteIconHref} type="image/png" />
+        <link rel="shortcut icon" href={siteIconHref} type="image/png" />
+        <link rel="apple-touch-icon" href={siteIconHref} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
