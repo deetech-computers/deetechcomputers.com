@@ -35,9 +35,9 @@ export default function LoginPage() {
       <section className="auth-hp-card auth-hp-card--login">
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
-            <span className="auth-hp-logo-wrap" aria-hidden="true">
-              <img className="auth-hp-logo" src="/logo.png" alt="" width="40" height="40" />
-            </span>
+            <Link href="/" className="auth-hp-logo-link" aria-label="Go to homepage">
+              <img className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width="170" height="48" />
+            </Link>
           </header>
           <h1>Sign in</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>

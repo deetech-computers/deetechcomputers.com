@@ -5714,32 +5714,18 @@ button, input, select, textarea { font: inherit; }
 }
 .auth-hp-head {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
 }
-.auth-hp-head-spacer {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 auto;
-}
-.auth-hp-logo-wrap {
-  width: 40px;
-  height: 40px;
+.auth-hp-logo-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid #dde3ee;
 }
 .auth-hp-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: left center;
+  width: auto;
+  height: 48px;
+  object-fit: contain;
+  object-position: center;
   aspect-ratio: auto !important;
 }
 .auth-hp-head a {
@@ -5747,7 +5733,6 @@ button, input, select, textarea { font: inherit; }
   font-weight: 500;
   font-size: 0.92rem;
   white-space: nowrap;
-  margin-left: auto;
 }
 .auth-hp-card h1 {
   margin: 0;

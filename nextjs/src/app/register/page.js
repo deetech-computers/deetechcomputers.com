@@ -41,7 +41,9 @@ export default function RegisterPage() {
       <section className="auth-hp-card auth-hp-card--register">
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
-            <span className="auth-hp-head-spacer" aria-hidden="true" />
+            <Link href="/" className="auth-hp-logo-link" aria-label="Go to homepage">
+              <img className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width="170" height="48" />
+            </Link>
           </header>
           <h1>Create account</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
