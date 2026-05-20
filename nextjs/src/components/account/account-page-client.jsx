@@ -699,6 +699,11 @@ export default function AccountPageClient({ initialTab = "" }) {
     return () => mediaQuery.removeEventListener("change", syncMobileMenuState);
   }, [initialTab]);
 
+  useEffect(() => {
+    if (typeof window === "undefined" || mobileNavOpen) return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeSection, mobileNavOpen]);
+
   function fillProfileForm(profile) {
     const nextProfile = profile || {};
     setProfileForm({

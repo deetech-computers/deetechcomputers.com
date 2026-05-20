@@ -1113,6 +1113,7 @@ button, input, select, textarea { font: inherit; }
   min-width: 0; height: 42px; border-radius: 12px; padding: 11px 42px 11px 40px;
   border-color: #dfd5c8;
   background: #fff;
+  font-size: 16px;
 }
 .mobile-header-search__icon {
   position: absolute;
@@ -12402,7 +12403,7 @@ button, input, select, textarea { font: inherit; }
   .header-search-mode__form .search-input {
     height: 46px;
     padding-right: 88px;
-    font-size: 0.92rem;
+    font-size: 16px;
   }
   .header-search-mode__cancel {
     width: 38px;
