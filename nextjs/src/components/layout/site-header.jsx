@@ -37,7 +37,6 @@ import {
   buildNotificationScope,
   buildUserNotifications,
   formatNotificationTime,
-  markNotificationAsRead,
   markNotificationsAsRead,
   readNotificationReadIds,
 } from "@/lib/header-notifications";
@@ -724,14 +723,11 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
     setAccountMenuOpen(false);
     setCartDrawerOpen(false);
+    if (isAuthenticated && notificationItems.length) {
+      markNotificationsAsRead(notificationScope, notificationItems.map((item) => item?.id));
+      setNotificationItems((current) => [...current]);
+    }
     setNotificationMenuOpen(true);
-  }
-
-  function handleNotificationSelect(itemId) {
-    if (!isAuthenticated) return;
-    markNotificationAsRead(notificationScope, itemId);
-    setNotificationItems((current) => [...current]);
-    closeNotificationMenu();
   }
 
   function handleNotificationCenterSelect() {
@@ -798,7 +794,7 @@ export default function SiteHeader() {
                 key={itemId}
                 href={item.href}
                 className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
-                onClick={() => handleNotificationSelect(itemId)}
+                onClick={onSelect}
               >
                 <div className="notification-dropdown__meta">
                   <strong>{item.title}</strong>

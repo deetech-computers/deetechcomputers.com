@@ -10429,6 +10429,7 @@ button, input, select, textarea { font: inherit; }
 .track-order-progress__fill {
   display: block;
   height: 100%;
+  width: calc(var(--track-progress, 0) * 100%);
   background: #184f27;
 }
 .track-order-step {
@@ -12093,14 +12094,28 @@ button, input, select, textarea { font: inherit; }
     justify-items: start;
     text-align: left;
   }
+  .track-order-progress {
+    gap: 14px;
+  }
   .track-order-progress__line {
-    display: none;
+    display: block;
+    left: 27px;
+    right: auto;
+    top: 29px;
+    bottom: 29px;
+    width: 4px;
+    height: auto;
+  }
+  .track-order-progress__fill {
+    width: 100%;
+    height: calc(var(--track-progress, 0) * 100%);
   }
   .track-order-step {
     grid-template-columns: 58px minmax(0, 1fr);
     justify-items: start;
     align-items: center;
     text-align: left;
+    gap: 8px 14px;
   }
   .track-order-step strong,
   .track-order-step span {

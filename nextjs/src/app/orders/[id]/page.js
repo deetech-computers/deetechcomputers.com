@@ -156,6 +156,7 @@ export default function TrackOrderPage() {
   }, [id, isAuthenticated, status, token]);
 
   const steps = useMemo(() => buildTrackingState(order), [order]);
+  const progressRatio = Math.max(0, (steps.filter((step) => step.done).length - 1) / (steps.length - 1));
 
   return (
     <main className="shell page-section">
@@ -224,7 +225,7 @@ export default function TrackOrderPage() {
                 <span
                   className="track-order-progress__fill"
                   style={{
-                    width: `${((steps.filter((step) => step.done).length - 1) / (steps.length - 1)) * 100}%`,
+                    "--track-progress": progressRatio,
                   }}
                 />
               </div>
