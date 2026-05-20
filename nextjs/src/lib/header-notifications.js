@@ -1,4 +1,4 @@
-const STORAGE_KEY_PREFIX = "deetech:header-notifications:last-seen";
+const STORAGE_KEY_PREFIX = "deetech:header-notifications:read";
 
 function toTime(value) {
   const time = value ? new Date(value).getTime() : 0;
@@ -27,24 +27,41 @@ function getStorageKey(scope) {
   return `${STORAGE_KEY_PREFIX}:${normalizeText(scope) || "guest"}`;
 }
 
-export function readNotificationLastSeen(scope) {
-  if (typeof window === "undefined") return 0;
+export function readNotificationReadIds(scope) {
+  if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(getStorageKey(scope));
-    const value = Number(raw || 0);
-    return Number.isFinite(value) ? value : 0;
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.map((value) => normalizeText(value)).filter(Boolean) : [];
   } catch {
-    return 0;
+    return [];
   }
 }
 
-export function writeNotificationLastSeen(scope, value = Date.now()) {
+export function writeNotificationReadIds(scope, ids) {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(getStorageKey(scope), String(Number(value) || Date.now()));
+    const nextIds = Array.isArray(ids) ? ids.map((value) => normalizeText(value)).filter(Boolean) : [];
+    window.localStorage.setItem(getStorageKey(scope), JSON.stringify(nextIds));
   } catch {
     // Ignore storage write failures and keep notifications non-blocking.
   }
+}
+
+export function markNotificationAsRead(scope, id) {
+  const target = normalizeText(id);
+  if (!target) return;
+  const current = readNotificationReadIds(scope);
+  if (current.includes(target)) return;
+  writeNotificationReadIds(scope, [...current, target]);
+}
+
+export function markNotificationsAsRead(scope, ids) {
+  const nextIds = Array.isArray(ids) ? ids.map((value) => normalizeText(value)).filter(Boolean) : [];
+  if (!nextIds.length) return;
+  const current = readNotificationReadIds(scope);
+  const merged = Array.from(new Set([...current, ...nextIds]));
+  writeNotificationReadIds(scope, merged);
 }
 
 function buildCustomerName(order) {

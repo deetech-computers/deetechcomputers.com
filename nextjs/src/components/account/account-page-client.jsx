@@ -545,18 +545,11 @@ function LogoutSection({ onLogout }) {
   );
 }
 
-const SUPPORT_QUICK_REPLIES = [
-  "Hello team, I need an update on my request.",
-  "Thanks. Please confirm expected completion time.",
-  "Issue resolved on my side. Thank you.",
-];
-
 function MessagesSection({
   tickets,
   replyDraft,
   sendingReply,
   onReplyDraftChange,
-  onQuickReply,
   onSendReply,
 }) {
   const activeTicket = tickets[0] || null;
@@ -617,13 +610,6 @@ function MessagesSection({
                 </div>
 
                 <form ref={composerFormRef} className="account-support-chat__composer" onSubmit={onSendReply}>
-                  <div className="account-support-chat__quick">
-                    {SUPPORT_QUICK_REPLIES.map((text) => (
-                      <button key={text} type="button" className="ghost-button" onClick={() => onQuickReply(text)}>
-                        {text}
-                      </button>
-                    ))}
-                  </div>
                   <div className="account-support-chat__composer-row">
                     <textarea
                       className="field account-support-chat__input"
@@ -903,11 +889,6 @@ export default function AccountPageClient({ initialTab = "" }) {
     router.replace(nextHref, { scroll: false });
   }
 
-  function handleSupportQuickReply(text) {
-    const base = supportReplyDraft.trim();
-    setSupportReplyDraft(base ? `${base}\n${text}` : text);
-  }
-
   async function handleSupportReplySubmit(event) {
     event.preventDefault();
     const message = supportReplyDraft.trim();
@@ -945,7 +926,6 @@ export default function AccountPageClient({ initialTab = "" }) {
           replyDraft={supportReplyDraft}
           sendingReply={sendingSupportReply}
           onReplyDraftChange={setSupportReplyDraft}
-          onQuickReply={handleSupportQuickReply}
           onSendReply={handleSupportReplySubmit}
         />
       );

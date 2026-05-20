@@ -37,8 +37,9 @@ import {
   buildNotificationScope,
   buildUserNotifications,
   formatNotificationTime,
-  readNotificationLastSeen,
-  writeNotificationLastSeen,
+  markNotificationAsRead,
+  markNotificationsAsRead,
+  readNotificationReadIds,
 } from "@/lib/header-notifications";
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: "admin" };
@@ -287,8 +288,8 @@ export default function SiteHeader() {
   const isMobileViewport = viewportWidth <= 980;
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
   const notificationScope = buildNotificationScope(user);
-  const notificationLastSeen = readNotificationLastSeen(notificationScope);
-  const unseenNotificationCount = notificationItems.filter((item) => Number(item?.timestamp || 0) > notificationLastSeen).length;
+  const notificationReadIds = readNotificationReadIds(notificationScope);
+  const unseenNotificationCount = notificationItems.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
   const notificationBadgeText = String(unseenNotificationCount || 0);
   const notificationTargetHref = user?.role === "admin" ? "/admin" : "/account";
   const desktopCategoryNavItems = categoryNavItems.filter((item) => item.slug !== "others");
@@ -718,18 +719,27 @@ export default function SiteHeader() {
     setNotificationMenuOpen(false);
   }
 
-  function markNotificationsSeen() {
-    if (!isAuthenticated) return;
-    writeNotificationLastSeen(notificationScope);
-  }
-
   function openNotificationMenu() {
     setHeaderSearchOpen(false);
     setWishlistMenuOpen(false);
     setAccountMenuOpen(false);
     setCartDrawerOpen(false);
     setNotificationMenuOpen(true);
-    markNotificationsSeen();
+  }
+
+  function handleNotificationSelect(itemId) {
+    if (!isAuthenticated) return;
+    markNotificationAsRead(notificationScope, itemId);
+    setNotificationItems((current) => [...current]);
+    closeNotificationMenu();
+  }
+
+  function handleNotificationCenterSelect() {
+    if (isAuthenticated) {
+      markNotificationsAsRead(notificationScope, notificationItems.map((item) => item?.id));
+      setNotificationItems((current) => [...current]);
+    }
+    closeNotificationMenu();
   }
 
   function removeFromCartPreview(event, lineKey) {
@@ -753,7 +763,6 @@ export default function SiteHeader() {
     const primaryHref = notificationTargetHref;
     const primaryLabel = user?.role === "admin" ? "Open admin dashboard" : "Open my account";
     const onSelect = () => {
-      markNotificationsSeen();
       closeNotificationMenu();
     };
 
@@ -762,7 +771,7 @@ export default function SiteHeader() {
         <div className="notification-dropdown__empty">
           <p>{isAuthenticated ? "No new notifications right now." : "Sign in to see notifications."}</p>
           {isAuthenticated ? (
-            <Link href={primaryHref} className="notification-dropdown__cta" onClick={onSelect}>
+            <Link href={primaryHref} className="notification-dropdown__cta" onClick={handleNotificationCenterSelect}>
               {primaryLabel}
             </Link>
           ) : (
@@ -782,13 +791,14 @@ export default function SiteHeader() {
         </div>
         <div className="notification-dropdown__items">
           {notificationItems.slice(0, 6).map((item) => {
-            const isUnread = Number(item?.timestamp || 0) > notificationLastSeen;
+            const itemId = String(item?.id || "");
+            const isUnread = !notificationReadIds.includes(itemId);
             return (
               <Link
-                key={item.id}
+                key={itemId}
                 href={item.href}
                 className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
-                onClick={onSelect}
+                onClick={() => handleNotificationSelect(itemId)}
               >
                 <div className="notification-dropdown__meta">
                   <strong>{item.title}</strong>
@@ -799,7 +809,7 @@ export default function SiteHeader() {
             );
           })}
         </div>
-        <Link href={primaryHref} className="notification-dropdown__cta" onClick={onSelect}>
+        <Link href={primaryHref} className="notification-dropdown__cta" onClick={handleNotificationCenterSelect}>
           {primaryLabel}
         </Link>
       </div>
@@ -962,6 +972,12 @@ export default function SiteHeader() {
                         <path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </Link>
+                    <Link href="/wishlist" className="mobile-menu__top-link" onClick={closeMobileMenu}>
+                      <span>Wishlist</span>
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="mobile-menu__top-link-icon">
+                        <path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </Link>
                   </div>
                 ) : null}
 
@@ -1012,6 +1028,13 @@ export default function SiteHeader() {
                         onClick={closeMobileMenu}
                       >
                         <span>{affiliateNavItem.label}</span>
+                      </Link>
+                      <Link
+                        href="/wishlist"
+                        className={isActivePath(pathname, "/wishlist") ? "mobile-menu__link is-active" : "mobile-menu__link"}
+                        onClick={closeMobileMenu}
+                      >
+                        <span>Wishlist</span>
                       </Link>
 
                     </div>
@@ -1347,12 +1370,6 @@ export default function SiteHeader() {
                     >
                       <ActionIcon name="search" />
                     </button>
-                    <Link href="/wishlist" className="icon-button icon-button--mobile-action" aria-label="Wishlist">
-                      <ActionIcon name="wishlist" />
-                      <span className="icon-button__badge">
-                        {wishlistBadgeText}
-                      </span>
-                    </Link>
                     <button
                       type="button"
                       className={cartDrawerOpen ? "icon-button icon-button--mobile-action cart-button is-active" : "icon-button icon-button--mobile-action cart-button"}
