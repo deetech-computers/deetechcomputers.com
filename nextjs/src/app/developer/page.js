@@ -97,7 +97,7 @@ export default function DeveloperPage() {
         <section className="policy-content-section">
           <h2>Highlights and Accolades</h2>
           <p>
-            One thing I value about my growth is that it is not based only on theory. I am learning in school, but I am also applying what I learn by building real features and improving real user experiences.
+            One thing I value about my growth is that it is not based only on theory. I learnt in school, but I also applied what I learnt by building real features and improving real user experiences.
           </p>
           <p>
             I am an alumnus of UCC, where I pursued BSc Information Technology, and I am proficient in HTML, CSS, JavaScript, React, Next.js, MongoDB, and the wider set of tools needed to build, refine, and ship a project like this one.
