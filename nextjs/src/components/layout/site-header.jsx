@@ -1056,7 +1056,7 @@ export default function SiteHeader() {
               <div className="header-search-mode">
                 <Link href="/" className="brand-mark header-search-mode__brand" aria-label="Go to homepage">
                   <StableImage
-                    src="/logo.png"
+                    src="/favicon-removebg-preview.png"
                     alt="Deetech Computers logo"
                     width={170}
                     height={48}
@@ -1122,7 +1122,7 @@ export default function SiteHeader() {
                     </button>
                     <Link href="/" className="brand-mark brand-mark--mobile">
                       <StableImage
-                        src="/logo.png"
+                        src="/favicon-removebg-preview.png"
                         alt="Deetech Computers logo"
                         width={190}
                         height={56}
@@ -1178,7 +1178,7 @@ export default function SiteHeader() {
 
                 <Link href="/" className="brand-mark brand-mark--desktop-shell">
                   <StableImage
-                    src="/logo.png"
+                    src="/favicon-removebg-preview.png"
                     alt="Deetech Computers logo"
                     width={170}
                     height={48}
