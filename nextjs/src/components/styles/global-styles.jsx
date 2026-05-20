@@ -878,6 +878,130 @@ button, input, select, textarea { font: inherit; }
 .wishlist-dropdown__cta:active {
   transform: translateY(1px);
 }
+.notification-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+.notification-dropdown__panel {
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 0;
+  width: min(420px, calc(100vw - 28px));
+  border: 1px solid #d6deea;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(11, 35, 67, 0.16);
+  border-radius: 16px;
+  z-index: 50;
+  overflow: hidden;
+}
+.notification-dropdown__panel--mobile {
+  right: -42px;
+  width: min(360px, calc(100vw - 18px));
+}
+.notification-dropdown__empty {
+  min-height: 210px;
+  padding: 20px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.notification-dropdown__empty p {
+  margin: 0;
+  color: #1d2531;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.notification-dropdown__content {
+  display: grid;
+}
+.notification-dropdown__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid #e3e9f3;
+}
+.notification-dropdown__head strong {
+  color: #151b27;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+.notification-dropdown__head span {
+  color: #0d56da;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.notification-dropdown__items {
+  max-height: 360px;
+  overflow: auto;
+}
+.notification-dropdown__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e3e9f3;
+  color: inherit;
+  transition: background 180ms ease;
+}
+.notification-dropdown__item.is-unread {
+  background: #f5f9ff;
+}
+.notification-dropdown__item:hover {
+  background: #f8fbff;
+}
+.notification-dropdown__meta {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.notification-dropdown__meta strong {
+  margin: 0;
+  color: #151b27;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.notification-dropdown__meta p {
+  margin: 0;
+  color: #5f6d83;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.notification-dropdown__item > span {
+  color: #0d56da;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.notification-dropdown__cta {
+  margin: 12px 18px 16px;
+  min-height: 46px;
+  border-radius: 10px;
+  background: #0d56da;
+  color: #fff;
+  width: calc(100% - 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 0.9rem;
+  line-height: 1;
+  font-weight: 800;
+  padding: 0 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.notification-dropdown__cta:hover {
+  background: #0b4cc2;
+}
+.notification-dropdown__cta:active {
+  transform: translateY(1px);
+}
 .account-dropdown {
   position: relative;
   display: inline-flex;

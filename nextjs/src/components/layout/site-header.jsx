@@ -8,6 +8,14 @@ import StableImage from "@/components/ui/stable-image";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
 import {
+  asArray,
+  requestWithToken,
+} from "@/lib/resource";
+import {
+  API_BASE,
+  API_BASE_ORDERS,
+} from "@/lib/config";
+import {
   readWishlistEntries,
   removeWishlistEntry,
   WISHLIST_UPDATED_EVENT,
@@ -24,6 +32,14 @@ import {
   resolveProductImage,
 } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
+import {
+  buildAdminNotifications,
+  buildNotificationScope,
+  buildUserNotifications,
+  formatNotificationTime,
+  readNotificationLastSeen,
+  writeNotificationLastSeen,
+} from "@/lib/header-notifications";
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: "admin" };
 const affiliateNavItem = { href: "/affiliates", label: "Affiliates", icon: "affiliates" };
@@ -44,6 +60,7 @@ const BRAND_FALLBACK = (
     DEETECH
   </div>
 );
+const HEADER_NOTIFICATION_REFRESH_MS = 30_000;
 
 function isActivePath(pathname, href) {
   if (href === "/") return pathname === "/";
@@ -117,6 +134,21 @@ function ActionIcon({ name }) {
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="8.3" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.9" />
         <path d="M5 20c.6-3 3.2-4.9 7-4.9s6.4 1.9 7 4.9" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (name === "notifications") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 4.5a4.8 4.8 0 0 0-4.8 4.8v2.2c0 1.1-.3 2.2-.9 3.1l-1 1.5h13.4l-1-1.5a5.4 5.4 0 0 1-.9-3.1V9.3A4.8 4.8 0 0 0 12 4.5Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path d="M10 19a2.2 2.2 0 0 0 4 0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     );
   }
@@ -203,15 +235,8 @@ function CategoryIcon({ slug }) {
 export default function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
-  const {
-    items: cartItems,
-    subtotal: cartSubtotal,
-    count,
-    status: cartStatus,
-    updateQuantity,
-    removeItem: removeCartItem,
-  } = useCart();
+  const { user, isAuthenticated, logout, status, token } = useAuth();
+  const { items: cartItems, subtotal: cartSubtotal, count, status: cartStatus, updateQuantity, removeItem: removeCartItem } = useCart();
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpenSlug, setDesktopOpenSlug] = useState("");
@@ -219,6 +244,8 @@ export default function SiteHeader() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [wishlistMenuOpen, setWishlistMenuOpen] = useState(false);
+  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
+  const [notificationItems, setNotificationItems] = useState([]);
   const [searchProducts, setSearchProducts] = useState([]);
   const [wishlistPreviewItems, setWishlistPreviewItems] = useState([]);
   const [categoryNavItems, setCategoryNavItems] = useState(() => {
@@ -250,12 +277,20 @@ export default function SiteHeader() {
   const accountMenuRef = useRef(null);
   const cartMenuRef = useRef(null);
   const wishlistMenuRef = useRef(null);
+  const desktopNotificationMenuRef = useRef(null);
+  const mobileNotificationMenuRef = useRef(null);
   const previousMobileOpenRef = useRef(false);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window === "undefined" ? 1280 : window.innerWidth
   );
   const isAdminRoute = pathname?.startsWith("/admin");
+  const isMobileViewport = viewportWidth <= 980;
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
+  const notificationScope = buildNotificationScope(user);
+  const notificationLastSeen = readNotificationLastSeen(notificationScope);
+  const unseenNotificationCount = notificationItems.filter((item) => Number(item?.timestamp || 0) > notificationLastSeen).length;
+  const notificationBadgeText = String(unseenNotificationCount || 0);
+  const notificationTargetHref = user?.role === "admin" ? "/admin" : "/account";
   const desktopCategoryNavItems = categoryNavItems.filter((item) => item.slug !== "others");
   const desktopNavItems = isAdminRoute ? ADMIN_MENU_ITEMS : [...desktopCategoryNavItems, affiliateNavItem];
 
@@ -278,6 +313,7 @@ export default function SiteHeader() {
     setAccountMenuOpen(false);
     setCartDrawerOpen(false);
     setWishlistMenuOpen(false);
+    setNotificationMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -490,10 +526,35 @@ export default function SiteHeader() {
   }, [wishlistMenuOpen]);
 
   useEffect(() => {
+    if (!notificationMenuOpen) return undefined;
+
+    const onPointerDown = (event) => {
+      if (desktopNotificationMenuRef.current?.contains(event.target)) return;
+      if (mobileNotificationMenuRef.current?.contains(event.target)) return;
+      setNotificationMenuOpen(false);
+    };
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setNotificationMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [notificationMenuOpen]);
+
+  useEffect(() => {
     if (headerSearchOpen) {
       setAccountMenuOpen(false);
       setCartDrawerOpen(false);
       setWishlistMenuOpen(false);
+      setNotificationMenuOpen(false);
     }
   }, [headerSearchOpen]);
 
@@ -552,6 +613,68 @@ export default function SiteHeader() {
     };
   }, [searchProducts]);
 
+  useEffect(() => {
+    if (status !== "ready") return undefined;
+    if (!isAuthenticated || !token) {
+      setNotificationItems([]);
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const normalizeNotificationsList = (payload, key) => {
+      if (Array.isArray(payload)) return payload;
+      if (Array.isArray(payload?.[key])) return payload[key];
+      return asArray(payload);
+    };
+
+    async function loadNotifications() {
+      try {
+        if (user?.role === "admin") {
+          const [ordersPayload, ticketsPayload] = await Promise.all([
+            requestWithToken(API_BASE_ORDERS, token),
+            requestWithToken(`${API_BASE}/support`, token),
+          ]);
+          if (cancelled) return;
+          setNotificationItems(
+            buildAdminNotifications(
+              normalizeNotificationsList(ordersPayload, "orders"),
+              normalizeNotificationsList(ticketsPayload, "tickets")
+            )
+          );
+          return;
+        }
+
+        const [ordersPayload, ticketsPayload] = await Promise.all([
+          requestWithToken(`${API_BASE_ORDERS}/myorders`, token),
+          requestWithToken(`${API_BASE}/support/my`, token),
+        ]);
+        if (cancelled) return;
+        setNotificationItems(
+          buildUserNotifications(
+            normalizeNotificationsList(ordersPayload, "orders"),
+            normalizeNotificationsList(ticketsPayload, "tickets")
+          )
+        );
+      } catch {
+        if (!cancelled) {
+          setNotificationItems([]);
+        }
+      }
+    }
+
+    loadNotifications();
+    const interval = window.setInterval(loadNotifications, HEADER_NOTIFICATION_REFRESH_MS);
+    const onFocus = () => loadNotifications();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [isAuthenticated, status, token, user?.role]);
+
   const onSearchSubmit = (event) => {
     event.preventDefault();
     const params = new URLSearchParams();
@@ -591,6 +714,24 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
   }
 
+  function closeNotificationMenu() {
+    setNotificationMenuOpen(false);
+  }
+
+  function markNotificationsSeen() {
+    if (!isAuthenticated) return;
+    writeNotificationLastSeen(notificationScope);
+  }
+
+  function openNotificationMenu() {
+    setHeaderSearchOpen(false);
+    setWishlistMenuOpen(false);
+    setAccountMenuOpen(false);
+    setCartDrawerOpen(false);
+    setNotificationMenuOpen(true);
+    markNotificationsSeen();
+  }
+
   function removeFromCartPreview(event, lineKey) {
     event.preventDefault();
     event.stopPropagation();
@@ -605,6 +746,64 @@ export default function SiteHeader() {
     event.stopPropagation();
     if (!productId) return;
     removeWishlistEntry(productId);
+  }
+
+  function renderNotificationMenuContent() {
+    const roleLabel = user?.role === "admin" ? "Admin notifications" : "Your notifications";
+    const primaryHref = notificationTargetHref;
+    const primaryLabel = user?.role === "admin" ? "Open admin dashboard" : "Open my account";
+    const onSelect = () => {
+      markNotificationsSeen();
+      closeNotificationMenu();
+    };
+
+    if (!notificationItems.length) {
+      return (
+        <div className="notification-dropdown__empty">
+          <p>{isAuthenticated ? "No new notifications right now." : "Sign in to see notifications."}</p>
+          {isAuthenticated ? (
+            <Link href={primaryHref} className="notification-dropdown__cta" onClick={onSelect}>
+              {primaryLabel}
+            </Link>
+          ) : (
+            <Link href="/login" className="notification-dropdown__cta" onClick={onSelect}>
+              Login
+            </Link>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="notification-dropdown__content">
+        <div className="notification-dropdown__head">
+          <strong>{roleLabel}</strong>
+          <span>{unseenNotificationCount > 0 ? `${unseenNotificationCount} new` : "All caught up"}</span>
+        </div>
+        <div className="notification-dropdown__items">
+          {notificationItems.slice(0, 6).map((item) => {
+            const isUnread = Number(item?.timestamp || 0) > notificationLastSeen;
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
+                onClick={onSelect}
+              >
+                <div className="notification-dropdown__meta">
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                </div>
+                <span>{formatNotificationTime(item.timestamp)}</span>
+              </Link>
+            );
+          })}
+        </div>
+        <Link href={primaryHref} className="notification-dropdown__cta" onClick={onSelect}>
+          {primaryLabel}
+        </Link>
+      </div>
+    );
   }
 
   function renderAccountMenuContent() {
@@ -1110,6 +1309,7 @@ export default function SiteHeader() {
                       className="icon-button icon-button--mobile"
                       onClick={() => {
                         setAccountMenuOpen(false);
+                        setNotificationMenuOpen(false);
                         setMobileOpen(true);
                       }}
                       aria-label="Open menu"
@@ -1141,6 +1341,7 @@ export default function SiteHeader() {
                       aria-label="Search"
                       onClick={() => {
                         setAccountMenuOpen(false);
+                        setNotificationMenuOpen(false);
                         setHeaderSearchOpen(true);
                       }}
                     >
@@ -1160,12 +1361,43 @@ export default function SiteHeader() {
                         setHeaderSearchOpen(false);
                         setWishlistMenuOpen(false);
                         setAccountMenuOpen(false);
+                        setNotificationMenuOpen(false);
                         setCartDrawerOpen((current) => !current);
                       }}
                     >
                       <ActionIcon name="cart" />
                       <span className={cartStatus === "ready" ? "icon-button__badge" : "icon-button__badge is-pending"}>{cartBadgeText}</span>
                     </button>
+                    {isAuthenticated ? (
+                      <div className={notificationMenuOpen ? "notification-dropdown is-open" : "notification-dropdown"} ref={mobileNotificationMenuRef}>
+                        <button
+                          type="button"
+                          className={notificationMenuOpen ? "icon-button icon-button--mobile-action is-active" : "icon-button icon-button--mobile-action"}
+                          aria-label={user?.role === "admin" ? "Admin notifications" : "Notifications"}
+                          aria-haspopup="menu"
+                          aria-expanded={notificationMenuOpen}
+                          onClick={() => {
+                            if (notificationMenuOpen) {
+                              closeNotificationMenu();
+                              return;
+                            }
+                            openNotificationMenu();
+                          }}
+                        >
+                          <ActionIcon name="notifications" />
+                          {unseenNotificationCount > 0 ? (
+                            <span className="icon-button__badge">
+                              {notificationBadgeText}
+                            </span>
+                          ) : null}
+                        </button>
+                        {notificationMenuOpen && isMobileViewport ? (
+                          <div className="notification-dropdown__panel notification-dropdown__panel--mobile" role="menu" aria-label="Notifications">
+                            {renderNotificationMenuContent()}
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
                     <Link
                       href="/account"
                       className="icon-button icon-button--mobile-action"
@@ -1271,6 +1503,7 @@ export default function SiteHeader() {
                 aria-expanded={headerSearchOpen}
                 onClick={() => {
                   setAccountMenuOpen(false);
+                  setNotificationMenuOpen(false);
                   setHeaderSearchOpen(true);
                 }}
               >
@@ -1279,7 +1512,10 @@ export default function SiteHeader() {
               <div
                 className={wishlistMenuOpen ? "wishlist-dropdown is-open" : "wishlist-dropdown"}
                 ref={wishlistMenuRef}
-                onMouseEnter={() => setWishlistMenuOpen(true)}
+                onMouseEnter={() => {
+                  setNotificationMenuOpen(false);
+                  setWishlistMenuOpen(true);
+                }}
                 onMouseLeave={() => setWishlistMenuOpen(false)}
               >
                 <Link
@@ -1311,16 +1547,55 @@ export default function SiteHeader() {
                   setHeaderSearchOpen(false);
                   setWishlistMenuOpen(false);
                   setAccountMenuOpen(false);
+                  setNotificationMenuOpen(false);
                   setCartDrawerOpen((current) => !current);
                 }}
                 >
                   <ActionIcon name="cart" />
                 <span className={cartStatus === "ready" ? "icon-button__badge" : "icon-button__badge is-pending"}>{cartBadgeText}</span>
               </button>
+              {isAuthenticated ? (
+                <div
+                  className={notificationMenuOpen ? "notification-dropdown is-open" : "notification-dropdown"}
+                  ref={desktopNotificationMenuRef}
+                  onMouseEnter={() => openNotificationMenu()}
+                  onMouseLeave={() => closeNotificationMenu()}
+                >
+                  <button
+                    type="button"
+                    className={notificationMenuOpen ? "icon-button icon-button--desktop is-active" : "icon-button icon-button--desktop"}
+                    aria-label={user?.role === "admin" ? "Admin notifications" : "Notifications"}
+                    aria-haspopup="menu"
+                    aria-expanded={notificationMenuOpen}
+                    onClick={() => {
+                      if (notificationMenuOpen) {
+                        closeNotificationMenu();
+                        return;
+                      }
+                      openNotificationMenu();
+                    }}
+                  >
+                    <ActionIcon name="notifications" />
+                    {unseenNotificationCount > 0 ? (
+                      <span className="icon-button__badge">
+                        {notificationBadgeText}
+                      </span>
+                    ) : null}
+                  </button>
+                  {notificationMenuOpen && !isMobileViewport ? (
+                    <div className="notification-dropdown__panel" role="menu" aria-label="Notifications">
+                      {renderNotificationMenuContent()}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
               <div
                 className={accountMenuOpen ? "account-dropdown is-open" : "account-dropdown"}
                 ref={accountMenuRef}
-                onMouseEnter={() => setAccountMenuOpen(true)}
+                onMouseEnter={() => {
+                  setNotificationMenuOpen(false);
+                  setAccountMenuOpen(true);
+                }}
                 onMouseLeave={() => setAccountMenuOpen(false)}
               >
                 <Link
