@@ -22,6 +22,11 @@ export const metadata = {
     template: `%s | ${APP_NAME}`,
   },
   description: "Standalone Next.js storefront for Deetech Computers.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     title: APP_NAME,
     description: "Standalone Next.js storefront for Deetech Computers.",
