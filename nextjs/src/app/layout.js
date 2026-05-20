@@ -14,7 +14,7 @@ const defaultOgImage = {
   height: 630,
   alt: "Deetech Computers",
 };
-const siteIconHref = "/logo.png?v=deetech-20260520";
+const siteIconHref = "/logo-favicon.png?v=deetech-20260520b";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
