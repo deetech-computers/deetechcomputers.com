@@ -11065,6 +11065,9 @@ button, input, select, textarea { font: inherit; }
     min-width: 0;
     display: grid;
     gap: 8px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
   }
   .homepage-products__rail-controls {
     display: flex;
@@ -11084,9 +11087,10 @@ button, input, select, textarea { font: inherit; }
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 14px;
     gap: 12px;
-    border-top: 1px solid #ece7de;
-    border-left: 1px solid #ece7de;
+    border: 0;
     background: transparent;
+    box-shadow: none;
+    outline: none;
     padding: 2px 14px 10px;
   }
   .homepage-products__mobile-rail::-webkit-scrollbar {
