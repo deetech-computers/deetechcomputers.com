@@ -11086,7 +11086,7 @@ button, input, select, textarea { font: inherit; }
     gap: 12px;
     border-top: 1px solid #ece7de;
     border-left: 1px solid #ece7de;
-    background: #fff;
+    background: transparent;
     padding: 2px 14px 10px;
   }
   .homepage-products__mobile-rail::-webkit-scrollbar {
