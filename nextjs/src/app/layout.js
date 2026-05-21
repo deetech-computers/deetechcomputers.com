@@ -14,7 +14,7 @@ const defaultOgImage = {
   height: 630,
   alt: "Deetech Computers",
 };
-const siteIconHref = "/favicon-removebg-preview.png?v=deetech-20260520h";
+const siteIconHref = "/favicon-removebg-preview.png?v=deetech-20260521a";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -23,10 +23,14 @@ export const metadata = {
     template: `%s | ${APP_NAME}`,
   },
   description: "Standalone Next.js storefront for Deetech Computers.",
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: siteIconHref,
-    shortcut: siteIconHref,
-    apple: siteIconHref,
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: siteIconHref, type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: [{ url: siteIconHref, type: "image/png" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: APP_NAME,
@@ -67,7 +71,8 @@ export default function RootLayout({ children }) {
         <GlobalStyles />
         <link rel="icon" href={siteIconHref} type="image/png" />
         <link rel="shortcut icon" href={siteIconHref} type="image/png" />
-        <link rel="apple-touch-icon" href={siteIconHref} />
+        <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
