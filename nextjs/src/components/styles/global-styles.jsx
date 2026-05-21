@@ -2615,7 +2615,7 @@ button, input, select, textarea { font: inherit; }
   display: grid; place-items: center; font-size: 0.72rem;
 }
 .shop-filter-chip.is-active {
-  background: linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%); color: #fff; border-color: #0a4aa8;
+  background: linear-gradient(135deg, #1d1a16, #3d352c); color: #fff; border-color: #1d1a16;
 }
 .shop-filter-chip.is-active span {
   background: rgba(255,255,255,0.16);
@@ -2692,7 +2692,7 @@ button, input, select, textarea { font: inherit; }
   outline: none;
 }
 .shop-active-filter {
-  border: 0; border-radius: 999px; background: rgba(217, 164, 65, 0.14); color: #5e4517;
+  border: 0; border-radius: 999px; background: linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%); color: #fff;
   padding: 8px 12px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700;
 }
 .shop-active-filter span {
