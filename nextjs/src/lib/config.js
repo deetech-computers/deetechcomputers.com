@@ -1,3 +1,4 @@
+// Production SEO output should default to the live custom domain.
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.NODE_ENV === "production"
