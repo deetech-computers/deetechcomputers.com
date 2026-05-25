@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
+import { API_BASE } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
@@ -67,7 +68,7 @@ export default function CartPage() {
     setCouponStatus("checking");
     setCouponMessage("Validating coupon...");
     try {
-      const result = await requestJson("/api/discounts/validate", {
+      const result = await requestJson(`${API_BASE}/discounts/validate`, {
         method: "POST",
         body: JSON.stringify({ code: normalized }),
       });

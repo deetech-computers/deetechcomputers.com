@@ -20,6 +20,7 @@ import {
   writeCheckoutDraft,
 } from "@/lib/checkout";
 import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
+import { API_BASE, API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
@@ -184,7 +185,7 @@ export default function CheckoutPaymentPage() {
       }));
 
       try {
-        const result = await requestJson("/api/affiliates/validate-code", {
+        const result = await requestJson(`${API_BASE}/affiliates/validate-code`, {
           method: "POST",
           body: JSON.stringify({ code }),
         });
@@ -332,7 +333,7 @@ export default function CheckoutPaymentPage() {
       while (!ignore && !hubtelFinalizedRef.current && Date.now() - startedAt < HUBTEL_MAX_WAIT_MS) {
         try {
           const result = await requestJson(
-            `/api/orders/hubtel/status/${encodeURIComponent(hubtelClientReference)}?token=${encodeURIComponent(hubtelStatusToken)}`,
+            `${API_BASE_ORDERS}/hubtel/status/${encodeURIComponent(hubtelClientReference)}?token=${encodeURIComponent(hubtelStatusToken)}`,
             { retries: 1 }
           );
           const paymentStatus = String(result?.paymentStatus || "").toLowerCase();
@@ -408,7 +409,7 @@ export default function CheckoutPaymentPage() {
 
     setProofUploading(true);
     try {
-      const result = await requestJson("/api/upload/payment-proof", {
+      const result = await requestJson(`${API_BASE}/upload/payment-proof`, {
         method: "POST",
         body,
       });
@@ -524,11 +525,11 @@ export default function CheckoutPaymentPage() {
     try {
       const result =
         isAuthenticated && token
-          ? await requestWithToken("/api/orders", token, {
+          ? await requestWithToken(API_BASE_ORDERS, token, {
               method: "POST",
               body: JSON.stringify(payload),
             })
-          : await requestJson("/api/orders/guest", {
+          : await requestJson(`${API_BASE_ORDERS}/guest`, {
               method: "POST",
               body: JSON.stringify(payload),
             });

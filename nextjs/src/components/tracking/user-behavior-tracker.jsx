@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { API_BASE_USERS } from "@/lib/config";
 import { canonicalCategory } from "@/lib/products";
 import { requestWithToken } from "@/lib/resource";
 
@@ -66,7 +67,7 @@ export default function UserBehaviorTracker() {
     const timer = window.setTimeout(async () => {
       if (cancelled) return;
       try {
-        await requestWithToken("/api/users/behavior", token, {
+        await requestWithToken(`${API_BASE_USERS}/behavior`, token, {
           method: "POST",
           body: JSON.stringify(payload),
           retries: 0,

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 
 export default function HubtelPaymentCancelledClient() {
@@ -32,7 +33,7 @@ export default function HubtelPaymentCancelledClient() {
       }
       try {
         const result = await requestJson(
-          `/api/orders/hubtel/status/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`,
+          `${API_BASE_ORDERS}/hubtel/status/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`,
           { retries: 1 }
         );
         if (ignore) return;

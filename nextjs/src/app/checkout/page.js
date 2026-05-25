@@ -13,6 +13,8 @@ import {
   writeCheckoutDraft,
   splitName,
 } from "@/lib/checkout";
+import { API_BASE } from "@/lib/config";
+import { requestJson } from "@/lib/http";
 import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 
 export default function CheckoutPage() {
@@ -128,13 +130,10 @@ export default function CheckoutPage() {
       }));
 
       try {
-        const response = await fetch("/api/affiliates/validate-code", {
+        const payload = await requestJson(`${API_BASE}/affiliates/validate-code`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
         });
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(payload?.message || "Affiliate code not found");
         if (ignore) return;
         setAffiliateState({
           status: "valid",

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
+import { API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { clearCompletedCheckoutState } from "@/lib/checkout";
 import { writeLastOrder } from "@/lib/order-confirmation";
@@ -45,7 +46,7 @@ export default function HubtelPaymentSuccessClient() {
       while (!ignore && Date.now() - startedAt < maxWaitMs) {
         try {
           const result = await requestJson(
-            `/api/orders/hubtel/status/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`
+            `${API_BASE_ORDERS}/hubtel/status/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`
           );
           const order = result?.order;
           if (result?.paymentStatus === "paid" && order) {

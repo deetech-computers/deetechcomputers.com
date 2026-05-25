@@ -1,3 +1,5 @@
+import { buildApiUrl } from "./config";
+
 const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
 
 function isJsonContentType(contentType) {
@@ -34,7 +36,17 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function resolveRequestUrl(url) {
+  const target = String(url || "").trim();
+  if (!target) return target;
+  if (target.startsWith("/api")) {
+    return buildApiUrl(target);
+  }
+  return target;
+}
+
 export async function requestJson(url, options = {}) {
+  const requestUrl = resolveRequestUrl(url);
   const headers = {
     ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers || {}),
@@ -50,7 +62,7 @@ export async function requestJson(url, options = {}) {
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(requestUrl, {
         ...options,
         headers,
         cache: options.cache || "no-store",
@@ -81,14 +93,14 @@ export async function requestJson(url, options = {}) {
 
         const error = new Error(getErrorMessageFromPayload(data, response.status));
         error.status = response.status;
-        error.url = url;
+        error.url = requestUrl;
         throw error;
       }
 
       if (!isJsonContentType(contentType) && looksLikeHtml(text)) {
         const error = new Error(getFriendlyHttpMessage(502));
         error.status = 502;
-        error.url = url;
+        error.url = requestUrl;
         throw error;
       }
 

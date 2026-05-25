@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { useAuth } from "@/hooks/use-auth";
-import { API_BASE } from "@/lib/config";
+import { API_BASE, API_BASE_SUPPORT } from "@/lib/config";
 
 const contactCards = [
   {
@@ -124,7 +124,7 @@ export default function ContactPage() {
     setStatus({ type: "", text: "" });
 
     try {
-      await requestJson("/api/support", {
+      await requestJson(API_BASE_SUPPORT, {
         method: "POST",
         body: JSON.stringify({
           name: fullName,
