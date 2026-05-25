@@ -1,5 +1,8 @@
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://deetechcomputers-com.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://www.deetechcomputers.com"
+    : "http://localhost:3000");
 
 const assetBase =
   process.env.NEXT_PUBLIC_DEETECH_ASSET_BASE ||
