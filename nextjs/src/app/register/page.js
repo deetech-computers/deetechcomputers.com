@@ -9,6 +9,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -63,11 +65,49 @@ export default function RegisterPage() {
             </label>
             <label className="field-group">
               <span>Password</span>
-              <input className="field" type="password" placeholder="Password *" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} autoComplete="new-password" required />
+              <div className="password-field">
+                <input
+                  className="field"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password *"
+                  value={form.password}
+                  onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-field__toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </label>
             <label className="field-group">
               <span>Confirm password</span>
-              <input className="field" type="password" placeholder="Confirm password *" value={form.confirmPassword} onChange={(event) => setForm((current) => ({ ...current, confirmPassword: event.target.value }))} autoComplete="new-password" required />
+              <div className="password-field">
+                <input
+                  className="field"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm password *"
+                  value={form.confirmPassword}
+                  onChange={(event) => setForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-field__toggle"
+                  onClick={() => setShowConfirmPassword((current) => !current)}
+                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  aria-pressed={showConfirmPassword}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>

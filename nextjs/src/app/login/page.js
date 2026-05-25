@@ -9,6 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,15 +56,26 @@ export default function LoginPage() {
             </label>
             <label className="field-group">
               <span>Password</span>
-              <input
-                className="field"
-                type="password"
-                placeholder="Use your password"
-                value={form.password}
-                onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                autoComplete="current-password"
-                required
-              />
+              <div className="password-field">
+                <input
+                  className="field"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Use your password"
+                  value={form.password}
+                  onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-field__toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>

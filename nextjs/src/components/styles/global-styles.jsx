@@ -5762,6 +5762,30 @@ button, input, select, textarea { font: inherit; }
   padding-inline: 14px;
   font-size: 1rem;
 }
+.auth-hp-form .password-field {
+  position: relative;
+}
+.auth-hp-form .password-field .field {
+  padding-right: 82px;
+}
+.auth-hp-form .password-field__toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #0d56da;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.auth-hp-form .password-field__toggle:focus-visible {
+  outline: 2px solid #0d56da;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
 .auth-hp-form .field:focus {
   border-color: #0d56da;
   box-shadow: 0 0 0 3px rgba(13, 86, 218, 0.14);
