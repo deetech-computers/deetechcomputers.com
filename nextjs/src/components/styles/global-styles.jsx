@@ -919,10 +919,13 @@ button, input, select, textarea { font: inherit; }
 .notification-dropdown__head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   padding: 16px 18px 12px;
   border-bottom: 1px solid #e3e9f3;
+}
+.notification-dropdown__head strong {
+  margin-right: auto;
 }
 .notification-dropdown__head strong {
   color: #151b27;
@@ -938,6 +941,38 @@ button, input, select, textarea { font: inherit; }
   max-height: 360px;
   overflow: auto;
 }
+.notification-dropdown__close {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #d6deea;
+  border-radius: 999px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.notification-dropdown__close span {
+  position: absolute;
+  width: 14px;
+  height: 1.8px;
+  background: #233042;
+  border-radius: 999px;
+}
+.notification-dropdown__close span:first-child {
+  transform: rotate(45deg);
+}
+.notification-dropdown__close span:last-child {
+  transform: rotate(-45deg);
+}
+.notification-dropdown__close:hover {
+  background: #f5f9ff;
+}
+.notification-dropdown__close:focus-visible {
+  outline: 2px solid #0d56da;
+  outline-offset: 2px;
+}
 .notification-dropdown__item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -952,6 +987,10 @@ button, input, select, textarea { font: inherit; }
 }
 .notification-dropdown__item:hover {
   background: #f8fbff;
+}
+.notification-dropdown__empty--compact {
+  min-height: 0;
+  padding: 18px;
 }
 .notification-dropdown__meta {
   min-width: 0;
@@ -7158,6 +7197,56 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 18px;
 }
+.account-notification-history {
+  display: grid;
+  gap: 18px;
+}
+.account-notification-card {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 24px;
+}
+.account-notification-card.is-unread {
+  border-color: rgba(24, 79, 39, 0.26);
+  background: linear-gradient(180deg, #f6fbf7 0%, #ffffff 100%);
+}
+.account-notification-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.account-notification-card__head h3 {
+  margin: 4px 0 0;
+  font-size: 1.18rem;
+}
+.account-notification-card__eyebrow {
+  color: #1d6a33;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.account-notification-card__status {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+.account-notification-card__status strong {
+  color: #184f27;
+  font-size: 0.9rem;
+}
+.account-notification-card__status span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.account-notification-card p {
+  margin: 0;
+  color: #3f4a59;
+  line-height: 1.6;
+}
 .account-dashboard .primary-button,
 .account-dashboard .primary-link,
 .account-dashboard__content .primary-button {
@@ -10407,6 +10496,10 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 16px;
 }
+.track-order-top__back {
+  width: fit-content;
+  margin-bottom: 14px;
+}
 .track-order-top__header p {
   margin: 8px 0 0;
   color: #3a352d;
@@ -11836,6 +11929,13 @@ button, input, select, textarea { font: inherit; }
   }
   .account-dashboard__section-head h2 {
     font-size: clamp(1.7rem, 6vw, 2.4rem);
+  }
+  .account-notification-card__head {
+    display: grid;
+  }
+  .account-notification-card__status {
+    justify-items: start;
+    text-align: left;
   }
   .account-support-chat {
     grid-template-columns: 1fr;

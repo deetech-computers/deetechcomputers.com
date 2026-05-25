@@ -1,4 +1,6 @@
-const STORAGE_KEY_PREFIX = "deetech:header-notifications:read";
+const READ_STORAGE_KEY_PREFIX = "deetech:header-notifications:read";
+const DISMISSED_STORAGE_KEY_PREFIX = "deetech:header-notifications:dismissed";
+export const HEADER_NOTIFICATIONS_UPDATED_EVENT = "deetech:header-notifications:updated";
 
 function toTime(value) {
   const time = value ? new Date(value).getTime() : 0;
@@ -23,14 +25,23 @@ export function buildNotificationScope(user) {
   return `${role}:${viewerId}`;
 }
 
-function getStorageKey(scope) {
-  return `${STORAGE_KEY_PREFIX}:${normalizeText(scope) || "guest"}`;
+function getStorageKey(prefix, scope) {
+  return `${prefix}:${normalizeText(scope) || "guest"}`;
 }
 
-export function readNotificationReadIds(scope) {
+function notifyStorageUpdate(scope) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(HEADER_NOTIFICATIONS_UPDATED_EVENT, {
+      detail: { scope: normalizeText(scope) || "guest" },
+    })
+  );
+}
+
+function readNotificationIds(prefix, scope) {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(getStorageKey(scope));
+    const raw = window.localStorage.getItem(getStorageKey(prefix, scope));
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.map((value) => normalizeText(value)).filter(Boolean) : [];
   } catch {
@@ -38,14 +49,31 @@ export function readNotificationReadIds(scope) {
   }
 }
 
-export function writeNotificationReadIds(scope, ids) {
+function writeNotificationIds(prefix, scope, ids) {
   if (typeof window === "undefined") return;
   try {
     const nextIds = Array.isArray(ids) ? ids.map((value) => normalizeText(value)).filter(Boolean) : [];
-    window.localStorage.setItem(getStorageKey(scope), JSON.stringify(nextIds));
+    window.localStorage.setItem(getStorageKey(prefix, scope), JSON.stringify(nextIds));
+    notifyStorageUpdate(scope);
   } catch {
     // Ignore storage write failures and keep notifications non-blocking.
   }
+}
+
+export function readNotificationReadIds(scope) {
+  return readNotificationIds(READ_STORAGE_KEY_PREFIX, scope);
+}
+
+export function writeNotificationReadIds(scope, ids) {
+  writeNotificationIds(READ_STORAGE_KEY_PREFIX, scope, ids);
+}
+
+export function readNotificationDismissedIds(scope) {
+  return readNotificationIds(DISMISSED_STORAGE_KEY_PREFIX, scope);
+}
+
+export function writeNotificationDismissedIds(scope, ids) {
+  writeNotificationIds(DISMISSED_STORAGE_KEY_PREFIX, scope, ids);
 }
 
 export function markNotificationAsRead(scope, id) {
@@ -62,6 +90,28 @@ export function markNotificationsAsRead(scope, ids) {
   const current = readNotificationReadIds(scope);
   const merged = Array.from(new Set([...current, ...nextIds]));
   writeNotificationReadIds(scope, merged);
+}
+
+export function dismissNotification(scope, id) {
+  const target = normalizeText(id);
+  if (!target) return;
+  const current = readNotificationDismissedIds(scope);
+  if (current.includes(target)) return;
+  writeNotificationDismissedIds(scope, [...current, target]);
+}
+
+export function dismissNotifications(scope, ids) {
+  const nextIds = Array.isArray(ids) ? ids.map((value) => normalizeText(value)).filter(Boolean) : [];
+  if (!nextIds.length) return;
+  const current = readNotificationDismissedIds(scope);
+  const merged = Array.from(new Set([...current, ...nextIds]));
+  writeNotificationDismissedIds(scope, merged);
+}
+
+function buildNotificationEventId(prefix, sourceId, eventTime) {
+  const normalizedSourceId = normalizeText(sourceId || "event");
+  const normalizedEventTime = Number(eventTime || 0) || 0;
+  return `${prefix}-${normalizedSourceId}-${normalizedEventTime}`;
 }
 
 function buildCustomerName(order) {
@@ -97,7 +147,7 @@ export function buildAdminNotifications(orders, tickets) {
       const eventTime = toTime(order?.createdAt || order?.updatedAt);
       if (!eventTime) return null;
       return {
-        id: `admin-order-${normalizeText(order?._id || order?.id || eventTime)}`,
+        id: buildNotificationEventId("admin-order", order?._id || order?.id, eventTime),
         href: "/admin/orders",
         title: "New order received",
         body: `${buildCustomerName(order)} placed order #${buildOrderLabel(order)}.`,
@@ -113,7 +163,7 @@ export function buildAdminNotifications(orders, tickets) {
       const eventTime = toTime(latestCustomerReply?.createdAt || ticket?.createdAt || ticket?.updatedAt);
       if (!eventTime) return null;
       return {
-        id: `admin-ticket-${normalizeText(ticket?._id || ticket?.id || eventTime)}`,
+        id: buildNotificationEventId("admin-ticket", ticket?._id || ticket?.id, eventTime),
         href: "/admin/messages",
         title: "New customer message",
         body: `${normalizeText(ticket?.subject) || "Support request"} from ${normalizeText(ticket?.name || ticket?.email || "customer")}.`,
@@ -134,7 +184,7 @@ export function buildUserNotifications(orders, tickets) {
       if (!eventTime || eventTime <= createdTime) return null;
       const statusLabel = buildStatusLabel(order?.orderStatus);
       return {
-        id: `user-order-${normalizeText(order?._id || order?.id || eventTime)}`,
+        id: buildNotificationEventId("user-order", order?._id || order?.id, eventTime),
         href: normalizeText(order?._id || order?.id) ? `/orders/${normalizeText(order?._id || order?.id)}` : "/account?tab=orders",
         title: `Order #${buildOrderLabel(order)} ${statusLabel}`,
         body: "Your order record has a new update. Open it to track the latest progress.",
@@ -150,7 +200,7 @@ export function buildUserNotifications(orders, tickets) {
       const eventTime = toTime(latestAdminReply?.createdAt);
       if (!eventTime) return null;
       return {
-        id: `user-ticket-${normalizeText(ticket?._id || ticket?.id || eventTime)}`,
+        id: buildNotificationEventId("user-ticket", ticket?._id || ticket?.id, eventTime),
         href: "/account?tab=messages",
         title: "Support replied to your message",
         body: normalizeText(ticket?.subject) || "Open your account messages to continue the conversation.",

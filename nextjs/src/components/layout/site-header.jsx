@@ -33,11 +33,14 @@ import {
 } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 import {
+  dismissNotifications,
   buildAdminNotifications,
   buildNotificationScope,
   buildUserNotifications,
   formatNotificationTime,
+  HEADER_NOTIFICATIONS_UPDATED_EVENT,
   markNotificationsAsRead,
+  readNotificationDismissedIds,
   readNotificationReadIds,
 } from "@/lib/header-notifications";
 
@@ -246,6 +249,8 @@ export default function SiteHeader() {
   const [wishlistMenuOpen, setWishlistMenuOpen] = useState(false);
   const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const [notificationItems, setNotificationItems] = useState([]);
+  const [notificationReadIds, setNotificationReadIds] = useState([]);
+  const [notificationDismissedIds, setNotificationDismissedIds] = useState([]);
   const [searchProducts, setSearchProducts] = useState([]);
   const [wishlistPreviewItems, setWishlistPreviewItems] = useState([]);
   const [categoryNavItems, setCategoryNavItems] = useState(() => {
@@ -287,10 +292,15 @@ export default function SiteHeader() {
   const isMobileViewport = viewportWidth <= 980;
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
   const notificationScope = buildNotificationScope(user);
-  const notificationReadIds = readNotificationReadIds(notificationScope);
-  const unseenNotificationCount = notificationItems.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
+  const headerNotificationItems = notificationItems.filter(
+    (item) => !notificationDismissedIds.includes(String(item?.id || ""))
+  );
+  const latestHeaderNotification = headerNotificationItems[0] || null;
+  const unseenNotificationCount = headerNotificationItems.filter(
+    (item) => !notificationReadIds.includes(String(item?.id || ""))
+  ).length;
   const notificationBadgeText = String(unseenNotificationCount || 0);
-  const notificationTargetHref = user?.role === "admin" ? "/admin" : "/account";
+  const notificationTargetHref = "/account?tab=notifications";
   const desktopCategoryNavItems = categoryNavItems.filter((item) => item.slug !== "others");
   const desktopNavItems = isAdminRoute ? ADMIN_MENU_ITEMS : [...desktopCategoryNavItems, affiliateNavItem];
 
@@ -550,6 +560,22 @@ export default function SiteHeader() {
   }, [notificationMenuOpen]);
 
   useEffect(() => {
+    const syncNotificationStorage = (event) => {
+      if (event?.type === "storage" && event.key && !event.key.includes("deetech:header-notifications:")) return;
+      setNotificationReadIds(readNotificationReadIds(notificationScope));
+      setNotificationDismissedIds(readNotificationDismissedIds(notificationScope));
+    };
+
+    syncNotificationStorage();
+    window.addEventListener("storage", syncNotificationStorage);
+    window.addEventListener(HEADER_NOTIFICATIONS_UPDATED_EVENT, syncNotificationStorage);
+    return () => {
+      window.removeEventListener("storage", syncNotificationStorage);
+      window.removeEventListener(HEADER_NOTIFICATIONS_UPDATED_EVENT, syncNotificationStorage);
+    };
+  }, [notificationScope]);
+
+  useEffect(() => {
     if (headerSearchOpen) {
       setAccountMenuOpen(false);
       setCartDrawerOpen(false);
@@ -715,6 +741,11 @@ export default function SiteHeader() {
   }
 
   function closeNotificationMenu() {
+    if (isAuthenticated && notificationItems.length) {
+      const currentIds = notificationItems.map((item) => item?.id);
+      markNotificationsAsRead(notificationScope, currentIds);
+      dismissNotifications(notificationScope, currentIds);
+    }
     setNotificationMenuOpen(false);
   }
 
@@ -725,17 +756,26 @@ export default function SiteHeader() {
     setCartDrawerOpen(false);
     if (isAuthenticated && notificationItems.length) {
       markNotificationsAsRead(notificationScope, notificationItems.map((item) => item?.id));
-      setNotificationItems((current) => [...current]);
     }
     setNotificationMenuOpen(true);
   }
 
   function handleNotificationCenterSelect() {
     if (isAuthenticated) {
-      markNotificationsAsRead(notificationScope, notificationItems.map((item) => item?.id));
-      setNotificationItems((current) => [...current]);
+      const currentIds = notificationItems.map((item) => item?.id);
+      markNotificationsAsRead(notificationScope, currentIds);
+      dismissNotifications(notificationScope, currentIds);
     }
     closeNotificationMenu();
+  }
+
+  function handleNotificationItemSelect() {
+    if (isAuthenticated && notificationItems.length) {
+      const currentIds = notificationItems.map((item) => item?.id);
+      markNotificationsAsRead(notificationScope, currentIds);
+      dismissNotifications(notificationScope, currentIds);
+    }
+    setNotificationMenuOpen(false);
   }
 
   function removeFromCartPreview(event, lineKey) {
@@ -757,7 +797,6 @@ export default function SiteHeader() {
   function renderNotificationMenuContent() {
     const roleLabel = user?.role === "admin" ? "Admin notifications" : "Your notifications";
     const primaryHref = notificationTargetHref;
-    const primaryLabel = user?.role === "admin" ? "Open admin dashboard" : "Open my account";
     const onSelect = () => {
       closeNotificationMenu();
     };
@@ -768,7 +807,7 @@ export default function SiteHeader() {
           <p>{isAuthenticated ? "No new notifications right now." : "Sign in to see notifications."}</p>
           {isAuthenticated ? (
             <Link href={primaryHref} className="notification-dropdown__cta" onClick={handleNotificationCenterSelect}>
-              {primaryLabel}
+              Open notification history
             </Link>
           ) : (
             <Link href="/login" className="notification-dropdown__cta" onClick={onSelect}>
@@ -784,29 +823,39 @@ export default function SiteHeader() {
         <div className="notification-dropdown__head">
           <strong>{roleLabel}</strong>
           <span>{unseenNotificationCount > 0 ? `${unseenNotificationCount} new` : "All caught up"}</span>
+          <button type="button" className="notification-dropdown__close" onClick={closeNotificationMenu} aria-label="Close notifications">
+            <span />
+            <span />
+          </button>
         </div>
         <div className="notification-dropdown__items">
-          {notificationItems.slice(0, 6).map((item) => {
-            const itemId = String(item?.id || "");
-            const isUnread = !notificationReadIds.includes(itemId);
-            return (
-              <Link
-                key={itemId}
-                href={item.href}
-                className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
-                onClick={onSelect}
-              >
-                <div className="notification-dropdown__meta">
-                  <strong>{item.title}</strong>
-                  <p>{item.body}</p>
-                </div>
-                <span>{formatNotificationTime(item.timestamp)}</span>
-              </Link>
-            );
-          })}
+          {latestHeaderNotification ? (
+            (() => {
+              const itemId = String(latestHeaderNotification?.id || "");
+              const isUnread = !notificationReadIds.includes(itemId);
+              return (
+                <Link
+                  key={itemId}
+                  href={latestHeaderNotification.href}
+                  className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
+                  onClick={handleNotificationItemSelect}
+                >
+                  <div className="notification-dropdown__meta">
+                    <strong>{latestHeaderNotification.title}</strong>
+                    <p>{latestHeaderNotification.body}</p>
+                  </div>
+                  <span>{formatNotificationTime(latestHeaderNotification.timestamp)}</span>
+                </Link>
+              );
+            })()
+          ) : (
+            <div className="notification-dropdown__empty notification-dropdown__empty--compact">
+              <p>No quick notifications right now.</p>
+            </div>
+          )}
         </div>
         <Link href={primaryHref} className="notification-dropdown__cta" onClick={handleNotificationCenterSelect}>
-          {primaryLabel}
+          Open notification history
         </Link>
       </div>
     );
@@ -1571,8 +1620,6 @@ export default function SiteHeader() {
                 <div
                   className={notificationMenuOpen ? "notification-dropdown is-open" : "notification-dropdown"}
                   ref={desktopNotificationMenuRef}
-                  onMouseEnter={() => openNotificationMenu()}
-                  onMouseLeave={() => closeNotificationMenu()}
                 >
                   <button
                     type="button"

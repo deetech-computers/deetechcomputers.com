@@ -194,6 +194,9 @@ export default function TrackOrderPage() {
           <div className="track-order-top panel">
             <div className="track-order-top__header">
               <div>
+                <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
+                  Back to My Orders
+                </Link>
                 <h2>Order Status</h2>
                 <p>Order ID : #{order.orderNumber || order._id}</p>
               </div>

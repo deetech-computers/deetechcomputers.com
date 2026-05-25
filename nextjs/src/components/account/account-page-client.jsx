@@ -12,12 +12,22 @@ import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { formatCurrency } from "@/lib/format";
+import {
+  buildAdminNotifications,
+  buildNotificationScope,
+  buildUserNotifications,
+  formatNotificationTime,
+  HEADER_NOTIFICATIONS_UPDATED_EVENT,
+  markNotificationsAsRead,
+  readNotificationReadIds,
+} from "@/lib/header-notifications";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { readWishlistEntries } from "@/lib/wishlist";
 import { GHANA_REGIONS, readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
   { id: "personal", label: "Personal Information" },
+  { id: "notifications", label: "Notifications" },
   { id: "orders", label: "My Orders" },
   { id: "address", label: "Manage Address" },
   { id: "messages", label: "Messages / Requests" },
@@ -31,6 +41,7 @@ const ACCOUNT_SECTIONS = [
 
 const ALLOWED_ACCOUNT_TABS = new Set([
   "personal",
+  "notifications",
   "orders",
   "address",
   "messages",
@@ -638,6 +649,63 @@ function MessagesSection({
   );
 }
 
+function NotificationsSection({ notifications, readIds, onOpenNotification, onMarkAllRead }) {
+  return (
+    <section className="account-dashboard__section">
+      <div className="account-dashboard__section-head account-dashboard__section-head--row">
+        <div>
+          <h2>Notifications</h2>
+          <p>Read your latest order and support updates here. The navbar only shows a quick preview, while the full history stays in this section.</p>
+        </div>
+        {notifications.length ? (
+          <button type="button" className="ghost-button" onClick={onMarkAllRead}>
+            Mark all as read
+          </button>
+        ) : null}
+      </div>
+
+      {!notifications.length ? (
+        <EmptyState
+          icon="orders"
+          title="No notifications yet"
+          description="Order updates and support replies will appear here as soon as they arrive."
+        />
+      ) : (
+        <div className="account-notification-history">
+          {notifications.map((item) => {
+            const itemId = String(item?.id || "");
+            const isUnread = !readIds.includes(itemId);
+            return (
+              <article key={itemId} className={isUnread ? "account-notification-card panel is-unread" : "account-notification-card panel"}>
+                <div className="account-notification-card__head">
+                  <div>
+                    <span className="account-notification-card__eyebrow">{item.kind === "message" ? "Support update" : "Order update"}</span>
+                    <h3>{item.title}</h3>
+                  </div>
+                  <div className="account-notification-card__status">
+                    <strong>{isUnread ? "Unread" : "Read"}</strong>
+                    <span>{formatNotificationTime(item.timestamp)}</span>
+                  </div>
+                </div>
+                <p>{item.body}</p>
+                <div className="account-dashboard__actions">
+                  <Link
+                    href={item.href}
+                    className="primary-link"
+                    onClick={() => onOpenNotification(itemId)}
+                  >
+                    Open update
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function AccountPageClient({ initialTab = "" }) {
   const router = useRouter();
   const { pushToast } = useToast();
@@ -673,6 +741,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const [activeSupportTicketId, setActiveSupportTicketId] = useState("");
   const [supportReplyDraft, setSupportReplyDraft] = useState("");
   const [sendingSupportReply, setSendingSupportReply] = useState(false);
+  const [notificationReadIds, setNotificationReadIds] = useState([]);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -703,6 +772,22 @@ export default function AccountPageClient({ initialTab = "" }) {
     if (typeof window === "undefined" || mobileNavOpen) return;
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection, mobileNavOpen]);
+
+  useEffect(() => {
+    const notificationScope = buildNotificationScope(user);
+    const syncNotificationStorage = (event) => {
+      if (event?.type === "storage" && event.key && !event.key.includes("deetech:header-notifications:")) return;
+      setNotificationReadIds(readNotificationReadIds(notificationScope));
+    };
+
+    syncNotificationStorage();
+    window.addEventListener("storage", syncNotificationStorage);
+    window.addEventListener(HEADER_NOTIFICATIONS_UPDATED_EVENT, syncNotificationStorage);
+    return () => {
+      window.removeEventListener("storage", syncNotificationStorage);
+      window.removeEventListener(HEADER_NOTIFICATIONS_UPDATED_EVENT, syncNotificationStorage);
+    };
+  }, [user]);
 
   function fillProfileForm(profile) {
     const nextProfile = profile || {};
@@ -894,6 +979,17 @@ export default function AccountPageClient({ initialTab = "" }) {
     router.replace(nextHref, { scroll: false });
   }
 
+  function handleNotificationOpen(notificationId) {
+    if (!notificationId) return;
+    const notificationScope = buildNotificationScope(user);
+    markNotificationsAsRead(notificationScope, [notificationId]);
+  }
+
+  function handleMarkAllNotificationsRead() {
+    const notificationScope = buildNotificationScope(user);
+    markNotificationsAsRead(notificationScope, accountNotifications.map((item) => item?.id));
+  }
+
   async function handleSupportReplySubmit(event) {
     event.preventDefault();
     const message = supportReplyDraft.trim();
@@ -917,7 +1013,21 @@ export default function AccountPageClient({ initialTab = "" }) {
     }
   }
 
+  const accountNotifications = user?.role === "admin"
+    ? buildAdminNotifications(orders, supportTickets)
+    : buildUserNotifications(orders, supportTickets);
+
   const content = useMemo(() => {
+    if (activeSection === "notifications") {
+      return (
+        <NotificationsSection
+          notifications={accountNotifications}
+          readIds={notificationReadIds}
+          onOpenNotification={handleNotificationOpen}
+          onMarkAllRead={handleMarkAllNotificationsRead}
+        />
+      );
+    }
     if (activeSection === "orders") {
       return <OrdersSection orders={orders} router={router} onDownloadInvoice={downloadInvoiceHtml} />;
     }
@@ -960,7 +1070,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       return <LogoutSection onLogout={handleLogout} />;
     }
     return <PersonalSection form={profileForm} onFieldChange={handleProfileFieldChange} onSubmit={handleProfileSubmit} submitting={savingProfile} />;
-  }, [activeSection, activeSupportTicketId, affiliateSummary, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, wishlistItems]);
+  }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, wishlistItems]);
 
   const activeSectionLabel = useMemo(() => {
     const match = ACCOUNT_SECTIONS.find((item) => item.id === activeSection);

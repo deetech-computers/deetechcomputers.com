@@ -43,7 +43,20 @@ export default async function createApp() {
   });
 
   // 🔒 Security & parsing
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://cdn.jsdelivr.net",
+            "https://static.cloudflareinsights.com",
+          ],
+        },
+      },
+    })
+  );
   const normalizeOrigin = (value) =>
     String(value || "")
       .trim()
