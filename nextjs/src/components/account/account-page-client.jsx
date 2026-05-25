@@ -27,10 +27,10 @@ import { GHANA_REGIONS, readCheckoutDraft, writeCheckoutDraft } from "@/lib/chec
 
 const ACCOUNT_SECTIONS = [
   { id: "personal", label: "Personal Information" },
-  { id: "notifications", label: "Notifications" },
   { id: "orders", label: "My Orders" },
   { id: "address", label: "Manage Address" },
   { id: "messages", label: "Messages / Requests" },
+  { id: "notifications", label: "Notifications" },
   { id: "admin", label: "Admin", href: "/admin", adminOnly: true },
   { id: "affiliates", label: "Affiliates" },
   { id: "wishlist", label: "Wishlist" },
