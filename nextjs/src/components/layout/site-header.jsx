@@ -1313,7 +1313,7 @@ export default function SiteHeader() {
         <div className="header-topbar">
           <div className="shell header-topbar__inner">
             <span>Free shipping on all laptops</span>
-            <span>Today's deal | Gift certificates</span>
+            <span>All products above 2,000</span>
           </div>
         </div>
 
