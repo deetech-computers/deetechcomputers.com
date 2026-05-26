@@ -57,11 +57,17 @@ export const API_ORIGIN =
 
 export function buildApiUrl(path = "") {
   const normalizedPath = String(path || "").trim();
-  if (!normalizedPath) return `${API_ORIGIN}/api`;
+  const runningInBrowser = typeof window !== "undefined";
+  if (!normalizedPath) {
+    return runningInBrowser ? "/api" : `${API_ORIGIN}/api`;
+  }
   if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
   const withApiPrefix = normalizedPath.startsWith("/api")
     ? normalizedPath
     : `/api/${normalizedPath.replace(/^\/+/, "")}`;
+  if (runningInBrowser) {
+    return withApiPrefix;
+  }
   return `${API_ORIGIN}${withApiPrefix}`;
 }
 

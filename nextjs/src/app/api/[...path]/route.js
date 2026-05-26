@@ -62,7 +62,7 @@ async function proxy(request, context) {
   const upstreamUrl = buildUpstreamUrl(params?.path, request.url);
   const method = request.method;
   const isReadMethod = method === "GET" || method === "HEAD";
-  const retries = isReadMethod ? 2 : 0;
+  const retries = isReadMethod ? 3 : 0;
   const init = {
     method,
     headers: buildRequestHeaders(request),
@@ -76,7 +76,7 @@ async function proxy(request, context) {
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
       const upstreamResponse = await fetch(upstreamUrl, {
         ...init,

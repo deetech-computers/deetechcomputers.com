@@ -11675,10 +11675,10 @@ button, input, select, textarea { font: inherit; }
   }
   .cart-row__remove-mobile {
     width: auto;
-    height: 42px;
-    min-width: 98px;
-    min-height: 42px;
-    padding: 0 12px;
+    height: 48px;
+    min-width: 112px;
+    min-height: 48px;
+    padding: 0 14px;
     border: 1px solid #e5ddd0;
     background: #fff;
     color: #1f1d1b;
@@ -11687,14 +11687,14 @@ button, input, select, textarea { font: inherit; }
     justify-content: center;
     gap: 6px;
     cursor: pointer;
-    border-radius: 999px;
+    border-radius: 0;
     white-space: nowrap;
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     font-weight: 600;
   }
   .cart-row__remove-mobile svg {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
   }
   .cart-summary {
     padding: 18px 16px;
