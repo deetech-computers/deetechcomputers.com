@@ -134,6 +134,76 @@ function buildStatusLabel(status) {
   return value.replace(/[-_]+/g, " ");
 }
 
+function uniqueNotificationsById(items) {
+  const seen = new Set();
+  return (Array.isArray(items) ? items : []).filter((item) => {
+    const id = normalizeText(item?.id);
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
+function resolveAdminTicketEvent(ticket) {
+  const latestCustomerReply = latestSupportMessage(ticket, "user");
+  if (latestCustomerReply) {
+    return {
+      eventTime: toTime(latestCustomerReply?.createdAt),
+      eventId: buildNotificationEventId(
+        "admin-ticket",
+        ticket?._id || ticket?.id,
+        toTime(latestCustomerReply?.createdAt)
+      ),
+    };
+  }
+
+  const createdTime = toTime(ticket?.createdAt);
+  return createdTime
+    ? {
+        eventTime: createdTime,
+        eventId: buildNotificationEventId("admin-ticket", ticket?._id || ticket?.id, createdTime),
+      }
+    : null;
+}
+
+function resolveUserOrderEvent(order) {
+  const sourceId = order?._id || order?.id;
+  const deliveredAt = toTime(order?.deliveredAt);
+  if (deliveredAt) {
+    return { eventTime: deliveredAt, eventKey: "delivered" };
+  }
+
+  const shippedStatus = normalizeRole(order?.orderStatus) === "shipped";
+  const shippedTime = toTime(order?.updatedAt || order?.paidAt);
+  if (shippedStatus && shippedTime) {
+    return { eventTime: shippedTime, eventKey: "shipped" };
+  }
+
+  const cancelled =
+    normalizeRole(order?.orderStatus) === "cancelled" ||
+    normalizeRole(order?.paymentStatus) === "failed";
+  const cancelledTime = toTime(order?.updatedAt);
+  if (cancelled && cancelledTime) {
+    return { eventTime: cancelledTime, eventKey: "cancelled" };
+  }
+
+  const accepted =
+    normalizeRole(order?.orderStatus) === "processing" ||
+    normalizeRole(order?.paymentStatus) === "paid";
+  const acceptedTime = toTime(order?.paidAt || order?.updatedAt);
+  const createdTime = toTime(order?.createdAt);
+  if (accepted && acceptedTime && acceptedTime > createdTime) {
+    return { eventTime: acceptedTime, eventKey: "processing" };
+  }
+
+  if (accepted && toTime(order?.paidAt)) {
+    return { eventTime: toTime(order?.paidAt), eventKey: "processing" };
+  }
+
+  if (!sourceId) return null;
+  return null;
+}
+
 function latestSupportMessage(ticket, sender) {
   const thread = Array.isArray(ticket?.messages) ? ticket.messages : [];
   return thread
@@ -159,36 +229,37 @@ export function buildAdminNotifications(orders, tickets) {
 
   const supportNotifications = (Array.isArray(tickets) ? tickets : [])
     .map((ticket) => {
-      const latestCustomerReply = latestSupportMessage(ticket, "user");
-      const eventTime = toTime(latestCustomerReply?.createdAt || ticket?.createdAt || ticket?.updatedAt);
-      if (!eventTime) return null;
+      const event = resolveAdminTicketEvent(ticket);
+      if (!event?.eventTime || !event?.eventId) return null;
       return {
-        id: buildNotificationEventId("admin-ticket", ticket?._id || ticket?.id, eventTime),
+        id: event.eventId,
         href: "/admin/messages",
         title: "New customer message",
         body: `${normalizeText(ticket?.subject) || "Support request"} from ${normalizeText(ticket?.name || ticket?.email || "customer")}.`,
-        timestamp: eventTime,
+        timestamp: event.eventTime,
         kind: "message",
       };
     })
     .filter(Boolean);
 
-  return [...orderNotifications, ...supportNotifications].sort((a, b) => b.timestamp - a.timestamp);
+  return uniqueNotificationsById([...orderNotifications, ...supportNotifications]).sort(
+    (a, b) => b.timestamp - a.timestamp
+  );
 }
 
 export function buildUserNotifications(orders, tickets) {
   const orderNotifications = (Array.isArray(orders) ? orders : [])
     .map((order) => {
-      const createdTime = toTime(order?.createdAt);
-      const eventTime = toTime(order?.deliveredAt || order?.paidAt || order?.updatedAt || order?.createdAt);
-      if (!eventTime || eventTime <= createdTime) return null;
-      const statusLabel = buildStatusLabel(order?.orderStatus);
+      const event = resolveUserOrderEvent(order);
+      if (!event?.eventTime || !event?.eventKey) return null;
+      const statusLabel =
+        event.eventKey === "processing" ? "accepted" : buildStatusLabel(event.eventKey);
       return {
-        id: buildNotificationEventId("user-order", order?._id || order?.id, eventTime),
+        id: `user-order-${normalizeText(order?._id || order?.id)}-${event.eventKey}`,
         href: normalizeText(order?._id || order?.id) ? `/orders/${normalizeText(order?._id || order?.id)}` : "/account?tab=orders",
         title: `Order #${buildOrderLabel(order)} ${statusLabel}`,
         body: "Your order record has a new update. Open it to track the latest progress.",
-        timestamp: eventTime,
+        timestamp: event.eventTime,
         kind: "order",
       };
     })
@@ -210,7 +281,33 @@ export function buildUserNotifications(orders, tickets) {
     })
     .filter(Boolean);
 
-  return [...orderNotifications, ...supportNotifications].sort((a, b) => b.timestamp - a.timestamp);
+  return uniqueNotificationsById([...orderNotifications, ...supportNotifications]).sort(
+    (a, b) => b.timestamp - a.timestamp
+  );
+}
+
+export function sanitizeNotificationIds(notifications, ids) {
+  const validIds = new Set(
+    (Array.isArray(notifications) ? notifications : [])
+      .map((item) => normalizeText(item?.id))
+      .filter(Boolean)
+  );
+
+  return (Array.isArray(ids) ? ids : [])
+    .map((value) => normalizeText(value))
+    .filter((value) => value && validIds.has(value));
+}
+
+export function buildQuickNotificationItems(notifications, readIds = [], dismissedIds = []) {
+  const readSet = new Set((Array.isArray(readIds) ? readIds : []).map((value) => normalizeText(value)));
+  const dismissedSet = new Set((Array.isArray(dismissedIds) ? dismissedIds : []).map((value) => normalizeText(value)));
+
+  return uniqueNotificationsById(notifications)
+    .filter((item) => {
+      const id = normalizeText(item?.id);
+      return id && !readSet.has(id) && !dismissedSet.has(id);
+    })
+    .sort((a, b) => Number(b?.timestamp || 0) - Number(a?.timestamp || 0));
 }
 
 export function formatNotificationTime(value) {

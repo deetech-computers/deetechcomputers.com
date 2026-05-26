@@ -35,6 +35,7 @@ import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 import {
   dismissNotifications,
   buildAdminNotifications,
+  buildQuickNotificationItems,
   buildNotificationScope,
   buildUserNotifications,
   formatNotificationTime,
@@ -42,6 +43,7 @@ import {
   markNotificationsAsRead,
   readNotificationDismissedIds,
   readNotificationReadIds,
+  sanitizeNotificationIds,
 } from "@/lib/header-notifications";
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: "admin" };
@@ -292,13 +294,15 @@ export default function SiteHeader() {
   const isMobileViewport = viewportWidth <= 980;
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
   const notificationScope = buildNotificationScope(user);
-  const headerNotificationItems = notificationItems.filter(
-    (item) => !notificationDismissedIds.includes(String(item?.id || ""))
+  const safeNotificationReadIds = sanitizeNotificationIds(notificationItems, notificationReadIds);
+  const safeNotificationDismissedIds = sanitizeNotificationIds(notificationItems, notificationDismissedIds);
+  const quickNotificationItems = buildQuickNotificationItems(
+    notificationItems,
+    safeNotificationReadIds,
+    safeNotificationDismissedIds
   );
-  const latestHeaderNotification = headerNotificationItems[0] || null;
-  const unseenNotificationCount = headerNotificationItems.filter(
-    (item) => !notificationReadIds.includes(String(item?.id || ""))
-  ).length;
+  const latestHeaderNotification = quickNotificationItems[0] || null;
+  const unseenNotificationCount = quickNotificationItems.length;
   const notificationBadgeText = String(unseenNotificationCount || 0);
   const notificationTargetHref = "/account?tab=notifications";
   const desktopCategoryNavItems = categoryNavItems.filter((item) => item.slug !== "others");
@@ -741,8 +745,8 @@ export default function SiteHeader() {
   }
 
   function closeNotificationMenu() {
-    if (isAuthenticated && notificationItems.length) {
-      const currentIds = notificationItems.map((item) => item?.id);
+    if (isAuthenticated && quickNotificationItems.length) {
+      const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
       dismissNotifications(notificationScope, currentIds);
     }
@@ -754,15 +758,15 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
     setAccountMenuOpen(false);
     setCartDrawerOpen(false);
-    if (isAuthenticated && notificationItems.length) {
-      markNotificationsAsRead(notificationScope, notificationItems.map((item) => item?.id));
+    if (isAuthenticated && quickNotificationItems.length) {
+      markNotificationsAsRead(notificationScope, quickNotificationItems.map((item) => item?.id));
     }
     setNotificationMenuOpen(true);
   }
 
   function handleNotificationCenterSelect() {
     if (isAuthenticated) {
-      const currentIds = notificationItems.map((item) => item?.id);
+      const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
       dismissNotifications(notificationScope, currentIds);
     }
@@ -770,8 +774,8 @@ export default function SiteHeader() {
   }
 
   function handleNotificationItemSelect() {
-    if (isAuthenticated && notificationItems.length) {
-      const currentIds = notificationItems.map((item) => item?.id);
+    if (isAuthenticated && quickNotificationItems.length) {
+      const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
       dismissNotifications(notificationScope, currentIds);
     }
@@ -801,7 +805,7 @@ export default function SiteHeader() {
       closeNotificationMenu();
     };
 
-    if (!notificationItems.length) {
+    if (!quickNotificationItems.length) {
       return (
         <div className="notification-dropdown__empty">
           <p>{isAuthenticated ? "No new notifications right now." : "Sign in to see notifications."}</p>
@@ -832,7 +836,7 @@ export default function SiteHeader() {
           {latestHeaderNotification ? (
             (() => {
               const itemId = String(latestHeaderNotification?.id || "");
-              const isUnread = !notificationReadIds.includes(itemId);
+              const isUnread = !safeNotificationReadIds.includes(itemId);
               return (
                 <Link
                   key={itemId}
