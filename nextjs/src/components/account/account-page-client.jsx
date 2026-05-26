@@ -134,6 +134,28 @@ function getOrderItemImage(item) {
   );
 }
 
+function getOrderItemsPrice(order) {
+  const persisted = Number(order?.itemsPrice || 0);
+  if (persisted > 0) return persisted;
+  return getOrderLineItems(order).reduce(
+    (sum, item) => sum + Number(item?.price || 0) * Number(item?.qty || 0),
+    0
+  );
+}
+
+function getOrderDiscountAmount(order) {
+  return Math.max(0, Number(order?.discountAmount || 0));
+}
+
+function getOrderShippingPrice(order) {
+  const persisted = Number(order?.shippingPrice || 0);
+  if (persisted > 0) return persisted;
+  const total = Number(order?.totalPrice || 0);
+  const itemsPrice = getOrderItemsPrice(order);
+  const discountAmount = getOrderDiscountAmount(order);
+  return Math.max(0, Number((total - Math.max(0, itemsPrice - discountAmount)).toFixed(2)));
+}
+
 function getReviewStars(rating) {
   const value = Math.max(0, Math.min(5, Number(rating || 0)));
   return Array.from({ length: 5 }, (_, index) => (
@@ -226,6 +248,9 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
       <div className="account-dashboard__stack">
         {orders.length ? orders.map((order) => {
           const items = getOrderLineItems(order);
+          const itemsPrice = getOrderItemsPrice(order);
+          const shippingPrice = getOrderShippingPrice(order);
+          const discountAmount = getOrderDiscountAmount(order);
           return (
             <article key={order._id} className="account-order-card panel">
               <div className="account-order-card__summary">
@@ -236,10 +261,16 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                 <div>
                   <span>Total Payment</span>
                   <strong>{formatCurrency(Number(order.totalPrice || 0))}</strong>
+                  <small>
+                    {shippingPrice > 0
+                      ? `Subtotal ${formatCurrency(itemsPrice)} + Delivery ${formatCurrency(shippingPrice)}`
+                      : `Subtotal ${formatCurrency(itemsPrice)} + Free Delivery`}
+                  </small>
                 </div>
                 <div>
                   <span>Payment Method</span>
                   <strong>{paymentLabel(order.paymentMethod)}</strong>
+                  {discountAmount > 0 ? <small>Discount {formatCurrency(discountAmount)}</small> : null}
                 </div>
                 <div>
                   <span>{order?.isDelivered ? "Delivered Date" : "Order Date"}</span>

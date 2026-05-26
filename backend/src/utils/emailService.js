@@ -62,6 +62,10 @@ function paymentMethodLabel(method) {
   return map[String(method || "").toLowerCase()] || (method || "N/A");
 }
 
+function shippingMethodLabel(shippingPrice) {
+  return Number(shippingPrice || 0) > 0 ? `Standard Delivery (${money(shippingPrice)})` : "Free Delivery";
+}
+
 function canUseOrderEmailJs() {
   return Boolean(
     EMAILJS_SERVICE_ID &&
@@ -271,6 +275,9 @@ export async function sendOrderNotification(to, orderDetails = {}) {
       customer_name: orderDetails.customerName || "Customer",
       customer_email: orderDetails.customerEmail || "",
       customer_phone: orderDetails.mobileNumber || "",
+      order_subtotal: `GH₵ ${Number(orderDetails.itemsPrice || 0).toFixed(2)}`,
+      shipping_fee: `GH₵ ${Number(orderDetails.shippingPrice || 0).toFixed(2)}`,
+      discount_amount: `GH₵ ${Number(orderDetails.discountAmount || 0).toFixed(2)}`,
       order_total: `GH₵ ${Number(orderDetails.totalPrice || 0).toFixed(2)}`,
       order_items: orderItemsBlocks || "<div>No items listed</div>",
       order_date: created.date,
@@ -280,7 +287,7 @@ export async function sendOrderNotification(to, orderDetails = {}) {
         /^,\s*|\s*,\s*$/g,
         ""
       ),
-      shipping_method: "Free Nationwide Delivery",
+      shipping_method: shippingMethodLabel(orderDetails.shippingPrice),
       subject: `NEW ORDER #${orderDetails.id || "N/A"} - ACTION REQUIRED`,
       customer_notes: orderDetails.guestNotes || "No special instructions",
       order_status: orderDetails.orderStatus || "NEW ORDER",
@@ -356,8 +363,23 @@ export async function sendOrderNotification(to, orderDetails = {}) {
 
           <h3 style="margin:18px 0 10px;padding-bottom:8px;border-bottom:2px solid #007bff;">Items (${items.length} items, ${totalQty} units)</h3>
           <div style="background:#f8f9fa;border-radius:6px;padding:10px 12px;">${orderItemsHtml || "<em>No items</em>"}</div>
-          <div style="background:#e9ecef;padding:12px;border-radius:5px;margin-top:12px;font-size:18px;font-weight:bold;color:#d9534f;">
-            Total: ${money(orderDetails.totalPrice)}
+          <div style="background:#e9ecef;padding:12px;border-radius:5px;margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Subtotal</span>
+              <strong>${money(orderDetails.itemsPrice)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Delivery Fee</span>
+              <strong>${Number(orderDetails.shippingPrice || 0) > 0 ? money(orderDetails.shippingPrice) : "FREE"}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Discount</span>
+              <strong>-${money(orderDetails.discountAmount)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:bold;color:#d9534f;border-top:1px solid #cfd4da;padding-top:10px;">
+              <span>Total</span>
+              <strong>${money(orderDetails.totalPrice)}</strong>
+            </div>
           </div>
 
           <div style="text-align:center;margin-top:18px;">
@@ -407,7 +429,9 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       customer_email: to,
       customer_phone: orderDetails.mobileNumber || "",
       order_id: orderId,
-      order_subtotal: Number(orderDetails.totalPrice || 0).toFixed(2),
+      order_subtotal: Number(orderDetails.itemsPrice || 0).toFixed(2),
+      shipping_fee: Number(orderDetails.shippingPrice || 0).toFixed(2),
+      discount_amount: Number(orderDetails.discountAmount || 0).toFixed(2),
       order_total: Number(orderDetails.totalPrice || 0).toFixed(2),
       currency_symbol: "GH₵ ",
       order_items: orderItemsRows || "<tr><td colspan='3'>No items listed</td></tr>",
@@ -424,7 +448,7 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       website_url: websiteUrl,
       order_tracking_url: `${websiteUrl}/order-completed`,
       estimated_delivery: "24 hours Delivery",
-      shipping_method: "Free Nationwide Delivery",
+      shipping_method: shippingMethodLabel(orderDetails.shippingPrice),
       subject: `Order Confirmation #${orderId} - ${COMPANY_NAME}`,
     });
     return true;
@@ -434,7 +458,10 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
   const created = formatDateTime(orderDetails.createdAt);
   const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
   const trackingUrl = frontendBaseUrl ? `${frontendBaseUrl}/orders.html?tab=orders` : "#";
-  const subtotal = Number(orderDetails.totalPrice || 0);
+  const subtotal = Number(orderDetails.itemsPrice || 0);
+  const shipping = Number(orderDetails.shippingPrice || 0);
+  const discountAmount = Number(orderDetails.discountAmount || 0);
+  const total = Number(orderDetails.totalPrice || 0);
   const rows = items
     .map((item) => {
       const lineTotal = item.qty * item.price;
@@ -489,9 +516,17 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
               <span>Subtotal</span>
               <strong>${money(subtotal)}</strong>
             </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Delivery Fee</span>
+              <strong>${shipping > 0 ? money(shipping) : "FREE"}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Coupon Discount</span>
+              <strong>-${money(discountAmount)}</strong>
+            </div>
             <div style="display:flex;justify-content:space-between;font-size:18px;border-top:1px solid #cfd4da;padding-top:10px;">
               <span><strong>Total</strong></span>
-              <strong style="color:#d9534f;">${money(subtotal)}</strong>
+              <strong style="color:#d9534f;">${money(total)}</strong>
             </div>
           </div>
 
@@ -511,7 +546,7 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
     </html>
   `;
 
-  const text = `Your order ${orderDetails.id || ""} has been confirmed. Total: ${money(subtotal)}.`;
+  const text = `Your order ${orderDetails.id || ""} has been confirmed. Total: ${money(total)}.`;
 
   await sendEmail({
     to,

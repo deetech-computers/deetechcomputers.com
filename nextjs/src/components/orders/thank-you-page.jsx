@@ -213,10 +213,10 @@ export default function OrderCompletedPage() {
               </div>
 
               <div className="order-complete__totals">
-                <div className="order-complete__totals-line">
-                  <span>Shipping</span>
-                  <strong>{summary.shipping === 0 ? formatCurrency(0) : formatCurrency(summary.shipping)}</strong>
-                </div>
+              <div className="order-complete__totals-line">
+                <span>Shipping</span>
+                <strong>{summary.shipping === 0 ? "FREE" : formatCurrency(summary.shipping)}</strong>
+              </div>
                 <div className="order-complete__totals-line">
                   <span>Taxes</span>
                   <strong>{formatCurrency(0)}</strong>

@@ -69,11 +69,8 @@ export default function HubtelPaymentSuccessClient() {
               estimatedDeliveryDate: buildEstimatedDelivery(order?.paidAt || order?.createdAt),
               paymentMethod: order?.paymentMethod || "hubtel",
               total: Number(order?.totalPrice || 0),
-              subtotal:
-                Number(order?.discountAmount || 0) > 0
-                  ? Number(order?.totalPrice || 0) + Number(order?.discountAmount || 0)
-                  : Number(order?.totalPrice || 0),
-              shipping: 0,
+              subtotal: Number(order?.itemsPrice || 0),
+              shipping: Number(order?.shippingPrice || 0),
               discountCode: String(order?.discountCode || pending?.discountCode || "").trim().toUpperCase(),
               discountPercent: Number(order?.discountPercent || pending?.discountPercent || 0),
               discountAmount: Number(order?.discountAmount || pending?.discountAmount || 0),

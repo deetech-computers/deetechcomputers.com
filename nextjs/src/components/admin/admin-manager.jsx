@@ -1121,6 +1121,9 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
             <div className="admin-chip-row">
               <span className={`admin-chip ${statusClass(item.orderStatus)}`}>{item.orderStatus || "pending"}</span>
               <span className="admin-chip is-neutral">{formatCurrency(Number(item.totalPrice || 0))}</span>
+              <span className="admin-chip is-neutral">
+                {Number(item.shippingPrice || 0) > 0 ? `Delivery ${formatCurrency(Number(item.shippingPrice || 0))}` : "Delivery FREE"}
+              </span>
               <span className="admin-chip is-neutral">{item.paymentStatus || "pending"}</span>
               <span className="admin-chip is-neutral">{item.paymentMethod || "N/A"}</span>
             </div>
@@ -1130,6 +1133,9 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
         {isExpanded ? (
           <div id={orderBodyId} className="admin-collapsible__body">
         <div className="admin-meta-grid">
+          <span>Subtotal <strong>{formatCurrency(Number(item.itemsPrice || 0))}</strong></span>
+          <span>Delivery Fee <strong>{Number(item.shippingPrice || 0) > 0 ? formatCurrency(Number(item.shippingPrice || 0)) : "FREE"}</strong></span>
+          <span>Discount <strong>-{formatCurrency(Number(item.discountAmount || 0))}</strong></span>
           <span>Total <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong></span>
           <span>Payment <strong>{item.paymentMethod || "N/A"}</strong></span>
           <span>Status <strong>{item.paymentStatus || "pending"}</strong></span>

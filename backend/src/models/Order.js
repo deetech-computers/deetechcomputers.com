@@ -101,6 +101,21 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    itemsPrice: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    shippingPrice: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    discountedItemsPrice: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
     discountCode: { type: String, trim: true },
     discountPercent: { type: Number, min: 0, max: 100 },
     discountAmount: { type: Number, min: 0, default: 0 },

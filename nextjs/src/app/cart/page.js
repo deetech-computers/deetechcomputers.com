@@ -7,8 +7,9 @@ import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
 import { API_BASE } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
-import { readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
+import { buildOrderItems, readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
+import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
@@ -22,6 +23,8 @@ export default function CartPage() {
     percent: 0,
   });
   const couponValidationSeq = useRef(0);
+  const pricingPreviewSeq = useRef(0);
+  const [pricingPreview, setPricingPreview] = useState(null);
 
   const itemCount = useMemo(
     () => items.reduce((sum, item) => sum + Number(item.qty || 0), 0),
@@ -34,9 +37,58 @@ export default function CartPage() {
     return (subtotal * percent) / 100;
   }, [appliedCoupon.percent, subtotal]);
 
-  const shipping = 0;
-  const taxes = 0;
-  const total = Math.max(0, subtotal + shipping + taxes - couponDiscount);
+  const localPricing = useMemo(
+    () => buildCheckoutPricing({ items, subtotal, discountAmount: couponDiscount }),
+    [items, subtotal, couponDiscount]
+  );
+  const pricingPreviewKey = useMemo(
+    () =>
+      JSON.stringify({
+        orderItems: buildOrderItems(items),
+        discountCode: String(appliedCoupon.code || "").trim().toUpperCase(),
+        subtotal: Number(subtotal || 0),
+        discountAmount: Number(couponDiscount || 0),
+      }),
+    [appliedCoupon.code, couponDiscount, items, subtotal]
+  );
+  const pricing =
+    pricingPreview?.key === pricingPreviewKey ? pricingPreview.value : localPricing;
+  const shipping = pricing.shipping;
+  const taxes = pricing.taxes;
+  const total = pricing.total;
+
+  useEffect(() => {
+    const orderItems = buildOrderItems(items);
+    const seq = ++pricingPreviewSeq.current;
+
+    if (!orderItems.length) {
+      return;
+    }
+
+    let ignore = false;
+
+    async function syncPricingPreview() {
+      try {
+        const preview = await fetchCheckoutPricingPreview({
+          orderItems,
+          items,
+          subtotal,
+          discountAmount: couponDiscount,
+          discountCode: appliedCoupon.code,
+        });
+        if (ignore || seq !== pricingPreviewSeq.current) return;
+        setPricingPreview({ key: pricingPreviewKey, value: preview });
+      } catch {
+        if (ignore || seq !== pricingPreviewSeq.current) return;
+        setPricingPreview({ key: pricingPreviewKey, value: localPricing });
+      }
+    }
+
+    syncPricingPreview();
+    return () => {
+      ignore = true;
+    };
+  }, [appliedCoupon.code, couponDiscount, items, localPricing, pricingPreviewKey, subtotal]);
 
   useEffect(() => {
     const existingDraft = readCheckoutDraft() || {};

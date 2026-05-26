@@ -45,6 +45,25 @@ function normalizeList(payload, key) {
   return [];
 }
 
+function getOrderItemsPrice(order) {
+  const persisted = Number(order?.itemsPrice || 0);
+  if (persisted > 0) return persisted;
+  const items = Array.isArray(order?.orderItems) ? order.orderItems : [];
+  return items.reduce(
+    (sum, item) => sum + Number(item?.price || 0) * Number(item?.qty || 0),
+    0
+  );
+}
+
+function getOrderShippingPrice(order) {
+  const persisted = Number(order?.shippingPrice || 0);
+  if (persisted > 0) return persisted;
+  const total = Number(order?.totalPrice || 0);
+  const itemsPrice = getOrderItemsPrice(order);
+  const discountAmount = Math.max(0, Number(order?.discountAmount || 0));
+  return Math.max(0, Number((total - Math.max(0, itemsPrice - discountAmount)).toFixed(2)));
+}
+
 function DashboardCard({ label, value, helper, tone = "" }) {
   return (
     <article className={`admin-dash-card panel ${tone}`.trim()}>
@@ -309,6 +328,11 @@ export default function AdminDashboard() {
                           <p>{order?.shippingName || order?.guestName || order?.shippingEmail || "Customer"}</p>
                         </div>
                         <div>
+                          <p>
+                            {getOrderShippingPrice(order) > 0
+                              ? `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Delivery ${formatCurrency(getOrderShippingPrice(order))}`
+                              : `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Free Delivery`}
+                          </p>
                           <span className={`admin-chip ${getStatusTone(order?.orderStatus)}`}>{order?.orderStatus || "pending"}</span>
                           <p>{paymentMethodLabel(order?.paymentMethod)} • {formatCurrency(Number(order?.totalPrice || 0))}</p>
                         </div>

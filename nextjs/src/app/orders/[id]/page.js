@@ -203,6 +203,11 @@ export default function TrackOrderPage() {
               <div className="track-order-top__meta">
                 <span>{paymentLabel(order.paymentMethod)}</span>
                 <strong>{formatCurrency(Number(order.totalPrice || 0))}</strong>
+                <small>
+                  {Number(order.shippingPrice || 0) > 0
+                    ? `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Delivery ${formatCurrency(Number(order.shippingPrice || 0))}`
+                    : `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Free Delivery`}
+                </small>
               </div>
             </div>
 

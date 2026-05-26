@@ -169,6 +169,7 @@ export function CartProvider({ children }) {
           productId: id,
           lineKey,
           name: product.name,
+          category: product.category || "",
           price: Number(getProductPrice(product) || 0) + Number(resolvedUpgrades.totalDelta || 0),
           image: resolveProductImage(product.images?.[0] || product.image || ""),
           countInStock: stock,

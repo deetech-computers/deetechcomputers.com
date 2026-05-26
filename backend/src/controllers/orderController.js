@@ -17,6 +17,7 @@ import {
 import { sendOrderNotification, sendOrderConfirmation } from "../utils/emailService.js";
 import { initiateHubtelCheckout } from "../utils/hubtelService.js";
 import { deleteStoredMedia } from "../utils/mediaStorage.js";
+import { buildOrderPricing, getCommissionableAmount } from "../utils/orderPricing.js";
 import { getProductPricing } from "../utils/productPricing.js";
 import {
   buildUpgradeSignature,
@@ -24,9 +25,11 @@ import {
   resolveProductUpgradeSelection,
 } from "../utils/productUpgrades.js";
 
-async function processOrderItems(orderItems, session) {
+async function processOrderItems(orderItems, session, options = {}) {
   let total = 0;
   const processedItems = [];
+  const itemCategories = [];
+  const enforceStock = options.enforceStock !== false;
 
   for (const item of orderItems) {
     const qty = Number(item?.qty);
@@ -48,7 +51,7 @@ async function processOrderItems(orderItems, session) {
         0
     );
     const safeStock = Number.isFinite(currentStock) ? Math.max(0, currentStock) : 0;
-    if (safeStock < qty) {
+    if (enforceStock && safeStock < qty) {
       throw new Error(`Not enough stock for ${product.name}`);
     }
 
@@ -61,6 +64,7 @@ async function processOrderItems(orderItems, session) {
       Number(resolvedUpgrades.totalDelta || 0);
 
     total += qty * price;
+    itemCategories.push(product?.category || "");
     processedItems.push({
       product: product._id,
       qty,
@@ -79,7 +83,43 @@ async function processOrderItems(orderItems, session) {
     });
   }
 
-  return { total, processedItems };
+  return { total, processedItems, itemCategories };
+}
+
+export async function previewOrderPricing(req, res) {
+  const payload = req.body?.order ? JSON.parse(req.body.order) : req.body;
+  const orderItems = Array.isArray(payload?.orderItems) ? payload.orderItems : [];
+  const discountCode = String(payload?.discountCode || "").trim();
+
+  if (!orderItems.length) {
+    return res.json({
+      itemsPrice: 0,
+      shippingPrice: 0,
+      discountedItemsPrice: 0,
+      discountAmount: 0,
+      discountPercent: 0,
+      totalPrice: 0,
+      discountCode: "",
+    });
+  }
+
+  const { total, itemCategories } = await processOrderItems(orderItems, null, { enforceStock: false });
+  const discounted = await applyDiscount(discountCode, total, null);
+  const pricing = buildOrderPricing({
+    itemsPrice: total,
+    discountPercent: discounted.percent,
+    categoryInputs: itemCategories,
+  });
+
+  res.json({
+    itemsPrice: pricing.itemsPrice,
+    shippingPrice: pricing.shippingPrice,
+    discountedItemsPrice: pricing.discountedItemsPrice,
+    discountAmount: pricing.discountAmount,
+    discountPercent: pricing.discountPercent,
+    totalPrice: pricing.totalPrice,
+    discountCode: discounted.discount?.code || "",
+  });
 }
 
 function getHubtelCheckoutUrl(response) {
@@ -288,13 +328,29 @@ function buildHubtelStatusToken(clientReference) {
     .digest("hex");
 }
 
-function buildHubtelCallbackUrl(baseUrl) {
+function buildHubtelCallbackSignature(clientReference) {
+  if (!HUBTEL_CALLBACK_TOKEN) {
+    throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
+  }
+  const reference = String(clientReference || "").trim();
+  if (!reference) return "";
+  return crypto
+    .createHmac("sha256", HUBTEL_CALLBACK_TOKEN)
+    .update(`hubtel-callback:${reference}`)
+    .digest("hex");
+}
+
+function buildHubtelCallbackUrl(baseUrl, clientReference) {
   const trimmedBase = String(baseUrl || "").trim();
   if (!trimmedBase) return "";
   if (!HUBTEL_CALLBACK_TOKEN) {
     throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
   }
-  return `${trimmedBase}?token=${encodeURIComponent(HUBTEL_CALLBACK_TOKEN)}`;
+  const query = new URLSearchParams({
+    token: String(HUBTEL_CALLBACK_TOKEN || "").trim(),
+    sig: buildHubtelCallbackSignature(clientReference),
+  });
+  return `${trimmedBase}?${query.toString()}`;
 }
 
 function buildHubtelResultUrl(baseUrl, clientReference, statusToken) {
@@ -318,6 +374,73 @@ function defaultEstimatedDeliveryFrom(baseDateInput) {
   const base = new Date(baseDateInput || Date.now());
   if (Number.isNaN(base.getTime())) return null;
   return new Date(base.getTime() + 24 * 60 * 60 * 1000);
+}
+
+function extractHubtelAmount(payload = {}, rawData = {}) {
+  const candidates = [
+    rawData?.Amount,
+    rawData?.amount,
+    payload?.Amount,
+    payload?.amount,
+    rawData?.Data?.Amount,
+    rawData?.Data?.amount,
+  ];
+
+  for (const value of candidates) {
+    const amount = Number(value);
+    if (Number.isFinite(amount) && amount >= 0) {
+      return Number(amount.toFixed(2));
+    }
+  }
+  return null;
+}
+
+function extractHubtelGatewayReference(payload = {}, rawData = {}) {
+  const candidates = [
+    rawData?.PaylinkId,
+    rawData?.paylinkId,
+    rawData?.CheckoutId,
+    rawData?.checkoutId,
+    rawData?.TransactionId,
+    rawData?.transactionId,
+    payload?.PaylinkId,
+    payload?.paylinkId,
+    payload?.CheckoutId,
+    payload?.checkoutId,
+    payload?.TransactionId,
+    payload?.transactionId,
+  ];
+
+  for (const value of candidates) {
+    const normalized = String(value || "").trim();
+    if (normalized) return normalized;
+  }
+  return "";
+}
+
+function listExpectedHubtelGatewayReferences(order = {}) {
+  const payloadData =
+    order?.paymentGatewayPayload?.data && typeof order.paymentGatewayPayload.data === "object"
+      ? order.paymentGatewayPayload.data
+      : {};
+  return [
+    order?.paymentGatewayReference,
+    payloadData?.paylinkId,
+    payloadData?.PaylinkId,
+    payloadData?.checkoutId,
+    payloadData?.CheckoutId,
+    payloadData?.transactionId,
+    payloadData?.TransactionId,
+  ]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+}
+
+function amountsMatch(left, right) {
+  const a = Number(left);
+  const b = Number(right);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return false;
+  return Math.abs(a - b) < 0.01;
 }
 
 async function reserveStockAdjustments(adjustments = []) {
@@ -432,14 +555,14 @@ async function findRecentDuplicateOrder({
 
 async function applyDiscount(codeRaw, total, userId, session) {
   const code = String(codeRaw || "").trim().toUpperCase();
-  if (!code) return { total, discount: null };
+  if (!code) return { total, discount: null, percent: 0 };
 
   const finder = DiscountCode.findOne({ code, used: false });
   const doc = session ? await finder.session(session) : await finder;
 
   if (!doc) {
     // Discount codes should never block order placement.
-    return { total, discount: null };
+    return { total, discount: null, percent: 0 };
   }
 
   const percent = doc.percent || 0;
@@ -448,6 +571,7 @@ async function applyDiscount(codeRaw, total, userId, session) {
 
   return {
     total: newTotal,
+    percent,
     discount: { code: doc.code, percent, amount: discountAmount, _id: doc._id, userId },
   };
 }
@@ -567,6 +691,10 @@ async function sendOrderEmailsBestEffort(order) {
     orderStatus: order.orderStatus,
     guestNotes: String(order.guestNotes || "").trim(),
     paymentScreenshotUrl: String(order.paymentScreenshotUrl || "").trim(),
+    itemsPrice: Number(order.itemsPrice || 0),
+    shippingPrice: Number(order.shippingPrice || 0),
+    discountedItemsPrice: Number(order.discountedItemsPrice || 0),
+    discountAmount: Number(order.discountAmount || 0),
     totalPrice: Number(order.totalPrice || 0),
     orderItems: buildOrderItemsForEmail(order),
   };
@@ -630,8 +758,9 @@ async function reconcileAffiliateOnOrder(order) {
   const commissionRate = Number(
     order.affiliateCommissionRate > 0 ? order.affiliateCommissionRate : affiliate.commissionRate || 5
   );
+  const commissionableAmount = getCommissionableAmount(order);
   const commissionAmount = Number(
-    ((Number(order.totalPrice || 0) * commissionRate) / 100).toFixed(2)
+    ((commissionableAmount * commissionRate) / 100).toFixed(2)
   );
 
   let changed = false;
@@ -647,7 +776,7 @@ async function reconcileAffiliateOnOrder(order) {
     order.affiliateCommissionRate = commissionRate;
     changed = true;
   }
-  if (Number(order.affiliateCommissionAmount || 0) <= 0 && Number(order.totalPrice || 0) > 0) {
+  if (Number(order.affiliateCommissionAmount || 0) <= 0 && commissionableAmount > 0) {
     order.affiliateCommissionAmount = commissionAmount;
     changed = true;
   }
@@ -690,11 +819,12 @@ async function upsertReferralForOrder(order, session = null) {
 
   const resolvedCode = normalizeAffiliateCode(order.affiliateCode) || normalizeAffiliateCode(affiliate.code);
   const resolvedRate = Number(order.affiliateCommissionRate || affiliate.commissionRate || 5);
+  const commissionableAmount = getCommissionableAmount(order);
   const resolvedAmount = Number(
     (
       Number(order.affiliateCommissionAmount || 0) > 0
         ? Number(order.affiliateCommissionAmount || 0)
-        : (Number(order.totalPrice || 0) * resolvedRate) / 100
+        : (commissionableAmount * resolvedRate) / 100
     ).toFixed(2)
   );
 
@@ -721,7 +851,7 @@ async function upsertReferralForOrder(order, session = null) {
     order: order._id,
     affiliateCode: resolvedCode,
     commissionRate: resolvedRate,
-    orderAmount: Number(order.totalPrice || 0),
+    orderAmount: commissionableAmount,
     commissionAmount: resolvedAmount,
     status,
     customerName: pickOrderCustomer(order).name,
@@ -931,12 +1061,17 @@ export async function createOrder(req, res) {
   let reservedStock = [];
   let usedDiscount = null;
   try {
-    const { total, processedItems } = await processOrderItems(orderItems);
+    const { total, processedItems, itemCategories } = await processOrderItems(orderItems);
     const discounted = await applyDiscount(discountCode, total, req.user?._id);
+    const pricing = buildOrderPricing({
+      itemsPrice: total,
+      discountPercent: discounted.percent,
+      categoryInputs: itemCategories,
+    });
     const affiliate = await resolveAffiliateByCode(affiliateCode, req.user?._id);
     const commissionRate = Number(affiliate?.commissionRate || 5);
     const commissionAmount = affiliate
-      ? Number(((discounted.total * commissionRate) / 100).toFixed(2))
+      ? Number(((pricing.discountedItemsPrice * commissionRate) / 100).toFixed(2))
       : 0;
 
     const stockAdjustments = processedItems.map((item) => ({
@@ -968,14 +1103,17 @@ export async function createOrder(req, res) {
       shippingCity,
       clientOrderRef: resolvedClientOrderRef,
       attemptFingerprint,
-      totalPrice: discounted.total,
+      itemsPrice: pricing.itemsPrice,
+      shippingPrice: pricing.shippingPrice,
+      discountedItemsPrice: pricing.discountedItemsPrice,
+      totalPrice: pricing.totalPrice,
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
       stockReserved: true,
       discountCode: discounted.discount?.code,
-      discountPercent: discounted.discount?.percent,
-      discountAmount: discounted.discount?.amount || 0,
+      discountPercent: pricing.discountPercent,
+      discountAmount: pricing.discountAmount,
       affiliateCodeEntered: submittedAffiliateCode || undefined,
       affiliateCode: affiliate?.code,
       affiliate: affiliate?._id,
@@ -1002,7 +1140,7 @@ export async function createOrder(req, res) {
     });
 
     if (normalizedPaymentFlow === "auto") {
-      if (Number(discounted.total || 0) <= 0) {
+      if (Number(pricing.totalPrice || 0) <= 0) {
         throw new Error("Order total must be greater than zero for Hubtel automatic checkout.");
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
@@ -1010,10 +1148,13 @@ export async function createOrder(req, res) {
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
-        amount: discounted.total,
+        amount: pricing.totalPrice,
         description: `DEETECH Order ${order._id}`,
         clientReference,
-        callbackUrl: buildHubtelCallbackUrl(`${backendBase}/api/orders/hubtel/callback`),
+        callbackUrl: buildHubtelCallbackUrl(
+          `${backendBase}/api/orders/hubtel/callback`,
+          clientReference
+        ),
         returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken),
         cancellationUrl: buildHubtelResultUrl(
           `${frontendBase}/payment/cancelled`,
@@ -1029,7 +1170,9 @@ export async function createOrder(req, res) {
 
       order.paymentGateway = "hubtel";
       order.paymentGatewayReference =
-        String(hubtel?.data?.checkoutId || hubtel?.data?.transactionId || "").trim() || undefined;
+        String(
+          hubtel?.data?.paylinkId || hubtel?.data?.checkoutId || hubtel?.data?.transactionId || ""
+        ).trim() || undefined;
       order.paymentGatewayCheckoutUrl = checkoutUrl;
       order.paymentGatewayStatus = "initiated";
       order.paymentGatewayPayload = hubtel;
@@ -1315,12 +1458,17 @@ export async function createGuestOrder(req, res) {
       },
     });
 
-    const { total, processedItems } = await processOrderItems(orderItems);
+    const { total, processedItems, itemCategories } = await processOrderItems(orderItems);
     const discounted = await applyDiscount(discountCode, total, null);
+    const pricing = buildOrderPricing({
+      itemsPrice: total,
+      discountPercent: discounted.percent,
+      categoryInputs: itemCategories,
+    });
     const affiliate = await resolveAffiliateByCode(affiliateCode, null);
     const commissionRate = Number(affiliate?.commissionRate || 5);
     const commissionAmount = affiliate
-      ? Number(((discounted.total * commissionRate) / 100).toFixed(2))
+      ? Number(((pricing.discountedItemsPrice * commissionRate) / 100).toFixed(2))
       : 0;
 
     const stockAdjustments = processedItems.map((item) => ({
@@ -1352,14 +1500,17 @@ export async function createGuestOrder(req, res) {
       shippingCity: shippingCity || guestCity,
       clientOrderRef: resolvedClientOrderRef,
       attemptFingerprint,
-      totalPrice: discounted.total,
+      itemsPrice: pricing.itemsPrice,
+      shippingPrice: pricing.shippingPrice,
+      discountedItemsPrice: pricing.discountedItemsPrice,
+      totalPrice: pricing.totalPrice,
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
       stockReserved: true,
       discountCode: discounted.discount?.code,
-      discountPercent: discounted.discount?.percent,
-      discountAmount: discounted.discount?.amount || 0,
+      discountPercent: pricing.discountPercent,
+      discountAmount: pricing.discountAmount,
       affiliateCodeEntered: submittedAffiliateCode || undefined,
       affiliateCode: affiliate?.code,
       affiliate: affiliate?._id,
@@ -1391,7 +1542,7 @@ export async function createGuestOrder(req, res) {
     });
 
     if (normalizedPaymentFlow === "auto") {
-      if (Number(discounted.total || 0) <= 0) {
+      if (Number(pricing.totalPrice || 0) <= 0) {
         throw new Error("Order total must be greater than zero for Hubtel automatic checkout.");
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
@@ -1399,10 +1550,13 @@ export async function createGuestOrder(req, res) {
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
-        amount: discounted.total,
+        amount: pricing.totalPrice,
         description: `DEETECH Guest Order ${order._id}`,
         clientReference,
-        callbackUrl: buildHubtelCallbackUrl(`${backendBase}/api/orders/hubtel/callback`),
+        callbackUrl: buildHubtelCallbackUrl(
+          `${backendBase}/api/orders/hubtel/callback`,
+          clientReference
+        ),
         returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken),
         cancellationUrl: buildHubtelResultUrl(
           `${frontendBase}/payment/cancelled`,
@@ -1418,7 +1572,9 @@ export async function createGuestOrder(req, res) {
 
       order.paymentGateway = "hubtel";
       order.paymentGatewayReference =
-        String(hubtel?.data?.checkoutId || hubtel?.data?.transactionId || "").trim() || undefined;
+        String(
+          hubtel?.data?.paylinkId || hubtel?.data?.checkoutId || hubtel?.data?.transactionId || ""
+        ).trim() || undefined;
       order.paymentGatewayCheckoutUrl = checkoutUrl;
       order.paymentGatewayStatus = "initiated";
       order.paymentGatewayPayload = hubtel;
@@ -1540,11 +1696,6 @@ export async function createGuestOrder(req, res) {
 
 // Hubtel callback (public)
 export async function handleHubtelCallback(req, res) {
-  const callbackToken = String(req.query?.token || "").trim();
-  if (!timingSafeEqualText(callbackToken, HUBTEL_CALLBACK_TOKEN)) {
-    return res.status(401).json({ ok: false, message: "Unauthorized callback." });
-  }
-
   const payload = req.body || {};
   const rawData = payload?.Data && typeof payload.Data === "object" ? payload.Data : {};
   const clientReference = String(
@@ -1554,6 +1705,12 @@ export async function handleHubtelCallback(req, res) {
       rawData?.CheckoutId ||
       ""
   ).trim();
+  const callbackToken = String(req.query?.token || "").trim();
+  const callbackSignature = String(req.query?.sig || "").trim();
+
+  if (!timingSafeEqualText(callbackToken, HUBTEL_CALLBACK_TOKEN)) {
+    return res.status(401).json({ ok: false, message: "Unauthorized callback." });
+  }
 
   if (!clientReference) {
     await writeOrderAttemptLog({
@@ -1564,6 +1721,18 @@ export async function handleHubtelCallback(req, res) {
       reason: "Hubtel callback received without client reference",
     });
     return res.status(200).json({ ok: true, ignored: true });
+  }
+  const expectedSignature = buildHubtelCallbackSignature(clientReference);
+  if (!timingSafeEqualText(callbackSignature, expectedSignature)) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "system",
+      stage: "callback",
+      outcome: "ignored_invalid_signature",
+      clientOrderRef: clientReference,
+      reason: "Hubtel callback signature mismatch",
+    });
+    return res.status(401).json({ ok: false, message: "Unauthorized callback signature." });
   }
 
   const order = await Order.findOne({ clientOrderRef: clientReference }).sort({ createdAt: -1 });
@@ -1583,6 +1752,64 @@ export async function handleHubtelCallback(req, res) {
   const statusText = String(rawData?.Status || payload?.Status || "").trim().toLowerCase();
   const wasPaidBefore = order.paymentStatus === "paid";
   const isSuccess = responseCode === "0000" && statusText === "success";
+  const callbackAmount = extractHubtelAmount(payload, rawData);
+  const expectedAmount = Number(order.totalPrice || 0);
+  const callbackGatewayReference = extractHubtelGatewayReference(payload, rawData);
+  const expectedGatewayReferences = listExpectedHubtelGatewayReferences(order);
+
+  if (isSuccess && callbackAmount !== null && !amountsMatch(callbackAmount, expectedAmount)) {
+    order.paymentGateway = "hubtel";
+    order.paymentGatewayStatus = "amount_mismatch";
+    order.paymentGatewayPayload = payload;
+    await order.save();
+    await writeOrderAttemptLog({
+      req,
+      order,
+      user: order.user,
+      scope: order.user ? "authenticated" : "guest",
+      stage: "callback",
+      outcome: "ignored_amount_mismatch",
+      clientOrderRef: clientReference,
+      paymentMethod: order.paymentMethod,
+      paymentFlow: order.paymentFlow,
+      itemCount: countOrderItems(order.orderItems),
+      totalPrice: expectedAmount,
+      shippingEmail: order.shippingEmail,
+      guestEmail: order.guestEmail,
+      mobileNumber: order.mobileNumber,
+      reason: `Hubtel callback amount mismatch (${callbackAmount} vs ${expectedAmount})`,
+    });
+    return res.status(200).json({ ok: true, ignored: true });
+  }
+  if (
+    isSuccess &&
+    callbackGatewayReference &&
+    expectedGatewayReferences.length &&
+    !expectedGatewayReferences.includes(callbackGatewayReference)
+  ) {
+    order.paymentGateway = "hubtel";
+    order.paymentGatewayStatus = "gateway_reference_mismatch";
+    order.paymentGatewayPayload = payload;
+    await order.save();
+    await writeOrderAttemptLog({
+      req,
+      order,
+      user: order.user,
+      scope: order.user ? "authenticated" : "guest",
+      stage: "callback",
+      outcome: "ignored_reference_mismatch",
+      clientOrderRef: clientReference,
+      paymentMethod: order.paymentMethod,
+      paymentFlow: order.paymentFlow,
+      itemCount: countOrderItems(order.orderItems),
+      totalPrice: expectedAmount,
+      shippingEmail: order.shippingEmail,
+      guestEmail: order.guestEmail,
+      mobileNumber: order.mobileNumber,
+      reason: `Hubtel callback reference mismatch (${callbackGatewayReference} vs ${expectedGatewayReferences.join(", ")})`,
+    });
+    return res.status(200).json({ ok: true, ignored: true });
+  }
 
   order.paymentGateway = "hubtel";
   order.paymentGatewayStatus = statusText || responseCode || "unknown";

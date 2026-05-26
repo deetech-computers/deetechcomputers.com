@@ -22,6 +22,7 @@ import {
 import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { API_BASE, API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
+import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
 import { requestWithToken } from "@/lib/resource";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
@@ -75,6 +76,8 @@ export default function CheckoutPaymentPage() {
   const hubtelFinalizedRef = useRef(false);
   const submitLockRef = useRef(false);
   const clientOrderRefRef = useRef("");
+  const pricingPreviewSeq = useRef(0);
+  const [pricingPreview, setPricingPreview] = useState(null);
 
   function buildEstimatedDelivery(dateInput) {
     const base = new Date(dateInput || Date.now());
@@ -217,13 +220,29 @@ export default function CheckoutPaymentPage() {
     () => items.reduce((sum, item) => sum + Number(item.qty || 0), 0),
     [items]
   );
-  const shipping = 0;
-  const taxes = 0;
   const couponDiscount =
     Number(form.discountAmount || 0) > 0
       ? Number(form.discountAmount || 0)
       : (subtotal * Number(form.discountPercent || 0)) / 100;
-  const total = Math.max(0, subtotal + shipping + taxes - couponDiscount);
+  const localPricing = useMemo(
+    () => buildCheckoutPricing({ items, subtotal, discountAmount: couponDiscount }),
+    [items, subtotal, couponDiscount]
+  );
+  const pricingPreviewKey = useMemo(
+    () =>
+      JSON.stringify({
+        orderItems: buildOrderItems(items),
+        discountCode: String(form.discountCode || "").trim().toUpperCase(),
+        subtotal: Number(subtotal || 0),
+        discountAmount: Number(couponDiscount || 0),
+      }),
+    [couponDiscount, form.discountCode, items, subtotal]
+  );
+  const pricing =
+    pricingPreview?.key === pricingPreviewKey ? pricingPreview.value : localPricing;
+  const shipping = pricing.shipping;
+  const taxes = pricing.taxes;
+  const total = pricing.total;
   const manualPaymentMethods = PAYMENT_METHODS;
   const hubtelPaymentMethod =
     PAYMENT_METHODS.find((method) => method.id === "hubtel") || PAYMENT_METHODS[0];
@@ -237,6 +256,39 @@ export default function CheckoutPaymentPage() {
   const submitDisabled =
     submitting ||
     (isManualFlow && proofUploading);
+
+  useEffect(() => {
+    const orderItems = buildOrderItems(items);
+    const seq = ++pricingPreviewSeq.current;
+
+    if (!orderItems.length) {
+      return;
+    }
+
+    let ignore = false;
+
+    async function syncPricingPreview() {
+      try {
+        const preview = await fetchCheckoutPricingPreview({
+          orderItems,
+          items,
+          subtotal,
+          discountAmount: couponDiscount,
+          discountCode: form.discountCode,
+        });
+        if (ignore || seq !== pricingPreviewSeq.current) return;
+        setPricingPreview({ key: pricingPreviewKey, value: preview });
+      } catch {
+        if (ignore || seq !== pricingPreviewSeq.current) return;
+        setPricingPreview({ key: pricingPreviewKey, value: localPricing });
+      }
+    }
+
+    syncPricingPreview();
+    return () => {
+      ignore = true;
+    };
+  }, [couponDiscount, form.discountCode, items, localPricing, pricingPreviewKey, subtotal]);
 
   function closeHubtelModal() {
     setHubtelModalOpen(false);
@@ -266,11 +318,8 @@ export default function CheckoutPaymentPage() {
       estimatedDeliveryDate: buildEstimatedDelivery(order?.paidAt || order?.createdAt),
       paymentMethod: order?.paymentMethod || "hubtel",
       total: Number(order?.totalPrice || 0),
-      subtotal:
-        Number(order?.discountAmount || 0) > 0
-          ? Number(order?.totalPrice || 0) + Number(order?.discountAmount || 0)
-          : Number(order?.totalPrice || 0),
-      shipping: 0,
+      subtotal: Number(order?.itemsPrice || 0),
+      shipping: Number(order?.shippingPrice || 0),
       discountCode: String(order?.discountCode || pending?.discountCode || "").trim().toUpperCase(),
       discountPercent: Number(order?.discountPercent || pending?.discountPercent || 0),
       discountAmount: Number(order?.discountAmount || pending?.discountAmount || 0),
@@ -594,11 +643,8 @@ export default function CheckoutPaymentPage() {
         estimatedDeliveryDate: buildEstimatedDelivery(order?.paidAt || order?.createdAt),
         paymentMethod: selectedPaymentMethodId,
         total: Number(order?.totalPrice || total),
-        subtotal:
-          Number(order?.discountAmount || 0) > 0
-            ? Number(order?.totalPrice || 0) + Number(order?.discountAmount || 0)
-            : subtotal,
-        shipping,
+        subtotal: Number(order?.itemsPrice || subtotal),
+        shipping: Number(order?.shippingPrice ?? shipping),
         discountCode: String(order?.discountCode || form.discountCode || "").trim().toUpperCase(),
         discountPercent: Number(order?.discountPercent || form.discountPercent || 0),
         discountAmount: Number(order?.discountAmount || couponDiscount || 0),

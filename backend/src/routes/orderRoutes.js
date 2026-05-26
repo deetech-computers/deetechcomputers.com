@@ -4,6 +4,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import {
   createOrder,
   createGuestOrder,
+  previewOrderPricing,
   getMyOrders,
   getMyOrderById,
   getAllOrders,
@@ -29,6 +30,7 @@ router
 
 // Guest order (JSON)
 router.post("/guest", asyncHandler(createGuestOrder));
+router.post("/preview", asyncHandler(previewOrderPricing));
 router.post("/hubtel/callback", asyncHandler(handleHubtelCallback));
 router.get("/hubtel/status/:clientReference", asyncHandler(getHubtelPaymentStatus));
 router.get("/attempts", protect, admin, asyncHandler(getRecentOrderAttempts));
