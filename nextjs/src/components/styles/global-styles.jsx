@@ -6453,6 +6453,19 @@ button, input, select, textarea { font: inherit; }
 .admin-collapsible__body {
   margin-top: 12px;
 }
+.admin-record-card__toggle {
+  padding: 2px;
+}
+.admin-record-card__summary {
+  min-width: 0;
+}
+.admin-record-card__toggle h3 {
+  margin: 0;
+}
+.admin-record-card__toggle p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
 .admin-order-card__toggle {
   padding: 2px;
 }

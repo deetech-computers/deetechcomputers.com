@@ -1035,30 +1035,45 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
   const [supportStatusDraft, setSupportStatusDraft] = useState(() => item?.status || "new");
   const [supportResponseDraft, setSupportResponseDraft] = useState("");
   const [etaDraft, setEtaDraft] = useState(() => toDateTimeLocalValue(item?.estimatedDeliveryDate));
+  const collapsibleIdBase = String(id || item?.email || item?.code || item?.title || item?.name || "record").replace(/[^a-zA-Z0-9_-]+/g, "-");
 
   if (type === "products") {
     const image = resolveProductImage(item.images?.[0] || item.image_url || item.image);
+    const productBodyId = `admin-product-body-${collapsibleIdBase}`;
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__main">
-          <div className="admin-record__image">
-            {image ? (
-              <StableImage src={image} alt={item.name} width={96} height={96} />
-            ) : (
-              <span>No image</span>
-            )}
-          </div>
-          <div>
-            <h3>{item.name}</h3>
-            <p>
-              {item.category || "Category"} / {item.subCategory || item.brand || "Subcategory"}
-            </p>
-            <div className="admin-chip-row">
-              <span className="admin-chip">{item.brand || "Brand"}</span>
-              <span className="admin-chip">{formatCurrency(Number(item.price || 0))}</span>
-              <span className={`admin-chip ${Number(item.countInStock || 0) > 0 ? "is-success" : "is-danger"}`}>{Number(item.countInStock || 0)} in stock</span>
-              {item.isFeatured ? <span className="admin-chip is-warning">Featured</span> : null}
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={productBodyId}
+        >
+          <div className="admin-record__main admin-record-card__summary">
+            <div className="admin-record__image">
+              {image ? (
+                <StableImage src={image} alt={item.name} width={96} height={96} />
+              ) : (
+                <span>No image</span>
+              )}
             </div>
+            <div>
+              <h3>{item.name}</h3>
+              <p>
+                {item.category || "Category"} / {item.subCategory || item.brand || "Subcategory"}
+              </p>
+              <div className="admin-chip-row">
+                <span className="admin-chip">{item.brand || "Brand"}</span>
+                <span className="admin-chip">{formatCurrency(Number(item.price || 0))}</span>
+                <span className={`admin-chip ${Number(item.countInStock || 0) > 0 ? "is-success" : "is-danger"}`}>{Number(item.countInStock || 0)} in stock</span>
+                {item.isFeatured ? <span className="admin-chip is-warning">Featured</span> : null}
+              </div>
+            </div>
+          </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={productBodyId} className="admin-collapsible__body">
             {Array.isArray(item.homeSections) && item.homeSections.length ? (
               <div className="admin-chip-row">
                 {item.homeSections.map((section) => (
@@ -1068,12 +1083,12 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
                 ))}
               </div>
             ) : null}
+            <div className="admin-actions">
+              <Link className="ghost-button" href={`/admin/products/${id}/edit`}>Edit</Link>
+              <button className="danger-button" type="button" disabled={busy} onClick={() => onAction("deleteProduct", item)}>Delete</button>
+            </div>
           </div>
-        </div>
-        <div className="admin-actions">
-          <Link className="ghost-button" href={`/admin/products/${id}/edit`}>Edit</Link>
-          <button className="danger-button" type="button" disabled={busy} onClick={() => onAction("deleteProduct", item)}>Delete</button>
-        </div>
+        ) : null}
       </article>
     );
   }
@@ -1327,34 +1342,51 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const topInterest = [...interests]
       .sort((a, b) => Number(b?.count || 0) - Number(a?.count || 0))
       .find((entry) => normalizeText(entry?.category));
+    const userBodyId = `admin-user-body-${collapsibleIdBase}`;
 
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__head">
-          <div>
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={userBodyId}
+        >
+          <div className="admin-record-card__summary">
             <h3>{item.name || item.email}</h3>
             <p>{item.email} / {item.phone || "No phone"}</p>
+            <div className="admin-chip-row">
+              <span className={`admin-chip ${item.role === "admin" ? "is-success" : "is-neutral"}`}>{item.role || "user"}</span>
+              <span className={`admin-chip ${active ? "is-success" : "is-danger"}`}>{active ? "Active" : "Inactive"}</span>
+              <span className="admin-chip is-neutral">{item.region || "No region"}</span>
+              <span className="admin-chip is-neutral">Joined {formatDate(item.createdAt)}</span>
+            </div>
           </div>
-          <span className={`admin-chip ${item.role === "admin" ? "is-success" : "is-neutral"}`}>{item.role || "user"}</span>
-        </div>
-        <div className="admin-meta-grid">
-          <span>Region <strong>{item.region || "N/A"}</strong></span>
-          <span>Status <strong>{active ? "Active" : "Inactive"}</strong></span>
-          <span>Joined <strong>{formatDate(item.createdAt)}</strong></span>
-          <span>Wishlist <strong>{wishlistCount}</strong></span>
-          <span>Orders <strong>{insight?.totalOrders || 0}</strong></span>
-          <span>Spent <strong>{formatCurrency(Number(insight?.totalSpent || 0))}</strong></span>
-          <span>Reviews <strong>{insight?.reviewCount || 0}</strong></span>
-          <span>Support Tickets <strong>{insight?.supportTickets || 0}</strong></span>
-          <span>Avg Rating <strong>{Number(insight?.avgRating || 0).toFixed(1)}</strong></span>
-          <span>Top Search <strong>{topSearch?.term || "None yet"}</strong></span>
-          <span>Top Interest <strong>{topInterest?.category || "None yet"}</strong></span>
-        </div>
-        <div className="admin-actions">
-          <button className="ghost-button" type="button" onClick={() => onAction("openUser360", item)}>View User 360</button>
-          <button className="ghost-button" disabled={busy} onClick={() => onAction("userStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
-          <button className="danger-button" disabled={busy} onClick={() => onAction("deleteUser", item)}>Delete</button>
-        </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={userBodyId} className="admin-collapsible__body">
+            <div className="admin-meta-grid">
+              <span>Region <strong>{item.region || "N/A"}</strong></span>
+              <span>Status <strong>{active ? "Active" : "Inactive"}</strong></span>
+              <span>Joined <strong>{formatDate(item.createdAt)}</strong></span>
+              <span>Wishlist <strong>{wishlistCount}</strong></span>
+              <span>Orders <strong>{insight?.totalOrders || 0}</strong></span>
+              <span>Spent <strong>{formatCurrency(Number(insight?.totalSpent || 0))}</strong></span>
+              <span>Reviews <strong>{insight?.reviewCount || 0}</strong></span>
+              <span>Support Tickets <strong>{insight?.supportTickets || 0}</strong></span>
+              <span>Avg Rating <strong>{Number(insight?.avgRating || 0).toFixed(1)}</strong></span>
+              <span>Top Search <strong>{topSearch?.term || "None yet"}</strong></span>
+              <span>Top Interest <strong>{topInterest?.category || "None yet"}</strong></span>
+            </div>
+            <div className="admin-actions">
+              <button className="ghost-button" type="button" onClick={() => onAction("openUser360", item)}>View User 360</button>
+              <button className="ghost-button" disabled={busy} onClick={() => onAction("userStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
+              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteUser", item)}>Delete</button>
+            </div>
+          </div>
+        ) : null}
       </article>
     );
   }
@@ -1365,66 +1397,98 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const productName = item.product?.name || "Product";
     const rating = Math.max(0, Math.min(5, Number(item.rating || 0)));
     const roundedRating = Math.round(rating);
+    const reviewBodyId = `admin-review-body-${collapsibleIdBase}`;
 
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__head">
-          <div>
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={reviewBodyId}
+        >
+          <div className="admin-record-card__summary">
             <h3>{item.title || "Product Review"}</h3>
             <p>{reviewerName} / {productName}</p>
+            <div className="admin-chip-row">
+              <span className={`admin-chip ${item.approved ? "is-success" : "is-danger"}`}>{item.approved ? "Approved" : "Rejected"}</span>
+              <span className="admin-chip is-neutral">{rating.toFixed(1)} / 5</span>
+              <span className="admin-chip is-neutral">Created {formatDate(item.createdAt)}</span>
+            </div>
           </div>
-          <span className={`admin-chip ${item.approved ? "is-success" : "is-danger"}`}>{item.approved ? "Approved" : "Rejected"}</span>
-        </div>
-        <div className="admin-review-rating" aria-label={`Rating ${rating.toFixed(1)} out of 5`}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span key={star} className={star <= roundedRating ? "is-filled" : ""} aria-hidden="true">★</span>
-          ))}
-          <strong>{rating.toFixed(1)} / 5</strong>
-        </div>
-        <p>{item.comment || "No review text"}</p>
-        <div className="admin-review-meta">
-          <span className="admin-chip is-neutral">Created {formatDateTime(item.createdAt)}</span>
-          {productId ? (
-            <Link className="ghost-button" href={`/products/${productId}`}>
-              Open product
-            </Link>
-          ) : null}
-        </div>
-        <div className="admin-actions">
-          {!item.approved ? (
-            <button className="ghost-button" disabled={busy} onClick={() => onAction("moderateReview", item, null, true)}>Approve</button>
-          ) : null}
-          {item.approved ? (
-            <button className="ghost-button" disabled={busy} onClick={() => onAction("moderateReview", item, null, false)}>Reject</button>
-          ) : null}
-          <button className="danger-button" disabled={busy} onClick={() => onAction("deleteReview", item)}>Delete</button>
-        </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={reviewBodyId} className="admin-collapsible__body">
+            <div className="admin-review-rating" aria-label={`Rating ${rating.toFixed(1)} out of 5`}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star} className={star <= roundedRating ? "is-filled" : ""} aria-hidden="true">*</span>
+              ))}
+              <strong>{rating.toFixed(1)} / 5</strong>
+            </div>
+            <p>{item.comment || "No review text"}</p>
+            <div className="admin-review-meta">
+              <span className="admin-chip is-neutral">Created {formatDateTime(item.createdAt)}</span>
+              {productId ? (
+                <Link className="ghost-button" href={`/products/${productId}`}>
+                  Open product
+                </Link>
+              ) : null}
+            </div>
+            <div className="admin-actions">
+              {!item.approved ? (
+                <button className="ghost-button" disabled={busy} onClick={() => onAction("moderateReview", item, null, true)}>Approve</button>
+              ) : null}
+              {item.approved ? (
+                <button className="ghost-button" disabled={busy} onClick={() => onAction("moderateReview", item, null, false)}>Reject</button>
+              ) : null}
+              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteReview", item)}>Delete</button>
+            </div>
+          </div>
+        ) : null}
       </article>
     );
   }
 
   if (type === "affiliates") {
     const active = item.isActive !== false;
+    const affiliateBodyId = `admin-affiliate-body-${collapsibleIdBase}`;
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__head">
-          <div>
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={affiliateBodyId}
+        >
+          <div className="admin-record-card__summary">
             <h3>{item.code || "Affiliate"}</h3>
             <p>{item.user?.name || item.user?.email || "Affiliate user"} / {item.tier || "starter"}</p>
+            <div className="admin-chip-row">
+              <span className={`admin-chip ${active ? "is-success" : "is-danger"}`}>{active ? "Active" : "Inactive"}</span>
+              <span className="admin-chip is-neutral">{item.stats?.totalReferrals || 0} referrals</span>
+              <span className="admin-chip is-neutral">{formatCurrency(Number(item.stats?.earnedCommission || 0))} earned</span>
+            </div>
           </div>
-          <span className={`admin-chip ${active ? "is-success" : "is-danger"}`}>{active ? "Active" : "Inactive"}</span>
-        </div>
-        <div className="admin-meta-grid">
-          <span>Referrals <strong>{item.stats?.totalReferrals || 0}</strong></span>
-          <span>Pending <strong>{formatCurrency(Number(item.stats?.pendingCommission || 0))}</strong></span>
-          <span>Earned <strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></span>
-          <span>Rate <strong>{Number(item.commissionRate || 0)}%</strong></span>
-        </div>
-        <div className="admin-actions">
-          <button className="ghost-button" disabled={busy} onClick={() => onAction("copyAffiliateCode", item)}>Copy Code</button>
-          <button className="ghost-button" disabled={busy} onClick={() => onAction("affiliateStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
-          <button className="danger-button" disabled={busy} onClick={() => onAction("deleteAffiliate", item)}>Delete</button>
-        </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={affiliateBodyId} className="admin-collapsible__body">
+            <div className="admin-meta-grid">
+              <span>Referrals <strong>{item.stats?.totalReferrals || 0}</strong></span>
+              <span>Pending <strong>{formatCurrency(Number(item.stats?.pendingCommission || 0))}</strong></span>
+              <span>Earned <strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></span>
+              <span>Rate <strong>{Number(item.commissionRate || 0)}%</strong></span>
+            </div>
+            <div className="admin-actions">
+              <button className="ghost-button" disabled={busy} onClick={() => onAction("copyAffiliateCode", item)}>Copy Code</button>
+              <button className="ghost-button" disabled={busy} onClick={() => onAction("affiliateStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
+              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteAffiliate", item)}>Delete</button>
+            </div>
+          </div>
+        ) : null}
       </article>
     );
   }
@@ -1434,80 +1498,97 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const usedByEmail = normalizeText(item?.usedBy?.email);
     const usedBy = usedByName || usedByEmail;
     const orderRef = normalizeText(item?.order?._id || item?.order);
+    const discountBodyId = `admin-discount-body-${collapsibleIdBase}`;
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__head">
-          <div>
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={discountBodyId}
+        >
+          <div className="admin-record-card__summary">
             <h3>{item.code || "Discount"}</h3>
             <p>{Number(item.percent || 0)}% off / created {formatDate(item.createdAt)}</p>
+            <div className="admin-chip-row">
+              <span className={`admin-chip ${item.used ? "is-danger" : "is-success"}`}>{item.used ? "Used" : "Available"}</span>
+              <span className="admin-chip is-neutral">{Number(item.percent || 0)}%</span>
+              <span className="admin-chip is-neutral">{usedBy || "No user linked"}</span>
+            </div>
           </div>
-          <span className={`admin-chip ${item.used ? "is-danger" : "is-success"}`}>{item.used ? "Used" : "Available"}</span>
-        </div>
-        <div className="admin-meta-grid">
-          <span>
-            Percent
-            <strong>{Number(item.percent || 0)}%</strong>
-          </span>
-          <span>
-            Created
-            <strong>{formatDateTime(item.createdAt)}</strong>
-          </span>
-          <span>
-            Used At
-            <strong>{item.usedAt ? formatDateTime(item.usedAt) : "Not used yet"}</strong>
-          </span>
-          <span>
-            Used By
-            <strong>{usedBy || "No user linked"}</strong>
-          </span>
-          {orderRef ? (
-            <span>
-              Order Ref
-              <strong>{orderRef}</strong>
-            </span>
-          ) : null}
-        </div>
-        <div className="admin-actions">
-          <button className="ghost-button" disabled={busy} onClick={() => onAction("copyDiscountCode", item)}>Copy Code</button>
-          <button className="danger-button" disabled={busy} onClick={() => onAction("deleteDiscount", item)}>Delete</button>
-        </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={discountBodyId} className="admin-collapsible__body">
+            <div className="admin-meta-grid">
+              <span>Percent <strong>{Number(item.percent || 0)}%</strong></span>
+              <span>Created <strong>{formatDateTime(item.createdAt)}</strong></span>
+              <span>Used At <strong>{item.usedAt ? formatDateTime(item.usedAt) : "Not used yet"}</strong></span>
+              <span>Used By <strong>{usedBy || "No user linked"}</strong></span>
+              {orderRef ? <span>Order Ref <strong>{orderRef}</strong></span> : null}
+            </div>
+            <div className="admin-actions">
+              <button className="ghost-button" disabled={busy} onClick={() => onAction("copyDiscountCode", item)}>Copy Code</button>
+              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteDiscount", item)}>Delete</button>
+            </div>
+          </div>
+        ) : null}
       </article>
     );
   }
 
   if (type === "banners") {
+    const bannerBodyId = `admin-banner-body-${collapsibleIdBase}`;
     return (
-      <article className="admin-record panel">
-        <div className="admin-record__main">
-          <div className="admin-record__image">
-            {item.imageUrl ? (
-              <StableImage src={item.imageUrl} alt={item.title} width={96} height={96} />
-            ) : (
-              <span>No image</span>
-            )}
+      <article className="admin-record panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-record-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={bannerBodyId}
+        >
+          <div className="admin-record__main admin-record-card__summary">
+            <div className="admin-record__image">
+              {item.imageUrl ? (
+                <StableImage src={item.imageUrl} alt={item.title} width={96} height={96} />
+              ) : (
+                <span>No image</span>
+              )}
+            </div>
+            <div>
+              <h3>Homepage Banner</h3>
+              <p>
+                {item.linkCategory
+                  ? `Category link: ${item.linkCategory}${item.linkSubCategory ? ` / ${item.linkSubCategory}` : " / all"}`
+                  : item.link
+                    ? `Custom link: ${item.link}`
+                    : "No click link (plain banner)"}
+              </p>
+              <div className="admin-chip-row"><span className="admin-chip">Order {item.order || 0}</span></div>
+            </div>
           </div>
-          <div>
-            <h3>Homepage Banner</h3>
-            <p>
-              {item.linkCategory
-                ? `Category link: ${item.linkCategory}${item.linkSubCategory ? ` / ${item.linkSubCategory}` : " / all"}`
-                : item.link
-                  ? `Custom link: ${item.link}`
-                  : "No click link (plain banner)"}
-            </p>
-            <div className="admin-chip-row"><span className="admin-chip">Order {item.order || 0}</span></div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={bannerBodyId} className="admin-collapsible__body">
+            {editing ? <BannerForm initial={item} submitLabel="Update Banner" busy={busy} onSubmit={(event) => onAction("updateBanner", item, event)} /> : null}
+            <div className="admin-actions">
+              <button className="ghost-button" type="button" onClick={() => setEditing((current) => !current)}>{editing ? "Close Edit" : "Edit"}</button>
+              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteBanner", item)}>Delete</button>
+            </div>
           </div>
-        </div>
-        {editing ? <BannerForm initial={item} submitLabel="Update Banner" busy={busy} onSubmit={(event) => onAction("updateBanner", item, event)} /> : null}
-        <div className="admin-actions">
-          <button className="ghost-button" type="button" onClick={() => setEditing((current) => !current)}>{editing ? "Close Edit" : "Edit"}</button>
-          <button className="danger-button" disabled={busy} onClick={() => onAction("deleteBanner", item)}>Delete</button>
-        </div>
+        ) : null}
       </article>
     );
   }
 
   return (
+    <article className="admin-record panel">
+      <pre>{JSON.stringify(item, null, 2)}</pre>
+    </article>
+  );  return (
     <article className="admin-record panel">
       <pre>{JSON.stringify(item, null, 2)}</pre>
     </article>
