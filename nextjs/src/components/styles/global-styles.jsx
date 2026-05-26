@@ -6453,6 +6453,16 @@ button, input, select, textarea { font: inherit; }
 .admin-collapsible__body {
   margin-top: 12px;
 }
+.admin-order-card__toggle {
+  padding: 2px;
+}
+.admin-order-card__toggle h3 {
+  margin: 0;
+}
+.admin-order-card__toggle p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
 .admin-review-rating {
   display: flex;
   align-items: center;
@@ -6485,17 +6495,12 @@ button, input, select, textarea { font: inherit; }
   border-color: var(--line);
 }
 .admin-support-ticket__summary {
-  list-style: none;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
   padding: 14px;
   border-bottom: 1px solid var(--line);
-}
-.admin-support-ticket__summary::-webkit-details-marker {
-  display: none;
 }
 .admin-support-ticket__summary-copy strong {
   display: block;
@@ -6558,25 +6563,29 @@ button, input, select, textarea { font: inherit; }
   background: #f8fafc;
   overflow: hidden;
 }
-.admin-support-ticket__thread > summary {
-  list-style: none;
-  cursor: pointer;
+.admin-support-ticket__thread-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 12px 14px;
+  text-align: left;
   font-weight: 700;
   color: #0f172a;
   border-bottom: 1px solid #e2e8f0;
 }
-.admin-support-ticket__thread > summary span {
+.admin-support-ticket__thread-toggle-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-support-ticket__thread-toggle-meta span:first-child {
   font-size: 0.78rem;
   color: #64748b;
   font-weight: 700;
-}
-.admin-support-ticket__thread > summary::-webkit-details-marker {
-  display: none;
 }
 .admin-support-ticket__thread-list {
   display: grid;
@@ -6634,19 +6643,6 @@ button, input, select, textarea { font: inherit; }
 }
 .admin-support-ticket__form {
   gap: 10px;
-}
-.admin-support-ticket__quick-replies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.admin-support-ticket__quick-replies .ghost-button {
-  min-height: 34px;
-  padding: 0 10px;
-  font-size: 0.78rem;
-  border-color: #cfd8e3;
-  color: #0f172a;
-  background: #ffffff;
 }
 .admin-support-ticket__form .field {
   border-color: #cfd8e3;
@@ -11377,9 +11373,6 @@ button, input, select, textarea { font: inherit; }
   .admin-support-ticket__submit {
     width: 100%;
     min-width: 0;
-  }
-  .admin-support-ticket__quick-replies .ghost-button {
-    max-width: 100%;
   }
   .admin-manager > .panel,
   .admin-viz-card,

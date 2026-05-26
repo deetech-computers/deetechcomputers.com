@@ -86,30 +86,6 @@ const HOME_SECTION_OPTIONS = [
   ["trusted_brands", "Shop Trusted Brands"],
 ];
 const HOME_SECTION_LABELS = new Map(HOME_SECTION_OPTIONS);
-const SUPPORT_REPLY_TEMPLATES = [
-  {
-    label: "Acknowledge",
-    text: "Thanks for contacting DEETECH support. We are reviewing your request and will update you shortly.",
-  },
-  {
-    label: "Escalate",
-    text: "We have received your request and escalated it to the technical team for action.",
-  },
-  {
-    label: "Resolved",
-    text: "Your request has been resolved. Please confirm if everything is now working as expected.",
-  },
-];
-const SUPPORT_REPLY_EMOJIS = [
-  "\u{1F642}",
-  "\u{1F44D}",
-  "\u{1F64F}",
-  "\u{2705}",
-  "\u{1F4E6}",
-  "\u{1F527}",
-  "\u{1F4DE}",
-];
-
 const PRODUCT_DISCOUNT_PRESET_OPTIONS = [
   ["none", "No discount"],
   ["instant", "Instant discount"],
@@ -248,30 +224,37 @@ function TinyBarChart({ title, rows = [], formatter = (value) => value }) {
 function DonutChart({ title, segments = [], formatter = (value) => value }) {
   const valid = segments.filter((segment) => Number(segment?.value || 0) > 0);
   const total = valid.reduce((sum, segment) => sum + Number(segment.value || 0), 0);
-  let offset = 0;
+  const slices = valid.map((segment, index) => {
+    const value = Number(segment.value || 0);
+    const slice = total > 0 ? (value / total) * 264 : 0;
+    const strokeDashoffset = -valid
+      .slice(0, index)
+      .reduce((sum, entry) => sum + (total > 0 ? (Number(entry?.value || 0) / total) * 264 : 0), 0);
+    return {
+      key: `${segment.label}-${index}`,
+      index,
+      segment,
+      slice,
+      strokeDashoffset,
+    };
+  });
   return (
     <article className="admin-viz-card">
       <h3>{title}</h3>
       <div className="admin-viz-donut-wrap">
         <svg viewBox="0 0 120 120" className="admin-viz-donut" aria-hidden="true">
           <circle cx="60" cy="60" r="42" className="admin-viz-donut__base" />
-          {valid.map((segment, index) => {
-            const value = Number(segment.value || 0);
-            const slice = total > 0 ? (value / total) * 264 : 0;
-            const currentOffset = offset;
-            offset += slice;
-            return (
-              <circle
-                key={`${segment.label}-${index}`}
-                cx="60"
-                cy="60"
-                r="42"
-                className={`admin-viz-donut__slice is-${index % 5}`}
-                strokeDasharray={`${slice} 264`}
-                strokeDashoffset={-currentOffset}
-              />
-            );
-          })}
+          {slices.map(({ key, index, slice, strokeDashoffset }) => (
+            <circle
+              key={key}
+              cx="60"
+              cy="60"
+              r="42"
+              className={`admin-viz-donut__slice is-${index % 5}`}
+              strokeDasharray={`${slice} 264`}
+              strokeDashoffset={strokeDashoffset}
+            />
+          ))}
         </svg>
         <div className="admin-viz-donut__center">
           <strong>{formatCount(total)}</strong>
@@ -292,14 +275,14 @@ function DonutChart({ title, segments = [], formatter = (value) => value }) {
 }
 
 function User360Modal({ user, insight, activity, onClose }) {
-  const orders = Array.isArray(activity?.orders) ? activity.orders : [];
-  const reviews = Array.isArray(activity?.reviews) ? activity.reviews : [];
-  const tickets = Array.isArray(activity?.tickets) ? activity.tickets : [];
   const wishlistCount = Number(activity?.wishlistCount || 0);
   const searchTerms = Array.isArray(activity?.searchTerms) ? activity.searchTerms : [];
   const interests = Array.isArray(activity?.interests) ? activity.interests : [];
 
   const timeline = useMemo(() => {
+    const orders = Array.isArray(activity?.orders) ? activity.orders : [];
+    const reviews = Array.isArray(activity?.reviews) ? activity.reviews : [];
+    const tickets = Array.isArray(activity?.tickets) ? activity.tickets : [];
     const orderEvents = orders.map((order) => ({
       type: "Order",
       date: order?.createdAt || "",
@@ -321,7 +304,7 @@ function User360Modal({ user, insight, activity, onClose }) {
     return [...orderEvents, ...reviewEvents, ...ticketEvents]
       .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
       .slice(0, 24);
-  }, [orders, reviews, tickets]);
+  }, [activity]);
 
   return (
     <div className="admin-overlay" role="dialog" aria-modal="true" aria-label="User 360 details">
@@ -1047,6 +1030,8 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
   const [editing, setEditing] = useState(false);
   const id = item._id || item.id;
   const busy = busyAction === id;
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [threadExpanded, setThreadExpanded] = useState(false);
   const [supportStatusDraft, setSupportStatusDraft] = useState(() => item?.status || "new");
   const [supportResponseDraft, setSupportResponseDraft] = useState("");
   const [etaDraft, setEtaDraft] = useState(() => toDateTimeLocalValue(item?.estimatedDeliveryDate));
@@ -1105,15 +1090,30 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const affiliateCommissionAmount = Number(item.affiliateCommissionAmount || 0);
     const affiliateUsed = Boolean(affiliateCodeApplied);
     const affiliateAttemptedOnly = !affiliateUsed && Boolean(affiliateCodeEntered);
+    const orderBodyId = `admin-order-body-${String(orderId || id || "order").replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
     return (
-      <article className="admin-record admin-record--order panel">
-        <div className="admin-record__head">
+      <article className="admin-record admin-record--order panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header admin-order-card__toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={orderBodyId}
+        >
           <div>
             <h3>{orderId}</h3>
             <p>{customer} / {formatDateTime(item.createdAt)}</p>
+            <div className="admin-chip-row">
+              <span className={`admin-chip ${statusClass(item.orderStatus)}`}>{item.orderStatus || "pending"}</span>
+              <span className="admin-chip is-neutral">{formatCurrency(Number(item.totalPrice || 0))}</span>
+              <span className="admin-chip is-neutral">{item.paymentStatus || "pending"}</span>
+              <span className="admin-chip is-neutral">{item.paymentMethod || "N/A"}</span>
+            </div>
           </div>
-          <span className={`admin-chip ${statusClass(item.orderStatus)}`}>{item.orderStatus || "pending"}</span>
-        </div>
+          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+        </button>
+        {isExpanded ? (
+          <div id={orderBodyId} className="admin-collapsible__body">
         <div className="admin-meta-grid">
           <span>Total <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong></span>
           <span>Payment <strong>{item.paymentMethod || "N/A"}</strong></span>
@@ -1178,6 +1178,8 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           <button className="ghost-button" type="button" disabled={busy} onClick={() => onAction("markDelivered", item)}>Delivered</button>
           <button className="danger-button" type="button" disabled={busy} onClick={() => onAction("deleteOrder", item)}>Delete</button>
         </div>
+          </div>
+        ) : null}
       </article>
     );
   }
@@ -1189,18 +1191,18 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const hasStatusChanged = supportStatusDraft !== (item.status || "new");
     const hasResponseChanged = supportResponseDraft.trim().length > 0;
     const canSubmit = hasStatusChanged || hasResponseChanged;
-
-    function addTemplateReply(template) {
-      const base = supportResponseDraft.trim();
-      setSupportResponseDraft(base ? `${base}\n\n${template}` : template);
-    }
-    function appendReplyEmoji(emoji) {
-      setSupportResponseDraft((current) => `${current}${emoji}`);
-    }
+    const supportBodyId = `admin-support-body-${String(id || item.email || item.subject || "ticket").replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
+    const supportThreadId = `admin-support-thread-${String(id || item.email || item.subject || "ticket").replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
 
     return (
-      <details className="admin-record panel admin-support-ticket">
-        <summary className="admin-support-ticket__summary">
+      <article className="admin-record panel admin-support-ticket admin-collapsible">
+        <button
+          type="button"
+          className="admin-support-ticket__summary admin-collapsible__header"
+          onClick={() => setIsExpanded((current) => !current)}
+          aria-expanded={isExpanded}
+          aria-controls={supportBodyId}
+        >
           <div className="admin-support-ticket__summary-copy">
             <strong>{item.name || "Customer Support"}</strong>
             <p>{item.name || "Customer"} / {item.email || "No email"}</p>
@@ -1208,10 +1210,12 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           <div className="admin-support-ticket__summary-meta">
             <span className={`admin-chip ${statusClass(item.status)}`}>{item.status || "new"}</span>
             <small>{formatDateTime(item.updatedAt)}</small>
+            <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
           </div>
-        </summary>
+        </button>
 
-        <div className="admin-support-ticket__body">
+        {isExpanded ? (
+        <div id={supportBodyId} className="admin-support-ticket__body admin-collapsible__body">
           <div className="admin-record__head">
             <div>
               <h3>{item.subject || "Support request"}</h3>
@@ -1237,12 +1241,22 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           </div>
 
           {sortedThread.length ? (
-            <details className="admin-support-ticket__thread">
-              <summary>
-                Conversation thread
-                <span>{sortedThread.length} messages</span>
-              </summary>
-              <div className="admin-support-ticket__thread-list" role="log" aria-live="polite">
+            <div className="admin-support-ticket__thread">
+              <button
+                type="button"
+                className="admin-support-ticket__thread-toggle"
+                onClick={() => setThreadExpanded((current) => !current)}
+                aria-expanded={threadExpanded}
+                aria-controls={supportThreadId}
+              >
+                <span>Conversation thread</span>
+                <div className="admin-support-ticket__thread-toggle-meta">
+                  <span>{sortedThread.length} messages</span>
+                  <span className="admin-collapsible__icon" aria-hidden="true">{threadExpanded ? "-" : "+"}</span>
+                </div>
+              </button>
+              {threadExpanded ? (
+              <div id={supportThreadId} className="admin-support-ticket__thread-list" role="log" aria-live="polite">
                 {sortedThread.map((entry, index) => {
                   const imageUrl = resolveAssetUrl(entry?.imageUrl);
                   const sender = String(entry?.sender || "").toLowerCase() === "admin" ? "admin" : "user";
@@ -1262,7 +1276,8 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
                   );
                 })}
               </div>
-            </details>
+              ) : null}
+            </div>
           ) : null}
 
           <form className="admin-form admin-support-ticket__form" onSubmit={(event) => onAction("updateSupport", item, event)}>
@@ -1275,32 +1290,14 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
               </select>
             </label>
 
-            <div className="admin-support-ticket__quick-replies">
-              {SUPPORT_REPLY_TEMPLATES.map((template) => (
-                <button key={template.label} type="button" className="ghost-button" onClick={() => addTemplateReply(template.text)}>
-                  {template.label}
-                </button>
-              ))}
-              {SUPPORT_REPLY_EMOJIS.map((emoji) => (
-                <button key={emoji} type="button" className="ghost-button" onClick={() => appendReplyEmoji(emoji)}>
-                  {emoji}
-                </button>
-              ))}
-            </div>
             <div className="admin-support-ticket__composer-row">
               <textarea
                 className="field admin-support-ticket__composer-input"
                 name="response"
                 value={supportResponseDraft}
                 onChange={(event) => setSupportResponseDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    event.currentTarget.form?.requestSubmit();
-                  }
-                }}
                 placeholder="Type your reply..."
-                rows={1}
+                rows={4}
               />
             </div>
             <p className="admin-support-ticket__hint">
@@ -1312,7 +1309,8 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
             </button>
           </form>
         </div>
-      </details>
+        ) : null}
+      </article>
     );
   }
 
@@ -1523,7 +1521,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const router = useRouter();
   const [payload, setPayload] = useState(type === "dashboard" ? {} : []);
   const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [busyAction, setBusyAction] = useState("");
@@ -1611,11 +1609,11 @@ export default function AdminManager({ type, productMode = "list", productId = "
   }, [config.endpoint, isAdmin, token, type]);
 
   useEffect(() => {
-    if (!token || !isAdmin) {
-      setLoading(false);
-      return;
-    }
-    loadData();
+    if (!token || !isAdmin) return;
+    const timer = window.setTimeout(() => {
+      loadData();
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [isAdmin, loadData, token]);
 
   useEffect(() => {
