@@ -58,6 +58,7 @@ export default function CheckoutPage() {
     clientOrderRef: "",
     affiliateCodeMode: "manual",
     affiliateCodeCleared: false,
+    affiliateCodeClearedAt: 0,
   });
 
   useEffect(() => {
@@ -69,7 +70,11 @@ export default function CheckoutPage() {
         : "";
     const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
     const nextDraft = { ...(draft || {}) };
-    const affiliateWasCleared = Boolean(nextDraft.affiliateCodeCleared);
+    const attributionCapturedAt = Number(attribution?.capturedAt || 0);
+    const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
+    const affiliateWasCleared =
+      Boolean(nextDraft.affiliateCodeCleared) &&
+      (!attributionCapturedAt || affiliateClearedAt >= attributionCapturedAt);
     const autoApplyStoredCode =
       !affiliateWasCleared &&
       !String(nextDraft.affiliateCode || "").trim() &&
@@ -200,6 +205,7 @@ export default function CheckoutPage() {
         affiliateCode: normalizedValue,
         affiliateCodeMode: "manual",
         affiliateCodeCleared: !String(normalizedValue).trim(),
+        affiliateCodeClearedAt: String(normalizedValue).trim() ? 0 : Date.now(),
       };
     });
   }
