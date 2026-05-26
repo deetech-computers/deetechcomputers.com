@@ -14,7 +14,8 @@ export default function AffiliateLinkCapture() {
     const params = new URLSearchParams(window.location.search);
     const code = getAffiliateCodeFromSearchParams(params);
     if (!code) return;
-    saveAffiliateAttribution(code, "url");
+    const source = pathname?.startsWith("/products/") ? "product-link" : "url";
+    saveAffiliateAttribution(code, source, { pathname });
   }, [pathname, queryKey]);
 
   return null;

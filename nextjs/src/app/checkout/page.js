@@ -15,7 +15,11 @@ import {
 } from "@/lib/checkout";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
-import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
+import {
+  readAffiliateAttribution,
+  saveAffiliateAttribution,
+  shouldAutoApplyAffiliateAttribution,
+} from "@/lib/affiliate-attribution";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -52,24 +56,35 @@ export default function CheckoutPage() {
     discountPercent: 0,
     discountAmount: 0,
     clientOrderRef: "",
+    affiliateCodeMode: "manual",
+    affiliateCodeCleared: false,
   });
 
   useEffect(() => {
     const draft = readCheckoutDraft();
-    const affiliateFromStorage = readAffiliateCode();
+    const attribution = readAffiliateAttribution();
     const affiliateFromUrl =
       typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("affiliate")
         : "";
     const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
-    const normalizedStoredCode = String(affiliateFromStorage || "").trim().toUpperCase();
     const nextDraft = { ...(draft || {}) };
+    const autoApplyStoredCode =
+      !nextDraft.affiliateCodeCleared &&
+      !String(nextDraft.affiliateCode || "").trim() &&
+      shouldAutoApplyAffiliateAttribution(attribution, items)
+        ? String(attribution?.code || "").trim().toUpperCase()
+        : "";
 
     if (normalizedUrlCode) {
       saveAffiliateAttribution(normalizedUrlCode, "checkout-url");
       nextDraft.affiliateCode = normalizedUrlCode;
-    } else if (!String(nextDraft.affiliateCode || "").trim() && normalizedStoredCode) {
-      nextDraft.affiliateCode = normalizedStoredCode;
+      nextDraft.affiliateCodeMode = "auto-url";
+      nextDraft.affiliateCodeCleared = false;
+    } else if (autoApplyStoredCode) {
+      nextDraft.affiliateCode = autoApplyStoredCode;
+      nextDraft.affiliateCodeMode = "auto-attribution";
+      nextDraft.affiliateCodeCleared = false;
     }
 
     if (!Object.keys(nextDraft).length) return;
@@ -77,7 +92,21 @@ export default function CheckoutPage() {
     if (isPhaseOneComplete({ ...form, ...nextDraft })) {
       setPhaseSaved(true);
     }
-  }, []);
+  }, [items]);
+
+  useEffect(() => {
+    if (form.affiliateCodeMode !== "auto-attribution") return;
+    const attribution = readAffiliateAttribution();
+    if (shouldAutoApplyAffiliateAttribution(attribution, items)) return;
+    setForm((current) => {
+      if (current.affiliateCodeMode !== "auto-attribution") return current;
+      return {
+        ...current,
+        affiliateCode: "",
+        affiliateCodeMode: "manual",
+      };
+    });
+  }, [form.affiliateCodeMode, items]);
 
   useEffect(() => {
     if (!user) return;
@@ -160,7 +189,18 @@ export default function CheckoutPage() {
 
   function updateField(key, value) {
     setPhaseSaved(false);
-    setForm((current) => ({ ...current, [key]: value }));
+    setForm((current) => {
+      if (key !== "affiliateCode") {
+        return { ...current, [key]: value };
+      }
+      const normalizedValue = String(value || "").toUpperCase();
+      return {
+        ...current,
+        affiliateCode: normalizedValue,
+        affiliateCodeMode: "manual",
+        affiliateCodeCleared: !String(normalizedValue).trim(),
+      };
+    });
   }
 
   function registerFieldRef(key) {

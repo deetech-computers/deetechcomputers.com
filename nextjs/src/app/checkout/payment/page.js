@@ -19,7 +19,11 @@ import {
   readCheckoutDraft,
   writeCheckoutDraft,
 } from "@/lib/checkout";
-import { readAffiliateCode, saveAffiliateAttribution } from "@/lib/affiliate-attribution";
+import {
+  readAffiliateAttribution,
+  saveAffiliateAttribution,
+  shouldAutoApplyAffiliateAttribution,
+} from "@/lib/affiliate-attribution";
 import { API_BASE, API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
@@ -71,6 +75,8 @@ export default function CheckoutPaymentPage() {
     discountPercent: 0,
     discountAmount: 0,
     clientOrderRef: "",
+    affiliateCodeMode: "manual",
+    affiliateCodeCleared: false,
   });
   const [ready, setReady] = useState(false);
   const hubtelFinalizedRef = useRef(false);
@@ -117,20 +123,29 @@ export default function CheckoutPaymentPage() {
 
   useEffect(() => {
     const draft = readCheckoutDraft();
-    const affiliateFromStorage = readAffiliateCode();
+    const attribution = readAffiliateAttribution();
     const affiliateFromUrl =
       typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("affiliate")
         : "";
     const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
-    const normalizedStoredCode = String(affiliateFromStorage || "").trim().toUpperCase();
     const nextDraft = { ...(draft || {}) };
+    const autoApplyStoredCode =
+      !nextDraft.affiliateCodeCleared &&
+      !String(nextDraft.affiliateCode || "").trim() &&
+      shouldAutoApplyAffiliateAttribution(attribution, items)
+        ? String(attribution?.code || "").trim().toUpperCase()
+        : "";
 
     if (normalizedUrlCode) {
       saveAffiliateAttribution(normalizedUrlCode, "payment-url");
       nextDraft.affiliateCode = normalizedUrlCode;
-    } else if (!String(nextDraft.affiliateCode || "").trim() && normalizedStoredCode) {
-      nextDraft.affiliateCode = normalizedStoredCode;
+      nextDraft.affiliateCodeMode = "auto-url";
+      nextDraft.affiliateCodeCleared = false;
+    } else if (autoApplyStoredCode) {
+      nextDraft.affiliateCode = autoApplyStoredCode;
+      nextDraft.affiliateCodeMode = "auto-attribution";
+      nextDraft.affiliateCodeCleared = false;
     }
 
     if (!Object.keys(nextDraft).length || !isPhaseOneComplete(nextDraft)) {
@@ -142,6 +157,20 @@ export default function CheckoutPaymentPage() {
     clientOrderRefRef.current = String(nextDraft?.clientOrderRef || "").trim();
     setReady(true);
   }, [pushToast, router]);
+
+  useEffect(() => {
+    if (!ready || form.affiliateCodeMode !== "auto-attribution") return;
+    const attribution = readAffiliateAttribution();
+    if (shouldAutoApplyAffiliateAttribution(attribution, items)) return;
+    setForm((current) => {
+      if (current.affiliateCodeMode !== "auto-attribution") return current;
+      return {
+        ...current,
+        affiliateCode: "",
+        affiliateCodeMode: "manual",
+      };
+    });
+  }, [form.affiliateCodeMode, items, ready]);
 
   useEffect(() => {
     if (!ready) return;
