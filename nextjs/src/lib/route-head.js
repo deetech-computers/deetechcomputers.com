@@ -1,4 +1,4 @@
-import { APP_NAME, SITE_URL } from "@/lib/config";
+import { APP_NAME, buildSiteUrl } from "@/lib/config";
 
 function normalizePath(path = "/") {
   if (!path || path === "/") return "/";
@@ -11,7 +11,7 @@ export function buildRouteTitle(title) {
 
 export function buildCanonicalUrl(path) {
   const normalizedPath = normalizePath(path);
-  return normalizedPath === "/" ? SITE_URL : `${SITE_URL}${normalizedPath}`;
+  return normalizedPath === "/" ? buildSiteUrl("/") : buildSiteUrl(normalizedPath);
 }
 
 export function makeStaticRouteHead({ title, path, description }) {

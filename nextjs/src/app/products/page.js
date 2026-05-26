@@ -1,5 +1,5 @@
 import ProductsPageClient from "@/components/products/products-page-client";
-import { APP_NAME, SITE_URL } from "@/lib/config";
+import { APP_NAME, SITE_URL, buildSiteUrl } from "@/lib/config";
 import { redirect } from "next/navigation";
 import { buildProductsHref, canonicalCategory, formatCategoryLabel, getStorefrontCategoryLabel, isStorefrontCategory } from "@/lib/products";
 
@@ -55,7 +55,7 @@ function buildCanonicalUrl(searchParams) {
 export async function generateMetadata({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const canonical = buildCanonicalUrl(resolvedSearchParams);
-  const canonicalUrl = `${SITE_URL}${canonical}`;
+  const canonicalUrl = buildSiteUrl(canonical);
   const search = getSearchParamValue(resolvedSearchParams, "q").trim();
   const category = canonicalCategory(getSearchParamValue(resolvedSearchParams, "category") || "all");
   const brand = String(getSearchParamValue(resolvedSearchParams, "brand") || "").trim();
@@ -76,7 +76,7 @@ export async function generateMetadata({ searchParams }) {
       ? `Browse ${categoryLabel} products at Deetech Computers.`
       : "Browse laptops, phones, monitors, accessories, and more at Deetech Computers.";
   const ogImage = {
-    url: `${SITE_URL}/logo.png`,
+    url: buildSiteUrl("/logo.png"),
     width: 1200,
     height: 630,
     alt: APP_NAME,

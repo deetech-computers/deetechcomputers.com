@@ -1,9 +1,45 @@
-// Production SEO output should default to the live custom domain.
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://www.deetechcomputers.com"
-    : "http://localhost:3000");
+const PRODUCTION_SITE_URL = "https://www.deetechcomputers.com";
+const DEVELOPMENT_SITE_URL = "http://localhost:3000";
+
+function normalizeSiteUrl(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return "";
+  return normalized.replace(/\/+$/, "");
+}
+
+function isVercelHostname(hostname) {
+  return hostname === "vercel.app" || hostname.endsWith(".vercel.app");
+}
+
+function resolveSiteUrl() {
+  const requested = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+
+  if (process.env.NODE_ENV !== "production") {
+    return requested || DEVELOPMENT_SITE_URL;
+  }
+
+  if (!requested) return PRODUCTION_SITE_URL;
+
+  try {
+    const parsed = new URL(requested);
+    if (isVercelHostname(parsed.hostname)) {
+      return PRODUCTION_SITE_URL;
+    }
+    return normalizeSiteUrl(parsed.toString());
+  } catch {
+    return PRODUCTION_SITE_URL;
+  }
+}
+
+export const SITE_URL = resolveSiteUrl();
+
+export function buildSiteUrl(path = "/") {
+  const normalizedPath = String(path || "/").trim();
+  if (!normalizedPath || normalizedPath === "/") {
+    return `${SITE_URL}/`;
+  }
+  return `${SITE_URL}${normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`}`;
+}
 
 const assetBase =
   process.env.NEXT_PUBLIC_DEETECH_ASSET_BASE ||

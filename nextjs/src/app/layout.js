@@ -5,11 +5,11 @@ import RouteScrollTop from "@/components/navigation/route-scroll-top";
 import GlobalStyles from "@/components/styles/global-styles";
 import AffiliateLinkCapture from "@/components/tracking/affiliate-link-capture";
 import UserBehaviorTracker from "@/components/tracking/user-behavior-tracker";
-import { APP_NAME, SITE_URL } from "@/lib/config";
+import { APP_NAME, SITE_URL, buildSiteUrl } from "@/lib/config";
 import { Suspense } from "react";
 
 const defaultOgImage = {
-  url: `${SITE_URL}/logo.png`,
+  url: buildSiteUrl("/logo.png"),
   width: 1200,
   height: 630,
   alt: "Deetech Computers",
@@ -35,7 +35,7 @@ export const metadata = {
   openGraph: {
     title: APP_NAME,
     description: "Standalone Next.js storefront for Deetech Computers.",
-    url: SITE_URL,
+    url: buildSiteUrl("/"),
     siteName: APP_NAME,
     type: "website",
     locale: "en_GH",

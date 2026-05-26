@@ -1,5 +1,5 @@
 import ProductsPageClient from "@/components/products/products-page-client";
-import { APP_NAME, SITE_URL } from "@/lib/config";
+import { APP_NAME, buildSiteUrl } from "@/lib/config";
 import { getStorefrontCategoryLabel } from "@/lib/products";
 
 function getSearchParamValue(searchParams, key) {
@@ -10,7 +10,7 @@ function getSearchParamValue(searchParams, key) {
 
 export function generateCategoryPageMetadata(category, searchParams) {
   const canonical = `/products/${category}`;
-  const canonicalUrl = `${SITE_URL}${canonical}`;
+  const canonicalUrl = buildSiteUrl(canonical);
   const search = getSearchParamValue(searchParams, "q").trim();
   const brand = String(getSearchParamValue(searchParams, "brand") || "").trim();
   const hasSearch = Boolean(search);
@@ -27,7 +27,7 @@ export function generateCategoryPageMetadata(category, searchParams) {
     ? `Search results for "${search}" in ${categoryLabel} at Deetech Computers.`
     : `Browse ${categoryLabel} products at Deetech Computers.`;
   const ogImage = {
-    url: `${SITE_URL}/logo.png`,
+    url: buildSiteUrl("/logo.png"),
     width: 1200,
     height: 630,
     alt: APP_NAME,
