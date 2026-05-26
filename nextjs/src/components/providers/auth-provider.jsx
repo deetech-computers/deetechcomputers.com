@@ -1,48 +1,86 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { fetchProfile, loginUser, registerUser, updateProfile } from "@/lib/auth";
-import { clearSession, readStoredToken, readStoredUser, writeSession } from "@/lib/session";
+import { createContext, useContext, useSyncExternalStore } from "react";
+import {
+  fetchProfile,
+  googleAuthUser,
+  loginUser,
+  registerUser,
+  updateProfile,
+} from "@/lib/auth";
+import {
+  clearSession,
+  readServerSessionSnapshot,
+  readSessionSnapshot,
+  subscribeToSession,
+  writeSession,
+} from "@/lib/session";
 import { useToast } from "./toast-provider";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const { pushToast } = useToast();
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [status, setStatus] = useState("loading");
+  const session = useSyncExternalStore(
+    subscribeToSession,
+    readSessionSnapshot,
+    readServerSessionSnapshot
+  );
+  const user = session.user;
+  const token = session.token;
+  const status = "ready";
 
-  useEffect(() => {
-    setUser(readStoredUser());
-    setToken(readStoredToken());
-    setStatus("ready");
-  }, []);
+  const normalizeAuthResult = (data) => {
+    const tokenValue = data?.token || null;
+    const userValue =
+      data?.user ||
+      (data?._id
+        ? {
+            _id: data._id,
+            name: data.name,
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            email: data.email,
+            role: data.role,
+            isActive: data.isActive,
+            avatarUrl: data.avatarUrl || "",
+            authProvider: data.authProvider || "local",
+          }
+        : null);
 
-  const setSessionState = (nextToken, nextUser) => {
-    setToken(nextToken);
-    setUser(nextUser);
-    writeSession({ token: nextToken, user: nextUser });
+    return {
+      token: tokenValue,
+      user: userValue,
+    };
   };
 
   const login = async ({ email, password }) => {
     const data = await loginUser({ email, password });
-    setSessionState(data.token || null, data.user || null);
+    const normalized = normalizeAuthResult(data);
+    writeSession({ token: normalized.token, user: normalized.user });
     pushToast("Login successful", "success");
     return data;
   };
 
   const register = async ({ name, email, password }) => {
     const data = await registerUser({ name, email, password });
-    setSessionState(data.token || null, data.user || null);
+    const normalized = normalizeAuthResult(data);
+    writeSession({ token: normalized.token, user: normalized.user });
     pushToast("Account created successfully", "success");
+    return data;
+  };
+
+  const loginWithGoogle = async (credential) => {
+    const data = await googleAuthUser(credential);
+    const normalized = normalizeAuthResult(data);
+    writeSession({ token: normalized.token, user: normalized.user });
+    pushToast("Google sign-in successful", "success");
     return data;
   };
 
   const refreshProfile = async () => {
     if (!token) return null;
     const profile = await fetchProfile(token);
-    setUser(profile);
     writeSession({ token, user: profile });
     return profile;
   };
@@ -55,8 +93,6 @@ export function AuthProvider({ children }) {
       ...(user || {}),
       ...(profile || {}),
     };
-    setToken(nextToken);
-    setUser(nextUser);
     writeSession({ token: nextToken, user: nextUser });
     pushToast("Profile updated successfully!", "success");
     return nextUser;
@@ -64,25 +100,21 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     clearSession();
-    setUser(null);
-    setToken(null);
     pushToast("You have been logged out", "info");
   };
 
-  const value = useMemo(
-    () => ({
-      user,
-      token,
-      status,
-      isAuthenticated: Boolean(token),
-      login,
-      register,
-      refreshProfile,
-      saveProfile,
-      logout,
-    }),
-    [status, token, user]
-  );
+  const value = {
+    user,
+    token,
+    status,
+    isAuthenticated: Boolean(token),
+    login,
+    loginWithGoogle,
+    register,
+    refreshProfile,
+    saveProfile,
+    logout,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

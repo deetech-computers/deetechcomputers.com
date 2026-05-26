@@ -5851,6 +5851,49 @@ button, input, select, textarea { font: inherit; }
   opacity: 0.72;
   cursor: wait;
 }
+.auth-google {
+  display: grid;
+  gap: 10px;
+}
+.auth-google__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #677286;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.auth-google__divider::before,
+.auth-google__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d5dce8;
+}
+.auth-google__divider span {
+  flex: 0 0 auto;
+}
+.auth-google__button {
+  min-height: 44px;
+  display: grid;
+  justify-content: center;
+}
+.auth-google__button.is-disabled {
+  pointer-events: none;
+  opacity: 0.72;
+}
+.auth-google__button > div {
+  width: 100% !important;
+  max-width: 100%;
+}
+.auth-google__button iframe {
+  max-width: 100%;
+}
+.auth-google__error {
+  margin: 0;
+  text-align: center;
+}
 .auth-hp-link-row {
   justify-self: center;
   color: #0d56da;

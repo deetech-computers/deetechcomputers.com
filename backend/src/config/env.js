@@ -51,6 +51,10 @@ export const EMAILJS_RESET_PUBLIC_KEY =
 export const EMAILJS_RESET_PRIVATE_KEY =
   process.env.EMAILJS_RESET_PRIVATE_KEY || process.env.EMAILJS_PRIVATE_KEY || "";
 
+// Google auth
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+
 // Hubtel auto-checkout
 export const HUBTEL_API_ID = process.env.HUBTEL_API_ID || "";
 export const HUBTEL_API_KEY = process.env.HUBTEL_API_KEY || "";

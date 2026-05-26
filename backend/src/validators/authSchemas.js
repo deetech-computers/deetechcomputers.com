@@ -28,3 +28,7 @@ export const socialLoginSchema = Joi.object({
   provider: Joi.string().valid("google", "twitter", "tiktok").required(),
   token: Joi.string().required(),
 });
+
+export const googleAuthSchema = Joi.object({
+  credential: Joi.string().required(),
+});

@@ -15,6 +15,17 @@ export async function registerUser(payload) {
   });
 }
 
+export async function googleAuthUser(credential) {
+  return requestJson(`${API_BASE_AUTH}/google`, {
+    method: "POST",
+    body: JSON.stringify({ credential }),
+  });
+}
+
+export async function fetchGoogleAuthConfig() {
+  return requestJson(`${API_BASE_AUTH}/google/config`);
+}
+
 export async function fetchProfile(token) {
   return requestJson(`${API_BASE_USERS}/profile`, {
     headers: {

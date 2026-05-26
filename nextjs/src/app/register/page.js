@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -38,13 +40,26 @@ export default function RegisterPage() {
     }
   };
 
+  const handleGoogleAuth = async (credential) => {
+    setSubmitting(true);
+    setError("");
+    try {
+      await loginWithGoogle(credential);
+      router.push("/account");
+    } catch (err) {
+      setError(err.message || "Google sign-up failed.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <main className="auth-hp-page">
       <section className="auth-hp-card auth-hp-card--register">
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
             <Link href="/" className="auth-hp-logo-link" aria-label="Go to homepage">
-              <img className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width="170" height="48" />
+              <Image className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width={170} height={48} priority />
             </Link>
           </header>
           <h1>Create account</h1>
@@ -113,6 +128,12 @@ export default function RegisterPage() {
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
               {submitting ? "Creating account..." : "Create"}
             </button>
+            <GoogleAuthButton
+              text="signup_with"
+              onCredential={handleGoogleAuth}
+              onError={(err) => setError(err?.message || "Google sign-up failed.")}
+              disabled={submitting}
+            />
             <Link href="/login" className="auth-hp-link-row">Sign in</Link>
           </form>
         </div>

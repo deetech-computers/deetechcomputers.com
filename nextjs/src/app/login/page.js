@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -31,13 +33,26 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleAuth = async (credential) => {
+    setSubmitting(true);
+    setError("");
+    try {
+      await loginWithGoogle(credential);
+      router.push("/account");
+    } catch (err) {
+      setError(err.message || "Google sign-in failed.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <main className="auth-hp-page">
       <section className="auth-hp-card auth-hp-card--login">
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
             <Link href="/" className="auth-hp-logo-link" aria-label="Go to homepage">
-              <img className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width="170" height="48" />
+              <Image className="auth-hp-logo" src="/favicon-removebg-preview.png" alt="Deetech Computers logo" width={170} height={48} priority />
             </Link>
           </header>
           <h1>Sign in</h1>
@@ -81,6 +96,12 @@ export default function LoginPage() {
             <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
               {submitting ? "Logging in..." : "Login"}
             </button>
+            <GoogleAuthButton
+              text="signin_with"
+              onCredential={handleGoogleAuth}
+              onError={(err) => setError(err?.message || "Google sign-in failed.")}
+              disabled={submitting}
+            />
             <Link href="/register" className="auth-hp-link-row">Create account</Link>
             <Link href="/forgot-password" className="auth-hp-link-row">Forgot password?</Link>
           </form>

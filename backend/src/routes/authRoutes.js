@@ -8,6 +8,8 @@ import {
   forgotPassword,
   resetPassword,
   socialLogin,
+  googleAuth,
+  googleAuthConfig,
 } from "../controllers/authController.js";
 import { validateRequest } from "../middleware/validateMiddleware.js";
 import {
@@ -16,6 +18,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   socialLoginSchema,
+  googleAuthSchema,
 } from "../validators/authSchemas.js";
 import { createRateLimiter } from "../middleware/rateLimitFactory.js";
 
@@ -35,6 +38,8 @@ const forgotPasswordLimiter = createRateLimiter({
 // user registration & login
 router.post("/register", authLimiter, validateRequest(registerSchema), registerUser);
 router.post("/login", authLimiter, validateRequest(loginSchema), loginUser);
+router.get("/google/config", googleAuthConfig);
+router.post("/google", authLimiter, validateRequest(googleAuthSchema), googleAuth);
 router.post("/logout", logoutUser);
 
 // token refresh

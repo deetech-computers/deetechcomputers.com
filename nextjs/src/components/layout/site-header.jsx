@@ -254,6 +254,7 @@ export default function SiteHeader() {
   const [notificationReadIds, setNotificationReadIds] = useState([]);
   const [notificationDismissedIds, setNotificationDismissedIds] = useState([]);
   const [notificationStorageScopeReady, setNotificationStorageScopeReady] = useState("");
+  const [notificationItemsScopeReady, setNotificationItemsScopeReady] = useState("");
   const [searchProducts, setSearchProducts] = useState([]);
   const [wishlistPreviewItems, setWishlistPreviewItems] = useState([]);
   const [categoryNavItems, setCategoryNavItems] = useState(() => {
@@ -296,6 +297,7 @@ export default function SiteHeader() {
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
   const notificationScope = buildNotificationScope(user);
   const isNotificationScopeSynced = notificationStorageScopeReady === notificationScope;
+  const isNotificationItemsSynced = notificationItemsScopeReady === notificationScope;
   const safeNotificationReadIds = isNotificationScopeSynced
     ? sanitizeNotificationIds(notificationItems, notificationReadIds)
     : [];
@@ -303,7 +305,7 @@ export default function SiteHeader() {
     ? sanitizeNotificationIds(notificationItems, notificationDismissedIds)
     : [];
   const quickNotificationItems =
-    isAuthenticated && !isNotificationScopeSynced
+    isAuthenticated && (!isNotificationScopeSynced || !isNotificationItemsSynced)
       ? []
       : buildQuickNotificationItems(
           notificationItems,
@@ -665,10 +667,13 @@ export default function SiteHeader() {
     if (status !== "ready") return undefined;
     if (!isAuthenticated || !token) {
       setNotificationItems([]);
+      setNotificationItemsScopeReady("");
       return undefined;
     }
 
     let cancelled = false;
+    setNotificationItems([]);
+    setNotificationItemsScopeReady("");
 
     const normalizeNotificationsList = (payload, key) => {
       if (Array.isArray(payload)) return payload;
@@ -690,6 +695,7 @@ export default function SiteHeader() {
               normalizeNotificationsList(ticketsPayload, "tickets")
             )
           );
+          setNotificationItemsScopeReady(notificationScope);
           return;
         }
 
@@ -704,9 +710,11 @@ export default function SiteHeader() {
             normalizeNotificationsList(ticketsPayload, "tickets")
           )
         );
+        setNotificationItemsScopeReady(notificationScope);
       } catch {
         if (!cancelled) {
           setNotificationItems([]);
+          setNotificationItemsScopeReady(notificationScope);
         }
       }
     }
@@ -721,7 +729,7 @@ export default function SiteHeader() {
       window.clearInterval(interval);
       window.removeEventListener("focus", onFocus);
     };
-  }, [isAuthenticated, status, token, user?.role]);
+  }, [isAuthenticated, notificationScope, status, token, user?.role]);
 
   const onSearchSubmit = (event) => {
     event.preventDefault();
