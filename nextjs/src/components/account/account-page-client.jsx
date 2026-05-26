@@ -52,6 +52,8 @@ const ALLOWED_ACCOUNT_TABS = new Set([
   "logout",
 ]);
 
+const SUPPORT_WHATSAPP_LINK = "https://wa.me/message/WEYXKNNA6KXXL1";
+
 function normalizeAccountTab(value) {
   return ALLOWED_ACCOUNT_TABS.has(value) ? value : "personal";
 }
@@ -669,6 +671,16 @@ function MessagesSection({
                     <button type="submit" className="primary-button account-support-chat__send" disabled={sendingReply || !replyDraft.trim()}>
                       {sendingReply ? "..." : "Send"}
                     </button>
+                  </div>
+                  <div className="account-support-chat__quick">
+                    <a
+                      href={SUPPORT_WHATSAPP_LINK}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="ghost-button"
+                    >
+                      If our reply is delayed, reach us on WhatsApp for faster support
+                    </a>
                   </div>
                 </form>
               </>
