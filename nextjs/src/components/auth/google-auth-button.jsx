@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchGoogleAuthConfig } from "@/lib/auth";
 
 let googleScriptPromise = null;
+let googleConfigPromise = null;
+let initializedClientId = "";
+let activeCredentialHandler = null;
+
+function loadGoogleConfig() {
+  if (googleConfigPromise) return googleConfigPromise;
+  googleConfigPromise = fetchGoogleAuthConfig();
+  return googleConfigPromise;
+}
 
 function loadGoogleScript() {
   // Keep a single shared Google script loader across auth screens.
@@ -46,10 +55,10 @@ export default function GoogleAuthButton({
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false);
   const [error, setError] = useState("");
-  const instanceId = useId().replace(/:/g, "-");
 
   useEffect(() => {
     callbackRef.current = onCredential;
+    activeCredentialHandler = onCredential;
   }, [onCredential]);
 
   useEffect(() => {
@@ -64,7 +73,7 @@ export default function GoogleAuthButton({
       setError("");
 
       try {
-        const config = await fetchGoogleAuthConfig();
+        const config = await loadGoogleConfig();
         const clientId = String(config?.clientId || "").trim();
         if (!config?.enabled || !clientId) {
           throw new Error("Google sign-in is not available right now.");
@@ -73,19 +82,21 @@ export default function GoogleAuthButton({
         await loadGoogleScript();
         if (cancelled || !window.google?.accounts?.id || !containerRef.current) return;
 
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: (response) => {
-            const credential = String(response?.credential || "").trim();
-            if (!credential) {
-              const nextError = new Error("Google did not return a valid sign-in credential.");
-              setError(nextError.message);
-              errorRef.current?.(nextError);
-              return;
-            }
-            callbackRef.current?.(credential);
-          },
-        });
+        if (initializedClientId !== clientId) {
+          window.google.accounts.id.initialize({
+            client_id: clientId,
+            callback: (response) => {
+              const credential = String(response?.credential || "").trim();
+              if (!credential) {
+                const nextError = new Error("Google did not return a valid sign-in credential.");
+                errorRef.current?.(nextError);
+                return;
+              }
+              activeCredentialHandler?.(credential);
+            },
+          });
+          initializedClientId = clientId;
+        }
 
         containerRef.current.innerHTML = "";
         window.google.accounts.id.renderButton(containerRef.current, {
@@ -115,7 +126,7 @@ export default function GoogleAuthButton({
     return () => {
       cancelled = true;
     };
-  }, [instanceId, text]);
+  }, [text]);
 
   return (
     <div className="auth-google">
