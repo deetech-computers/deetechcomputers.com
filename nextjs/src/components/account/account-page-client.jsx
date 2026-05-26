@@ -672,19 +672,25 @@ function MessagesSection({
                       {sendingReply ? "..." : "Send"}
                     </button>
                   </div>
-                  <div className="account-support-chat__quick">
-                    <a
-                      href={SUPPORT_WHATSAPP_LINK}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="ghost-button"
-                    >
-                      If our reply is delayed, reach us on WhatsApp for faster support
-                    </a>
-                  </div>
                 </form>
               </>
             ) : null}
+          </div>
+          <div className="contact-support-preview panel">
+            <h3>Need another way to reach us?</h3>
+            <p>
+              If our reply is taking longer than expected, you can also contact us on WhatsApp for faster text support.
+            </p>
+            <div className="account-dashboard__actions">
+              <a
+                href={SUPPORT_WHATSAPP_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="primary-link"
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       )}
