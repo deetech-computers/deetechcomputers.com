@@ -1313,7 +1313,7 @@ export default function SiteHeader() {
         <div className="header-topbar">
           <div className="shell header-topbar__inner">
             <span>Free shipping on all laptops</span>
-            <span>All products above 2,000</span>
+            <span>Non-laptops: GHC 30 below 300 | GHC 50 for 300-999 | GHC 100 for 1,000-1,999 | Free at 2,000+</span>
           </div>
         </div>
 

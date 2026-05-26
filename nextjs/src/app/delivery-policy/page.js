@@ -57,10 +57,13 @@ const page = {
           ],
         },
         {
-          title: "5. Delivery Fee Communication",
+          title: "5. Non-Laptop Delivery Fees",
           items: [
-            "For non-laptop items, delivery personnel will contact you upon arrival.",
-            "Delivery fee confirmed before handing over the parcel.",
+            "Orders below GHC 300 attract a GHC 30 delivery fee.",
+            "Orders from GHC 300 to GHC 999 attract a GHC 50 delivery fee.",
+            "Orders from GHC 1,000 to GHC 1,999 attract a GHC 100 delivery fee.",
+            "Orders at GHC 2,000 or more qualify for free delivery.",
+            "Delivery fee is based on the product subtotal for non-laptop items.",
           ],
         },
       ],
@@ -83,7 +86,7 @@ const page = {
           items: [
             "Available for selected products only.",
             "70% commitment fee required before dispatch.",
-            "Delivery fee communicated upon rider's arrival.",
+            "Delivery fee follows the published non-laptop delivery tiers.",
           ],
           extraTitle: "Eligible Items for Payment on Delivery (Outside Kumasi)",
           extraItems: ["Phone Accessories", "Computer Accessories", "Tablets"],
@@ -97,6 +100,7 @@ const page = {
         "Kumasi Pickup Available: Collect your orders directly from our main location in Kumasi after notification.",
         "Fast Processing: Most orders are processed and delivered within 4-24 hours after confirmation.",
         "Free Laptop Delivery: Enjoy complimentary nationwide delivery on all laptop purchases after full payment.",
+        "Tiered Non-Laptop Delivery: Delivery is GHC 30 below GHC 300, GHC 50 for GHC 300 to GHC 999, GHC 100 for GHC 1,000 to GHC 1,999, and free from GHC 2,000 upward.",
         "Clear Communication: We maintain transparent communication about delivery fees and timelines.",
       ],
     },

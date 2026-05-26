@@ -13,7 +13,10 @@ export function calculateShippingPrice(items = [], subtotal = 0) {
 
   if (allLaptops) return 0;
   if (safeSubtotal >= 2000) return 0;
-  return 100;
+  if (safeSubtotal >= 1000) return 100;
+  if (safeSubtotal >= 300) return 50;
+  if (safeSubtotal > 0) return 30;
+  return 0;
 }
 
 export function buildCheckoutPricing({ items = [], subtotal = 0, discountAmount = 0 } = {}) {
