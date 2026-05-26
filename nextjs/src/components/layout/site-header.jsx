@@ -253,6 +253,7 @@ export default function SiteHeader() {
   const [notificationItems, setNotificationItems] = useState([]);
   const [notificationReadIds, setNotificationReadIds] = useState([]);
   const [notificationDismissedIds, setNotificationDismissedIds] = useState([]);
+  const [notificationStorageScopeReady, setNotificationStorageScopeReady] = useState("");
   const [searchProducts, setSearchProducts] = useState([]);
   const [wishlistPreviewItems, setWishlistPreviewItems] = useState([]);
   const [categoryNavItems, setCategoryNavItems] = useState(() => {
@@ -294,13 +295,21 @@ export default function SiteHeader() {
   const isMobileViewport = viewportWidth <= 980;
   const wishlistBadgeText = String(wishlistPreviewItems.length || 0);
   const notificationScope = buildNotificationScope(user);
-  const safeNotificationReadIds = sanitizeNotificationIds(notificationItems, notificationReadIds);
-  const safeNotificationDismissedIds = sanitizeNotificationIds(notificationItems, notificationDismissedIds);
-  const quickNotificationItems = buildQuickNotificationItems(
-    notificationItems,
-    safeNotificationReadIds,
-    safeNotificationDismissedIds
-  );
+  const isNotificationScopeSynced = notificationStorageScopeReady === notificationScope;
+  const safeNotificationReadIds = isNotificationScopeSynced
+    ? sanitizeNotificationIds(notificationItems, notificationReadIds)
+    : [];
+  const safeNotificationDismissedIds = isNotificationScopeSynced
+    ? sanitizeNotificationIds(notificationItems, notificationDismissedIds)
+    : [];
+  const quickNotificationItems =
+    isAuthenticated && !isNotificationScopeSynced
+      ? []
+      : buildQuickNotificationItems(
+          notificationItems,
+          safeNotificationReadIds,
+          safeNotificationDismissedIds
+        );
   const latestHeaderNotification = quickNotificationItems[0] || null;
   const unseenNotificationCount = quickNotificationItems.length;
   const notificationBadgeText = String(unseenNotificationCount || 0);
@@ -564,10 +573,19 @@ export default function SiteHeader() {
   }, [notificationMenuOpen]);
 
   useEffect(() => {
+    setNotificationStorageScopeReady("");
     const syncNotificationStorage = (event) => {
+      if (
+        event?.type === HEADER_NOTIFICATIONS_UPDATED_EVENT &&
+        event?.detail?.scope &&
+        String(event.detail.scope) !== notificationScope
+      ) {
+        return;
+      }
       if (event?.type === "storage" && event.key && !event.key.includes("deetech:header-notifications:")) return;
       setNotificationReadIds(readNotificationReadIds(notificationScope));
       setNotificationDismissedIds(readNotificationDismissedIds(notificationScope));
+      setNotificationStorageScopeReady(notificationScope);
     };
 
     syncNotificationStorage();
