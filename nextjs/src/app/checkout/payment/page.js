@@ -130,14 +130,15 @@ export default function CheckoutPaymentPage() {
         : "";
     const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
     const nextDraft = { ...(draft || {}) };
+    const affiliateWasCleared = Boolean(nextDraft.affiliateCodeCleared);
     const autoApplyStoredCode =
-      !nextDraft.affiliateCodeCleared &&
+      !affiliateWasCleared &&
       !String(nextDraft.affiliateCode || "").trim() &&
       shouldAutoApplyAffiliateAttribution(attribution, items)
         ? String(attribution?.code || "").trim().toUpperCase()
         : "";
 
-    if (normalizedUrlCode) {
+    if (!affiliateWasCleared && normalizedUrlCode) {
       saveAffiliateAttribution(normalizedUrlCode, "payment-url");
       nextDraft.affiliateCode = normalizedUrlCode;
       nextDraft.affiliateCodeMode = "auto-url";
