@@ -776,9 +776,6 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
     setAccountMenuOpen(false);
     setCartDrawerOpen(false);
-    if (isAuthenticated && quickNotificationItems.length) {
-      markNotificationsAsRead(notificationScope, quickNotificationItems.map((item) => item?.id));
-    }
     setNotificationMenuOpen(true);
   }
 
