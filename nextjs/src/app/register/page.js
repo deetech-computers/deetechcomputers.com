@@ -32,7 +32,7 @@ export default function RegisterPage() {
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
-      router.push("/account");
+      router.push("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -45,7 +45,7 @@ export default function RegisterPage() {
     setError("");
     try {
       await loginWithGoogle(credential);
-      router.push("/account");
+      router.push("/");
     } catch (err) {
       setError(err.message || "Google sign-up failed.");
     } finally {

@@ -25,7 +25,7 @@ export default function LoginPage() {
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
-      router.push("/account");
+      router.push("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -38,7 +38,7 @@ export default function LoginPage() {
     setError("");
     try {
       await loginWithGoogle(credential);
-      router.push("/account");
+      router.push("/");
     } catch (err) {
       setError(err.message || "Google sign-in failed.");
     } finally {
