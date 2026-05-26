@@ -6,6 +6,7 @@ import { fetchGoogleAuthConfig } from "@/lib/auth";
 let googleScriptPromise = null;
 
 function loadGoogleScript() {
+  // Keep a single shared Google script loader across auth screens.
   if (typeof window === "undefined") return Promise.reject(new Error("Browser required"));
   if (window.google?.accounts?.id) return Promise.resolve();
   if (googleScriptPromise) return googleScriptPromise;
