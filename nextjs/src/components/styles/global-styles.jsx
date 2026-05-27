@@ -3108,7 +3108,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-card--catalog .product-card__body h3 {
   font-size: 0.82rem; line-height: 1.45; font-weight: 700; color: #22201d;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .product-card--related {
   border: 1px solid #f0ebe2;
