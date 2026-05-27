@@ -21,11 +21,21 @@ import {
   saveAffiliateAttribution,
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
+import { fetchProfile } from "@/lib/auth";
+
+function hasSavedBillingDefaults(source) {
+  return Boolean(
+    String(source?.shippingAddress || source?.address || "").trim() &&
+    String(source?.shippingCity || source?.city || "").trim() &&
+    String(source?.deliveryRegion || source?.region || "").trim() &&
+    String(source?.mobileNumber || source?.phone || "").trim()
+  );
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items } = useCart();
-  const { user } = useAuth();
+  const { isAuthenticated, token, user } = useAuth();
   const { pushToast } = useToast();
   const [phaseSaved, setPhaseSaved] = useState(false);
   const [affiliateState, setAffiliateState] = useState({
@@ -36,43 +46,73 @@ export default function CheckoutPage() {
   });
   const fieldRefs = useRef({});
   const [form, setForm] = useState(() => buildCheckoutFormState(user));
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const draft = readCheckoutDraft(user);
-    const attribution = readAffiliateAttribution();
-    const affiliateFromUrl =
-      typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("affiliate")
-        : "";
-    const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
-    const nextDraft = { ...(draft || {}) };
-    const attributionCapturedAt = Number(attribution?.capturedAt || 0);
-    const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
-    const affiliateWasCleared =
-      Boolean(nextDraft.affiliateCodeCleared) &&
-      (!attributionCapturedAt || affiliateClearedAt >= attributionCapturedAt);
-    const autoApplyStoredCode =
-      !affiliateWasCleared &&
-      !String(nextDraft.affiliateCode || "").trim() &&
-      shouldAutoApplyAffiliateAttribution(attribution, items)
-        ? String(attribution?.code || "").trim().toUpperCase()
-        : "";
+    let cancelled = false;
+    setHydrated(false);
 
-    if (!affiliateWasCleared && normalizedUrlCode) {
-      saveAffiliateAttribution(normalizedUrlCode, "checkout-url");
-      nextDraft.affiliateCode = normalizedUrlCode;
-      nextDraft.affiliateCodeMode = "auto-url";
-      nextDraft.affiliateCodeCleared = false;
-    } else if (autoApplyStoredCode) {
-      nextDraft.affiliateCode = autoApplyStoredCode;
-      nextDraft.affiliateCodeMode = "auto-attribution";
-      nextDraft.affiliateCodeCleared = false;
+    async function hydrateCheckoutForm() {
+      const draft = readCheckoutDraft(user);
+      const attribution = readAffiliateAttribution();
+      const affiliateFromUrl =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("affiliate")
+          : "";
+      const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
+      const nextDraft = { ...(draft || {}) };
+      const attributionCapturedAt = Number(attribution?.capturedAt || 0);
+      const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
+      const affiliateWasCleared =
+        Boolean(nextDraft.affiliateCodeCleared) &&
+        (!attributionCapturedAt || affiliateClearedAt >= attributionCapturedAt);
+      const autoApplyStoredCode =
+        !affiliateWasCleared &&
+        !String(nextDraft.affiliateCode || "").trim() &&
+        shouldAutoApplyAffiliateAttribution(attribution, items)
+          ? String(attribution?.code || "").trim().toUpperCase()
+          : "";
+
+      if (!affiliateWasCleared && normalizedUrlCode) {
+        saveAffiliateAttribution(normalizedUrlCode, "checkout-url");
+        nextDraft.affiliateCode = normalizedUrlCode;
+        nextDraft.affiliateCodeMode = "auto-url";
+        nextDraft.affiliateCodeCleared = false;
+      } else if (autoApplyStoredCode) {
+        nextDraft.affiliateCode = autoApplyStoredCode;
+        nextDraft.affiliateCodeMode = "auto-attribution";
+        nextDraft.affiliateCodeCleared = false;
+      }
+
+      let activeProfile = user;
+      const needsProfileDefaults =
+        isAuthenticated &&
+        token &&
+        !hasSavedBillingDefaults(nextDraft) &&
+        !hasSavedBillingDefaults(user);
+
+      if (needsProfileDefaults) {
+        try {
+          activeProfile = await fetchProfile(token);
+        } catch {
+          activeProfile = user;
+        }
+      }
+
+      if (cancelled) return;
+
+      const nextForm = buildCheckoutFormState(activeProfile, nextDraft);
+      setForm(nextForm);
+      setPhaseSaved(isPhaseOneComplete(nextForm));
+      setHydrated(true);
     }
 
-    const nextForm = buildCheckoutFormState(user, nextDraft);
-    setForm(nextForm);
-    setPhaseSaved(isPhaseOneComplete(nextForm));
-  }, [items, user]);
+    hydrateCheckoutForm();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, items, token, user]);
 
   useEffect(() => {
     if (form.affiliateCodeMode !== "auto-attribution") return;
@@ -89,8 +129,9 @@ export default function CheckoutPage() {
   }, [form.affiliateCodeMode, items]);
 
   useEffect(() => {
+    if (!hydrated) return;
     writeCheckoutDraft(form, user);
-  }, [form, user]);
+  }, [form, hydrated, user]);
 
   useEffect(() => {
     const code = String(form.affiliateCode || "").trim();
