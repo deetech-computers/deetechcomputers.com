@@ -18,7 +18,7 @@ export const upload = multer({
   storage,
   limits: {
     fileSize: 10 * 1024 * 1024,
-    files: 5,
+    files: 6,
   },
   fileFilter: (req, file, cb) => checkFileType(file, cb),
 });

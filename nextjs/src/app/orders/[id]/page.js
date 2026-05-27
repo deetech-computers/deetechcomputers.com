@@ -7,6 +7,7 @@ import StableImage from "@/components/ui/stable-image";
 import { useAuth } from "@/hooks/use-auth";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { requestWithToken } from "@/lib/resource";
 
@@ -157,6 +158,7 @@ export default function TrackOrderPage() {
 
   const steps = useMemo(() => buildTrackingState(order), [order]);
   const progressRatio = Math.max(0, (steps.filter((step) => step.done).length - 1) / (steps.length - 1));
+  const productSavings = useMemo(() => getLinesDiscountTotal(order?.orderItems || []), [order]);
 
   return (
     <main className="shell page-section">
@@ -208,6 +210,7 @@ export default function TrackOrderPage() {
                     ? `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Delivery ${formatCurrency(Number(order.shippingPrice || 0))}`
                     : `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Free Delivery`}
                 </small>
+                {productSavings > 0 ? <small>Product savings {formatCurrency(productSavings)}</small> : null}
               </div>
             </div>
 
@@ -250,6 +253,7 @@ export default function TrackOrderPage() {
                 const product = item?.product || {};
                 const image = resolveProductImage(product?.images?.[0] || product?.image);
                 const productHref = product?._id ? `/products/${product._id}` : "/products";
+                const pricing = getLinePricing(item);
                 return (
                   <article key={`${product?._id || index}`} className="track-order-product">
                     <Link href={productHref} className="track-order-product__link">
@@ -272,7 +276,8 @@ export default function TrackOrderPage() {
                     </Link>
                     <div className="track-order-product__meta">
                       <span>Qty {Number(item?.qty || 1)}</span>
-                      <strong>{formatCurrency(Number(item?.price || 0) * Number(item?.qty || 1))}</strong>
+                      {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
+                      <strong>{formatCurrency(pricing.currentLineTotal)}</strong>
                     </div>
                   </article>
                 );

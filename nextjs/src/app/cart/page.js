@@ -9,6 +9,7 @@ import { API_BASE } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { buildOrderItems, readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
@@ -30,6 +31,7 @@ export default function CartPage() {
     () => items.reduce((sum, item) => sum + Number(item.qty || 0), 0),
     [items]
   );
+  const productDiscountTotal = useMemo(() => getLinesDiscountTotal(items), [items]);
 
   const couponDiscount = useMemo(() => {
     const percent = Number(appliedCoupon.percent || 0);
@@ -213,6 +215,7 @@ export default function CartPage() {
                   const productId = item.productId || item._id;
                   const lineKey = item.lineKey || productId;
                   const upgradeLabel = formatSelectedUpgrades(item.selectedUpgrades);
+                  const pricing = getLinePricing(item);
                   return (
                     <article key={lineKey} className="cart-row">
                       <Link href={productId ? `/products/${productId}` : "/products"} className="cart-row__product">
@@ -230,7 +233,12 @@ export default function CartPage() {
                           {upgradeLabel ? <small>{upgradeLabel}</small> : null}
                         </div>
                       </Link>
-                      <p className="cart-row__price">{formatCurrency(item.price)}</p>
+                      <div className="cart-row__price-block">
+                        {pricing.hasDiscount ? (
+                          <p className="cart-row__price-old">{formatCurrency(pricing.originalUnitPrice)}</p>
+                        ) : null}
+                        <p className="cart-row__price">{formatCurrency(pricing.currentUnitPrice)}</p>
+                      </div>
                       <div className="cart-row__controls">
                         <div className="cart-row__qty">
                           <button type="button" onClick={() => updateQuantity(productId, Number(item.qty || 1) - 1, lineKey)} aria-label={`Decrease ${item.name} quantity`}>
@@ -261,7 +269,12 @@ export default function CartPage() {
                         </button>
                       </div>
                       <div className="cart-row__subtotal-block">
-                        <p className="cart-row__subtotal">{formatCurrency(Number(item.price || 0) * Number(item.qty || 0))}</p>
+                        <div className="cart-row__subtotal-stack">
+                          {pricing.hasDiscount ? (
+                            <p className="cart-row__subtotal-old">{formatCurrency(pricing.originalLineTotal)}</p>
+                          ) : null}
+                          <p className="cart-row__subtotal">{formatCurrency(pricing.currentLineTotal)}</p>
+                        </div>
                         <button
                           type="button"
                           className="cart-row__remove"
@@ -291,6 +304,12 @@ export default function CartPage() {
                   <span>Sub Total</span>
                   <strong>{formatCurrency(subtotal)}</strong>
                 </div>
+                {productDiscountTotal > 0 ? (
+                  <div className="cart-summary__line">
+                    <span>Product Savings</span>
+                    <strong>-{formatCurrency(productDiscountTotal)}</strong>
+                  </div>
+                ) : null}
                 <div className="cart-summary__line">
                   <span>Shipping</span>
                   <strong>{formatCurrency(shipping)}</strong>

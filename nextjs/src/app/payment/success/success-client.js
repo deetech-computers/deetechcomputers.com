@@ -6,11 +6,27 @@ import { useCart } from "@/hooks/use-cart";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import { clearCompletedCheckoutState } from "@/lib/checkout";
+import { getLinePricing } from "@/lib/order-line-pricing";
 import { writeLastOrder } from "@/lib/order-confirmation";
 
 function buildEstimatedDelivery(dateInput) {
   const base = new Date(dateInput || Date.now());
   return new Date(base.getTime() + 24 * 60 * 60 * 1000).toISOString();
+}
+
+function buildSavedOrderItem(item) {
+  const pricing = getLinePricing(item);
+  return {
+    name: item?.product?.name || item?.name || "Product",
+    category: item?.product?.category || item?.category || "Product",
+    quantity: Number(item?.qty || item?.quantity || 0),
+    qty: Number(item?.qty || item?.quantity || 0),
+    price: pricing.currentUnitPrice,
+    originalPrice: pricing.originalUnitPrice,
+    discountPrice: pricing.discountUnitPrice,
+    discountApplied: pricing.hasDiscount,
+    image: item?.product?.images?.[0] || item?.product?.image || item?.image || "",
+  };
 }
 
 export default function HubtelPaymentSuccessClient() {
@@ -75,14 +91,7 @@ export default function HubtelPaymentSuccessClient() {
               discountPercent: Number(order?.discountPercent || pending?.discountPercent || 0),
               discountAmount: Number(order?.discountAmount || pending?.discountAmount || 0),
               items: Array.isArray(order?.orderItems)
-                ? order.orderItems.map((item) => ({
-                    name: item?.product?.name || "Product",
-                    category: item?.product?.category || "Product",
-                    quantity: Number(item?.qty || 0),
-                    qty: Number(item?.qty || 0),
-                    price: Number(item?.price || 0),
-                    image: item?.product?.images?.[0] || item?.product?.image || "",
-                  }))
+                ? order.orderItems.map((item) => buildSavedOrderItem(item))
                 : Array.isArray(pending?.items)
                   ? pending.items
                   : [],

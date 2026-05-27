@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/lib/format";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 
 const SUPPORT_PHONE = "+233 591755964";
 const SUPPORT_EMAIL = "deetechcomputers01@gmail.com";
@@ -53,13 +54,15 @@ function normalizeItems(order, summary) {
 
   return sourceItems.map((item) => {
     const product = item?.product || {};
-    const quantity = Number(item?.quantity || item?.qty || 1);
-    const unitPrice = Number(item?.price || product?.price || 0);
-    const lineTotal = Math.max(0, quantity * unitPrice);
+    const pricing = getLinePricing(item);
     return {
       name: product?.name || item?.name || "Product",
-      quantity,
-      lineTotal,
+      quantity: pricing.quantity,
+      lineTotal: pricing.currentLineTotal,
+      originalLineTotal: pricing.originalLineTotal,
+      hasDiscount: pricing.hasDiscount,
+      currentUnitPrice: pricing.currentUnitPrice,
+      originalUnitPrice: pricing.originalUnitPrice,
     };
   });
 }
@@ -73,6 +76,7 @@ export function buildInvoiceHtml(order, summary) {
   const shipping = Number(summary?.shipping ?? order?.shippingPrice ?? order?.shipping ?? 0);
   const discountAmount = Number(summary?.discountAmount ?? order?.discountAmount ?? 0);
   const total = Number(summary?.total ?? order?.totalPrice ?? order?.total ?? 0);
+  const productSavings = getLinesDiscountTotal(items);
   const orderId = order?.orderId || order?.orderNumber || order?.reference || order?._id || "N/A";
   const orderDate = formatDateTime(order?.date || order?.createdAt || order?.updatedAt);
   const estimatedDelivery = buildEstimatedDelivery(order);
@@ -108,7 +112,14 @@ export function buildInvoiceHtml(order, summary) {
         .map(
           (item) => `
             <tr>
-              <td style="padding:8px 4px;border-bottom:1px solid #e5e7eb;">${escapeHtml(item.name)}</td>
+              <td style="padding:8px 4px;border-bottom:1px solid #e5e7eb;">
+                ${escapeHtml(item.name)}
+                ${
+                  item.hasDiscount
+                    ? `<div style="margin-top:4px;color:#6b7280;font-size:10px;">${escapeHtml(formatCurrency(item.currentUnitPrice))} from ${escapeHtml(formatCurrency(item.originalUnitPrice))}</div>`
+                    : ""
+                }
+              </td>
               <td style="padding:8px 4px;border-bottom:1px solid #e5e7eb;text-align:center;">${escapeHtml(item.quantity)}</td>
               <td style="padding:8px 4px;border-bottom:1px solid #e5e7eb;text-align:right;">${escapeHtml(formatCurrency(item.lineTotal))}</td>
             </tr>
@@ -251,6 +262,7 @@ export function buildInvoiceHtml(order, summary) {
 
       <div class="totals">
         <div class="line"><span>Subtotal:</span><strong>${escapeHtml(formatCurrency(subtotal))}</strong></div>
+        ${productSavings > 0 ? `<div class="line"><span>Product Savings:</span><strong>-${escapeHtml(formatCurrency(productSavings))}</strong></div>` : ""}
         <div class="line"><span>Delivery Fee:</span><strong>${shipping === 0 ? "FREE" : escapeHtml(formatCurrency(shipping))}</strong></div>
         <div class="line"><span>Coupon Discount:</span><strong>-${escapeHtml(formatCurrency(discountAmount))}</strong></div>
         <div class="line grand"><span>Total:</span><span>${escapeHtml(formatCurrency(total))}</span></div>

@@ -333,6 +333,9 @@ export default function AdminDashboard() {
                               ? `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Delivery ${formatCurrency(getOrderShippingPrice(order))}`
                               : `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Free Delivery`}
                           </p>
+                          {Number(order?.discountAmount || 0) > 0 ? (
+                            <p>Discount {formatCurrency(Number(order.discountAmount || 0))}</p>
+                          ) : null}
                           <span className={`admin-chip ${getStatusTone(order?.orderStatus)}`}>{order?.orderStatus || "pending"}</span>
                           <p>{paymentMethodLabel(order?.paymentMethod)} • {formatCurrency(Number(order?.totalPrice || 0))}</p>
                         </div>

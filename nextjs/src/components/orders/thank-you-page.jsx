@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import StableImage from "@/components/ui/stable-image";
 import { clearLastOrder, readLastOrder } from "@/lib/order-confirmation";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCurrency } from "@/lib/format";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
@@ -107,6 +108,7 @@ export default function OrderCompletedPage() {
       items,
       shipping,
       subtotal,
+      productSavings: getLinesDiscountTotal(items),
       discountAmount,
       total: Number(order.total || 0),
     };
@@ -184,8 +186,7 @@ export default function OrderCompletedPage() {
 
               <div className="order-complete__items">
                 {summary.items.map((item, index) => {
-                  const qty = Number(item.quantity || item.qty || 1);
-                  const price = Number(item.price || 0);
+                  const pricing = getLinePricing(item);
                   return (
                     <article key={`${item.name}-${index}`} className="order-complete__item">
                       <div className="order-complete__product">
@@ -206,13 +207,22 @@ export default function OrderCompletedPage() {
                           <small>{formatCategoryLabel(item.category || "Product")}</small>
                         </div>
                       </div>
-                      <strong className="order-complete__price">{formatCurrency(qty * price)}</strong>
+                      <div className="order-complete__price-stack">
+                        {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
+                        <strong className="order-complete__price">{formatCurrency(pricing.currentLineTotal)}</strong>
+                      </div>
                     </article>
                   );
                 })}
               </div>
 
               <div className="order-complete__totals">
+              {Number(summary.productSavings || 0) > 0 ? (
+                <div className="order-complete__totals-line">
+                  <span>Product Savings</span>
+                  <strong>-{formatCurrency(Number(summary.productSavings || 0))}</strong>
+                </div>
+              ) : null}
               <div className="order-complete__totals-line">
                 <span>Shipping</span>
                 <strong>{summary.shipping === 0 ? "FREE" : formatCurrency(summary.shipping)}</strong>

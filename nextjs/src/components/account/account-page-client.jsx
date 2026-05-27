@@ -12,6 +12,7 @@ import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { formatCurrency } from "@/lib/format";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import {
   buildAdminNotifications,
   buildNotificationScope,
@@ -158,6 +159,10 @@ function getOrderShippingPrice(order) {
   return Math.max(0, Number((total - Math.max(0, itemsPrice - discountAmount)).toFixed(2)));
 }
 
+function getOrderProductSavings(order) {
+  return getLinesDiscountTotal(getOrderLineItems(order));
+}
+
 function getReviewStars(rating) {
   const value = Math.max(0, Math.min(5, Number(rating || 0)));
   return Array.from({ length: 5 }, (_, index) => (
@@ -253,6 +258,7 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
           const itemsPrice = getOrderItemsPrice(order);
           const shippingPrice = getOrderShippingPrice(order);
           const discountAmount = getOrderDiscountAmount(order);
+          const productSavings = getOrderProductSavings(order);
           return (
             <article key={order._id} className="account-order-card panel">
               <div className="account-order-card__summary">
@@ -272,6 +278,7 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                 <div>
                   <span>Payment Method</span>
                   <strong>{paymentLabel(order.paymentMethod)}</strong>
+                  {productSavings > 0 ? <small>Product savings {formatCurrency(productSavings)}</small> : null}
                   {discountAmount > 0 ? <small>Discount {formatCurrency(discountAmount)}</small> : null}
                 </div>
                 <div>
@@ -284,6 +291,7 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                 {items.slice(0, 4).map((item, index) => {
                   const product = item?.product || {};
                   const image = getOrderItemImage(item);
+                  const pricing = getLinePricing(item);
                   return (
                     <Link
                       key={product?._id || index}
@@ -301,6 +309,9 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                       <div className="account-order-card__copy">
                         <strong>{product?.name || "Product"}</strong>
                         <span>{formatCategoryLabel(product?.category || product?.brand || "Product")}</span>
+                        {pricing.hasDiscount ? (
+                          <small>{formatCurrency(pricing.originalUnitPrice)} to {formatCurrency(pricing.currentUnitPrice)}</small>
+                        ) : null}
                       </div>
                     </Link>
                   );

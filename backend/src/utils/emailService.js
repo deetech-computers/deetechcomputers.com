@@ -105,6 +105,9 @@ function orderItemsForEmail(items = []) {
     qty: Number(item.qty || item.quantity || 0),
     name: item.name || item.product?.name || String(item.product || "Product"),
     price: Number(item.price || 0),
+    originalPrice: Number(item.originalPrice || 0),
+    discountPrice: Number(item.discountPrice || 0),
+    discountApplied: Boolean(item.discountApplied) || Number(item.originalPrice || 0) > Number(item.price || 0),
   }));
 }
 
@@ -125,6 +128,11 @@ function buildOrderItemsForEmailJs(items = []) {
       name,
       quantity,
       price,
+      originalPrice: Number(item?.originalPrice || 0),
+      discountPrice: Number(item?.discountPrice || 0),
+      discountApplied:
+        Boolean(item?.discountApplied) ||
+        Number(item?.originalPrice || 0) > Number(item?.price || 0),
       subtotal: quantity * price,
     };
   });
@@ -262,6 +270,11 @@ export async function sendOrderNotification(to, orderDetails = {}) {
               <span style="color: #333;">GH₵ ${item.price.toFixed(2)}</span> =
               <strong style="color: #d9534f;">GH₵ ${item.subtotal.toFixed(2)}</strong>
             </div>
+            ${
+              item.discountApplied
+                ? `<div style="font-size: 12px; color: #666; margin-top: 4px;">Discounted from GH₵ ${item.originalPrice.toFixed(2)}</div>`
+                : ""
+            }
           </div>`
       )
       .join("");
@@ -322,7 +335,10 @@ export async function sendOrderNotification(to, orderDetails = {}) {
     .map(
       (item) => `
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #ddd;">
-          <span>${escapeHtml(item.name)} (x${item.qty})</span>
+          <span>
+            ${escapeHtml(item.name)} (x${item.qty})
+            ${item.discountApplied ? `<small style="display:block;color:#666;">Discounted from ${money(item.originalPrice)}</small>` : ""}
+          </span>
           <strong>${money(item.price * item.qty)}</strong>
         </div>
       `
@@ -467,7 +483,10 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       const lineTotal = item.qty * item.price;
       return `
         <tr>
-          <td width="50%" style="padding:8px 0 8px 5px;border-bottom:1px dashed #ddd;">${escapeHtml(item.name)}</td>
+          <td width="50%" style="padding:8px 0 8px 5px;border-bottom:1px dashed #ddd;">
+            ${escapeHtml(item.name)}
+            ${item.discountApplied ? `<div style="margin-top:4px;color:#666;font-size:11px;">Discounted from ${money(item.originalPrice)}</div>` : ""}
+          </td>
           <td width="20%" align="center" style="padding:8px 0;border-bottom:1px dashed #ddd;">${item.qty}</td>
           <td width="30%" align="right" style="padding:8px 5px 8px 0;border-bottom:1px dashed #ddd;">${money(lineTotal)}</td>
         </tr>

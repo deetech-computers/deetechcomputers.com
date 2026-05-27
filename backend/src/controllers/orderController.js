@@ -59,9 +59,15 @@ async function processOrderItems(orderItems, session, options = {}) {
       product,
       item?.selectedUpgrades
     );
-    const price =
-      Number(getProductPricing(product).currentPrice || 0) +
-      Number(resolvedUpgrades.totalDelta || 0);
+    const productPricing = getProductPricing(product);
+    const upgradeDelta = Number(resolvedUpgrades.totalDelta || 0);
+    const originalPrice = Number(productPricing.originalPrice || 0) + upgradeDelta;
+    const discountPrice = Number(productPricing.currentPrice || 0) + upgradeDelta;
+    const price = discountPrice;
+    const discountApplied =
+      Boolean(productPricing.isDiscountActive) &&
+      discountPrice > 0 &&
+      originalPrice > discountPrice;
 
     total += qty * price;
     itemCategories.push(product?.category || "");
@@ -69,6 +75,9 @@ async function processOrderItems(orderItems, session, options = {}) {
       product: product._id,
       qty,
       price,
+      originalPrice,
+      discountPrice: discountApplied ? discountPrice : 0,
+      discountApplied,
       selectedUpgrades: {
         signature: resolvedUpgrades.signature,
         ram: {
@@ -669,6 +678,9 @@ function buildOrderItemsForEmail(order) {
       qty,
       quantity: qty,
       price,
+      originalPrice: Number(item?.originalPrice || 0),
+      discountPrice: Number(item?.discountPrice || 0),
+      discountApplied: Boolean(item?.discountApplied) || Number(item?.originalPrice || 0) > price,
       name: upgradeLabel ? `${productName} (${upgradeLabel})` : productName,
       product: item?.product?._id || item?.product,
     };
@@ -1928,6 +1940,8 @@ export async function getHubtelPaymentStatus(req, res) {
       _id: order._id,
       createdAt: order.createdAt,
       paidAt: order.paidAt,
+      itemsPrice: order.itemsPrice,
+      shippingPrice: order.shippingPrice,
       totalPrice: order.totalPrice,
       discountCode: order.discountCode,
       discountPercent: order.discountPercent,
@@ -1944,6 +1958,9 @@ export async function getHubtelPaymentStatus(req, res) {
         ? order.orderItems.map((item) => ({
             qty: item.qty,
             price: item.price,
+            originalPrice: item.originalPrice,
+            discountPrice: item.discountPrice,
+            discountApplied: item.discountApplied,
             product: item.product
               ? {
                   name: item.product.name,

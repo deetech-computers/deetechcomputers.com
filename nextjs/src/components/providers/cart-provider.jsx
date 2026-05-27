@@ -17,7 +17,8 @@ import {
   upsertServerCartItem,
   writeStoredCart,
 } from "@/lib/cart";
-import { getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
+import { getProductStock, resolveProductImage } from "@/lib/products";
+import { getProductPricing } from "@/lib/product-pricing";
 import { buildCartLineKey, resolveProductUpgradeSelection } from "@/lib/product-upgrades";
 import { useAuth } from "./auth-provider";
 import { useToast } from "./toast-provider";
@@ -133,6 +134,14 @@ export function CartProvider({ children }) {
     const id = String(product?._id || product?.productId || "");
     if (!id) return;
     const resolvedUpgrades = resolveProductUpgradeSelection(product, options?.selectedUpgrades);
+    const pricing = getProductPricing(product);
+    const upgradeDelta = Number(resolvedUpgrades.totalDelta || 0);
+    const livePrice = Number(pricing.currentPrice || 0) + upgradeDelta;
+    const originalPrice = Number(pricing.originalPrice || 0) + upgradeDelta;
+    const hasDiscount =
+      Boolean(pricing.isDiscountActive) &&
+      originalPrice > 0 &&
+      originalPrice > livePrice;
     const selectedUpgrades = {
       ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
       storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
@@ -170,7 +179,10 @@ export function CartProvider({ children }) {
           lineKey,
           name: product.name,
           category: product.category || "",
-          price: Number(getProductPrice(product) || 0) + Number(resolvedUpgrades.totalDelta || 0),
+          price: livePrice,
+          originalPrice: hasDiscount ? originalPrice : livePrice,
+          discountPrice: hasDiscount ? livePrice : 0,
+          hasDiscount,
           image: resolveProductImage(product.images?.[0] || product.image || ""),
           countInStock: stock,
           selectedUpgrades,

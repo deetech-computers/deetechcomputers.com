@@ -8,6 +8,8 @@ import { useToast } from "@/components/providers/toast-provider";
 import { API_BASE, API_BASE_ORDERS, API_BASE_PRODUCTS, API_BASE_SUPPORT, API_BASE_USERS } from "@/lib/config";
 import StableImage from "@/components/ui/stable-image";
 import { formatCurrency } from "@/lib/format";
+import { getLinesDiscountTotal } from "@/lib/order-line-pricing";
+import { getProductPricing } from "@/lib/product-pricing";
 import { requestWithToken, asArray } from "@/lib/resource";
 import { resolveProductImage } from "@/lib/products";
 import { normalizeProductUpgradeSpecs } from "@/lib/product-upgrades";
@@ -1143,6 +1145,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
 
   if (type === "products") {
     const image = resolveProductImage(item.images?.[0] || item.image_url || item.image);
+    const productPricing = getProductPricing(item);
     const productBodyId = `admin-product-body-${collapsibleIdBase}`;
     return (
       <article className="admin-record panel admin-collapsible">
@@ -1168,7 +1171,13 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
               </p>
               <div className="admin-chip-row">
                 <span className="admin-chip">{item.brand || "Brand"}</span>
-                <span className="admin-chip">{formatCurrency(Number(item.price || 0))}</span>
+                {productPricing.isDiscountActive ? (
+                  <span className="admin-chip is-warning">
+                    {formatCurrency(productPricing.currentPrice)} from {formatCurrency(productPricing.originalPrice)}
+                  </span>
+                ) : (
+                  <span className="admin-chip">{formatCurrency(Number(item.price || 0))}</span>
+                )}
                 <span className={`admin-chip ${Number(item.countInStock || 0) > 0 ? "is-success" : "is-danger"}`}>{Number(item.countInStock || 0)} in stock</span>
                 {item.isFeatured ? <span className="admin-chip is-warning">Featured</span> : null}
               </div>
@@ -1201,6 +1210,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const customer = item.shippingName || item.guestName || item.user?.name || item.shippingEmail || "Customer";
     const paymentProofUrl = resolvePaymentProofUrl(item);
     const orderId = item.orderNumber || item._id;
+    const productSavings = getLinesDiscountTotal(item.orderItems || []);
     const shippingPhone = item.mobileNumber || item.shippingPhone || item.user?.phone || "No phone";
     const shippingAddress = [item.shippingAddress, item.shippingCity, item.deliveryRegion].filter(Boolean).join(", ");
     const affiliateCodeEntered = normalizeText(item.affiliateCodeEntered);
@@ -1238,6 +1248,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           <div id={orderBodyId} className="admin-collapsible__body">
         <div className="admin-meta-grid">
           <span>Subtotal <strong>{formatCurrency(Number(item.itemsPrice || 0))}</strong></span>
+          <span>Product Savings <strong>{productSavings > 0 ? `-${formatCurrency(productSavings)}` : formatCurrency(0)}</strong></span>
           <span>Delivery Fee <strong>{Number(item.shippingPrice || 0) > 0 ? formatCurrency(Number(item.shippingPrice || 0)) : "FREE"}</strong></span>
           <span>Discount <strong>-{formatCurrency(Number(item.discountAmount || 0))}</strong></span>
           <span>Total <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong></span>

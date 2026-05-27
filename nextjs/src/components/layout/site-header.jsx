@@ -15,6 +15,7 @@ import {
   API_BASE,
   API_BASE_ORDERS,
 } from "@/lib/config";
+import { getLinePricing } from "@/lib/order-line-pricing";
 import {
   readWishlistEntries,
   removeWishlistEntry,
@@ -1729,8 +1730,7 @@ export default function SiteHeader() {
                       {cartItems.map((item, index) => {
                         const id = String(item?.productId || item?._id || item?.id || "");
                         const lineKey = String(item?.lineKey || id || `${index}`);
-                        const qty = Number(item?.qty || item?.quantity || 1);
-                        const lineTotal = Number(item?.price || 0) * qty;
+                        const pricing = getLinePricing(item);
                         const maxStock = Number(item?.countInStock || 99);
                         const upgradeLabel = formatSelectedUpgrades(item?.selectedUpgrades);
                         return (
@@ -1749,7 +1749,10 @@ export default function SiteHeader() {
                                   {item?.name || "Product"}
                                 </Link>
                                 {upgradeLabel ? <p className="cart-feedback__variant">{upgradeLabel}</p> : null}
-                                <p className="cart-feedback__price">{formatCartPrice(lineTotal)}</p>
+                                <div className="cart-feedback__price-stack">
+                                  {pricing.hasDiscount ? <small>{formatCartPrice(pricing.originalLineTotal)}</small> : null}
+                                  <p className="cart-feedback__price">{formatCartPrice(pricing.currentLineTotal)}</p>
+                                </div>
                               </div>
                               <div className="cart-feedback__bottom">
                                 <div className="cart-feedback__qty">

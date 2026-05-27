@@ -17,6 +17,9 @@ const orderSchema = new mongoose.Schema(
         },
         qty: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true, min: 0 }, // price at time of order
+        originalPrice: { type: Number, min: 0, default: 0 }, // original unit price at time of order
+        discountPrice: { type: Number, min: 0, default: 0 }, // discounted/live unit price at time of order
+        discountApplied: { type: Boolean, default: false },
         selectedUpgrades: {
           signature: { type: String, trim: true, default: "" },
           ram: {

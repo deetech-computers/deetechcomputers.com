@@ -24,7 +24,7 @@ router.route("/")
   .post(
     protect,
     admin,
-    upload.array("images", 5), // allow up to 5 images
+    upload.array("images", 6),
     validateRequest(createProductSchema),
     createProduct
   );
@@ -34,7 +34,7 @@ router.route("/:id")
   .put(
     protect,
     admin,
-    upload.array("images", 5),
+    upload.array("images", 6),
     validateRequest(updateProductSchema),
     updateProduct
   )

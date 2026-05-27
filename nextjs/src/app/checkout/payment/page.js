@@ -8,6 +8,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import { formatCurrency } from "@/lib/format";
+import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { writeLastOrder } from "@/lib/order-confirmation";
 import {
@@ -29,6 +30,21 @@ import { requestJson } from "@/lib/http";
 import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
 import { requestWithToken } from "@/lib/resource";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
+
+function buildSavedOrderItem(item) {
+  const pricing = getLinePricing(item);
+  return {
+    name: item?.product?.name || item?.name || "Product",
+    category: item?.product?.category || item?.category || item?.categoryName || "Product",
+    quantity: Number(item?.qty || item?.quantity || 0),
+    qty: Number(item?.qty || item?.quantity || 0),
+    price: pricing.currentUnitPrice,
+    originalPrice: pricing.originalUnitPrice,
+    discountPrice: pricing.discountUnitPrice,
+    discountApplied: pricing.hasDiscount,
+    image: item?.product?.images?.[0] || item?.product?.image || item?.image || "",
+  };
+}
 
 export default function CheckoutPaymentPage() {
   const PROCESSING_FLOOR_MS = 1800;
@@ -255,6 +271,7 @@ export default function CheckoutPaymentPage() {
     () => items.reduce((sum, item) => sum + Number(item.qty || 0), 0),
     [items]
   );
+  const productDiscountTotal = useMemo(() => getLinesDiscountTotal(items), [items]);
   const couponDiscount =
     Number(form.discountAmount || 0) > 0
       ? Number(form.discountAmount || 0)
@@ -359,14 +376,7 @@ export default function CheckoutPaymentPage() {
       discountPercent: Number(order?.discountPercent || pending?.discountPercent || 0),
       discountAmount: Number(order?.discountAmount || pending?.discountAmount || 0),
       items: Array.isArray(order?.orderItems)
-        ? order.orderItems.map((item) => ({
-            name: item?.product?.name || "Product",
-            category: item?.product?.category || "Product",
-            quantity: Number(item?.qty || 0),
-            qty: Number(item?.qty || 0),
-            price: Number(item?.price || 0),
-            image: item?.product?.images?.[0] || item?.product?.image || "",
-          }))
+        ? order.orderItems.map((item) => buildSavedOrderItem(item))
         : Array.isArray(pending?.items)
           ? pending.items
           : [],
@@ -649,14 +659,7 @@ export default function CheckoutPaymentPage() {
               phone: form.mobileNumber,
               address: form.shippingAddress,
               city: form.shippingCity,
-              items: items.map((item) => ({
-                name: item.name,
-                category: item.category || item.categoryName || "Product",
-                quantity: item.qty,
-                qty: item.qty,
-                price: Number(item.price || 0),
-                image: item.image || "",
-              })),
+              items: items.map((item) => buildSavedOrderItem(item)),
             })
           );
         }
@@ -683,14 +686,7 @@ export default function CheckoutPaymentPage() {
         discountCode: String(order?.discountCode || form.discountCode || "").trim().toUpperCase(),
         discountPercent: Number(order?.discountPercent || form.discountPercent || 0),
         discountAmount: Number(order?.discountAmount || couponDiscount || 0),
-        items: items.map((item) => ({
-          name: item.name,
-          category: item.category || item.categoryName || "Product",
-          quantity: item.qty,
-          qty: item.qty,
-          price: Number(item.price || 0),
-          image: item.image || "",
-        })),
+        items: items.map((item) => buildSavedOrderItem(item)),
         email: form.shippingEmail,
         phone: form.mobileNumber,
         address: form.shippingAddress,
@@ -988,6 +984,12 @@ export default function CheckoutPaymentPage() {
                 <span>Sub Total</span>
                 <strong>{formatCurrency(subtotal)}</strong>
               </div>
+              {productDiscountTotal > 0 ? (
+                <div className="checkout-summary__line">
+                  <span>Product Savings</span>
+                  <strong>-{formatCurrency(productDiscountTotal)}</strong>
+                </div>
+              ) : null}
               <div className="checkout-summary__line">
                 <span>Shipping</span>
                 <strong>{formatCurrency(shipping)}</strong>
@@ -1037,6 +1039,7 @@ export default function CheckoutPaymentPage() {
             <div className="checkout-summary__items">
               {items.map((item) => {
                 const upgradeLabel = formatSelectedUpgrades(item?.selectedUpgrades);
+                const pricing = getLinePricing(item);
                 return (
                 <article key={item.lineKey || item.productId || item._id} className="checkout-summary__item">
                   <div className="checkout-summary__thumb">
@@ -1056,8 +1059,16 @@ export default function CheckoutPaymentPage() {
                     <p>{formatCategoryLabel(item.category || item.categoryName || "Product")}</p>
                     {upgradeLabel ? <small>{upgradeLabel}</small> : null}
                     <small>Qty {item.qty}</small>
+                    {pricing.hasDiscount ? (
+                      <small className="checkout-summary__price-note">
+                        <s>{formatCurrency(pricing.originalUnitPrice)}</s> {formatCurrency(pricing.currentUnitPrice)} each
+                      </small>
+                    ) : null}
                   </div>
-                  <strong>{formatCurrency(Number(item.price || 0) * Number(item.qty || 0))}</strong>
+                  <div className="checkout-summary__price-stack">
+                    {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
+                    <strong>{formatCurrency(pricing.currentLineTotal)}</strong>
+                  </div>
                 </article>
                 );
               })}

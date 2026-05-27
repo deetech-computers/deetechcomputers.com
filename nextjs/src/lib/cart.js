@@ -1,6 +1,7 @@
 import { API_BASE_CART } from "./config";
 import { requestJson } from "./http";
-import { getProductPrice, resolveProductImage } from "./products";
+import { resolveProductImage } from "./products";
+import { getProductPricing } from "./product-pricing";
 import {
   buildCartLineKey,
   normalizeUpgradeSelection,
@@ -30,6 +31,12 @@ export function normalizeCartItems(items = []) {
       buildCartLineKey(id, normalizedUpgrades) ||
       id;
 
+    const unitPrice = Number(item.price || 0);
+    const originalPrice = Number(item.originalPrice || 0);
+    const discountPrice = Number(item.discountPrice || 0);
+    const hasDiscount =
+      Boolean(item.hasDiscount || item.discountApplied) ||
+      (originalPrice > 0 && originalPrice > unitPrice);
     const normalized = {
       ...item,
       _id: item._id || item.productId || id,
@@ -37,6 +44,10 @@ export function normalizeCartItems(items = []) {
       lineKey,
       selectedUpgrades: normalizedUpgrades,
       qty: normalizeQty(item.qty || item.quantity || 1),
+      price: unitPrice,
+      originalPrice: hasDiscount ? Math.max(unitPrice, originalPrice) : unitPrice,
+      discountPrice: hasDiscount ? (discountPrice > 0 ? discountPrice : unitPrice) : 0,
+      hasDiscount,
     };
 
     map.set(lineKey, normalized);
@@ -115,6 +126,14 @@ export function normalizeServerCart(payload) {
     const id = product._id || item.product;
     const selectedUpgrades = normalizeUpgradeSelection(item?.selectedUpgrades);
     const resolvedUpgrades = resolveProductUpgradeSelection(product, selectedUpgrades);
+    const pricing = getProductPricing(product);
+    const upgradeDelta = Number(resolvedUpgrades.totalDelta || 0);
+    const price = Number(pricing.currentPrice || 0) + upgradeDelta;
+    const originalPrice = Number(pricing.originalPrice || 0) + upgradeDelta;
+    const hasDiscount =
+      Boolean(pricing.isDiscountActive) &&
+      originalPrice > 0 &&
+      originalPrice > price;
 
     return {
       _id: id,
@@ -128,7 +147,11 @@ export function normalizeServerCart(payload) {
       },
       qty: normalizeQty(item.qty || 1),
       name: product.name,
-      price: Number(getProductPrice(product) || 0) + Number(resolvedUpgrades.totalDelta || 0),
+      category: product.category || "",
+      price,
+      originalPrice: hasDiscount ? originalPrice : price,
+      discountPrice: hasDiscount ? price : 0,
+      hasDiscount,
       image: resolveProductImage(product.images?.[0] || product.image || ""),
       countInStock:
         product.countInStock ?? product.stock_quantity ?? product.stock ?? 0,
