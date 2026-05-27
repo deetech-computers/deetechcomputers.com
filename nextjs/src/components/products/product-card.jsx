@@ -37,6 +37,15 @@ function getCategoryLabel(product) {
   return String(product?.category || "").replace(/[_-]+/g, " ").trim() || "Products";
 }
 
+function normalizeDisplayTitle(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/[a-z]/.test(raw)) return raw;
+  return raw
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (match) => match.toUpperCase());
+}
+
 function CartIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -93,6 +102,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const summary = getSummary(product);
   const categoryLabel = getCategoryLabel(product);
+  const displayName = normalizeDisplayTitle(product?.name || "Product");
   const sharePayload = useMemo(
     () => ({
       title: product?.name || "Deetech product",
@@ -258,28 +268,30 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
         {isRelated ? (
           <div className="product-card__meta-row">
             <p className="product-card__category">{categoryLabel}</p>
-            <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
-              {Array.from({ length: 5 }, (_, index) => (
-                <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
-              ))}
-              <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
-            </p>
+            {reviewCount > 0 ? (
+              <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
+                ))}
+                <strong>{ratingValue.toFixed(1)}</strong>
+              </p>
+            ) : null}
           </div>
         ) : null}
         <Link href={productHref} className="product-card__title-link">
-          <h3>{product?.name || "Product"}</h3>
+          <h3>{displayName}</h3>
         </Link>
         <p className="product-card__description">{isRelated ? summary : summary}</p>
         <div className="product-card__price-wrap">
           {hasDiscount ? <p className="product-card__price-old">{formatCurrency(originalPrice)}</p> : null}
           <p className="product-card__price">{formatCurrency(price)}</p>
         </div>
-        {!isRelated ? (
-          <p className="product-card__rating" aria-label={`${rating} out of 5 stars`}>
+        {!isRelated && reviewCount > 0 ? (
+          <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
             {Array.from({ length: 5 }, (_, index) => (
               <span key={index} className={index < rating ? "is-filled" : ""}>{"\u2605"}</span>
             ))}
-            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
+            <strong>{ratingValue.toFixed(1)}</strong>
           </p>
         ) : null}
       </div>
