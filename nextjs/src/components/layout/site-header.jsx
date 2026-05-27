@@ -1730,6 +1730,7 @@ export default function SiteHeader() {
                       {cartItems.map((item, index) => {
                         const id = String(item?.productId || item?._id || item?.id || "");
                         const lineKey = String(item?.lineKey || id || `${index}`);
+                        const qty = Number(item?.qty || item?.quantity || 1);
                         const pricing = getLinePricing(item);
                         const maxStock = Number(item?.countInStock || 99);
                         const upgradeLabel = formatSelectedUpgrades(item?.selectedUpgrades);
