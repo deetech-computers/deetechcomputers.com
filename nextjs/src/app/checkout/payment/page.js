@@ -53,7 +53,7 @@ export default function CheckoutPaymentPage() {
   const HUBTEL_MAX_WAIT_MS = 10 * 60 * 1000;
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
-  const { token, isAuthenticated } = useAuth();
+  const { token, isAuthenticated, user } = useAuth();
   const { pushToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [transitionStage, setTransitionStage] = useState("idle");
@@ -139,7 +139,7 @@ export default function CheckoutPaymentPage() {
   }, []);
 
   useEffect(() => {
-    const draft = readCheckoutDraft();
+    const draft = readCheckoutDraft(user);
     const attribution = readAffiliateAttribution();
     const affiliateFromUrl =
       typeof window !== "undefined"
@@ -178,7 +178,7 @@ export default function CheckoutPaymentPage() {
     setForm((current) => ({ ...current, ...nextDraft }));
     clientOrderRefRef.current = String(nextDraft?.clientOrderRef || "").trim();
     setReady(true);
-  }, [pushToast, router]);
+  }, [items, pushToast, router, user]);
 
   useEffect(() => {
     if (!ready || form.affiliateCodeMode !== "auto-attribution") return;
@@ -196,8 +196,8 @@ export default function CheckoutPaymentPage() {
 
   useEffect(() => {
     if (!ready) return;
-    writeCheckoutDraft(form);
-  }, [form, ready]);
+    writeCheckoutDraft(form, user);
+  }, [form, ready, user]);
 
   useEffect(() => {
     if (!ready) return;
@@ -386,7 +386,7 @@ export default function CheckoutPaymentPage() {
       city: order?.shippingCity || order?.guestCity || pending?.city || "",
     });
 
-    clearCompletedCheckoutState();
+    clearCompletedCheckoutState(user);
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("deetech-hubtel-pending");
       window.sessionStorage.setItem("deetech-order-complete-animate", "1");
@@ -693,7 +693,7 @@ export default function CheckoutPaymentPage() {
         city: form.shippingCity,
       });
 
-      clearCompletedCheckoutState();
+      clearCompletedCheckoutState(user);
       pushToast("Order placed successfully", "success");
       const processingElapsed = Date.now() - processingStart;
       if (processingElapsed < PROCESSING_FLOOR_MS) {

@@ -1,4 +1,5 @@
 import { clearAffiliateAttribution } from "@/lib/affiliate-attribution";
+import { readStoredUser } from "@/lib/session";
 
 export const CHECKOUT_DRAFT_KEY = "deetech:checkout-draft";
 
@@ -77,7 +78,23 @@ export function splitName(name) {
   };
 }
 
-export function readCheckoutDraft() {
+function normalizeDraftScopeInput(scopeInput) {
+  if (scopeInput && typeof scopeInput === "object") {
+    return scopeInput;
+  }
+  return readStoredUser();
+}
+
+function buildCheckoutDraftScopeKey(scopeInput) {
+  const scope = normalizeDraftScopeInput(scopeInput);
+  const userId = String(scope?._id || "").trim();
+  if (userId) return `user:${userId}`;
+  const email = String(scope?.email || "").trim().toLowerCase();
+  if (email) return `email:${email}`;
+  return "guest";
+}
+
+function safeParseCheckoutStorage() {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(CHECKOUT_DRAFT_KEY);
@@ -87,18 +104,60 @@ export function readCheckoutDraft() {
   }
 }
 
-export function writeCheckoutDraft(value) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(value));
+function normalizeCheckoutStorageEnvelope(parsed) {
+  if (parsed && typeof parsed === "object" && parsed.version === 2 && parsed.drafts && typeof parsed.drafts === "object") {
+    return parsed;
+  }
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+    return {
+      version: 2,
+      drafts: {
+        guest: parsed,
+      },
+    };
+  }
+  return {
+    version: 2,
+    drafts: {},
+  };
 }
 
-export function clearCheckoutDraft() {
+function writeCheckoutStorageEnvelope(envelope) {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+  window.localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(envelope));
 }
 
-export function clearCompletedCheckoutState() {
-  clearCheckoutDraft();
+export function readCheckoutDraft(scopeInput) {
+  const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
+  const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
+  const draft = envelope.drafts?.[scopeKey];
+  return draft && typeof draft === "object" ? draft : null;
+}
+
+export function writeCheckoutDraft(value, scopeInput) {
+  if (typeof window === "undefined") return;
+  const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
+  const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
+  envelope.drafts[scopeKey] = value;
+  writeCheckoutStorageEnvelope(envelope);
+}
+
+export function clearCheckoutDraft(scopeInput) {
+  if (typeof window === "undefined") return;
+  const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
+  const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
+  if (scopeKey in envelope.drafts) {
+    delete envelope.drafts[scopeKey];
+  }
+  if (!Object.keys(envelope.drafts).length) {
+    window.localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+    return;
+  }
+  writeCheckoutStorageEnvelope(envelope);
+}
+
+export function clearCompletedCheckoutState(scopeInput) {
+  clearCheckoutDraft(scopeInput);
   clearAffiliateAttribution();
 }
 

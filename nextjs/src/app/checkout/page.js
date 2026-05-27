@@ -34,35 +34,39 @@ export default function CheckoutPage() {
     commissionRate: 0,
   });
   const fieldRefs = useRef({});
+  const [form, setForm] = useState(() => createCheckoutForm(user));
 
-  const initialName = splitName(user?.name);
-  const [form, setForm] = useState({
-    firstName: initialName.firstName,
-    lastName: initialName.lastName,
-    companyName: "",
-    shippingAddress: user?.address || "",
-    shippingCity: user?.city || "",
-    deliveryRegion: user?.region || "",
-    mobileNumber: user?.phone || "",
-    shippingEmail: user?.email || "",
-    affiliateCode: "",
-    useShippingForBilling: true,
-    billingAddress: "",
-    paymentMethod: "mtn",
-    paymentProofUrl: "",
-    paymentProofName: "",
-    paymentProofStorage: "",
-    discountCode: "",
-    discountPercent: 0,
-    discountAmount: 0,
-    clientOrderRef: "",
-    affiliateCodeMode: "manual",
-    affiliateCodeCleared: false,
-    affiliateCodeClearedAt: 0,
-  });
+  function createCheckoutForm(activeUser, draft = {}) {
+    const initialName = splitName(activeUser?.name);
+    return {
+      firstName: initialName.firstName,
+      lastName: initialName.lastName,
+      companyName: "",
+      shippingAddress: activeUser?.address || "",
+      shippingCity: activeUser?.city || "",
+      deliveryRegion: activeUser?.region || "",
+      mobileNumber: activeUser?.phone || "",
+      shippingEmail: activeUser?.email || "",
+      affiliateCode: "",
+      useShippingForBilling: true,
+      billingAddress: "",
+      paymentMethod: "mtn",
+      paymentProofUrl: "",
+      paymentProofName: "",
+      paymentProofStorage: "",
+      discountCode: "",
+      discountPercent: 0,
+      discountAmount: 0,
+      clientOrderRef: "",
+      affiliateCodeMode: "manual",
+      affiliateCodeCleared: false,
+      affiliateCodeClearedAt: 0,
+      ...draft,
+    };
+  }
 
   useEffect(() => {
-    const draft = readCheckoutDraft();
+    const draft = readCheckoutDraft(user);
     const attribution = readAffiliateAttribution();
     const affiliateFromUrl =
       typeof window !== "undefined"
@@ -93,12 +97,10 @@ export default function CheckoutPage() {
       nextDraft.affiliateCodeCleared = false;
     }
 
-    if (!Object.keys(nextDraft).length) return;
-    setForm((current) => ({ ...current, ...nextDraft }));
-    if (isPhaseOneComplete({ ...form, ...nextDraft })) {
-      setPhaseSaved(true);
-    }
-  }, [items]);
+    const nextForm = createCheckoutForm(user, nextDraft);
+    setForm(nextForm);
+    setPhaseSaved(isPhaseOneComplete(nextForm));
+  }, [items, user]);
 
   useEffect(() => {
     if (form.affiliateCodeMode !== "auto-attribution") return;
@@ -115,23 +117,8 @@ export default function CheckoutPage() {
   }, [form.affiliateCodeMode, items]);
 
   useEffect(() => {
-    if (!user) return;
-    const nextName = splitName(user.name);
-    setForm((current) => ({
-      ...current,
-      firstName: current.firstName || nextName.firstName,
-      lastName: current.lastName || nextName.lastName,
-      shippingAddress: current.shippingAddress || user.address || "",
-      shippingCity: current.shippingCity || user.city || "",
-      deliveryRegion: current.deliveryRegion || user.region || "",
-      mobileNumber: current.mobileNumber || user.phone || "",
-      shippingEmail: current.shippingEmail || user.email || "",
-    }));
-  }, [user]);
-
-  useEffect(() => {
-    writeCheckoutDraft(form);
-  }, [form]);
+    writeCheckoutDraft(form, user);
+  }, [form, user]);
 
   useEffect(() => {
     const code = String(form.affiliateCode || "").trim();

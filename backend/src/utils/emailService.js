@@ -21,7 +21,7 @@ import {
 import logger from "./logger.js";
 
 const COMPANY_NAME = "DEETECH COMPUTERS";
-const SUPPORT_EMAIL = ADMIN_EMAIL || SMTP_USER || "support@deetech.local";
+const SUPPORT_EMAIL = "deetechcomputers01@gmail.com";
 const SUPPORT_PHONE = "+233 59 175 5964";
 const CURRENCY_SYMBOL = "GH₵";
 
