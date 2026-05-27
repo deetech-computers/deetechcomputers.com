@@ -386,7 +386,6 @@ export default function CheckoutPaymentPage() {
       city: order?.shippingCity || order?.guestCity || pending?.city || "",
     });
 
-    clearCompletedCheckoutState(user);
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("deetech-hubtel-pending");
       window.sessionStorage.setItem("deetech-order-complete-animate", "1");
@@ -398,6 +397,7 @@ export default function CheckoutPaymentPage() {
     setHubtelClientReference("");
     setHubtelStatusToken("");
     clearCart();
+    clearCompletedCheckoutState(user);
     router.replace("/order-completed");
   }
 
@@ -693,7 +693,6 @@ export default function CheckoutPaymentPage() {
         city: form.shippingCity,
       });
 
-      clearCompletedCheckoutState(user);
       pushToast("Order placed successfully", "success");
       const processingElapsed = Date.now() - processingStart;
       if (processingElapsed < PROCESSING_FLOOR_MS) {
@@ -716,6 +715,7 @@ export default function CheckoutPaymentPage() {
         window.scrollTo({ top: 0, behavior: "instant" });
       }
       clearCart();
+      clearCompletedCheckoutState(user);
       router.push("/order-completed");
     } catch (error) {
       setTransitionStage("idle");
