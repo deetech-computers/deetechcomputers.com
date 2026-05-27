@@ -624,6 +624,10 @@ function normalizeAffiliateCode(raw) {
   return String(raw || "").trim().toUpperCase();
 }
 
+function normalizeOrderEmailAddress(raw) {
+  return String(raw || "").trim().toLowerCase();
+}
+
 async function findAffiliateByCodeFlexible(code, session = null) {
   const normalized = normalizeAffiliateCode(code);
   if (!normalized) return null;
@@ -657,7 +661,7 @@ function normalizeOrderStatus(order) {
 function pickOrderCustomer(order) {
   return {
     name: String(order.shippingName || order.guestName || "").trim(),
-    email: String(order.shippingEmail || order.guestEmail || "").trim(),
+    email: normalizeOrderEmailAddress(order.shippingEmail || order.guestEmail || ""),
   };
 }
 
@@ -711,15 +715,23 @@ async function sendOrderEmailsBestEffort(order) {
     orderItems: buildOrderItemsForEmail(order),
   };
 
-  try {
-    if (ADMIN_EMAIL) {
+  if (ADMIN_EMAIL) {
+    try {
       await sendOrderNotification(ADMIN_EMAIL, orderDetails);
+    } catch (err) {
+      console.warn("Admin order email send skipped:", err?.message || err);
     }
-    if (customer.email) {
+  }
+
+  if (customer.email) {
+    try {
       await sendOrderConfirmation(customer.email, orderDetails);
+    } catch (err) {
+      console.warn(
+        `Customer order email send skipped for ${customer.email}:`,
+        err?.message || err
+      );
     }
-  } catch (err) {
-    console.warn("Backend order email send skipped:", err?.message || err);
   }
 }
 
@@ -1349,6 +1361,8 @@ export async function createGuestOrder(req, res) {
     discountCode,
     affiliateCode,
   } = payload;
+  const normalizedShippingEmail = normalizeOrderEmailAddress(shippingEmail);
+  const normalizedGuestEmail = normalizeOrderEmailAddress(guestEmail);
   const submittedAffiliateCode = normalizeAffiliateCode(affiliateCode);
   const trimmedOrderRef = String(clientOrderRef || "").trim();
 
@@ -1369,8 +1383,8 @@ export async function createGuestOrder(req, res) {
       ? toHubtelClientReference(trimmedOrderRef)
       : trimmedOrderRef || undefined;
   const attemptFingerprint = buildOrderAttemptFingerprint({
-    guestEmail,
-    shippingEmail,
+    guestEmail: normalizedGuestEmail,
+    shippingEmail: normalizedShippingEmail,
     mobileNumber: cleanMobile,
     paymentMethod,
     paymentFlow: normalizedPaymentFlow,
@@ -1383,13 +1397,13 @@ export async function createGuestOrder(req, res) {
   }
 
   if (trimmedOrderRef) {
-    const existingGuestOrder = await Order.findOne({
-      clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
-      $or: [
-        { guestEmail: String(guestEmail || "").trim() },
-        { shippingEmail: String(shippingEmail || "").trim() },
-      ],
-    }).sort({ createdAt: -1 });
+      const existingGuestOrder = await Order.findOne({
+        clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
+        $or: [
+          { guestEmail: normalizedGuestEmail },
+          { shippingEmail: normalizedShippingEmail },
+        ],
+      }).sort({ createdAt: -1 });
     if (existingGuestOrder) {
       await writeOrderAttemptLog({
         req,
@@ -1401,13 +1415,13 @@ export async function createGuestOrder(req, res) {
         attemptFingerprint,
         paymentMethod,
         paymentFlow: normalizedPaymentFlow,
-        itemCount: countOrderItems(orderItems),
-        totalPrice: Number(existingGuestOrder.totalPrice || 0),
-        shippingEmail,
-        guestEmail,
-        mobileNumber: cleanMobile,
-        reason: "Repeated clientOrderRef for guest checkout",
-      });
+          itemCount: countOrderItems(orderItems),
+          totalPrice: Number(existingGuestOrder.totalPrice || 0),
+          shippingEmail: normalizedShippingEmail,
+          guestEmail: normalizedGuestEmail,
+          mobileNumber: cleanMobile,
+          reason: "Repeated clientOrderRef for guest checkout",
+        });
       return res.status(200).json({
         message: "Order already submitted",
         order: existingGuestOrder,
@@ -1418,8 +1432,8 @@ export async function createGuestOrder(req, res) {
   }
 
   const existingGuestFingerprintOrder = await findRecentDuplicateOrder({
-    shippingEmail,
-    guestEmail,
+    shippingEmail: normalizedShippingEmail,
+    guestEmail: normalizedGuestEmail,
     attemptFingerprint,
   });
   if (existingGuestFingerprintOrder) {
@@ -1433,13 +1447,13 @@ export async function createGuestOrder(req, res) {
       attemptFingerprint,
       paymentMethod,
       paymentFlow: normalizedPaymentFlow,
-      itemCount: countOrderItems(orderItems),
-      totalPrice: Number(existingGuestFingerprintOrder.totalPrice || 0),
-      shippingEmail,
-      guestEmail,
-      mobileNumber: cleanMobile,
-      reason: "Recent matching guest checkout fingerprint returned existing order",
-    });
+        itemCount: countOrderItems(orderItems),
+        totalPrice: Number(existingGuestFingerprintOrder.totalPrice || 0),
+        shippingEmail: normalizedShippingEmail,
+        guestEmail: normalizedGuestEmail,
+        mobileNumber: cleanMobile,
+        reason: "Recent matching guest checkout fingerprint returned existing order",
+      });
     return res.status(200).json({
       message: "Order already submitted",
       order: existingGuestFingerprintOrder,
@@ -1459,15 +1473,15 @@ export async function createGuestOrder(req, res) {
       clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
       attemptFingerprint,
       paymentMethod,
-      paymentFlow: normalizedPaymentFlow,
-      itemCount: countOrderItems(orderItems),
-      shippingEmail,
-      guestEmail,
-      mobileNumber: cleanMobile,
-      metadata: {
-        hasPaymentScreenshot: Boolean(screenshotUrl),
-        deliveryRegion: String(deliveryRegion || "").trim(),
-      },
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        shippingEmail: normalizedShippingEmail,
+        guestEmail: normalizedGuestEmail,
+        mobileNumber: cleanMobile,
+        metadata: {
+          hasPaymentScreenshot: Boolean(screenshotUrl),
+          deliveryRegion: String(deliveryRegion || "").trim(),
+        },
     });
 
     const { total, processedItems, itemCategories } = await processOrderItems(orderItems);
@@ -1502,14 +1516,14 @@ export async function createGuestOrder(req, res) {
       orderItems: processedItems,
       paymentMethod,
       paymentFlow: normalizedPaymentFlow,
-      deliveryRegion,
-      mobileNumber: cleanMobile,
-      paymentMobileNumber:
-        normalizedPaymentFlow === "auto" ? cleanMobile : undefined,
-      shippingName: shippingName || guestName,
-      shippingEmail: shippingEmail || guestEmail,
-      shippingAddress: shippingAddress || guestAddress,
-      shippingCity: shippingCity || guestCity,
+        deliveryRegion,
+        mobileNumber: cleanMobile,
+        paymentMobileNumber:
+          normalizedPaymentFlow === "auto" ? cleanMobile : undefined,
+        shippingName: shippingName || guestName,
+        shippingEmail: normalizedShippingEmail || normalizedGuestEmail,
+        shippingAddress: shippingAddress || guestAddress,
+        shippingCity: shippingCity || guestCity,
       clientOrderRef: resolvedClientOrderRef,
       attemptFingerprint,
       itemsPrice: pricing.itemsPrice,
@@ -1524,17 +1538,17 @@ export async function createGuestOrder(req, res) {
       discountPercent: pricing.discountPercent,
       discountAmount: pricing.discountAmount,
       affiliateCodeEntered: submittedAffiliateCode || undefined,
-      affiliateCode: affiliate?.code,
-      affiliate: affiliate?._id,
-      affiliateCommissionRate: affiliate ? commissionRate : 0,
-      affiliateCommissionAmount: commissionAmount,
-      guestName,
-      guestEmail,
-      guestAddress,
-      guestCity,
-      guestNotes,
-      paymentScreenshotUrl: normalizedPaymentFlow === "manual" ? screenshotUrl : "",
-    });
+        affiliateCode: affiliate?.code,
+        affiliate: affiliate?._id,
+        affiliateCommissionRate: affiliate ? commissionRate : 0,
+        affiliateCommissionAmount: commissionAmount,
+        guestName,
+        guestEmail: normalizedGuestEmail,
+        guestAddress,
+        guestCity,
+        guestNotes,
+        paymentScreenshotUrl: normalizedPaymentFlow === "manual" ? screenshotUrl : "",
+      });
 
     await writeOrderAttemptLog({
       req,
@@ -1663,8 +1677,8 @@ export async function createGuestOrder(req, res) {
           paymentFlow: normalizedPaymentFlow,
           itemCount: countOrderItems(orderItems),
           totalPrice: Number(existingGuestOrder.totalPrice || 0),
-          shippingEmail,
-          guestEmail,
+          shippingEmail: normalizedShippingEmail,
+          guestEmail: normalizedGuestEmail,
           mobileNumber: cleanMobile,
           reason: "Duplicate clientOrderRef caught by unique index",
         });
@@ -1684,13 +1698,13 @@ export async function createGuestOrder(req, res) {
       clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
       attemptFingerprint,
       paymentMethod,
-      paymentFlow: normalizedPaymentFlow,
-      itemCount: countOrderItems(orderItems),
-      shippingEmail,
-      guestEmail,
-      mobileNumber: cleanMobile,
-      reason: err?.message || "Guest order creation failed",
-    });
+        paymentFlow: normalizedPaymentFlow,
+        itemCount: countOrderItems(orderItems),
+        shippingEmail: normalizedShippingEmail,
+        guestEmail: normalizedGuestEmail,
+        mobileNumber: cleanMobile,
+        reason: err?.message || "Guest order creation failed",
+      });
     if (reservedStock.length) {
       await rollbackStockAdjustments(reservedStock);
     }
