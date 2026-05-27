@@ -76,6 +76,15 @@ function getProductSummary(product) {
   );
 }
 
+function normalizeDisplayTitle(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/[a-z]/.test(raw)) return raw;
+  return raw
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (match) => match.toUpperCase());
+}
+
 function getReviewAverage(reviews) {
   const ratings = (reviews || [])
     .map((review) => Number(review?.rating))
@@ -517,6 +526,8 @@ export default function ProductDetailPage() {
   );
   const description = getProductDescription(product);
   const summary = getProductSummary(product);
+  const displayBrand = normalizeDisplayTitle(product?.brand || categoryLabel);
+  const displayName = normalizeDisplayTitle(product?.name);
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = reviews.length || getProductReviewCount(product);
@@ -808,17 +819,19 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="product-summary panel">
-          <p className="product-summary__eyebrow">{product?.brand || categoryLabel}</p>
-          <h1>{product.name}</h1>
-          <div className="product-summary__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
-            <span>
-              {Array.from({ length: 5 }, (_, index) => (
-                <span key={index}>{index < rating ? "★" : "☆"}</span>
-              ))}
-            </span>
-            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
-            <small>{reviewCount > 0 ? `(${reviewCount} reviews)` : "(0 reviews)"}</small>
-          </div>
+          <p className="product-summary__eyebrow">{displayBrand}</p>
+          <h1>{displayName}</h1>
+          {reviewCount > 0 ? (
+            <div className="product-summary__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+              <span>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span key={index}>{index < rating ? "★" : "☆"}</span>
+                ))}
+              </span>
+              <strong>{ratingValue.toFixed(1)}</strong>
+              <small>{`(${reviewCount} reviews)`}</small>
+            </div>
+          ) : null}
           <div className="product-summary__price-group">
             {hasDiscount && discountPercent > 0 ? (
               <span className="product-summary__discount-badge">Save {discountPercent}%</span>
@@ -1051,30 +1064,32 @@ export default function ProductDetailPage() {
 
           {activeTab === "reviews" ? (
             <div className="product-tabs__panel">
-              <div className="product-review-overview">
-                <div className="product-review-overview__score">
-                  <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
-                  <span>Out of 5</span>
-                  <p className="product-card__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
-                    {Array.from({ length: 5 }, (_, index) => (
-                      <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
-                    ))}
-                  </p>
-                  <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
-                </div>
+              {reviewCount > 0 ? (
+                <div className="product-review-overview">
+                  <div className="product-review-overview__score">
+                    <strong>{ratingValue.toFixed(1)}</strong>
+                    <span>Out of 5</span>
+                    <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
+                      ))}
+                    </p>
+                    <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
+                  </div>
 
-                <div className="product-review-overview__bars">
-                  {reviewBreakdown.map((item) => (
-                    <div key={item.stars} className="product-review-bar">
-                      <span>{item.stars} Star</span>
-                      <div className="product-review-bar__track">
-                        <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
+                  <div className="product-review-overview__bars">
+                    {reviewBreakdown.map((item) => (
+                      <div key={item.stars} className="product-review-bar">
+                        <span>{item.stars} Star</span>
+                        <div className="product-review-bar__track">
+                          <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
+                        </div>
+                        <strong>{item.count}</strong>
                       </div>
-                      <strong>{item.count}</strong>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               <div className="product-review-actions">
                 <div className="product-review-actions__copy">
