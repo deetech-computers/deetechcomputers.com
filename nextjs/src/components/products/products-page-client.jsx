@@ -826,7 +826,8 @@ export default function ProductsPageClient({ initialFilters }) {
                     disabled={currentPage === 1}
                     aria-label="Previous page"
                   >
-                    &lsaquo;
+                    <span aria-hidden="true">&lsaquo;</span>
+                    <span>Back</span>
                   </button>
 
                   <div className="shop-pagination__pages">
@@ -856,7 +857,8 @@ export default function ProductsPageClient({ initialFilters }) {
                     disabled={currentPage === totalPages}
                     aria-label="Next page"
                   >
-                    &rsaquo;
+                    <span>Next</span>
+                    <span aria-hidden="true">&rsaquo;</span>
                   </button>
                 </nav>
               ) : null}
