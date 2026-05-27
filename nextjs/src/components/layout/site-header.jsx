@@ -857,31 +857,31 @@ export default function SiteHeader() {
           </button>
         </div>
         <div className="notification-dropdown__items">
-          {latestHeaderNotification ? (
-            (() => {
-              const itemId = String(latestHeaderNotification?.id || "");
-              const isUnread = !safeNotificationReadIds.includes(itemId);
-              return (
-                <Link
-                  key={itemId}
-                  href={latestHeaderNotification.href}
-                  className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
-                  onClick={handleNotificationItemSelect}
-                >
-                  <div className="notification-dropdown__meta">
-                    <strong>{latestHeaderNotification.title}</strong>
-                    <p>{latestHeaderNotification.body}</p>
-                  </div>
-                  <span>{formatNotificationTime(latestHeaderNotification.timestamp)}</span>
-                </Link>
-              );
-            })()
-          ) : (
-            <div className="notification-dropdown__empty notification-dropdown__empty--compact">
-              <p>No quick notifications right now.</p>
-            </div>
-          )}
-        </div>
+            {quickNotificationItems.length ? (
+              quickNotificationItems.map((item) => {
+                const itemId = String(item?.id || "");
+                const isUnread = !safeNotificationReadIds.includes(itemId);
+                return (
+                  <Link
+                    key={itemId}
+                    href={item.href}
+                    className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
+                    onClick={handleNotificationItemSelect}
+                  >
+                    <div className="notification-dropdown__meta">
+                      <strong>{item.title}</strong>
+                      <p>{item.body}</p>
+                    </div>
+                    <span>{formatNotificationTime(item.timestamp)}</span>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="notification-dropdown__empty notification-dropdown__empty--compact">
+                <p>No quick notifications right now.</p>
+              </div>
+            )}
+          </div>
         <Link href={primaryHref} className="notification-dropdown__cta" onClick={handleNotificationCenterSelect}>
           Open notification history
         </Link>
