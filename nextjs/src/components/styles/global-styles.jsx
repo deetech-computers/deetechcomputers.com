@@ -3186,6 +3186,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-card__price {
   margin: 0; color: #1f1d1b; font-size: 0.95rem; font-weight: 700;
+  transition: color 180ms ease;
 }
 .product-card--catalog .product-card__price {
   font-size: 0.98rem; font-weight: 800; color: #1f1d1b;
@@ -3198,7 +3199,8 @@ button, input, select, textarea { font: inherit; }
   transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
 }
 .product-card__icon-button:hover {
-  transform: none;
+  transform: scale(1.08);
+  background: #f1f5f9;
 }
 .product-card__icon-button.is-active {
   background: #f3efe7; color: #171513; border-color: transparent;
@@ -3237,10 +3239,12 @@ button, input, select, textarea { font: inherit; }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   cursor: pointer; box-shadow: none;
   border-left: 1px solid #e6dfd3; border-right: 1px solid #e6dfd3;
-  transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+  transition: background 220ms ease, color 220ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 .product-card__cart-button:hover {
-  filter: none;
+  background: #004aad;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 .product-card__cart-button.is-in-cart {
   background: #173d16;
@@ -3265,6 +3269,10 @@ button, input, select, textarea { font: inherit; }
   .product-card:focus-within .product-card__image--secondary {
     opacity: 1;
     transform: scale(1.01);
+  }
+  .product-card:hover .product-card__price,
+  .product-card:focus-within .product-card__price {
+    color: #004aad;
   }
   .product-card--home .product-card__footer--reveal {
     display: grid;
@@ -3676,9 +3684,11 @@ button, input, select, textarea { font: inherit; }
   background: #0d56da !important;
   color: #ffffff !important;
   box-shadow: 0 14px 32px rgba(13, 86, 218, 0.2);
+  transition: background 220ms ease, color 220ms ease, transform 180ms ease, box-shadow 180ms ease;
 }
 .product-summary__cart:hover {
   background: #0b4cc2 !important;
+  transform: translateY(-1px);
 }
 .product-summary__inline-actions {
   display: grid;
@@ -3712,9 +3722,9 @@ button, input, select, textarea { font: inherit; }
   flex: 0 0 auto;
 }
 .product-summary__icon-action:hover {
-  border-color: rgba(217, 164, 65, 0.35);
-  background: rgba(217, 164, 65, 0.08);
-  transform: translateY(-1px);
+  border-color: #dbe3ee;
+  background: #f1f5f9;
+  transform: scale(1.04);
 }
 .product-summary__icon-action.is-active {
   border-color: rgba(217, 164, 65, 0.45);
