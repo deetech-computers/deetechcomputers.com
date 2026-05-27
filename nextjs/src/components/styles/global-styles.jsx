@@ -6902,6 +6902,7 @@ button, input, select, textarea { font: inherit; }
   padding: 16px;
   border-radius: 16px;
   align-content: start;
+  min-width: 0;
 }
 .admin-dash-panel__head {
   display: flex;
@@ -6918,6 +6919,7 @@ button, input, select, textarea { font: inherit; }
 .admin-dash-list {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 .admin-dash-row {
   display: grid;
@@ -6926,6 +6928,7 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid rgba(232, 224, 212, 0.7);
+  min-width: 0;
 }
 .admin-dash-row:last-child {
   border-bottom: 0;
@@ -6948,8 +6951,12 @@ button, input, select, textarea { font: inherit; }
 .admin-dash-row > div:last-child {
   display: grid;
   gap: 6px;
-  justify-items: end;
+  justify-items: start;
   min-width: 0;
+  max-width: 100%;
+}
+.admin-dash-row .admin-chip {
+  width: fit-content;
   max-width: 100%;
 }
 .admin-dash-panel--users .admin-dash-list--users {
@@ -11407,6 +11414,11 @@ button, input, select, textarea { font: inherit; }
   .admin-dash-shortcuts__grid,
   .admin-viz-grid {
     grid-template-columns: 1fr;
+  }
+  .admin-dash-panel__head,
+  .admin-dash-row {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
   .admin-dashboard__sync {
     justify-items: start;
