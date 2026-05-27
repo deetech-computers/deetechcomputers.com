@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import {
+  buildClientOrderRef,
   buildCheckoutFormState,
   GHANA_REGIONS,
   isPhaseOneComplete,
@@ -237,6 +238,13 @@ export default function CheckoutPage() {
 
     if (!validatePhaseOne()) return;
 
+    const clientOrderRef = String(form.clientOrderRef || "").trim() || buildClientOrderRef();
+    const nextDraft = {
+      ...form,
+      clientOrderRef,
+    };
+    writeCheckoutDraft(nextDraft, user);
+    setForm(nextDraft);
     setPhaseSaved(true);
     pushToast("Billing details saved. Moving to payment step.", "success");
     router.push("/checkout/payment");

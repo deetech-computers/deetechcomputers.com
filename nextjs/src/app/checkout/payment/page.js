@@ -139,45 +139,67 @@ export default function CheckoutPaymentPage() {
   }, []);
 
   useEffect(() => {
-    const draft = readCheckoutDraft(user);
-    const attribution = readAffiliateAttribution();
-    const affiliateFromUrl =
-      typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("affiliate")
-        : "";
-    const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
-    const nextDraft = { ...(draft || {}) };
-    const attributionCapturedAt = Number(attribution?.capturedAt || 0);
-    const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
-    const affiliateWasCleared =
-      Boolean(nextDraft.affiliateCodeCleared) &&
-      (!attributionCapturedAt || affiliateClearedAt >= attributionCapturedAt);
-    const autoApplyStoredCode =
-      !affiliateWasCleared &&
-      !String(nextDraft.affiliateCode || "").trim() &&
-      shouldAutoApplyAffiliateAttribution(attribution, items)
-        ? String(attribution?.code || "").trim().toUpperCase()
-        : "";
+    let cancelled = false;
 
-    if (!affiliateWasCleared && normalizedUrlCode) {
-      saveAffiliateAttribution(normalizedUrlCode, "payment-url");
-      nextDraft.affiliateCode = normalizedUrlCode;
-      nextDraft.affiliateCodeMode = "auto-url";
-      nextDraft.affiliateCodeCleared = false;
-    } else if (autoApplyStoredCode) {
-      nextDraft.affiliateCode = autoApplyStoredCode;
-      nextDraft.affiliateCodeMode = "auto-attribution";
-      nextDraft.affiliateCodeCleared = false;
+    function buildHydratedDraft(baseDraft) {
+      const attribution = readAffiliateAttribution();
+      const affiliateFromUrl =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("affiliate")
+          : "";
+      const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
+      const nextDraft = { ...(baseDraft || {}) };
+      const attributionCapturedAt = Number(attribution?.capturedAt || 0);
+      const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
+      const affiliateWasCleared =
+        Boolean(nextDraft.affiliateCodeCleared) &&
+        (!attributionCapturedAt || affiliateClearedAt >= attributionCapturedAt);
+      const autoApplyStoredCode =
+        !affiliateWasCleared &&
+        !String(nextDraft.affiliateCode || "").trim() &&
+        shouldAutoApplyAffiliateAttribution(attribution, items)
+          ? String(attribution?.code || "").trim().toUpperCase()
+          : "";
+
+      if (!affiliateWasCleared && normalizedUrlCode) {
+        saveAffiliateAttribution(normalizedUrlCode, "payment-url");
+        nextDraft.affiliateCode = normalizedUrlCode;
+        nextDraft.affiliateCodeMode = "auto-url";
+        nextDraft.affiliateCodeCleared = false;
+      } else if (autoApplyStoredCode) {
+        nextDraft.affiliateCode = autoApplyStoredCode;
+        nextDraft.affiliateCodeMode = "auto-attribution";
+        nextDraft.affiliateCodeCleared = false;
+      }
+
+      return nextDraft;
     }
 
-    if (!Object.keys(nextDraft).length || !isPhaseOneComplete(nextDraft)) {
-      pushToast("Please complete phase one before payment", "warning");
-      router.replace("/checkout");
-      return;
+    async function hydratePaymentStep() {
+      let nextDraft = buildHydratedDraft(readCheckoutDraft(user));
+      if ((!Object.keys(nextDraft).length || !isPhaseOneComplete(nextDraft)) && typeof window !== "undefined") {
+        await new Promise((resolve) => window.setTimeout(resolve, 120));
+        nextDraft = buildHydratedDraft(readCheckoutDraft(user));
+      }
+
+      if (cancelled) return;
+
+      if (!Object.keys(nextDraft).length || !isPhaseOneComplete(nextDraft)) {
+        pushToast("Please complete phase one before payment", "warning");
+        router.replace("/checkout");
+        return;
+      }
+
+      setForm((current) => ({ ...current, ...nextDraft }));
+      clientOrderRefRef.current = String(nextDraft?.clientOrderRef || "").trim();
+      setReady(true);
     }
-    setForm((current) => ({ ...current, ...nextDraft }));
-    clientOrderRefRef.current = String(nextDraft?.clientOrderRef || "").trim();
-    setReady(true);
+
+    hydratePaymentStep();
+
+    return () => {
+      cancelled = true;
+    };
   }, [items, pushToast, router, user]);
 
   useEffect(() => {
