@@ -67,6 +67,15 @@ function getProductDescription(product) {
   );
 }
 
+function getProductSummary(product) {
+  return (
+    product?.shortDescription ||
+    product?.short_description ||
+    product?.description ||
+    "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
+  );
+}
+
 function getReviewAverage(reviews) {
   const ratings = (reviews || [])
     .map((review) => Number(review?.rating))
@@ -507,6 +516,7 @@ export default function ProductDetailPage() {
     selectedUpgrades
   );
   const description = getProductDescription(product);
+  const summary = getProductSummary(product);
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = reviews.length || getProductReviewCount(product);
@@ -913,7 +923,7 @@ export default function ProductDetailPage() {
               ) : null}
             </div>
           ) : null}
-          <p className="product-summary__copy">{description}</p>
+          <p className="product-summary__copy">{summary}</p>
 
           <div className="product-summary__buy">
             <div className="product-summary__qty-control" aria-label="Product quantity">
