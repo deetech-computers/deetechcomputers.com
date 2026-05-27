@@ -7,11 +7,11 @@ import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/components/providers/toast-provider";
 import {
+  buildCheckoutFormState,
   GHANA_REGIONS,
   isPhaseOneComplete,
   readCheckoutDraft,
   writeCheckoutDraft,
-  splitName,
 } from "@/lib/checkout";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
@@ -34,36 +34,7 @@ export default function CheckoutPage() {
     commissionRate: 0,
   });
   const fieldRefs = useRef({});
-  const [form, setForm] = useState(() => createCheckoutForm(user));
-
-  function createCheckoutForm(activeUser, draft = {}) {
-    const initialName = splitName(activeUser?.name);
-    return {
-      firstName: initialName.firstName,
-      lastName: initialName.lastName,
-      companyName: "",
-      shippingAddress: activeUser?.address || "",
-      shippingCity: activeUser?.city || "",
-      deliveryRegion: activeUser?.region || "",
-      mobileNumber: activeUser?.phone || "",
-      shippingEmail: activeUser?.email || "",
-      affiliateCode: "",
-      useShippingForBilling: true,
-      billingAddress: "",
-      paymentMethod: "mtn",
-      paymentProofUrl: "",
-      paymentProofName: "",
-      paymentProofStorage: "",
-      discountCode: "",
-      discountPercent: 0,
-      discountAmount: 0,
-      clientOrderRef: "",
-      affiliateCodeMode: "manual",
-      affiliateCodeCleared: false,
-      affiliateCodeClearedAt: 0,
-      ...draft,
-    };
-  }
+  const [form, setForm] = useState(() => buildCheckoutFormState(user));
 
   useEffect(() => {
     const draft = readCheckoutDraft(user);
@@ -97,7 +68,7 @@ export default function CheckoutPage() {
       nextDraft.affiliateCodeCleared = false;
     }
 
-    const nextForm = createCheckoutForm(user, nextDraft);
+    const nextForm = buildCheckoutFormState(user, nextDraft);
     setForm(nextForm);
     setPhaseSaved(isPhaseOneComplete(nextForm));
   }, [items, user]);

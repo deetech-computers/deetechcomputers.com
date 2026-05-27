@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
 import { API_BASE } from "@/lib/config";
@@ -16,6 +17,7 @@ import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 
 export default function CartPage() {
   const { items, subtotal, updateQuantity, removeItem, clearCart } = useCart();
+  const { user } = useAuth();
   const [couponCode, setCouponCode] = useState("");
   const [couponStatus, setCouponStatus] = useState("idle");
   const [couponMessage, setCouponMessage] = useState("");
@@ -93,14 +95,14 @@ export default function CartPage() {
   }, [appliedCoupon.code, couponDiscount, items, localPricing, pricingPreviewKey, subtotal]);
 
   useEffect(() => {
-    const existingDraft = readCheckoutDraft() || {};
+    const existingDraft = readCheckoutDraft(user) || {};
     writeCheckoutDraft({
       ...existingDraft,
       discountCode: String(appliedCoupon.code || "").trim(),
       discountPercent: Number(appliedCoupon.percent || 0),
       discountAmount: couponDiscount,
-    });
-  }, [appliedCoupon.code, appliedCoupon.percent, couponDiscount]);
+    }, user);
+  }, [appliedCoupon.code, appliedCoupon.percent, couponDiscount, user]);
 
   async function validateCoupon(rawCode) {
     const normalized = String(rawCode || "").trim().toUpperCase();
@@ -171,13 +173,13 @@ export default function CartPage() {
     setAppliedCoupon({ code: "", percent: 0 });
     setCouponStatus("idle");
     setCouponMessage("");
-    const existingDraft = readCheckoutDraft() || {};
+    const existingDraft = readCheckoutDraft(user) || {};
     writeCheckoutDraft({
       ...existingDraft,
       discountCode: "",
       discountPercent: 0,
       discountAmount: 0,
-    });
+    }, user);
   }
 
   return (

@@ -78,6 +78,53 @@ export function splitName(name) {
   };
 }
 
+function preferFilled(primaryValue, fallbackValue) {
+  return String(primaryValue || "").trim() ? primaryValue : fallbackValue;
+}
+
+export function buildCheckoutDraftDefaults(activeUser) {
+  const initialName = splitName(activeUser?.name);
+  return {
+    firstName: initialName.firstName,
+    lastName: initialName.lastName,
+    companyName: "",
+    shippingAddress: activeUser?.address || "",
+    shippingCity: activeUser?.city || "",
+    deliveryRegion: activeUser?.region || "",
+    mobileNumber: activeUser?.phone || "",
+    shippingEmail: activeUser?.email || "",
+    affiliateCode: "",
+    useShippingForBilling: true,
+    billingAddress: "",
+    paymentMethod: "mtn",
+    paymentProofUrl: "",
+    paymentProofName: "",
+    paymentProofStorage: "",
+    discountCode: "",
+    discountPercent: 0,
+    discountAmount: 0,
+    clientOrderRef: "",
+    affiliateCodeMode: "manual",
+    affiliateCodeCleared: false,
+    affiliateCodeClearedAt: 0,
+  };
+}
+
+export function buildCheckoutFormState(activeUser, draft = {}) {
+  const defaults = buildCheckoutDraftDefaults(activeUser);
+  return {
+    ...defaults,
+    ...draft,
+    firstName: preferFilled(draft?.firstName, defaults.firstName),
+    lastName: preferFilled(draft?.lastName, defaults.lastName),
+    shippingAddress: preferFilled(draft?.shippingAddress, defaults.shippingAddress),
+    shippingCity: preferFilled(draft?.shippingCity, defaults.shippingCity),
+    deliveryRegion: preferFilled(draft?.deliveryRegion, defaults.deliveryRegion),
+    mobileNumber: preferFilled(draft?.mobileNumber, defaults.mobileNumber),
+    shippingEmail: preferFilled(draft?.shippingEmail, defaults.shippingEmail),
+  };
+}
+
 function normalizeDraftScopeInput(scopeInput) {
   if (scopeInput && typeof scopeInput === "object") {
     return scopeInput;

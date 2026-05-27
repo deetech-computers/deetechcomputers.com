@@ -968,7 +968,7 @@ export default function AccountPageClient({ initialTab = "" }) {
     event.preventDefault();
     setSavingAddress(true);
     try {
-      await saveProfile({
+      const updatedProfile = await saveProfile({
         firstName: profileForm.firstName.trim(),
         lastName: profileForm.lastName.trim(),
         phone: profileForm.phone.trim(),
@@ -977,7 +977,7 @@ export default function AccountPageClient({ initialTab = "" }) {
         region: profileForm.region.trim(),
       });
       writeCheckoutDraft({
-        ...(readCheckoutDraft() || {}),
+        ...(readCheckoutDraft(updatedProfile || user) || {}),
         firstName: profileForm.firstName.trim(),
         lastName: profileForm.lastName.trim(),
         shippingAddress: profileForm.address.trim(),
@@ -985,7 +985,7 @@ export default function AccountPageClient({ initialTab = "" }) {
         deliveryRegion: profileForm.region.trim(),
         mobileNumber: profileForm.phone.trim(),
         shippingEmail: profileForm.email.trim(),
-      });
+      }, updatedProfile || user);
       pushToast("Address updated successfully", "success");
     } finally {
       setSavingAddress(false);
