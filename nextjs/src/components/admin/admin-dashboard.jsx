@@ -314,7 +314,7 @@ export default function AdminDashboard() {
             </section>
 
             <section className="admin-dash-panels admin-dash-panels--overview">
-              <article className="admin-dash-panel panel">
+              <article className="admin-dash-panel admin-dash-panel--orders panel">
                 <div className="admin-dash-panel__head">
                   <h2>Recent Orders</h2>
                   <Link href="/admin/orders" className="ghost-link">Open Orders</Link>

@@ -6904,6 +6904,9 @@ button, input, select, textarea { font: inherit; }
   align-content: start;
   min-width: 0;
 }
+.admin-dash-panel--orders {
+  grid-column: span 2;
+}
 .admin-dash-panel__head {
   display: flex;
   align-items: center;
@@ -11419,6 +11422,9 @@ button, input, select, textarea { font: inherit; }
   .admin-dash-row {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+  .admin-dash-panel--orders {
+    grid-column: auto;
   }
   .admin-dashboard__sync {
     justify-items: start;
