@@ -101,20 +101,43 @@ function resolvePublicMediaUrl(rawUrl = "") {
 }
 
 function orderItemsForEmail(items = []) {
-  return items.map((item) => ({
-    qty: Number(item.qty || item.quantity || 0),
-    name: item.name || item.product?.name || String(item.product || "Product"),
-    price: Number(item.price || 0),
-    originalPrice: Number(item.originalPrice || 0),
-    discountPrice: Number(item.discountPrice || 0),
-    discountApplied: Boolean(item.discountApplied) || Number(item.originalPrice || 0) > Number(item.price || 0),
-  }));
+  return items.map((item) => {
+    const qty = Number(item.qty || item.quantity || 0);
+    const price = Number(item.price || 0);
+    const originalPrice = Number(item.originalPrice || 0);
+    const discountPrice = Number(item.discountPrice || 0);
+    const discountApplied =
+      Boolean(item.discountApplied) || originalPrice > price;
+    const effectiveOriginalPrice = discountApplied && originalPrice > 0 ? originalPrice : price;
+    const effectiveDiscountPrice = discountApplied && discountPrice > 0 ? discountPrice : price;
+    const lineTotal = qty * price;
+    const originalLineTotal = qty * effectiveOriginalPrice;
+    const savings = Math.max(0, originalLineTotal - lineTotal);
+
+    return {
+      qty,
+      name: item.name || item.product?.name || String(item.product || "Product"),
+      price,
+      originalPrice: effectiveOriginalPrice,
+      discountPrice: effectiveDiscountPrice,
+      discountApplied,
+      lineTotal,
+      originalLineTotal,
+      savings,
+    };
+  });
 }
 
 function buildOrderItemsForEmailJs(items = []) {
   return items.map((item) => {
     const quantity = Number(item?.qty || item?.quantity || 0);
     const price = Number(item?.price || 0);
+    const originalPrice = Number(item?.originalPrice || 0);
+    const discountPrice = Number(item?.discountPrice || 0);
+    const discountApplied =
+      Boolean(item?.discountApplied) || originalPrice > price;
+    const effectiveOriginalPrice = discountApplied && originalPrice > 0 ? originalPrice : price;
+    const effectiveDiscountPrice = discountApplied && discountPrice > 0 ? discountPrice : price;
     const name =
       item?.name ||
       item?.product?.name ||
@@ -128,14 +151,18 @@ function buildOrderItemsForEmailJs(items = []) {
       name,
       quantity,
       price,
-      originalPrice: Number(item?.originalPrice || 0),
-      discountPrice: Number(item?.discountPrice || 0),
-      discountApplied:
-        Boolean(item?.discountApplied) ||
-        Number(item?.originalPrice || 0) > Number(item?.price || 0),
+      originalPrice: effectiveOriginalPrice,
+      discountPrice: effectiveDiscountPrice,
+      discountApplied,
       subtotal: quantity * price,
+      originalSubtotal: quantity * effectiveOriginalPrice,
+      savings: Math.max(0, quantity * effectiveOriginalPrice - quantity * price),
     };
   });
+}
+
+function getOrderItemsSavings(items = []) {
+  return orderItemsForEmail(items).reduce((sum, item) => sum + Number(item.savings || 0), 0);
 }
 
 async function sendEmailJsTemplate(templateId, templateParams) {
@@ -257,6 +284,7 @@ export async function sendOrderNotification(to, orderDetails = {}) {
       trimTrailingSlash(FRONTEND_URL) || "https://deetechcomputers-com.vercel.app";
     const created = formatDateTime(orderDetails.createdAt);
     const orderItems = buildOrderItemsForEmailJs(orderDetails.orderItems || []);
+    const productSavings = getOrderItemsSavings(orderDetails.orderItems || []);
     const totalItems = orderItems.length;
     const totalQuantity = orderItems.reduce((sum, item) => sum + item.quantity, 0);
     const orderItemsBlocks = orderItems
@@ -272,7 +300,7 @@ export async function sendOrderNotification(to, orderDetails = {}) {
             </div>
             ${
               item.discountApplied
-                ? `<div style="font-size: 12px; color: #666; margin-top: 4px;">Discounted from GH₵ ${item.originalPrice.toFixed(2)}</div>`
+                ? `<div style="font-size: 12px; color: #666; margin-top: 4px;">Original: GH₵ ${item.originalPrice.toFixed(2)} each | Discounted: GH₵ ${item.discountPrice.toFixed(2)} each | Savings: GH₵ ${item.savings.toFixed(2)}</div>`
                 : ""
             }
           </div>`
@@ -289,6 +317,7 @@ export async function sendOrderNotification(to, orderDetails = {}) {
       customer_email: orderDetails.customerEmail || "",
       customer_phone: orderDetails.mobileNumber || "",
       order_subtotal: `GH₵ ${Number(orderDetails.itemsPrice || 0).toFixed(2)}`,
+      product_savings: `GH₵ ${Number(productSavings || 0).toFixed(2)}`,
       shipping_fee: `GH₵ ${Number(orderDetails.shippingPrice || 0).toFixed(2)}`,
       discount_amount: `GH₵ ${Number(orderDetails.discountAmount || 0).toFixed(2)}`,
       order_total: `GH₵ ${Number(orderDetails.totalPrice || 0).toFixed(2)}`,
@@ -325,6 +354,7 @@ export async function sendOrderNotification(to, orderDetails = {}) {
   }
 
   const items = orderItemsForEmail(orderDetails.orderItems || []);
+  const productSavings = items.reduce((sum, item) => sum + Number(item.savings || 0), 0);
   const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
   const created = formatDateTime(orderDetails.createdAt);
   const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
@@ -337,9 +367,9 @@ export async function sendOrderNotification(to, orderDetails = {}) {
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #ddd;">
           <span>
             ${escapeHtml(item.name)} (x${item.qty})
-            ${item.discountApplied ? `<small style="display:block;color:#666;">Discounted from ${money(item.originalPrice)}</small>` : ""}
+            ${item.discountApplied ? `<small style="display:block;color:#666;">Original: ${money(item.originalPrice)} each | Discounted: ${money(item.discountPrice)} each | You saved ${money(item.savings)}</small>` : ""}
           </span>
-          <strong>${money(item.price * item.qty)}</strong>
+          <strong>${money(item.lineTotal)}</strong>
         </div>
       `
     )
@@ -385,6 +415,10 @@ export async function sendOrderNotification(to, orderDetails = {}) {
               <strong>${money(orderDetails.itemsPrice)}</strong>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Product Savings</span>
+              <strong>-${money(productSavings)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
               <span>Delivery Fee</span>
               <strong>${Number(orderDetails.shippingPrice || 0) > 0 ? money(orderDetails.shippingPrice) : "FREE"}</strong>
             </div>
@@ -426,10 +460,18 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       trimTrailingSlash(FRONTEND_URL) || "https://deetechcomputers-com.vercel.app";
     const orderId = String(orderDetails.id || "N/A");
     const orderItems = buildOrderItemsForEmailJs(orderDetails.orderItems || []);
+    const productSavings = getOrderItemsSavings(orderDetails.orderItems || []);
     const orderItemsRows = orderItems
       .map(
         (item) => `<tr>
-          <td width="50%" style="padding:8px 0 8px 5px; font-size:12px;">${escapeHtml(item.name)}</td>
+          <td width="50%" style="padding:8px 0 8px 5px; font-size:12px;">
+            ${escapeHtml(item.name)}
+            ${
+              item.discountApplied
+                ? `<div style="margin-top:4px;color:#666;font-size:11px;">Original: GH₵ ${item.originalPrice.toFixed(2)} each | Discounted: GH₵ ${item.discountPrice.toFixed(2)} each | Saved: GH₵ ${item.savings.toFixed(2)}</div>`
+                : ""
+            }
+          </td>
           <td width="20%" align="center" style="padding:8px 0; font-size:12px;">${item.quantity}</td>
           <td width="30%" align="right" style="padding:8px 5px 8px 0; font-size:12px;">GH₵ ${item.subtotal.toFixed(2)}</td>
         </tr>`
@@ -446,6 +488,7 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       customer_phone: orderDetails.mobileNumber || "",
       order_id: orderId,
       order_subtotal: Number(orderDetails.itemsPrice || 0).toFixed(2),
+      product_savings: Number(productSavings || 0).toFixed(2),
       shipping_fee: Number(orderDetails.shippingPrice || 0).toFixed(2),
       discount_amount: Number(orderDetails.discountAmount || 0).toFixed(2),
       order_total: Number(orderDetails.totalPrice || 0).toFixed(2),
@@ -478,17 +521,17 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
   const shipping = Number(orderDetails.shippingPrice || 0);
   const discountAmount = Number(orderDetails.discountAmount || 0);
   const total = Number(orderDetails.totalPrice || 0);
+  const productSavings = items.reduce((sum, item) => sum + Number(item.savings || 0), 0);
   const rows = items
     .map((item) => {
-      const lineTotal = item.qty * item.price;
       return `
         <tr>
           <td width="50%" style="padding:8px 0 8px 5px;border-bottom:1px dashed #ddd;">
             ${escapeHtml(item.name)}
-            ${item.discountApplied ? `<div style="margin-top:4px;color:#666;font-size:11px;">Discounted from ${money(item.originalPrice)}</div>` : ""}
+            ${item.discountApplied ? `<div style="margin-top:4px;color:#666;font-size:11px;">Original: ${money(item.originalPrice)} each | Discounted: ${money(item.discountPrice)} each | You saved ${money(item.savings)}</div>` : ""}
           </td>
           <td width="20%" align="center" style="padding:8px 0;border-bottom:1px dashed #ddd;">${item.qty}</td>
-          <td width="30%" align="right" style="padding:8px 5px 8px 0;border-bottom:1px dashed #ddd;">${money(lineTotal)}</td>
+          <td width="30%" align="right" style="padding:8px 5px 8px 0;border-bottom:1px dashed #ddd;">${money(item.lineTotal)}</td>
         </tr>
       `;
     })
@@ -534,6 +577,10 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
               <span>Subtotal</span>
               <strong>${money(subtotal)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span>Product Savings</span>
+              <strong>-${money(productSavings)}</strong>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
               <span>Delivery Fee</span>
