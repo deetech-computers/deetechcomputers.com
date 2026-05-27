@@ -38,6 +38,7 @@ const HOME_SECTION_ALIASES = {
   top_smartphones: "budget_smartphones",
   shop_by_brands: "trusted_brands",
 };
+const MAX_PRODUCT_IMAGES = 6;
 
 function canonicalCategory(raw) {
   const v = String(raw || "").trim().toLowerCase();
@@ -135,6 +136,12 @@ function uniqueImages(list = []) {
   return out;
 }
 
+function ensureProductImageLimit(list = []) {
+  if (list.length > MAX_PRODUCT_IMAGES) {
+    throw new Error(`A product can have at most ${MAX_PRODUCT_IMAGES} images.`);
+  }
+}
+
 function parseExistingImagesInput(input) {
   if (Array.isArray(input)) {
     return uniqueImages(input);
@@ -147,13 +154,17 @@ function parseExistingImagesInput(input) {
 
 function parseDiscountConfig(body, basePriceInput, existingProduct = null) {
   const basePrice = Number(basePriceInput);
-  const discountPreset = String(body?.discountPreset || "none").trim().toLowerCase();
+  const requestedDiscountPreset = String(body?.discountPreset || "none").trim().toLowerCase();
   const discountPriceRaw = body?.discountPrice;
   const hasDiscountPrice =
     discountPriceRaw !== undefined &&
     discountPriceRaw !== null &&
     String(discountPriceRaw).trim() !== "";
   const discountPrice = hasDiscountPrice ? Number(discountPriceRaw) : 0;
+  const discountPreset =
+    hasDiscountPrice && (!requestedDiscountPreset || requestedDiscountPreset === "none")
+      ? "instant"
+      : requestedDiscountPreset;
 
   if (!Number.isFinite(basePrice) || basePrice <= 0) {
     throw new Error("Product price must be a valid positive amount");
@@ -242,6 +253,12 @@ export const createProduct = asyncHandler(async (req, res) => {
   const galleryUrls = parseImageUrls(req.body.imageUrls);
   const incomingMainImage = String(req.body.image_url || "").trim();
   const allImages = uniqueImages([incomingMainImage, ...uploadedImages, ...galleryUrls]);
+  try {
+    ensureProductImageLimit(allImages);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
   const mainImage = incomingMainImage || allImages[0] || "";
   const featuredRaw = req.body.isFeatured;
   const isFeatured =
@@ -406,14 +423,24 @@ export const updateProduct = asyncHandler(async (req, res) => {
   const baseExistingImages = Array.isArray(requestedExistingImages)
     ? requestedExistingImages.filter((img) => currentImages.includes(img) || String(img) === String(product.image_url || ""))
     : currentImages;
-  const incomingMainImage = req.body.image_url !== undefined ? String(req.body.image_url || "").trim() : "";
-  const resolvedMainImage = incomingMainImage || String(product.image_url || "").trim() || String(product.images?.[0] || "").trim();
+  const hasExplicitMainImage = req.body.image_url !== undefined;
+  const incomingMainImage = hasExplicitMainImage ? String(req.body.image_url || "").trim() : "";
+  const fallbackMainImage =
+    String(product.image_url || "").trim() || String(product.images?.[0] || "").trim();
+  const requestedMainImage = hasExplicitMainImage ? incomingMainImage : fallbackMainImage;
   const mergedImages = uniqueImages([
-    resolvedMainImage,
+    requestedMainImage,
     ...baseExistingImages,
     ...uploadedImages,
     ...galleryUrls,
   ]);
+  const resolvedMainImage = requestedMainImage || mergedImages[0] || "";
+  try {
+    ensureProductImageLimit(mergedImages);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
 
   product.image_url = resolvedMainImage || mergedImages[0] || "";
   product.images = mergedImages;

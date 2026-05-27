@@ -93,6 +93,7 @@ const PRODUCT_DISCOUNT_PRESET_OPTIONS = [
   ["72h", "Timed discount - 3 days"],
   ["168h", "Timed discount - 7 days"],
 ];
+const MAX_PRODUCT_IMAGES = 6;
 
 function resolveDiscountPreset(product) {
   const mode = String(product?.discountMode || "none").trim().toLowerCase();
@@ -113,6 +114,28 @@ function resolveDiscountPreset(product) {
   if (diffHours <= 24) return "24h";
   if (diffHours <= 72) return "72h";
   return "168h";
+}
+
+function buildInitialImageUrlSlots(product) {
+  const existingImages = Array.isArray(product?.images)
+    ? product.images.map((value) => String(value || "").trim()).filter(Boolean)
+    : [];
+  const mainImage = String(product?.image_url || existingImages[0] || "").trim();
+  const secondaryImages = existingImages.filter((value) => value && value !== mainImage);
+  const slots = [mainImage, ...secondaryImages].slice(0, MAX_PRODUCT_IMAGES);
+  while (slots.length < 2) {
+    slots.push("");
+  }
+  return slots;
+}
+
+function buildCurrentProductImages(product) {
+  const imageList = Array.isArray(product?.images)
+    ? product.images.map((value) => String(value || "").trim()).filter(Boolean)
+    : [];
+  const mainImage = String(product?.image_url || imageList[0] || "").trim();
+  const combined = [mainImage, ...imageList];
+  return [...new Set(combined.filter(Boolean))].slice(0, MAX_PRODUCT_IMAGES);
 }
 
 function normalizeEmail(value) {
@@ -708,6 +731,8 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [category, setCategory] = useState(initial?.category || "laptops");
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
   const [subCategory, setSubCategory] = useState(initial?.subCategory || initial?.brand || subCategories[0]);
+  const [imageUrlSlots, setImageUrlSlots] = useState(() => buildInitialImageUrlSlots(initial));
+  const [uploadSlotCount, setUploadSlotCount] = useState(2);
   const resolvedSubCategory = subCategories.includes(subCategory) ? subCategory : subCategories[0];
   const [selectedSections, setSelectedSections] = useState(() => {
     const existing = Array.isArray(initial?.homeSections) ? initial.homeSections : [];
@@ -719,12 +744,32 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [upgradeEnabled, setUpgradeEnabled] = useState(Boolean(initialUpgradeSpecs.enabled));
   const [ramOptions, setRamOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.ramOptions));
   const [storageOptions, setStorageOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.storageOptions));
+  const currentProductImages = useMemo(() => buildCurrentProductImages(initial), [initial]);
 
   function toggleHomeSection(key) {
     setSelectedSections((current) =>
       current.includes(key) ? current.filter((item) => item !== key) : [...current, key]
     );
   }
+
+  function updateImageUrlSlot(index, value) {
+    setImageUrlSlots((current) => current.map((entry, slotIndex) => (slotIndex === index ? value : entry)));
+  }
+
+  function addImageUrlSlot() {
+    setImageUrlSlots((current) => (current.length >= MAX_PRODUCT_IMAGES ? current : [...current, ""]));
+  }
+
+  function addUploadSlot() {
+    setUploadSlotCount((current) => (current >= MAX_PRODUCT_IMAGES ? current : current + 1));
+  }
+
+  const normalizedImageSlots = imageUrlSlots
+    .map((value) => String(value || "").trim())
+    .slice(0, MAX_PRODUCT_IMAGES);
+  const mainImageUrl = normalizedImageSlots[0] || "";
+  const galleryImageUrls = normalizedImageSlots.slice(1).filter(Boolean);
+  const retainedImageUrls = normalizedImageSlots.filter(Boolean);
 
   return (
     <form className="admin-form" onSubmit={onSubmit}>
@@ -772,14 +817,73 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
           ))}
         </select>
       </div>
-      <div className="admin-form__split">
-        <input className="field" name="image_url" defaultValue={initial?.image_url || initial?.images?.[0] || ""} placeholder="Main image URL" />
-        <input className="field" name="imageUrls" defaultValue={Array.isArray(initial?.images) ? initial.images.join(",") : ""} placeholder="Gallery image URLs, comma separated" />
-      </div>
-      <label className="admin-inline-control">
-        <span>Or upload product images (JPG/PNG/WEBP)</span>
-        <input className="field" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" multiple />
-      </label>
+      <input type="hidden" name="imageUrls" value={galleryImageUrls.join(",")} />
+      {initial ? <input type="hidden" name="existingImages" value={retainedImageUrls.join(",")} /> : null}
+      <section className="admin-product-images">
+        <div className="admin-product-images__head">
+          <div>
+            <h3>Web Image URLs</h3>
+            <p>Main image stays first. Add up to {MAX_PRODUCT_IMAGES} product images total.</p>
+          </div>
+          {imageUrlSlots.length < MAX_PRODUCT_IMAGES ? (
+            <button type="button" className="ghost-button" onClick={addImageUrlSlot}>+ Add image</button>
+          ) : null}
+        </div>
+        <div className="admin-product-images__grid">
+          {imageUrlSlots.map((value, index) => (
+            <div key={`image-url-${index}`} className="admin-image-slot">
+              <label className="admin-inline-control admin-inline-control--stack">
+                <span>{index === 0 ? "Main image URL" : `Image ${index + 1} URL`}</span>
+                <input
+                  className="field"
+                  name={index === 0 ? "image_url" : undefined}
+                  value={value}
+                  onChange={(event) => updateImageUrlSlot(index, event.target.value)}
+                  placeholder={index === 0 ? "Main image URL" : `Additional image ${index + 1} URL`}
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+        {currentProductImages.length ? (
+          <div className="admin-product-images__current">
+            <strong>Current saved images</strong>
+            <div className="admin-product-images__preview-grid">
+              {currentProductImages.map((image, index) => (
+                <div key={`${image}-${index}`} className="admin-product-images__preview-card">
+                  <StableImage src={resolveProductImage(image)} alt={`Product image ${index + 1}`} width={120} height={120} />
+                  <small>{index === 0 ? "Current main image" : `Current image ${index + 1}`}</small>
+                  <code>{image}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
+      <section className="admin-product-images">
+        <div className="admin-product-images__head">
+          <div>
+            <h3>Image Uploads (JPG/PNG/WEBP)</h3>
+            <p>Two upload slots are ready by default. Use + to add more up to {MAX_PRODUCT_IMAGES} files.</p>
+          </div>
+          {uploadSlotCount < MAX_PRODUCT_IMAGES ? (
+            <button type="button" className="ghost-button" onClick={addUploadSlot}>+ Add image</button>
+          ) : null}
+        </div>
+        <div className="admin-product-images__grid">
+          {Array.from({ length: uploadSlotCount }).map((_, index) => (
+            <label key={`image-upload-${index}`} className="admin-inline-control admin-inline-control--stack">
+              <span>{index === 0 ? "Main image upload" : `Image ${index + 1} upload`}</span>
+              <input
+                className="field"
+                name="images"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif"
+              />
+            </label>
+          ))}
+        </div>
+      </section>
       <input type="hidden" name="homeSections" value={selectedSections.join(",")} />
       <fieldset className="admin-check-group">
         <legend>Home sections</legend>
@@ -2193,6 +2297,17 @@ export default function AdminManager({ type, productMode = "list", productId = "
       if (action === "createProduct" || action === "updateProduct") {
         const form = new FormData(event.currentTarget);
         form.set("isFeatured", form.get("isFeatured") ? "true" : "false");
+        const imageUrlValues = [
+          normalizeText(form.get("image_url")),
+          ...String(form.get("imageUrls") || "")
+            .split(",")
+            .map((value) => normalizeText(value))
+            .filter(Boolean),
+        ];
+        const selectedFiles = form.getAll("images").filter((value) => value instanceof File && value.size > 0);
+        if (imageUrlValues.filter(Boolean).length + selectedFiles.length > MAX_PRODUCT_IMAGES) {
+          throw new Error(`A product can have at most ${MAX_PRODUCT_IMAGES} images in total.`);
+        }
         const url = action === "createProduct" ? API_BASE_PRODUCTS : `${API_BASE_PRODUCTS}/${item._id}`;
         await requestWithToken(url, token, { method: action === "createProduct" ? "POST" : "PUT", body: form });
       }
