@@ -211,6 +211,105 @@ export default function AffiliatesPage() {
     { label: "Earned", value: stats.deliveredReferrals, max: Math.max(1, stats.totalReferrals), tone: "earned" },
     { label: "Cancelled", value: stats.cancelledReferrals, max: Math.max(1, stats.totalReferrals), tone: "cancelled" },
   ];
+  const affiliateLearnSection = (
+    <section className="panel affiliate-learn">
+      <header className="affiliate-learn__header">
+        <h2>How It Works</h2>
+        <p>Three simple steps to start earning.</p>
+      </header>
+
+      <div className="affiliate-learn__steps">
+        {AFFILIATE_STEPS.map((step, index) => (
+          <article key={step.title} className="affiliate-learn__step">
+            <span className="affiliate-learn__step-index" aria-hidden="true">{index + 1}</span>
+            <span className="affiliate-learn__step-icon" aria-hidden="true">{step.icon}</span>
+            <strong>{step.title}</strong>
+            <p>{step.text}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="affiliate-learn__commission">
+        <h3>Simple 5% Commission + Tier Rewards System</h3>
+        <p>Your commission starts at 5% and can increase up to 10% during admin promotions.</p>
+        <div className="affiliate-learn__commission-grid">
+          <div className="affiliate-learn__rate">5%<span>Lifetime Base Rate</span></div>
+          <ul>
+            <li>5% for everyone. No tier reductions.</li>
+            <li>Instant payouts for all tiers.</li>
+            <li>Unlock premium rewards as you grow.</li>
+          </ul>
+        </div>
+        <p className="affiliate-learn__note">
+          <strong>Important:</strong> If a buyer does not enter your affiliate code at checkout, commission cannot be tracked on-site and will not appear in detailed stats.
+        </p>
+      </div>
+
+      <div className="affiliate-learn__tiers">
+        <h3>Tier Rewards & Benefits</h3>
+        <div className="affiliate-learn__tier-grid">
+          {AFFILIATE_TIERS.map((item, index) => {
+            const medal = index === 0 ? "ðŸ¥‰" : index === 1 ? "ðŸ¥ˆ" : "ðŸ†";
+            const tone = index === 0 ? "bronze" : index === 1 ? "silver" : "gold";
+            return (
+              <article key={item.tier} className={`affiliate-learn__tier-card is-${tone}`}>
+                <h4><span aria-hidden="true">{medal}</span>{item.tier}</h4>
+                <p className="affiliate-learn__tier-deals">{item.deals}</p>
+                <ul>
+                  {item.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="affiliate-learn__examples">
+        <h3>Sample Earnings (5% Commission)</h3>
+        <div className="affiliate-learn__example-grid">
+          <article><span>Basic Laptop</span><strong>GHC 2,500 -&gt; GHC 125</strong></article>
+          <article><span>Gaming PC</span><strong>GHC 4,000 -&gt; GHC 200</strong></article>
+          <article><span>Premium Setup</span><strong>GHC 6,000 -&gt; GHC 300</strong></article>
+        </div>
+        <p>Plus tier bonuses on top of these commissions.</p>
+      </div>
+
+      <div className="affiliate-learn__bottom-grid">
+        <div className="affiliate-learn__why">
+          <h3>Why Join?</h3>
+          <ul>
+            <li>5% guaranteed base commission (can increase up to 10%).</li>
+            <li>Instant tracking and mobile money payouts.</li>
+            <li>Quality tech products that customers trust.</li>
+            <li>No caps on earnings.</li>
+          </ul>
+        </div>
+
+        <div className="affiliate-learn__journey">
+          <h3>Your Journey to Gold Tier</h3>
+          <p>Start with 5%, grow your earnings, and unlock premium rewards.</p>
+          <div className="affiliate-learn__journey-grid">
+            <article><strong>ðŸŽ¯ Starter Tier</strong><span>5% Commission - You start here</span></article>
+            <article><strong>ðŸ¥‰ Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
+            <article><strong>ðŸ¥ˆ Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
+            <article><strong>ðŸ† Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
+          </div>
+        </div>
+      </div>
+
+      <div className="affiliate-learn__faq">
+        <h3>Quick FAQ</h3>
+        {AFFILIATE_FAQ.map((item) => (
+          <details key={item.q} className="affiliate-learn__faq-item">
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
 
   async function loadAffiliate() {
     setLoading(true);
@@ -393,18 +492,22 @@ export default function AffiliatesPage() {
               </section>
             </>
           ) : !dashboard?.isAffiliate ? (
-            <section className="affiliate-join-card">
-              <div>
-                <span className="affiliate-badge">Open for partners</span>
-                <h2>Start earning with DEETECH referrals.</h2>
-                <p>
-                  New partners start at {Number(settings?.defaultCommissionRate || 5)}% commission. Referrals are recorded when a customer uses your code at checkout, then move to earned when the order is delivered.
-                </p>
-              </div>
-              <button type="button" className="affiliate-primary" onClick={handleRegister} disabled={joining}>
-                {joining ? "Creating..." : "Create affiliate code"}
-              </button>
-            </section>
+            <>
+              <section className="affiliate-join-card">
+                <div>
+                  <span className="affiliate-badge">Open for partners</span>
+                  <h2>Start earning with DEETECH referrals.</h2>
+                  <p>
+                    New partners start at {Number(settings?.defaultCommissionRate || 5)}% commission. Referrals are recorded when a customer uses your code at checkout, then move to earned when the order is delivered.
+                  </p>
+                </div>
+                <button type="button" className="affiliate-primary" onClick={handleRegister} disabled={joining}>
+                  {joining ? "Creating..." : "Create affiliate code"}
+                </button>
+              </section>
+
+              {affiliateLearnSection}
+            </>
           ) : (
             <>
               <section className="affiliate-command">
