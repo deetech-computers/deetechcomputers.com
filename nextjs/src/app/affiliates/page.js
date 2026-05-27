@@ -71,6 +71,11 @@ function referralStatusLabel(status) {
   return "Pending";
 }
 
+function cleanAffiliateBadge(value, fallback = "") {
+  const normalized = String(value || "").replace(/[^\x20-\x7E]/g, "").trim();
+  return normalized || fallback;
+}
+
 function AffiliateIcon({ type }) {
   const paths = {
     referrals: "M7 13a4 4 0 1 1 8 0M4 21a7 7 0 0 1 14 0M17 11h5M19.5 8.5v5",
@@ -222,7 +227,7 @@ export default function AffiliatesPage() {
         {AFFILIATE_STEPS.map((step, index) => (
           <article key={step.title} className="affiliate-learn__step">
             <span className="affiliate-learn__step-index" aria-hidden="true">{index + 1}</span>
-            <span className="affiliate-learn__step-icon" aria-hidden="true">{step.icon}</span>
+            <span className="affiliate-learn__step-icon" aria-hidden="true">{cleanAffiliateBadge(step.icon, String(index + 1))}</span>
             <strong>{step.title}</strong>
             <p>{step.text}</p>
           </article>
@@ -249,7 +254,7 @@ export default function AffiliatesPage() {
         <h3>Tier Rewards & Benefits</h3>
         <div className="affiliate-learn__tier-grid">
           {AFFILIATE_TIERS.map((item, index) => {
-            const medal = index === 0 ? "ðŸ¥‰" : index === 1 ? "ðŸ¥ˆ" : "ðŸ†";
+            const medal = index === 0 ? "B" : index === 1 ? "S" : "G";
             const tone = index === 0 ? "bronze" : index === 1 ? "silver" : "gold";
             return (
               <article key={item.tier} className={`affiliate-learn__tier-card is-${tone}`}>
@@ -291,10 +296,10 @@ export default function AffiliatesPage() {
           <h3>Your Journey to Gold Tier</h3>
           <p>Start with 5%, grow your earnings, and unlock premium rewards.</p>
           <div className="affiliate-learn__journey-grid">
-            <article><strong>ðŸŽ¯ Starter Tier</strong><span>5% Commission - You start here</span></article>
-            <article><strong>ðŸ¥‰ Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
-            <article><strong>ðŸ¥ˆ Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
-            <article><strong>ðŸ† Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
+            <article><strong>Starter Tier</strong><span>5% Commission - You start here</span></article>
+            <article><strong>Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
+            <article><strong>Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
+            <article><strong>Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
           </div>
         </div>
       </div>
