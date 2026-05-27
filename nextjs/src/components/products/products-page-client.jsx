@@ -166,7 +166,7 @@ export default function ProductsPageClient({ initialFilters }) {
   const [promotion, setPromotion] = useState(canonicalHomeSectionKey(initialFilters.promotion || "all"));
   const [selectedSpecs, setSelectedSpecs] = useState({});
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [itemsPerPage] = useState(12);
+  const [itemsPerPage] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedSections, setExpandedSections] = useState({
     price: true,
