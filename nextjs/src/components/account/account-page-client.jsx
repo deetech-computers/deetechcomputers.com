@@ -24,7 +24,7 @@ import {
 } from "@/lib/header-notifications";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { readWishlistEntries } from "@/lib/wishlist";
-import { GHANA_REGIONS, readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
+import { GHANA_REGIONS } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
   { id: "personal", label: "Personal Information" },
@@ -976,16 +976,6 @@ export default function AccountPageClient({ initialTab = "" }) {
         city: profileForm.city.trim(),
         region: profileForm.region.trim(),
       });
-      writeCheckoutDraft({
-        ...(readCheckoutDraft(updatedProfile || user) || {}),
-        firstName: profileForm.firstName.trim(),
-        lastName: profileForm.lastName.trim(),
-        shippingAddress: profileForm.address.trim(),
-        shippingCity: profileForm.city.trim(),
-        deliveryRegion: profileForm.region.trim(),
-        mobileNumber: profileForm.phone.trim(),
-        shippingEmail: profileForm.email.trim(),
-      }, updatedProfile || user);
       pushToast("Address updated successfully", "success");
     } finally {
       setSavingAddress(false);

@@ -15,6 +15,7 @@ import {
   subscribeToSession,
   writeSession,
 } from "@/lib/session";
+import { clearAllCheckoutDrafts } from "@/lib/checkout";
 import { useToast } from "./toast-provider";
 
 const AuthContext = createContext(null);
@@ -99,6 +100,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    clearAllCheckoutDrafts();
     clearSession();
     pushToast("You have been logged out", "info");
   };

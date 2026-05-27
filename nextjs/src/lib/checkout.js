@@ -2,6 +2,7 @@ import { clearAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { readStoredUser } from "@/lib/session";
 
 export const CHECKOUT_DRAFT_KEY = "deetech:checkout-draft";
+const LEGACY_CHECKOUT_DRAFT_STORAGE_KEY = CHECKOUT_DRAFT_KEY;
 
 export const GHANA_REGIONS = [
   "Greater Accra",
@@ -151,10 +152,21 @@ function buildCheckoutDraftScopeKey(scopeInput) {
   return "guest";
 }
 
-function safeParseCheckoutStorage() {
+function getCheckoutStorage() {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(CHECKOUT_DRAFT_KEY);
+    window.localStorage.removeItem(LEGACY_CHECKOUT_DRAFT_STORAGE_KEY);
+  } catch {
+    // Ignore storage cleanup issues and continue with session storage.
+  }
+  return window.sessionStorage;
+}
+
+function safeParseCheckoutStorage() {
+  const storage = getCheckoutStorage();
+  if (!storage) return null;
+  try {
+    const raw = storage.getItem(CHECKOUT_DRAFT_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -180,8 +192,9 @@ function normalizeCheckoutStorageEnvelope(parsed) {
 }
 
 function writeCheckoutStorageEnvelope(envelope) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(envelope));
+  const storage = getCheckoutStorage();
+  if (!storage) return;
+  storage.setItem(CHECKOUT_DRAFT_KEY, JSON.stringify(envelope));
 }
 
 export function readCheckoutDraft(scopeInput) {
@@ -200,17 +213,24 @@ export function writeCheckoutDraft(value, scopeInput) {
 }
 
 export function clearCheckoutDraft(scopeInput) {
-  if (typeof window === "undefined") return;
+  const storage = getCheckoutStorage();
+  if (!storage) return;
   const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
   const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
   if (scopeKey in envelope.drafts) {
     delete envelope.drafts[scopeKey];
   }
   if (!Object.keys(envelope.drafts).length) {
-    window.localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+    storage.removeItem(CHECKOUT_DRAFT_KEY);
     return;
   }
   writeCheckoutStorageEnvelope(envelope);
+}
+
+export function clearAllCheckoutDrafts() {
+  const storage = getCheckoutStorage();
+  if (!storage) return;
+  storage.removeItem(CHECKOUT_DRAFT_KEY);
 }
 
 export function clearCompletedCheckoutState(scopeInput) {
