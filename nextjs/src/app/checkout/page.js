@@ -10,6 +10,7 @@ import {
   buildClientOrderRef,
   buildCheckoutFormState,
   GHANA_REGIONS,
+  hasSavedCheckoutProfile,
   isPhaseOneComplete,
   readCheckoutDraft,
   writeCheckoutDraft,
@@ -22,15 +23,6 @@ import {
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
 import { fetchProfile } from "@/lib/auth";
-
-function hasSavedBillingDefaults(source) {
-  return Boolean(
-    String(source?.shippingAddress || source?.address || "").trim() &&
-    String(source?.shippingCity || source?.city || "").trim() &&
-    String(source?.deliveryRegion || source?.region || "").trim() &&
-    String(source?.mobileNumber || source?.phone || "").trim()
-  );
-}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -88,8 +80,8 @@ export default function CheckoutPage() {
       const needsProfileDefaults =
         isAuthenticated &&
         token &&
-        !hasSavedBillingDefaults(nextDraft) &&
-        !hasSavedBillingDefaults(user);
+        !hasSavedCheckoutProfile(nextDraft) &&
+        !hasSavedCheckoutProfile(user);
 
       if (needsProfileDefaults) {
         try {

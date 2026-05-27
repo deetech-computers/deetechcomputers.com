@@ -78,21 +78,31 @@ export function splitName(name) {
   };
 }
 
+export function hasSavedCheckoutProfile(source) {
+  return Boolean(
+    String(source?.shippingAddress || source?.address || "").trim() &&
+    String(source?.shippingCity || source?.city || "").trim() &&
+    String(source?.deliveryRegion || source?.region || "").trim() &&
+    String(source?.mobileNumber || source?.phone || "").trim()
+  );
+}
+
 function preferFilled(primaryValue, fallbackValue) {
   return String(primaryValue || "").trim() ? primaryValue : fallbackValue;
 }
 
 export function buildCheckoutDraftDefaults(activeUser) {
-  const initialName = splitName(activeUser?.name);
+  const hasProfileDefaults = hasSavedCheckoutProfile(activeUser);
+  const initialName = hasProfileDefaults ? splitName(activeUser?.name) : { firstName: "", lastName: "" };
   return {
     firstName: initialName.firstName,
     lastName: initialName.lastName,
     companyName: "",
-    shippingAddress: activeUser?.address || "",
-    shippingCity: activeUser?.city || "",
-    deliveryRegion: activeUser?.region || "",
-    mobileNumber: activeUser?.phone || "",
-    shippingEmail: activeUser?.email || "",
+    shippingAddress: hasProfileDefaults ? activeUser?.address || "" : "",
+    shippingCity: hasProfileDefaults ? activeUser?.city || "" : "",
+    deliveryRegion: hasProfileDefaults ? activeUser?.region || "" : "",
+    mobileNumber: hasProfileDefaults ? activeUser?.phone || "" : "",
+    shippingEmail: hasProfileDefaults ? activeUser?.email || "" : "",
     affiliateCode: "",
     useShippingForBilling: true,
     billingAddress: "",
