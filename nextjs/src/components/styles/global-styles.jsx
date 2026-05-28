@@ -2853,6 +2853,11 @@ button, input, select, textarea { font: inherit; }
   border-color: #183d17;
   color: #ffffff;
 }
+.shop-pagination__page.is-active:hover:not(:disabled) {
+  color: #ffffff;
+  border-color: #183d17;
+  background: #183d17;
+}
 .shop-pagination__ellipsis {
   color: var(--muted);
   font-size: 0.85rem;

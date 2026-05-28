@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import { useCart } from "@/hooks/use-cart";
@@ -168,6 +168,7 @@ export default function ProductsPageClient({ initialFilters }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [itemsPerPage] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
+  const hasPaginatedRef = useRef(false);
   const [expandedSections, setExpandedSections] = useState({
     price: true,
     categories: true,
@@ -448,6 +449,17 @@ export default function ProductsPageClient({ initialFilters }) {
   useEffect(() => {
     setCurrentPage((page) => Math.min(page, totalPages));
   }, [totalPages]);
+
+  useEffect(() => {
+    if (!hasPaginatedRef.current) {
+      hasPaginatedRef.current = true;
+      return;
+    }
+    document.getElementById("shop-results")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [currentPage]);
 
   const pagedProducts = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
