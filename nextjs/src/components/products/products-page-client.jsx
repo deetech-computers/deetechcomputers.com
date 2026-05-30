@@ -497,10 +497,24 @@ export default function ProductsPageClient({ initialFilters }) {
   const activeFilters = useMemo(() => {
     const chips = [];
     if (category !== "all") {
-      chips.push({ key: "category", label: formatCategoryLabel(category), clear: () => setCategory("all") });
+      chips.push({
+        key: "category",
+        label: formatCategoryLabel(category),
+        clear: () => {
+          setCategory("all");
+          applyCatalogRoute({ category: "all" });
+        },
+      });
     }
     if (brand !== "all") {
-      chips.push({ key: "brand", label: brand, clear: () => setBrand("all") });
+      chips.push({
+        key: "brand",
+        label: brand,
+        clear: () => {
+          setBrand("all");
+          applyCatalogRoute({ brand: "all" });
+        },
+      });
     }
     if (availability !== "all") {
       chips.push({ key: "availability", label: "In stock", clear: () => setAvailability("all") });
@@ -517,7 +531,14 @@ export default function ProductsPageClient({ initialFilters }) {
     }
     if (promotion !== "all") {
       const match = PROMOTION_FILTERS.find((item) => item.value === promotion);
-      chips.push({ key: "promotion", label: match?.label || "Promotion", clear: () => setPromotion("all") });
+      chips.push({
+        key: "promotion",
+        label: match?.label || "Promotion",
+        clear: () => {
+          setPromotion("all");
+          applyCatalogRoute({ promotion: "all" });
+        },
+      });
     }
     Object.entries(selectedSpecs).forEach(([key, values]) => {
       values.forEach((value) => {
@@ -533,7 +554,7 @@ export default function ProductsPageClient({ initialFilters }) {
       });
     });
     return chips;
-  }, [availability, brand, category, priceBounds.max, priceBounds.min, promotion, reviewMin, selectedPrice.max, selectedPrice.min, selectedSpecs]);
+  }, [availability, brand, category, priceBounds.max, priceBounds.min, promotion, reviewMin, search, selectedPrice.max, selectedPrice.min, selectedSpecs]);
   const activeCategoryLabel = category === "all" ? "Shop" : getStorefrontCategoryLabel(category);
 
   function toggleFilterSection(id) {
@@ -541,6 +562,23 @@ export default function ProductsPageClient({ initialFilters }) {
       ...current,
       [id]: !(current[id] ?? true),
     }));
+  }
+
+  function applyCatalogRoute(next = {}) {
+    const nextCategory = canonicalCategory(next.category ?? category ?? "all");
+    const nextBrand = String(next.brand ?? brand ?? "all").trim().toLowerCase() || "all";
+    const nextPromotion = String(next.promotion ?? promotion ?? "all").trim().toLowerCase() || "all";
+    const nextSearch = String(next.search ?? search ?? "").trim();
+
+    router.push(
+      buildProductsHref({
+        category: nextCategory,
+        brand: nextBrand !== "all" ? nextBrand : "",
+        promotion: nextPromotion !== "all" ? nextPromotion : "",
+        query: nextSearch,
+        hash: "shop-results",
+      })
+    );
   }
 
   function isSectionExpanded(id) {
@@ -566,10 +604,6 @@ export default function ProductsPageClient({ initialFilters }) {
 
   function resetAllFilters() {
     setSearch("");
-    if (pathname !== "/products") {
-      router.push("/products#shop-results");
-      return;
-    }
     setCategory("all");
     setBrand("all");
     setAvailability("all");
@@ -581,15 +615,13 @@ export default function ProductsPageClient({ initialFilters }) {
       min: priceBounds.min,
       max: priceBounds.max,
     });
+    router.push("/products#shop-results");
   }
 
   function renderFilterContent() {
     function handleCategoryChange(nextCategory) {
-      if (nextCategory === "all") {
-        router.push("/products#shop-results");
-        return;
-      }
-      router.push(buildProductsHref({ category: nextCategory, hash: "shop-results" }));
+      setCategory(nextCategory);
+      applyCatalogRoute({ category: nextCategory });
     }
 
     return (
@@ -687,14 +719,25 @@ export default function ProductsPageClient({ initialFilters }) {
           onToggle={() => toggleFilterSection("brand")}
         >
           <div className="shop-filter-stack">
-            <FilterOption active={brand === "all"} label="All brands" onClick={() => setBrand("all")} />
+            <FilterOption
+              active={brand === "all"}
+              label="All brands"
+              onClick={() => {
+                setBrand("all");
+                applyCatalogRoute({ brand: "all" });
+              }}
+            />
             {brands.map((item) => (
               <FilterOption
                 key={item.value}
                 active={brand === item.value.toLowerCase()}
                 label={item.value}
                 count={item.count}
-                onClick={() => setBrand(item.value.toLowerCase())}
+                onClick={() => {
+                  const nextBrand = item.value.toLowerCase();
+                  setBrand(nextBrand);
+                  applyCatalogRoute({ brand: nextBrand });
+                }}
               />
             ))}
           </div>
@@ -750,14 +793,24 @@ export default function ProductsPageClient({ initialFilters }) {
           onToggle={() => toggleFilterSection("promotions")}
         >
           <div className="shop-filter-stack">
-            <FilterOption active={promotion === "all"} label="All offers" onClick={() => setPromotion("all")} />
+            <FilterOption
+              active={promotion === "all"}
+              label="All offers"
+              onClick={() => {
+                setPromotion("all");
+                applyCatalogRoute({ promotion: "all" });
+              }}
+            />
             {promotionOptions.map((item) => (
               <FilterOption
                 key={item.value}
                 active={promotion === item.value}
                 label={item.label}
                 count={item.count}
-                onClick={() => setPromotion(item.value)}
+                onClick={() => {
+                  setPromotion(item.value);
+                  applyCatalogRoute({ promotion: item.value });
+                }}
               />
             ))}
           </div>
