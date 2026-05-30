@@ -11821,6 +11821,8 @@ button, input, select, textarea { font: inherit; }
     background: #184d22;
     font-size: 0.98rem;
     letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
     text-align: center;
     justify-content: center;
   }
