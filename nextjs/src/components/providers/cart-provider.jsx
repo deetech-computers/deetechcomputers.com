@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
 import {
   CART_ITEM_ADDED_EVENT,
   CART_UPDATED_EVENT,
@@ -30,6 +30,41 @@ function serializeCartItems(items = []) {
   return JSON.stringify(normalizeCartItems(items));
 }
 
+let cartStoreSnapshot = {
+  items: [],
+  status: "loading",
+};
+
+const cartStoreListeners = new Set();
+
+function emitCartStore() {
+  cartStoreListeners.forEach((listener) => listener());
+}
+
+function subscribeCartStore(listener) {
+  cartStoreListeners.add(listener);
+  return () => {
+    cartStoreListeners.delete(listener);
+  };
+}
+
+function getCartStoreSnapshot() {
+  return cartStoreSnapshot;
+}
+
+function setCartStoreSnapshot(nextSnapshot) {
+  const nextItems = normalizeCartItems(nextSnapshot?.items || []);
+  const nextStatus = nextSnapshot?.status || "loading";
+  const itemsChanged = serializeCartItems(cartStoreSnapshot.items) !== serializeCartItems(nextItems);
+  const statusChanged = cartStoreSnapshot.status !== nextStatus;
+  if (!itemsChanged && !statusChanged) return;
+  cartStoreSnapshot = {
+    items: nextItems,
+    status: nextStatus,
+  };
+  emitCartStore();
+}
+
 function getCartItemLineKey(item) {
   return String(item?.lineKey || item?.productId || item?._id || "").trim();
 }
@@ -50,12 +85,17 @@ function getStockLimitMessage(stock) {
 export function CartProvider({ children }) {
   const { token, status: authStatus } = useAuth();
   const { pushToast } = useToast();
-  const [items, setItems] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const { items, status } = useSyncExternalStore(
+    subscribeCartStore,
+    getCartStoreSnapshot,
+    getCartStoreSnapshot
+  );
 
   useEffect(() => {
-    setItems(readStoredCart());
-    setStatus("ready");
+    setCartStoreSnapshot({
+      items: readStoredCart(),
+      status: "ready",
+    });
   }, []);
 
   useEffect(() => {
@@ -71,10 +111,18 @@ export function CartProvider({ children }) {
         const serverItems = await fetchServerCart(token);
         if (ignore) return;
         const merged = mergeCartItems(serverItems, readStoredCart());
-        setItems(merged);
+        setCartStoreSnapshot({
+          items: merged,
+          status: "ready",
+        });
         writeStoredCart(merged);
       } catch {
-        if (!ignore) setItems(readStoredCart());
+        if (!ignore) {
+          setCartStoreSnapshot({
+            items: readStoredCart(),
+            status: "ready",
+          });
+        }
       }
     }
 
@@ -89,10 +137,16 @@ export function CartProvider({ children }) {
     try {
       const serverItems = await fetchServerCart(activeToken);
       const normalized = normalizeCartItems(serverItems);
-      setItems(normalized);
+      setCartStoreSnapshot({
+        items: normalized,
+        status: "ready",
+      });
       writeStoredCart(normalized);
     } catch {
-      setItems(readStoredCart());
+      setCartStoreSnapshot({
+        items: readStoredCart(),
+        status: "ready",
+      });
     }
   }
 
@@ -102,7 +156,10 @@ export function CartProvider({ children }) {
       const serverItems = await fetchServerCart(activeToken);
       const normalized = normalizeCartItems(serverItems);
       const isValid = typeof validate === "function" ? validate(normalized) : false;
-      setItems(normalized);
+      setCartStoreSnapshot({
+        items: normalized,
+        status: "ready",
+      });
       writeStoredCart(normalized);
       if (!isValid) {
         pushToast(warningMessage, "warning");
@@ -110,7 +167,10 @@ export function CartProvider({ children }) {
       return isValid;
     } catch {
       pushToast(warningMessage, "warning");
-      setItems(readStoredCart());
+      setCartStoreSnapshot({
+        items: readStoredCart(),
+        status: "ready",
+      });
       return false;
     }
   }
@@ -120,7 +180,10 @@ export function CartProvider({ children }) {
 
     const syncFromStorage = () => {
       const nextItems = readStoredCart();
-      setItems((current) => (serializeCartItems(current) === serializeCartItems(nextItems) ? current : nextItems));
+      setCartStoreSnapshot({
+        items: nextItems,
+        status: "ready",
+      });
     };
 
     const handleStorageSync = (event) => {
@@ -157,55 +220,58 @@ export function CartProvider({ children }) {
 
     let toast = null;
     let serverQty = null;
-    let nextSnapshot = null;
+    let nextItems = null;
     unmarkRemovedCartItem(lineKey);
     unmarkRemovedCartItem(id);
 
-    setItems((current) => {
-      const nextItems = [...current];
-      const index = nextItems.findIndex((item) => String(item.lineKey || "") === lineKey);
+    {
+      const workingItems = [...cartStoreSnapshot.items];
+      const index = workingItems.findIndex((item) => String(item.lineKey || "") === lineKey);
       const stock = getProductStock(product) || 99;
 
       if (index >= 0) {
-        const nextQty = normalizeQty((nextItems[index].qty || 1) + qty);
+        const nextQty = normalizeQty((workingItems[index].qty || 1) + qty);
         if (nextQty > stock) {
           toast = { message: getStockLimitMessage(stock), type: "warning" };
-          return current;
+          nextItems = null;
+        } else {
+          workingItems[index] = { ...workingItems[index], qty: nextQty };
+          serverQty = nextQty;
         }
-        nextItems[index] = { ...nextItems[index], qty: nextQty };
-        serverQty = nextQty;
       } else {
         const requestedQty = normalizeQty(qty);
         if (requestedQty > stock) {
           toast = { message: getStockLimitMessage(stock), type: "warning" };
-          return current;
+          nextItems = null;
+        } else {
+          serverQty = requestedQty;
+          workingItems.push({
+            _id: id,
+            productId: id,
+            lineKey,
+            name: product.name,
+            category: product.category || "",
+            price: livePrice,
+            originalPrice: hasDiscount ? originalPrice : livePrice,
+            discountPrice: hasDiscount ? livePrice : 0,
+            hasDiscount,
+            image: resolveProductImage(product.images?.[0] || product.image || ""),
+            countInStock: stock,
+            selectedUpgrades,
+            qty: serverQty,
+          });
         }
-        serverQty = requestedQty;
-        nextItems.push({
-          _id: id,
-          productId: id,
-          lineKey,
-          name: product.name,
-          category: product.category || "",
-          price: livePrice,
-          originalPrice: hasDiscount ? originalPrice : livePrice,
-          discountPrice: hasDiscount ? livePrice : 0,
-          hasDiscount,
-          image: resolveProductImage(product.images?.[0] || product.image || ""),
-          countInStock: stock,
-          selectedUpgrades,
-          qty: serverQty,
-        });
       }
 
-      toast = { message: `${product.name} added to cart`, type: "success" };
-      const normalized = normalizeCartItems(nextItems);
-      nextSnapshot = normalized;
-      return normalized;
-    });
-
-    if (nextSnapshot) {
-      writeStoredCart(nextSnapshot);
+      if (serverQty) {
+        toast = { message: `${product.name} added to cart`, type: "success" };
+        nextItems = normalizeCartItems(workingItems);
+        setCartStoreSnapshot({
+          items: nextItems,
+          status: "ready",
+        });
+        writeStoredCart(nextItems);
+      }
     }
 
     if (toast) {
@@ -253,25 +319,22 @@ export function CartProvider({ children }) {
     const requestedQty = normalizeQty(qty);
     const nextQty = Math.min(requestedQty, stockLimit);
     let serverQty = null;
-    let nextSnapshot = null;
+    let nextItems = null;
     const selectedUpgrades = targetItem.selectedUpgrades || {};
 
-    setItems((current) => {
-      const nextItems = current.map((item) =>
+    serverQty = nextQty;
+    nextItems = normalizeCartItems(
+      cartStoreSnapshot.items.map((item) =>
         String(item.lineKey || item.productId || item._id) === lineKey
-          ? (() => {
-              serverQty = nextQty;
-              return { ...item, qty: nextQty };
-            })()
+          ? { ...item, qty: nextQty }
           : item
-      );
-      nextSnapshot = normalizeCartItems(nextItems);
-      return nextItems;
+      )
+    );
+    setCartStoreSnapshot({
+      items: nextItems,
+      status: "ready",
     });
-
-    if (nextSnapshot) {
-      writeStoredCart(nextSnapshot);
-    }
+    writeStoredCart(nextItems);
 
     if (requestedQty > stockLimit) {
       pushToast(getStockLimitMessage(stockLimit), "warning");
@@ -307,15 +370,14 @@ export function CartProvider({ children }) {
       items.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey).length === 0;
 
     markRemovedCartItem(lineKey);
-    let nextSnapshot = null;
-    setItems((current) => {
-      const nextItems = current.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey);
-      nextSnapshot = normalizeCartItems(nextItems);
-      return nextItems;
+    const nextItems = normalizeCartItems(
+      cartStoreSnapshot.items.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey)
+    );
+    setCartStoreSnapshot({
+      items: nextItems,
+      status: "ready",
     });
-    if (nextSnapshot) {
-      writeStoredCart(nextSnapshot);
-    }
+    writeStoredCart(nextItems);
     if (token) {
       if (isLastVisibleItem) {
         clearServerCart(token).catch(() => {
@@ -340,7 +402,10 @@ export function CartProvider({ children }) {
   const clearCart = () => {
     const productIds = items.map((item) => String(item.lineKey || item.productId || item._id)).filter(Boolean);
     markRemovedCartItems(productIds);
-    setItems([]);
+    setCartStoreSnapshot({
+      items: [],
+      status: "ready",
+    });
     clearStoredCart();
     if (token) {
       clearServerCart(token).catch(() => {
