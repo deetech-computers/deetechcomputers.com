@@ -22,7 +22,6 @@ import {
 } from "@/lib/checkout";
 import {
   readAffiliateAttribution,
-  saveAffiliateAttribution,
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
 import { API_BASE, API_BASE_ORDERS } from "@/lib/config";
@@ -143,11 +142,6 @@ export default function CheckoutPaymentPage() {
 
     function buildHydratedDraft(baseDraft) {
       const attribution = readAffiliateAttribution();
-      const affiliateFromUrl =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("affiliate")
-          : "";
-      const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
       const nextDraft = { ...(baseDraft || {}) };
       const attributionCapturedAt = Number(attribution?.capturedAt || 0);
       const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
@@ -161,12 +155,7 @@ export default function CheckoutPaymentPage() {
           ? String(attribution?.code || "").trim().toUpperCase()
           : "";
 
-      if (!affiliateWasCleared && normalizedUrlCode) {
-        saveAffiliateAttribution(normalizedUrlCode, "payment-url");
-        nextDraft.affiliateCode = normalizedUrlCode;
-        nextDraft.affiliateCodeMode = "auto-url";
-        nextDraft.affiliateCodeCleared = false;
-      } else if (autoApplyStoredCode) {
+      if (autoApplyStoredCode) {
         nextDraft.affiliateCode = autoApplyStoredCode;
         nextDraft.affiliateCodeMode = "auto-attribution";
         nextDraft.affiliateCodeCleared = false;

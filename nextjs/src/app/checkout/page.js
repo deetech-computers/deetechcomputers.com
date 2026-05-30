@@ -19,7 +19,6 @@ import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import {
   readAffiliateAttribution,
-  saveAffiliateAttribution,
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
 import { fetchProfile } from "@/lib/auth";
@@ -47,11 +46,6 @@ export default function CheckoutPage() {
     async function hydrateCheckoutForm() {
       const draft = readCheckoutDraft(user);
       const attribution = readAffiliateAttribution();
-      const affiliateFromUrl =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("affiliate")
-          : "";
-      const normalizedUrlCode = String(affiliateFromUrl || "").trim().toUpperCase();
       const nextDraft = { ...(draft || {}) };
       const attributionCapturedAt = Number(attribution?.capturedAt || 0);
       const affiliateClearedAt = Number(nextDraft.affiliateCodeClearedAt || 0);
@@ -65,12 +59,7 @@ export default function CheckoutPage() {
           ? String(attribution?.code || "").trim().toUpperCase()
           : "";
 
-      if (!affiliateWasCleared && normalizedUrlCode) {
-        saveAffiliateAttribution(normalizedUrlCode, "checkout-url");
-        nextDraft.affiliateCode = normalizedUrlCode;
-        nextDraft.affiliateCodeMode = "auto-url";
-        nextDraft.affiliateCodeCleared = false;
-      } else if (autoApplyStoredCode) {
+      if (autoApplyStoredCode) {
         nextDraft.affiliateCode = autoApplyStoredCode;
         nextDraft.affiliateCodeMode = "auto-attribution";
         nextDraft.affiliateCodeCleared = false;
