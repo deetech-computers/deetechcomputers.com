@@ -6507,6 +6507,19 @@ button, input, select, textarea { font: inherit; }
   border-radius: 999px;
   background: rgba(24, 79, 39, 0.08);
 }
+.admin-order-line-item {
+  display: grid;
+  gap: 4px;
+  align-items: start;
+}
+.admin-order-line-item strong,
+.admin-order-line-item small {
+  display: block;
+}
+.admin-order-line-item small {
+  color: #62584a;
+  line-height: 1.4;
+}
 .admin-order-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

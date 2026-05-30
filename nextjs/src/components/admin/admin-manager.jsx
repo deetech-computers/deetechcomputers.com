@@ -12,7 +12,7 @@ import { getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { getProductPricing } from "@/lib/product-pricing";
 import { requestWithToken, asArray } from "@/lib/resource";
 import { resolveProductImage } from "@/lib/products";
-import { normalizeProductUpgradeSpecs } from "@/lib/product-upgrades";
+import { formatSelectedUpgrades, normalizeProductUpgradeSpecs } from "@/lib/product-upgrades";
 
 const PRODUCT_CATEGORIES = [
   ["laptops", "Laptops and Desktops"],
@@ -1289,11 +1289,26 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           </div>
         </div>
         <div className="admin-record__items admin-record__items--order">
-          {(item.orderItems || []).map((line) => (
-            <span key={line._id || line.product?._id || line.product}>
-              {line.product?.name || "Product"} x {line.qty || 1} • {formatCurrency(Number(line.price || 0))}
-            </span>
-          ))}
+          {(item.orderItems || []).map((line) => {
+            const upgradeLabel = formatSelectedUpgrades({
+              ram: line?.selectedUpgrades?.ram?.label || "",
+              storage: line?.selectedUpgrades?.storage?.label || "",
+            });
+            const upgradeDelta =
+              Number(line?.selectedUpgrades?.ram?.priceDelta || 0) +
+              Number(line?.selectedUpgrades?.storage?.priceDelta || 0);
+            return (
+              <span key={line._id || line.product?._id || line.product} className="admin-order-line-item">
+                <strong>{line.product?.name || "Product"} x {line.qty || 1}</strong>
+                {upgradeLabel ? <small>Upgrade: {upgradeLabel}</small> : <small>Base option</small>}
+                <small>
+                  {upgradeDelta > 0
+                    ? `Unit ${formatCurrency(Number(line.price || 0))} including ${formatCurrency(upgradeDelta)} upgrade`
+                    : `Unit ${formatCurrency(Number(line.price || 0))}`}
+                </small>
+              </span>
+            );
+          })}
         </div>
         <div className="admin-actions admin-actions--wrap">
           <AdminStatusSelect label="Order" value={item.orderStatus || "pending"} options={["pending", "processing", "shipped", "delivered", "cancelled"]} onChange={(value) => onAction("orderStatus", item, null, value)} />
