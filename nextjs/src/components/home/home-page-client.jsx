@@ -234,20 +234,20 @@ export default function HomePage() {
       return sections.map(canonicalHomeSectionKey).includes(sectionKey);
     });
   };
-  const pickSectionProducts = ({
+  const buildSectionProducts = ({
     sectionKey,
     allowedCategories = [],
     fallback = [],
   }) => {
     const tagged = sortByNewest(sectionProducts(sectionKey, allowedCategories));
-    if (tagged.length) return tagged.slice(0, 5);
-    return sortByNewest(fallback).slice(0, 5);
+    if (tagged.length) return tagged;
+    return sortByNewest(fallback);
   };
   const productCollections = {
     hot_deals: {
       label: "Hot Deals",
       href: getHomeSectionFilterHref("hot_deals"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "hot_deals",
         fallback: [],
       }),
@@ -255,7 +255,7 @@ export default function HomePage() {
     just_landed: {
       label: "Just Landed",
       href: getHomeSectionFilterHref("just_landed"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "just_landed",
         fallback: newArrivalProducts,
       }),
@@ -263,7 +263,7 @@ export default function HomePage() {
     student_laptops: {
       label: "Laptops for Students",
       href: getHomeSectionFilterHref("student_laptops", "laptops"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "student_laptops",
         allowedCategories: ["laptops"],
         fallback: [],
@@ -272,7 +272,7 @@ export default function HomePage() {
     business_laptops: {
       label: "Laptops for Work & Business",
       href: getHomeSectionFilterHref("business_laptops", "laptops"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "business_laptops",
         allowedCategories: ["laptops"],
         fallback: [],
@@ -281,7 +281,7 @@ export default function HomePage() {
     gaming_laptops: {
       label: "Powerful/Gaming Laptops",
       href: getHomeSectionFilterHref("gaming_laptops", "laptops"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "gaming_laptops",
         allowedCategories: ["laptops"],
         fallback: [],
@@ -290,7 +290,7 @@ export default function HomePage() {
     budget_smartphones: {
       label: "Smartphones for Every Budget",
       href: getHomeSectionFilterHref("budget_smartphones", "phones"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "budget_smartphones",
         allowedCategories: ["phones"],
         fallback: [],
@@ -299,7 +299,7 @@ export default function HomePage() {
     quality_accessories: {
       label: "Quality Accessories",
       href: getHomeSectionFilterHref("quality_accessories", "accessories"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "quality_accessories",
         allowedCategories: ["accessories"],
         fallback: [],
@@ -308,7 +308,7 @@ export default function HomePage() {
     trusted_brands: {
       label: "Shop Trusted Brands",
       href: getHomeSectionFilterHref("trusted_brands"),
-      products: pickSectionProducts({
+      allProducts: buildSectionProducts({
         sectionKey: "trusted_brands",
         fallback: [],
       }),
@@ -364,10 +364,11 @@ export default function HomePage() {
       href: productCollections[key]?.href || "/products",
       title: homepageSectionMeta[key]?.title || productCollections[key]?.label || "Products",
       description: homepageSectionMeta[key]?.description || "Curated products for this section.",
-      products: productCollections[key]?.products || [],
+      allProducts: productCollections[key]?.allProducts || [],
+      products: (productCollections[key]?.allProducts || []).slice(0, 5),
     }))
-    .filter((section) => section.products.length > 0);
-  const homeSectionsSignature = visibleHomepageSections.map((section) => `${section.key}:${section.products.length}`).join("|");
+    .filter((section) => section.allProducts.length > 0);
+  const homeSectionsSignature = visibleHomepageSections.map((section) => `${section.key}:${section.allProducts.length}`).join("|");
   const categories = deriveCategories(products);
   const hasCategoryCounts = categories.some((item) => item.count > 0);
   const featuredCategoryOrder = ["laptops", "phones", "accessories", "monitors", "printers", "storage", "others"];
@@ -742,6 +743,7 @@ export default function HomePage() {
                     const useMobileScroll = isMobileHomeProducts && mobileHomeProductsView === "scroll";
                     const useMobileGrid = isMobileHomeProducts && mobileHomeProductsView === "grid";
                     const listedProducts = useMobileGrid ? section.products.slice(0, 4) : section.products;
+                    const mobileScrollProducts = section.allProducts?.length ? section.allProducts : section.products;
                     return (
                       <>
                   <div className="homepage-products__section-head">
@@ -784,7 +786,7 @@ export default function HomePage() {
                         className="homepage-products__mobile-rail"
                         onScroll={() => updateHomeSectionRailNav(section.key)}
                       >
-                        {section.products.map((product) => (
+                        {mobileScrollProducts.map((product) => (
                           <ProductCard key={`${section.key}-${product._id}`} product={product} onAddToCart={handleAddToCart} />
                         ))}
                       </div>
