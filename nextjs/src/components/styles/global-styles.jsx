@@ -11821,6 +11821,8 @@ button, input, select, textarea { font: inherit; }
     background: #184d22;
     font-size: 0.98rem;
     letter-spacing: 0.01em;
+    text-align: center;
+    justify-content: center;
   }
   .checkout-mobile-action-bar__button.is-disabled {
     opacity: 0.72;
