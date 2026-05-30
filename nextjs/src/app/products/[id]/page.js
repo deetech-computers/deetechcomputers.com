@@ -230,6 +230,11 @@ export default function ProductDetailPage() {
   const [reviewStatus, setReviewStatus] = useState("idle");
   const [reviewFormOpen, setReviewFormOpen] = useState(true);
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
+
+  function handleAddToCart(item, qty = 1, options = {}) {
+    if (!item) return;
+    addItem(item, qty, options);
+  }
   const [qty, setQty] = useState(1);
   const [selectedUpgrades, setSelectedUpgrades] = useState({});
   const [upgradePanelOpen, setUpgradePanelOpen] = useState(false);
@@ -960,7 +965,11 @@ export default function ProductDetailPage() {
               type="button"
               className="primary-button product-summary__cart"
               disabled={stock < 1}
-              onClick={() => addItem(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) })}
+              onClick={() =>
+                handleAddToCart(product, qty, {
+                  selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades),
+                })
+              }
             >
               {stock < 1 ? "Out of stock" : "Add to cart"}
             </button>
@@ -1249,7 +1258,7 @@ export default function ProductDetailPage() {
             <div ref={relatedRailRef} className="related-products__grid related-products__rail">
               {relatedProducts.map((item) => (
                 <div key={item._id} className="related-products__item">
-                  <ProductCard product={item} onAddToCart={addItem} variant="related" />
+                  <ProductCard product={item} onAddToCart={handleAddToCart} variant="related" />
                 </div>
               ))}
             </div>

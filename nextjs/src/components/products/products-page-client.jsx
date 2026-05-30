@@ -184,6 +184,11 @@ export default function ProductsPageClient({ initialFilters }) {
   });
   const [selectedPrice, setSelectedPrice] = useState({ min: 0, max: 0 });
 
+  function handleAddToCart(product, qty = 1, options = {}) {
+    if (!product) return;
+    addItem(product, qty, options);
+  }
+
   useEffect(() => {
     setSearch(initialFilters.search);
     setCategory(initialFilters.category);
@@ -832,7 +837,7 @@ export default function ProductsPageClient({ initialFilters }) {
 
               <div className="product-grid product-grid--catalog">
                 {pagedProducts.map((product) => (
-                  <ProductCard key={product._id} product={product} onAddToCart={addItem} variant="catalog" />
+                  <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} variant="catalog" />
                 ))}
               </div>
 

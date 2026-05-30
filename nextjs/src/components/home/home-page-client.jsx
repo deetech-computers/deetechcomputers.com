@@ -182,9 +182,9 @@ export default function HomePage() {
   const homeSectionRailRefs = useRef({});
   const [homeSectionRailNav, setHomeSectionRailNav] = useState({});
 
-  function handleAddToCart(product) {
+  function handleAddToCart(product, qty = 1, options = {}) {
     if (!product) return;
-    addItem(product, 1);
+    addItem(product, qty, options);
   }
 
   useEffect(() => {
