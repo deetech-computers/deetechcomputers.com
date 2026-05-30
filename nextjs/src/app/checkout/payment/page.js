@@ -973,7 +973,7 @@ export default function CheckoutPaymentPage() {
                     ) : null}
 
                     <label className="checkout-payment__upload" ref={registerFieldRef("paymentProof")}>
-                      <input type="file" accept="image/*" onChange={handleProofUpload} />
+                      <input id="checkout-payment-proof-input" type="file" accept="image/*" onChange={handleProofUpload} />
                       <span className="checkout-payment__upload-button">
                         {proofUploading ? "Uploading proof..." : form.paymentProofUrl ? "Replace payment proof" : "Upload payment proof"}
                       </span>
@@ -1111,9 +1111,14 @@ export default function CheckoutPaymentPage() {
                 : "Confirm Payment"}
           </button>
         ) : (
-          <div className="checkout-mobile-action-bar__hint">
-            Upload proof of payment to unlock confirm.
-          </div>
+          <label
+            htmlFor="checkout-payment-proof-input"
+            className={proofUploading
+              ? "checkout-summary__button checkout-mobile-action-bar__button is-disabled"
+              : "checkout-summary__button checkout-mobile-action-bar__button"}
+          >
+            {proofUploading ? "Uploading proof..." : "Upload Payment Proof"}
+          </label>
         )}
       </div>
 

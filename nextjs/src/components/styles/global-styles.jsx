@@ -11809,7 +11809,8 @@ button, input, select, textarea { font: inherit; }
     z-index: 70;
     gap: 10px;
     padding: 10px 12px calc(env(safe-area-inset-bottom) + 12px);
-    background: #171513;
+    background: #ffffff;
+    border-top: 1px solid #e6dfd3;
     box-shadow: 0 -14px 32px rgba(14, 19, 28, 0.2);
   }
   .checkout-mobile-action-bar__button {
@@ -11821,18 +11822,9 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.98rem;
     letter-spacing: 0.01em;
   }
-  .checkout-mobile-action-bar__hint {
-    min-height: 54px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: #171513;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.92rem;
-    font-weight: 600;
-    line-height: 1.35;
+  .checkout-mobile-action-bar__button.is-disabled {
+    opacity: 0.72;
+    pointer-events: none;
   }
   .order-complete__meta {
     grid-template-columns: 1fr;
