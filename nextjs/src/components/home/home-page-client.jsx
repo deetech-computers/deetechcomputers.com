@@ -18,6 +18,7 @@ import {
   pickFeaturedProducts,
   resolveProductImage,
 } from "@/lib/products";
+import { buildBannerCategoryLink, normalizeProductsBannerLink } from "@/lib/banner-links";
 import { asArray } from "@/lib/resource";
 
 function normalizeBanner(item) {
@@ -26,28 +27,8 @@ function normalizeBanner(item) {
   const customLink = String(item?.link || item?.ctaLink || "").trim();
   const categoryLink =
     category && category !== "all"
-      ? `/products?${new URLSearchParams({
-          category,
-          ...(subCategory && subCategory !== "all" ? { brand: subCategory } : {}),
-        }).toString()}#shop-results`
+      ? buildBannerCategoryLink(category, subCategory)
       : "";
-
-  function normalizeProductsBannerLink(link) {
-    if (!link) return "";
-    try {
-      const current = new URL(link, "https://deetech.local");
-      const parts = current.pathname.split("/").filter(Boolean);
-      if (parts[0] !== "products") return link;
-      const linkedCategory = canonicalCategory(parts[1] || current.searchParams.get("category") || "all");
-      if (!linkedCategory || linkedCategory === "all") return link;
-      const params = new URLSearchParams(current.searchParams);
-      params.set("category", linkedCategory);
-      const queryString = params.toString();
-      return `/products${queryString ? `?${queryString}` : ""}${current.hash || "#shop-results"}`;
-    } catch {
-      return link;
-    }
-  }
 
   return {
     imageUrl: resolveProductImage(item?.imageUrl || item?.image_url || item?.image || ""),

@@ -2,6 +2,51 @@
 import Banner from "../models/Banner.js";
 import { deleteStoredMedia, storeImageFile } from "../utils/mediaStorage.js";
 
+function canonicalCategory(value) {
+  const input = String(value || "").trim().toLowerCase();
+  if (!input) return "all";
+  if (input.includes("laptop") || input.includes("desktop") || input.includes("workstation")) return "laptops";
+  if (input.includes("phone") || input.includes("mobile") || input.includes("smartphone")) return "phones";
+  if (input.includes("monitor") || input.includes("display")) return "monitors";
+  if (input.includes("accessor") || input.includes("peripheral")) return "accessories";
+  if (input.includes("stor") || input.includes("ssd") || input.includes("drive") || input.includes("hdd")) return "storage";
+  if (input.includes("print")) return "printers";
+  if (input.includes("other") || input.includes("gadget")) return "others";
+  return input;
+}
+
+function buildBannerCategoryLink(category = "", brand = "") {
+  const normalizedCategory = canonicalCategory(category);
+  const normalizedBrand = String(brand || "").trim().toLowerCase();
+  if (!normalizedCategory || normalizedCategory === "all") return "";
+
+  const params = new URLSearchParams({
+    category: normalizedCategory,
+    ...(normalizedBrand && normalizedBrand !== "all" ? { brand: normalizedBrand } : {}),
+  });
+
+  return `/products?${params.toString()}#shop-results`;
+}
+
+function normalizeProductsBannerLink(link = "") {
+  const rawLink = String(link || "").trim();
+  if (!rawLink) return "";
+
+  try {
+    const current = new URL(rawLink, "https://deetech.local");
+    const parts = current.pathname.split("/").filter(Boolean);
+    if (parts[0] !== "products") return rawLink;
+
+    const linkedCategory = canonicalCategory(parts[1] || current.searchParams.get("category") || "all");
+    if (!linkedCategory || linkedCategory === "all") return rawLink;
+
+    const brand = String(current.searchParams.get("brand") || "").trim().toLowerCase();
+    return buildBannerCategoryLink(linkedCategory, brand);
+  } catch {
+    return rawLink;
+  }
+}
+
 async function resolveBannerImageUrl(req, fallback = "") {
   const uploadedFile = req?.file;
   if (uploadedFile?.buffer) {
@@ -36,7 +81,7 @@ export const createBanner = async (req, res) => {
     const banner = new Banner({
       title: String(title || "").trim(),
       imageUrl,
-      link: String(link || "").trim(),
+      link: normalizeProductsBannerLink(link),
       linkCategory: String(linkCategory || "").trim().toLowerCase(),
       linkSubCategory: String(linkSubCategory || "").trim().toLowerCase(),
       order: Number(order || 0),
@@ -62,7 +107,7 @@ export const updateBanner = async (req, res) => {
       {
         title: String(title || "").trim(),
         imageUrl: nextImageUrl,
-        link: String(link || "").trim(),
+        link: normalizeProductsBannerLink(link),
         linkCategory: String(linkCategory || "").trim().toLowerCase(),
         linkSubCategory: String(linkSubCategory || "").trim().toLowerCase(),
         order: Number(order || 0),
