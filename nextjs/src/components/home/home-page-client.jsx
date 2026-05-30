@@ -23,18 +23,35 @@ import { asArray } from "@/lib/resource";
 function normalizeBanner(item) {
   const category = canonicalCategory(item?.linkCategory || "");
   const subCategory = String(item?.linkSubCategory || "").trim().toLowerCase();
+  const customLink = String(item?.link || item?.ctaLink || "").trim();
   const categoryLink =
     category && category !== "all"
-      ? buildProductsHref({
+      ? `/products?${new URLSearchParams({
           category,
-          brand: subCategory && subCategory !== "all" ? subCategory : "",
-        })
+          ...(subCategory && subCategory !== "all" ? { brand: subCategory } : {}),
+        }).toString()}#shop-results`
       : "";
-  const customLink = String(item?.link || item?.ctaLink || "").trim();
+
+  function normalizeProductsBannerLink(link) {
+    if (!link) return "";
+    try {
+      const current = new URL(link, "https://deetech.local");
+      const parts = current.pathname.split("/").filter(Boolean);
+      if (parts[0] !== "products") return link;
+      const linkedCategory = canonicalCategory(parts[1] || current.searchParams.get("category") || "all");
+      if (!linkedCategory || linkedCategory === "all") return link;
+      const params = new URLSearchParams(current.searchParams);
+      params.set("category", linkedCategory);
+      const queryString = params.toString();
+      return `/products${queryString ? `?${queryString}` : ""}${current.hash || "#shop-results"}`;
+    } catch {
+      return link;
+    }
+  }
 
   return {
     imageUrl: resolveProductImage(item?.imageUrl || item?.image_url || item?.image || ""),
-    link: customLink || categoryLink || "",
+    link: normalizeProductsBannerLink(customLink) || categoryLink || "",
   };
 }
 const HOME_LOGO_FILES = [
