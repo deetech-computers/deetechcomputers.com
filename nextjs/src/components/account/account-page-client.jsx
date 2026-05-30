@@ -24,7 +24,7 @@ import {
 } from "@/lib/header-notifications";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { readWishlistEntries } from "@/lib/wishlist";
-import { GHANA_REGIONS } from "@/lib/checkout";
+import { GHANA_REGIONS, syncCheckoutDraftProfile } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
   { id: "personal", label: "Personal Information" },
@@ -976,6 +976,8 @@ export default function AccountPageClient({ initialTab = "" }) {
         city: profileForm.city.trim(),
         region: profileForm.region.trim(),
       });
+      fillProfileForm(updatedProfile);
+      syncCheckoutDraftProfile(updatedProfile, updatedProfile);
       pushToast("Address updated successfully", "success");
     } finally {
       setSavingAddress(false);

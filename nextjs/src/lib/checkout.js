@@ -94,7 +94,12 @@ function preferFilled(primaryValue, fallbackValue) {
 
 export function buildCheckoutDraftDefaults(activeUser) {
   const hasProfileDefaults = hasSavedCheckoutProfile(activeUser);
-  const initialName = hasProfileDefaults ? splitName(activeUser?.name) : { firstName: "", lastName: "" };
+  const initialName = hasProfileDefaults
+    ? {
+        firstName: String(activeUser?.firstName || "").trim() || splitName(activeUser?.name).firstName,
+        lastName: String(activeUser?.lastName || "").trim() || splitName(activeUser?.name).lastName,
+      }
+    : { firstName: "", lastName: "" };
   return {
     firstName: initialName.firstName,
     lastName: initialName.lastName,
@@ -209,6 +214,27 @@ export function writeCheckoutDraft(value, scopeInput) {
   const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
   const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
   envelope.drafts[scopeKey] = value;
+  writeCheckoutStorageEnvelope(envelope);
+}
+
+export function syncCheckoutDraftProfile(activeUser, scopeInput) {
+  if (typeof window === "undefined") return;
+  const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
+  const scopeKey = buildCheckoutDraftScopeKey(scopeInput);
+  const existingDraft = envelope.drafts?.[scopeKey];
+  if (!existingDraft || typeof existingDraft !== "object") return;
+
+  const defaults = buildCheckoutDraftDefaults(activeUser);
+  envelope.drafts[scopeKey] = {
+    ...existingDraft,
+    firstName: defaults.firstName,
+    lastName: defaults.lastName,
+    shippingAddress: defaults.shippingAddress,
+    shippingCity: defaults.shippingCity,
+    deliveryRegion: defaults.deliveryRegion,
+    mobileNumber: defaults.mobileNumber,
+    shippingEmail: defaults.shippingEmail,
+  };
   writeCheckoutStorageEnvelope(envelope);
 }
 
