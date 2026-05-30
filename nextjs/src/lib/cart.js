@@ -12,6 +12,12 @@ const CART_KEY = "cart";
 const CART_REMOVED_KEY = "cart_removed_ids";
 const MAX_QTY = 99;
 export const CART_ITEM_ADDED_EVENT = "deetech:cart-item-added";
+export const CART_UPDATED_EVENT = "deetech:cart-updated";
+
+function dispatchCartUpdatedEvent() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
+}
 
 export function normalizeQty(value) {
   const qty = Number(value);
@@ -75,7 +81,10 @@ export function readStoredCart() {
 
 export function writeStoredCart(items) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(CART_KEY, JSON.stringify(normalizeCartItems(items)));
+  const serialized = JSON.stringify(normalizeCartItems(items));
+  if (window.localStorage.getItem(CART_KEY) === serialized) return;
+  window.localStorage.setItem(CART_KEY, serialized);
+  dispatchCartUpdatedEvent();
 }
 
 export function clearStoredCart() {
@@ -94,7 +103,10 @@ function readRemovedCartIds() {
 
 function writeRemovedCartIds(ids) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(CART_REMOVED_KEY, JSON.stringify(Array.from(ids).map(String).filter(Boolean)));
+  const serialized = JSON.stringify(Array.from(ids).map(String).filter(Boolean));
+  if (window.localStorage.getItem(CART_REMOVED_KEY) === serialized) return;
+  window.localStorage.setItem(CART_REMOVED_KEY, serialized);
+  dispatchCartUpdatedEvent();
 }
 
 export function markRemovedCartItem(productId) {

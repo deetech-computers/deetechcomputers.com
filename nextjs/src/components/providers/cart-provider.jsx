@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   CART_ITEM_ADDED_EVENT,
+  CART_UPDATED_EVENT,
   clearStoredCart,
   fetchServerCart,
   clearServerCart,
@@ -24,6 +25,10 @@ import { useAuth } from "./auth-provider";
 import { useToast } from "./toast-provider";
 
 const CartContext = createContext(null);
+
+function serializeCartItems(items = []) {
+  return JSON.stringify(normalizeCartItems(items));
+}
 
 function getCartItemLineKey(item) {
   return String(item?.lineKey || item?.productId || item?._id || "").trim();
@@ -79,11 +84,6 @@ export function CartProvider({ children }) {
     };
   }, [authStatus, status, token]);
 
-  useEffect(() => {
-    if (status !== "ready") return;
-    writeStoredCart(items);
-  }, [items, status]);
-
   async function restoreServerCartSnapshot(activeToken = token) {
     if (!activeToken) return;
     try {
@@ -118,15 +118,22 @@ export function CartProvider({ children }) {
   useEffect(() => {
     if (status !== "ready") return undefined;
 
+    const syncFromStorage = () => {
+      const nextItems = readStoredCart();
+      setItems((current) => (serializeCartItems(current) === serializeCartItems(nextItems) ? current : nextItems));
+    };
+
     const handleStorageSync = (event) => {
-      if (event && event.storageArea !== window.localStorage) return;
-      setItems(readStoredCart());
+      if (event?.type === "storage" && event.storageArea !== window.localStorage) return;
+      syncFromStorage();
     };
 
     window.addEventListener("storage", handleStorageSync);
+    window.addEventListener(CART_UPDATED_EVENT, handleStorageSync);
 
     return () => {
       window.removeEventListener("storage", handleStorageSync);
+      window.removeEventListener(CART_UPDATED_EVENT, handleStorageSync);
     };
   }, [status]);
 
