@@ -316,6 +316,7 @@ export default function CheckoutPaymentPage() {
   const isHubtelMethod = form.paymentMethod === "hubtel";
   const isAutoFlow = isHubtelMethod && form.paymentFlow === "auto";
   const isManualFlow = !isAutoFlow;
+  const manualReadyToConfirm = Boolean(form.paymentProofUrl);
   const submitDisabled =
     submitting ||
     (isManualFlow && proofUploading);
@@ -1029,6 +1030,7 @@ export default function CheckoutPaymentPage() {
               <strong>{formatCurrency(total)}</strong>
             </div>
             <div className="checkout-summary__actions">
+              {isAutoFlow || manualReadyToConfirm ? (
                 <button
                   type="button"
                   className="checkout-summary__button"
@@ -1041,6 +1043,12 @@ export default function CheckoutPaymentPage() {
                         ? "Prepare Hubtel Checkout"
                         : "Confirm Payment"}
                 </button>
+              ) : (
+                <div className="checkout-summary__pending-action">
+                  <strong>Upload proof to continue</strong>
+                  <span>Once your payment screenshot is uploaded, the confirm button will appear here.</span>
+                </div>
+              )}
               <p className="checkout-summary__note">
                 {isAutoFlow
                   ? "You will complete payment on Hubtel secure checkout and return automatically."
@@ -1087,6 +1095,27 @@ export default function CheckoutPaymentPage() {
           </aside>
         </div>
       </section>
+
+      <div className="checkout-mobile-action-bar">
+        {isAutoFlow || manualReadyToConfirm ? (
+          <button
+            type="button"
+            className="checkout-summary__button checkout-mobile-action-bar__button"
+            onClick={handleConfirmPayment}
+            disabled={submitDisabled}
+          >
+            {submitting
+              ? "Confirming Order..."
+              : isAutoFlow
+                ? "Prepare Hubtel Checkout"
+                : "Confirm Payment"}
+          </button>
+        ) : (
+          <div className="checkout-mobile-action-bar__hint">
+            Upload proof of payment to unlock confirm.
+          </div>
+        )}
+      </div>
 
       {hubtelModalOpen ? (
         <div className="checkout-hubtel-modal" role="dialog" aria-modal="true" aria-labelledby="hubtelModalTitle">

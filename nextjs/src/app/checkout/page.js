@@ -305,7 +305,7 @@ export default function CheckoutPage() {
               <p>Phase one collects the customer and delivery details. Payment continues on the next step.</p>
             </div>
 
-            <form className="checkout-fields" onSubmit={handleSubmit}>
+            <form id="checkout-phase-one-form" className="checkout-fields" onSubmit={handleSubmit}>
               <label className="checkout-field">
                 <span>First Name *</span>
                 <input ref={registerFieldRef("firstName")} className="field" value={form.firstName} onChange={(event) => updateField("firstName", event.target.value)} placeholder="Ex. John" required />
@@ -426,6 +426,12 @@ export default function CheckoutPage() {
           </aside>
         </div>
       </section>
+
+      <div className="checkout-mobile-action-bar">
+        <button type="submit" form="checkout-phase-one-form" className="checkout-summary__button checkout-mobile-action-bar__button">
+          Proceed to Payment
+        </button>
+      </div>
     </main>
   );
 }
