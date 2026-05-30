@@ -6504,7 +6504,7 @@ button, input, select, textarea { font: inherit; }
 }
 .admin-record__items span {
   padding: 8px 10px;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(24, 79, 39, 0.08);
 }
 .admin-order-line-item {
