@@ -19,6 +19,7 @@ import {
 } from "@/lib/products";
 
 const SORT_OPTIONS = [
+  { value: "latest", label: "Latest" },
   { value: "name", label: "Name: A to Z" },
   { value: "price-asc", label: "Price: Low to high" },
   { value: "price-desc", label: "Price: High to low" },
@@ -64,6 +65,10 @@ function labelize(value) {
 
 function getProductTimestamp(product) {
   return new Date(product?.createdAt || product?.updatedAt || 0).getTime() || 0;
+}
+
+function getProductLatestTimestamp(product) {
+  return new Date(product?.updatedAt || product?.createdAt || 0).getTime() || 0;
 }
 
 function getProductId(product) {
@@ -417,6 +422,8 @@ export default function ProductsPageClient({ initialFilters }) {
     }
 
     switch (sortBy) {
+      case "latest":
+        return items.sort((a, b) => getProductLatestTimestamp(b) - getProductLatestTimestamp(a));
       case "price-asc":
         return items.sort((a, b) => getProductPrice(a) - getProductPrice(b));
       case "price-desc":
