@@ -157,6 +157,7 @@ export function CartProvider({ children }) {
 
     let toast = null;
     let serverQty = null;
+    let nextSnapshot = null;
     unmarkRemovedCartItem(lineKey);
     unmarkRemovedCartItem(id);
 
@@ -199,9 +200,13 @@ export function CartProvider({ children }) {
 
       toast = { message: `${product.name} added to cart`, type: "success" };
       const normalized = normalizeCartItems(nextItems);
-      writeStoredCart(normalized);
+      nextSnapshot = normalized;
       return normalized;
     });
+
+    if (nextSnapshot) {
+      writeStoredCart(nextSnapshot);
+    }
 
     if (toast) {
       pushToast(toast.message, toast.type);
@@ -248,6 +253,7 @@ export function CartProvider({ children }) {
     const requestedQty = normalizeQty(qty);
     const nextQty = Math.min(requestedQty, stockLimit);
     let serverQty = null;
+    let nextSnapshot = null;
     const selectedUpgrades = targetItem.selectedUpgrades || {};
 
     setItems((current) => {
@@ -259,9 +265,13 @@ export function CartProvider({ children }) {
             })()
           : item
       );
-      writeStoredCart(nextItems);
+      nextSnapshot = normalizeCartItems(nextItems);
       return nextItems;
     });
+
+    if (nextSnapshot) {
+      writeStoredCart(nextSnapshot);
+    }
 
     if (requestedQty > stockLimit) {
       pushToast(getStockLimitMessage(stockLimit), "warning");
@@ -297,11 +307,15 @@ export function CartProvider({ children }) {
       items.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey).length === 0;
 
     markRemovedCartItem(lineKey);
+    let nextSnapshot = null;
     setItems((current) => {
       const nextItems = current.filter((item) => String(item.lineKey || item.productId || item._id) !== lineKey);
-      writeStoredCart(nextItems);
+      nextSnapshot = normalizeCartItems(nextItems);
       return nextItems;
     });
+    if (nextSnapshot) {
+      writeStoredCart(nextSnapshot);
+    }
     if (token) {
       if (isLastVisibleItem) {
         clearServerCart(token).catch(() => {
