@@ -373,6 +373,23 @@ function buildHubtelResultUrl(baseUrl, clientReference, statusToken) {
   return `${trimmedBase}?${query.toString()}`;
 }
 
+function buildHubtelStatusTokenForOrder(order) {
+  const clientReference = String(order?.clientOrderRef || "").trim();
+  if (!clientReference) return undefined;
+  return buildHubtelStatusToken(clientReference);
+}
+
+function buildHubtelCheckoutResumeFields(order) {
+  const isAutoHubtel =
+    String(order?.paymentMethod || "").trim().toLowerCase() === "hubtel" &&
+    String(order?.paymentFlow || "").trim().toLowerCase() === "auto";
+  if (!isAutoHubtel) return {};
+  return {
+    statusToken: buildHubtelStatusTokenForOrder(order),
+    checkoutUrl: order?.paymentGatewayCheckoutUrl || undefined,
+  };
+}
+
 function parseEstimatedDeliveryInput(raw) {
   if (!raw) return null;
   const parsed = new Date(raw);
@@ -1062,7 +1079,7 @@ export async function createOrder(req, res) {
         message: "Order already submitted",
         order: existingOrder,
         orderId: existingOrder._id,
-        checkoutUrl: existingOrder.paymentGatewayCheckoutUrl || undefined,
+        ...buildHubtelCheckoutResumeFields(existingOrder),
       });
     }
   }
@@ -1096,7 +1113,7 @@ export async function createOrder(req, res) {
       message: "Order already submitted",
       order: existingFingerprintOrder,
       orderId: existingFingerprintOrder._id,
-      checkoutUrl: existingFingerprintOrder.paymentGatewayCheckoutUrl || undefined,
+      ...buildHubtelCheckoutResumeFields(existingFingerprintOrder),
     });
   }
 
@@ -1304,7 +1321,7 @@ export async function createOrder(req, res) {
           message: "Order already submitted",
           order: existingOrder,
           orderId: existingOrder._id,
-          checkoutUrl: existingOrder.paymentGatewayCheckoutUrl || undefined,
+          ...buildHubtelCheckoutResumeFields(existingOrder),
         });
       }
     }
@@ -1450,7 +1467,7 @@ export async function createGuestOrder(req, res) {
         message: "Order already submitted",
         order: existingGuestOrder,
         orderId: existingGuestOrder._id,
-        checkoutUrl: existingGuestOrder.paymentGatewayCheckoutUrl || undefined,
+        ...buildHubtelCheckoutResumeFields(existingGuestOrder),
       });
     }
   }
@@ -1484,7 +1501,7 @@ export async function createGuestOrder(req, res) {
       message: "Order already submitted",
       order: existingGuestFingerprintOrder,
       orderId: existingGuestFingerprintOrder._id,
-      checkoutUrl: existingGuestFingerprintOrder.paymentGatewayCheckoutUrl || undefined,
+      ...buildHubtelCheckoutResumeFields(existingGuestFingerprintOrder),
     });
   }
 
@@ -1715,7 +1732,7 @@ export async function createGuestOrder(req, res) {
           message: "Order already submitted",
           order: existingGuestOrder,
           orderId: existingGuestOrder._id,
-          checkoutUrl: existingGuestOrder.paymentGatewayCheckoutUrl || undefined,
+          ...buildHubtelCheckoutResumeFields(existingGuestOrder),
         });
       }
     }
