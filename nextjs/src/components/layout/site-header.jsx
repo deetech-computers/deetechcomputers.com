@@ -767,6 +767,15 @@ export default function SiteHeader() {
     setCartDrawerOpen(false);
   }
 
+  function navigateFromCartDrawer(event, href) {
+    event.preventDefault();
+    event.stopPropagation();
+    setCartDrawerOpen(false);
+    window.requestAnimationFrame(() => {
+      router.push(href);
+    });
+  }
+
   function closeWishlistMenu() {
     setWishlistMenuOpen(false);
   }
@@ -1800,10 +1809,10 @@ export default function SiteHeader() {
                     <strong>{formatCartPrice(cartSubtotal)}</strong>
                   </div>
                   <div className="cart-feedback__actions">
-                    <Link href="/cart" className="cart-feedback__view" onClick={closeCartDrawer}>
+                    <Link href="/cart" className="cart-feedback__view" onClick={(event) => navigateFromCartDrawer(event, "/cart")}>
                       View cart
                     </Link>
-                    <Link href="/checkout" className="cart-feedback__checkout" onClick={closeCartDrawer}>
+                    <Link href="/checkout" className="cart-feedback__checkout" onClick={(event) => navigateFromCartDrawer(event, "/checkout")}>
                       Checkout
                     </Link>
                   </div>
