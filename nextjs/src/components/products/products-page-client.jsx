@@ -320,7 +320,10 @@ export default function ProductsPageClient({ initialFilters }) {
 
       const matchesCategory = category === "all" || productCategory === category;
       const matchesBrand = brand === "all" || productBrand === brand;
-      const matchesAvailability = availability === "all" || productStock > 0;
+      const matchesAvailability =
+        availability === "all" ||
+        (availability === "instock" && productStock > 0) ||
+        (availability === "outofstock" && productStock < 1);
       const matchesReview = reviewFloor === 0 || productRating >= reviewFloor;
       const matchesSpecs = Object.entries(selectedSpecs).every(([key, values]) => {
         if (!Array.isArray(values) || !values.length) return true;
@@ -517,7 +520,11 @@ export default function ProductsPageClient({ initialFilters }) {
       });
     }
     if (availability !== "all") {
-      chips.push({ key: "availability", label: "In stock", clear: () => setAvailability("all") });
+      chips.push({
+        key: "availability",
+        label: availability === "outofstock" ? "Out of stock" : "In stock",
+        clear: () => setAvailability("all"),
+      });
     }
     if (priceBounds.max && (selectedPrice.min !== priceBounds.min || selectedPrice.max !== priceBounds.max)) {
       chips.push({
@@ -825,6 +832,7 @@ export default function ProductsPageClient({ initialFilters }) {
           <div className="shop-filter-stack">
             <FilterOption active={availability === "all"} label="All" onClick={() => setAvailability("all")} />
             <FilterOption active={availability === "instock"} label="In stock" onClick={() => setAvailability("instock")} />
+            <FilterOption active={availability === "outofstock"} label="Out of stock" onClick={() => setAvailability("outofstock")} />
           </div>
         </ShopFilterSection>
       </>
