@@ -35,6 +35,7 @@ export const createOrderSchema = Joi.object({
   shippingAddress: Joi.string().min(3).max(200).required(),
   shippingCity: Joi.string().min(2).max(100).required(),
   clientOrderRef: Joi.string().min(8).max(64).optional(),
+  forceNewPaymentAttempt: Joi.boolean().optional(),
   frontendOrigin: Joi.string().uri({ scheme: ["http", "https"] }).optional(),
   paymentScreenshotUrl: Joi.string().allow("").optional(),
 
@@ -75,6 +76,7 @@ export const createGuestOrderSchema = Joi.object({
   guestCity: Joi.string().min(2).max(100).required(),
   guestNotes: Joi.string().allow("").max(2000),
   clientOrderRef: Joi.string().min(8).max(64).optional(),
+  forceNewPaymentAttempt: Joi.boolean().optional(),
   frontendOrigin: Joi.string().uri({ scheme: ["http", "https"] }).optional(),
   paymentScreenshotUrl: Joi.string().allow("").optional(),
 

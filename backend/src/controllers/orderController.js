@@ -949,6 +949,7 @@ export async function createOrder(req, res) {
     paymentScreenshotUrl,
     discountCode,
     affiliateCode,
+    forceNewPaymentAttempt,
   } = payload;
   const submittedAffiliateCode = normalizeAffiliateCode(affiliateCode);
 
@@ -975,6 +976,8 @@ export async function createOrder(req, res) {
     (requestedFlow === "auto" || (!requestedFlow && !screenshotUrl))
       ? "auto"
       : "manual";
+  const shouldForceNewPaymentAttempt =
+    normalizedPaymentFlow === "auto" && Boolean(forceNewPaymentAttempt);
 
   if (normalizedPaymentFlow !== "auto" && !screenshotUrl) {
     res.status(400);
@@ -1051,11 +1054,13 @@ export async function createOrder(req, res) {
     }
   }
 
-  const existingFingerprintOrder = await findRecentDuplicateOrder({
-    userId: req.user._id,
-    shippingEmail,
-    attemptFingerprint,
-  });
+  const existingFingerprintOrder = shouldForceNewPaymentAttempt
+    ? null
+    : await findRecentDuplicateOrder({
+        userId: req.user._id,
+        shippingEmail,
+        attemptFingerprint,
+      });
   if (existingFingerprintOrder) {
     await writeOrderAttemptLog({
       req,
@@ -1360,6 +1365,7 @@ export async function createGuestOrder(req, res) {
     paymentScreenshotUrl,
     discountCode,
     affiliateCode,
+    forceNewPaymentAttempt,
   } = payload;
   const normalizedShippingEmail = normalizeOrderEmailAddress(shippingEmail);
   const normalizedGuestEmail = normalizeOrderEmailAddress(guestEmail);
@@ -1373,6 +1379,8 @@ export async function createGuestOrder(req, res) {
     (requestedFlow === "auto" || (!requestedFlow && !screenshotUrl))
       ? "auto"
       : "manual";
+  const shouldForceNewPaymentAttempt =
+    normalizedPaymentFlow === "auto" && Boolean(forceNewPaymentAttempt);
   const cleanMobile = normalizeGhanaMobile(mobileNumber);
   if (!/^(\+233|0)[0-9]{9}$/.test(cleanMobile)) {
     res.status(400);
@@ -1431,11 +1439,13 @@ export async function createGuestOrder(req, res) {
     }
   }
 
-  const existingGuestFingerprintOrder = await findRecentDuplicateOrder({
-    shippingEmail: normalizedShippingEmail,
-    guestEmail: normalizedGuestEmail,
-    attemptFingerprint,
-  });
+  const existingGuestFingerprintOrder = shouldForceNewPaymentAttempt
+    ? null
+    : await findRecentDuplicateOrder({
+        shippingEmail: normalizedShippingEmail,
+        guestEmail: normalizedGuestEmail,
+        attemptFingerprint,
+      });
   if (existingGuestFingerprintOrder) {
     await writeOrderAttemptLog({
       req,

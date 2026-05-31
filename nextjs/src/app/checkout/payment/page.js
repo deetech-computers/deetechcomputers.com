@@ -17,6 +17,7 @@ import {
   buildOrderItems,
   clearCompletedCheckoutState,
   isPhaseOneComplete,
+  prepareHubtelRetryDrafts,
   readCheckoutDraft,
   writeCheckoutDraft,
 } from "@/lib/checkout";
@@ -93,6 +94,7 @@ export default function CheckoutPaymentPage() {
     affiliateCodeMode: "manual",
     affiliateCodeCleared: false,
     affiliateCodeClearedAt: 0,
+    forceNewPaymentAttempt: false,
   });
   const [ready, setReady] = useState(false);
   const hubtelFinalizedRef = useRef(false);
@@ -430,6 +432,34 @@ export default function CheckoutPaymentPage() {
     pushToast("Hubtel checkout opened in a new tab.", "success");
   }
 
+  function stopWaitingForHubtelPayment() {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("deetech-hubtel-pending");
+      prepareHubtelRetryDrafts();
+    }
+    const nextClientOrderRef = buildClientOrderRef();
+    clientOrderRefRef.current = nextClientOrderRef;
+    setHubtelWaiting(false);
+    setHubtelClientReference("");
+    setHubtelStatusToken("");
+    setHubtelCheckoutUrl("");
+    setHubtelModalOpen(false);
+    setTransitionStage("idle");
+    setSubmitting(false);
+    submitLockRef.current = false;
+    hubtelFinalizedRef.current = false;
+    setForm((current) => {
+      const nextForm = {
+        ...current,
+        clientOrderRef: nextClientOrderRef,
+        forceNewPaymentAttempt: true,
+      };
+      writeCheckoutDraft(nextForm, user);
+      return nextForm;
+    });
+    pushToast("Hubtel payment was stopped. You can prepare a fresh checkout link.", "info");
+  }
+
   useEffect(() => {
     if (!hubtelClientReference || !hubtelStatusToken || hubtelFinalizedRef.current) return;
     let ignore = false;
@@ -449,8 +479,14 @@ export default function CheckoutPaymentPage() {
             return;
           }
           if (paymentStatus === "failed") {
+            if (typeof window !== "undefined") {
+              window.localStorage.removeItem("deetech-hubtel-pending");
+              prepareHubtelRetryDrafts();
+            }
             setHubtelWaiting(false);
             setTransitionStage("idle");
+            setHubtelClientReference("");
+            setHubtelStatusToken("");
             pushToast("Hubtel payment failed. Please retry payment.", "warning");
             return;
           }
@@ -472,8 +508,14 @@ export default function CheckoutPaymentPage() {
       }
 
       if (!ignore && !hubtelFinalizedRef.current) {
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("deetech-hubtel-pending");
+          prepareHubtelRetryDrafts();
+        }
         setHubtelWaiting(false);
         setTransitionStage("idle");
+        setHubtelClientReference("");
+        setHubtelStatusToken("");
         pushToast("Payment check timed out. You can retry or refresh shortly.", "warning");
       }
     }
@@ -602,6 +644,7 @@ export default function CheckoutPaymentPage() {
       frontendOrigin:
         typeof window !== "undefined" ? window.location.origin : undefined,
       clientOrderRef,
+      forceNewPaymentAttempt: Boolean(form.forceNewPaymentAttempt),
       paymentScreenshotUrl: isAutoFlow ? "" : form.paymentProofUrl,
       discountCode: String(form.discountCode || "").trim().toUpperCase() || undefined,
       affiliateCode: String(form.affiliateCode || "").trim() || undefined,
@@ -681,6 +724,7 @@ export default function CheckoutPaymentPage() {
         setTransitionStage("idle");
         setHubtelCheckoutUrl(checkoutUrl);
         setHubtelModalOpen(true);
+        setForm((current) => ({ ...current, forceNewPaymentAttempt: false }));
         pushToast("Hubtel checkout is ready. Continue from the popup menu.", "success");
         return;
       }
@@ -802,6 +846,11 @@ export default function CheckoutPaymentPage() {
                   ? "Waiting for Hubtel payment confirmation. Once paid, we will automatically complete your order and redirect you."
                   : "Please hold on while we validate your payment, save your order, and prepare your completion page."}
             </p>
+            {hubtelWaiting ? (
+              <button type="button" className="checkout-payment__secondary" onClick={stopWaitingForHubtelPayment}>
+                Stop waiting and retry
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}

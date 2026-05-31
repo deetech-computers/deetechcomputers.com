@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { API_BASE_ORDERS } from "@/lib/config";
+import { prepareHubtelRetryDrafts } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
 
 export default function HubtelPaymentCancelledClient() {
@@ -25,6 +26,10 @@ export default function HubtelPaymentCancelledClient() {
 
   useEffect(() => {
     let ignore = false;
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("deetech-hubtel-pending");
+      prepareHubtelRetryDrafts();
+    }
 
     async function checkOnce() {
       if (!clientReference || !statusToken) {

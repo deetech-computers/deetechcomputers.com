@@ -259,6 +259,26 @@ export function clearAllCheckoutDrafts() {
   storage.removeItem(CHECKOUT_DRAFT_KEY);
 }
 
+export function prepareHubtelRetryDrafts() {
+  const storage = getCheckoutStorage();
+  if (!storage) return;
+  const envelope = normalizeCheckoutStorageEnvelope(safeParseCheckoutStorage());
+  let changed = false;
+  for (const key of Object.keys(envelope.drafts || {})) {
+    const draft = envelope.drafts[key];
+    if (!draft || typeof draft !== "object") continue;
+    envelope.drafts[key] = {
+      ...draft,
+      clientOrderRef: "",
+      forceNewPaymentAttempt: true,
+    };
+    changed = true;
+  }
+  if (changed) {
+    writeCheckoutStorageEnvelope(envelope);
+  }
+}
+
 export function clearCompletedCheckoutState(scopeInput) {
   clearCheckoutDraft(scopeInput);
   clearAffiliateAttribution();
