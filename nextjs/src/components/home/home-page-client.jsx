@@ -15,6 +15,7 @@ import {
   fetchProducts,
   getProductRating,
   getProductPrice,
+  getProductStock,
   pickFeaturedProducts,
   resolveProductImage,
 } from "@/lib/products";
@@ -219,15 +220,16 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, [banners.length]);
 
-  const laptopProducts = products.filter((product) => canonicalCategory(product?.category) === "laptops");
-  const phoneProducts = products.filter((product) => canonicalCategory(product?.category) === "phones");
-  const featuredProducts = [...pickFeaturedProducts(products, 12)]
+  const availableHomeProducts = products.filter((product) => getProductStock(product) > 0);
+  const laptopProducts = availableHomeProducts.filter((product) => canonicalCategory(product?.category) === "laptops");
+  const phoneProducts = availableHomeProducts.filter((product) => canonicalCategory(product?.category) === "phones");
+  const featuredProducts = [...pickFeaturedProducts(availableHomeProducts, 12)]
     .sort((a, b) => getFeaturedScore(b) - getFeaturedScore(a))
     .slice(0, 8);
-  const newArrivalProducts = sortByNewest(products).slice(0, 5);
+  const newArrivalProducts = sortByNewest(availableHomeProducts).slice(0, 5);
   const sectionProducts = (sectionKey, allowedCategories = []) => {
     const allowed = new Set((allowedCategories || []).map((item) => canonicalCategory(item)));
-    return products.filter((product) => {
+    return availableHomeProducts.filter((product) => {
       const productCategory = canonicalCategory(product?.category);
       if (allowed.size && !allowed.has(productCategory)) return false;
       const sections = Array.isArray(product?.homeSections) ? product.homeSections : [];
