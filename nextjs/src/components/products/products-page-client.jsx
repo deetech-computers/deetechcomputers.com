@@ -424,26 +424,36 @@ export default function ProductsPageClient({ initialFilters }) {
 
   const sorted = useMemo(() => {
     const items = [...filtered];
+    const placeOutOfStockLast = (sortedItems) =>
+      sortedItems.sort((a, b) => Number(getProductStock(a) < 1) - Number(getProductStock(b) < 1));
 
     if (promotion === "just_landed") {
-      return items.sort((a, b) => getProductTimestamp(b) - getProductTimestamp(a));
+      return placeOutOfStockLast(items.sort((a, b) => getProductTimestamp(b) - getProductTimestamp(a)));
     }
 
+    let sortedItems;
     switch (sortBy) {
       case "latest":
-        return items.sort((a, b) => getProductLatestTimestamp(b) - getProductLatestTimestamp(a));
+        sortedItems = items.sort((a, b) => getProductLatestTimestamp(b) - getProductLatestTimestamp(a));
+        break;
       case "price-asc":
-        return items.sort((a, b) => getProductPrice(a) - getProductPrice(b));
+        sortedItems = items.sort((a, b) => getProductPrice(a) - getProductPrice(b));
+        break;
       case "price-desc":
-        return items.sort((a, b) => getProductPrice(b) - getProductPrice(a));
+        sortedItems = items.sort((a, b) => getProductPrice(b) - getProductPrice(a));
+        break;
       case "rating":
-        return items.sort((a, b) => getProductRating(b) - getProductRating(a));
+        sortedItems = items.sort((a, b) => getProductRating(b) - getProductRating(a));
+        break;
       case "name":
-        return items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
+        sortedItems = items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
+        break;
       default:
-        return items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
+        sortedItems = items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
+        break;
     }
-  }, [filtered, sortBy]);
+    return placeOutOfStockLast(sortedItems);
+  }, [filtered, promotion, sortBy]);
 
   useEffect(() => {
     setCurrentPage(1);
