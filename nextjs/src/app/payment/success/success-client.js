@@ -64,6 +64,12 @@ export default function HubtelPaymentSuccessClient() {
   );
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.location.search) return;
+    window.history.replaceState(null, "", window.location.pathname);
+  }, []);
+
+  useEffect(() => {
     let ignore = false;
 
     async function finalize() {
