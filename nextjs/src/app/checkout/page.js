@@ -18,6 +18,7 @@ import {
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
 import {
+  markAffiliateAttributionConsumed,
   readAffiliateAttribution,
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
@@ -63,6 +64,16 @@ export default function CheckoutPage() {
         nextDraft.affiliateCode = autoApplyStoredCode;
         nextDraft.affiliateCodeMode = "auto-attribution";
         nextDraft.affiliateCodeCleared = false;
+        markAffiliateAttributionConsumed(attribution);
+      } else if (
+        nextDraft.affiliateCodeMode === "auto-attribution" &&
+        String(nextDraft.affiliateCode || "").trim() &&
+        !shouldAutoApplyAffiliateAttribution(attribution, items)
+      ) {
+        nextDraft.affiliateCode = "";
+        nextDraft.affiliateCodeMode = "manual";
+        nextDraft.affiliateCodeCleared = false;
+        nextDraft.affiliateCodeClearedAt = 0;
       }
 
       let activeProfile = user;

@@ -22,6 +22,7 @@ import {
   writeCheckoutDraft,
 } from "@/lib/checkout";
 import {
+  markAffiliateAttributionConsumed,
   readAffiliateAttribution,
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
@@ -219,6 +220,16 @@ export default function CheckoutPaymentPage() {
         nextDraft.affiliateCode = autoApplyStoredCode;
         nextDraft.affiliateCodeMode = "auto-attribution";
         nextDraft.affiliateCodeCleared = false;
+        markAffiliateAttributionConsumed(attribution);
+      } else if (
+        nextDraft.affiliateCodeMode === "auto-attribution" &&
+        String(nextDraft.affiliateCode || "").trim() &&
+        !shouldAutoApplyAffiliateAttribution(attribution, items)
+      ) {
+        nextDraft.affiliateCode = "";
+        nextDraft.affiliateCodeMode = "manual";
+        nextDraft.affiliateCodeCleared = false;
+        nextDraft.affiliateCodeClearedAt = 0;
       }
 
       return nextDraft;

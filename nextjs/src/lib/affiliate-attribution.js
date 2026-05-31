@@ -28,6 +28,28 @@ export function clearAffiliateAttribution() {
   window.localStorage.removeItem(AFFILIATE_ATTRIBUTION_KEY);
 }
 
+export function markAffiliateAttributionConsumed(attribution) {
+  if (!isBrowser() || !attribution?.code) return;
+  try {
+    const raw = window.localStorage.getItem(AFFILIATE_ATTRIBUTION_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    const sameAttribution =
+      normalizeAffiliateCode(parsed?.code) === normalizeAffiliateCode(attribution.code) &&
+      Number(parsed?.capturedAt || 0) === Number(attribution.capturedAt || 0);
+    if (!sameAttribution) return;
+    window.localStorage.setItem(
+      AFFILIATE_ATTRIBUTION_KEY,
+      JSON.stringify({
+        ...parsed,
+        consumedAt: Date.now(),
+      })
+    );
+  } catch {
+    clearAffiliateAttribution();
+  }
+}
+
 export function saveAffiliateAttribution(code, source = "share-link", metadata = {}) {
   if (!isBrowser()) return "";
   const normalized = normalizeAffiliateCode(code);
@@ -70,6 +92,7 @@ export function readAffiliateAttribution() {
       pathname: String(parsed?.pathname || ""),
       productId: normalizeProductId(parsed?.productId || ""),
       capturedAt,
+      consumedAt: Number(parsed?.consumedAt || 0),
     };
   } catch {
     clearAffiliateAttribution();
@@ -84,6 +107,7 @@ export function readAffiliateCode() {
 export function shouldAutoApplyAffiliateAttribution(attribution, items = []) {
   if (!attribution?.code) return false;
   if (String(attribution?.source || "") !== "product-link") return false;
+  if (Number(attribution?.consumedAt || 0) > 0) return false;
   const targetProductId = normalizeProductId(attribution?.productId);
   if (!targetProductId) return false;
 
