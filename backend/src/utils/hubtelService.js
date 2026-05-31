@@ -30,8 +30,15 @@ export async function initiateHubtelCheckout({
 }) {
   assertHubtelConfigured();
 
+  const totalAmount = Number(amount);
+  if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+    const error = new Error("Invalid Hubtel checkout amount.");
+    error.statusCode = 400;
+    throw error;
+  }
+
   const payload = {
-    totalAmount: Number(amount),
+    totalAmount: Number(totalAmount.toFixed(2)),
     description: String(description || "DEETECH order payment"),
     callbackUrl: String(callbackUrl || "").trim(),
     returnUrl: String(returnUrl || "").trim(),
