@@ -670,6 +670,31 @@ export default function CheckoutPaymentPage() {
     }));
   }
 
+  function selectAutomaticPayment() {
+    setForm((current) => ({
+      ...current,
+      paymentMethod: "hubtel",
+      paymentFlow: "auto",
+      paymentProofUrl: "",
+      paymentProofName: "",
+      paymentProofStorage: "",
+    }));
+  }
+
+  function selectManualPayment() {
+    clearStoredHubtelPending({ prepareRetry: true });
+    setHubtelClientReference("");
+    setHubtelStatusToken("");
+    setHubtelCheckoutUrl("");
+    setHubtelModalOpen(false);
+    setHubtelWaiting(false);
+    setForm((current) => ({
+      ...current,
+      paymentMethod: current.paymentMethod === "hubtel" && current.paymentFlow === "auto" ? "mtn" : current.paymentMethod,
+      paymentFlow: "manual",
+    }));
+  }
+
   async function handleConfirmPayment() {
     if (submitLockRef.current || submitting) {
       return;
@@ -973,77 +998,62 @@ export default function CheckoutPaymentPage() {
               <Link href="/checkout" className="checkout-payment__secondary checkout-payment__secondary--inline">Edit billing details</Link>
             </section>
 
-            <div className="checkout-payment__methods">
-              {manualPaymentMethods.map((method) => (
+            <section className="checkout-payment__flow-options">
+              <h3>Choose payment type</h3>
+              <div className="checkout-payment__flow-grid">
                 <button
-                  key={method.id}
-                  ref={method.id === form.paymentMethod ? registerFieldRef("paymentMethod") : undefined}
+                  ref={isAutoFlow ? registerFieldRef("paymentFlow") : undefined}
                   type="button"
-                  className={method.id === form.paymentMethod ? "checkout-payment__option is-active" : "checkout-payment__option"}
-                  onClick={() => {
-                    if (method.id !== "hubtel") {
-                      clearStoredHubtelPending({ prepareRetry: true });
-                      setHubtelClientReference("");
-                      setHubtelStatusToken("");
-                      setHubtelCheckoutUrl("");
-                      setHubtelModalOpen(false);
-                      setHubtelWaiting(false);
-                    }
-                    setForm((current) => ({
-                      ...current,
-                      paymentMethod: method.id,
-                      paymentFlow: method.id === "hubtel" ? current.paymentFlow : "manual",
-                    }));
-                  }}
+                  className={isAutoFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
+                  onClick={selectAutomaticPayment}
                 >
-                  <span className="checkout-payment__radio" aria-hidden="true" />
-                  <StableImage
-                    src={method.logo}
-                    alt={method.label}
-                    className="checkout-payment__logo"
-                    width={72}
-                    height={72}
-                  />
-                  <span className="checkout-payment__copy">
-                    <strong>{method.label}</strong>
-                    <small>{method.helper}</small>
-                  </span>
+                  <strong>Automatic payment</strong>
+                  <small>Pay quickly through secure Hubtel checkout. No screenshot upload needed.</small>
                 </button>
-              ))}
+                <button
+                  ref={isManualFlow ? registerFieldRef("paymentFlow") : undefined}
+                  type="button"
+                  className={isManualFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
+                  onClick={selectManualPayment}
+                >
+                  <strong>Manual payment</strong>
+                  <small>Choose a payment method, transfer manually, then upload proof.</small>
+                </button>
+              </div>
+            </section>
 
-              {isHubtelMethod ? (
-                <section className="checkout-payment__flow-options">
-                  <h3>Hubtel Option</h3>
-                  <div className="checkout-payment__flow-grid">
-                    <button
-                      ref={registerFieldRef("paymentFlow")}
-                      type="button"
-                      className={isManualFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
-                      onClick={() => {
-                        clearStoredHubtelPending({ prepareRetry: true });
-                        setHubtelClientReference("");
-                        setHubtelStatusToken("");
-                        setHubtelCheckoutUrl("");
-                        setHubtelModalOpen(false);
-                        setHubtelWaiting(false);
-                        setForm((current) => ({ ...current, paymentFlow: "manual" }));
-                      }}
-                    >
-                      <strong>Hubtel Manual</strong>
-                      <small>Use Hubtel details and upload payment proof.</small>
-                    </button>
-                    <button
-                      type="button"
-                      className={isAutoFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
-                      onClick={() => setForm((current) => ({ ...current, paymentFlow: "auto" }))}
-                    >
-                      <strong>Hubtel Automatic</strong>
-                      <small>Pay on secure Hubtel checkout. No proof upload required.</small>
-                    </button>
-                  </div>
-                </section>
-              ) : null}
-            </div>
+            {isManualFlow ? (
+              <div className="checkout-payment__methods">
+                {manualPaymentMethods.map((method) => (
+                  <button
+                    key={method.id}
+                    ref={method.id === form.paymentMethod ? registerFieldRef("paymentMethod") : undefined}
+                    type="button"
+                    className={method.id === form.paymentMethod ? "checkout-payment__option is-active" : "checkout-payment__option"}
+                    onClick={() => {
+                      setForm((current) => ({
+                        ...current,
+                        paymentMethod: method.id,
+                        paymentFlow: "manual",
+                      }));
+                    }}
+                  >
+                    <span className="checkout-payment__radio" aria-hidden="true" />
+                    <StableImage
+                      src={method.logo}
+                      alt={method.label}
+                      className="checkout-payment__logo"
+                      width={72}
+                      height={72}
+                    />
+                    <span className="checkout-payment__copy">
+                      <strong>{method.label}</strong>
+                      <small>{method.helper}</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
 
             <div className="checkout-payment__details">
               {isAutoFlow ? (
