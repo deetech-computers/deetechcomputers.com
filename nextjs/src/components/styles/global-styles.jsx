@@ -3086,6 +3086,37 @@ button, input, select, textarea { font: inherit; }
   width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden;
   position: relative;
 }
+.product-card__image-shell.is-out-of-stock::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(10, 13, 18, 0.56);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+.product-card__stock-overlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 32px rgba(239, 68, 68, 0.28);
+  pointer-events: none;
+  white-space: nowrap;
+}
 .product-card--catalog .product-card__image-shell {
   border-radius: 0;
 }

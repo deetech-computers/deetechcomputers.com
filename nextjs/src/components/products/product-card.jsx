@@ -100,6 +100,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const imageShellRef = useRef(null);
   const [shouldLoadImage, setShouldLoadImage] = useState(false);
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
+  const isOutOfStock = stock < 1;
   const summary = getSummary(product);
   const categoryLabel = getCategoryLabel(product);
   const displayName = normalizeDisplayTitle(product?.name || "Product");
@@ -231,7 +232,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
         ) : null}
         <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
           <div className="product-card__media">
-            <div className="product-card__image-shell" ref={imageShellRef}>
+            <div className={`product-card__image-shell${isOutOfStock ? " is-out-of-stock" : ""}`} ref={imageShellRef}>
               {image && shouldLoadImage ? (
                 <>
                   <StableImage
@@ -259,6 +260,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
+              {isOutOfStock ? <span className="product-card__stock-overlay">Out of stock</span> : null}
             </div>
           </div>
         </Link>
@@ -311,12 +313,12 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               type="button"
               className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
               onClick={handleAddToCart}
-              disabled={stock < 1}
-              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+              disabled={isOutOfStock}
+              aria-label={!isOutOfStock ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
             >
               <CartIcon />
               <span>
-                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+                {isOutOfStock ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
               </span>
             </button>
             <button
@@ -347,12 +349,12 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
               type="button"
               className={`product-card__cart-button${isInCart ? " is-in-cart" : ""}${justAdded ? " is-just-added" : ""}`}
               onClick={handleAddToCart}
-              disabled={stock < 1}
-              aria-label={stock > 0 ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
+              disabled={isOutOfStock}
+              aria-label={!isOutOfStock ? (isInCart ? `Add another to cart. ${cartQuantity} already in cart` : "Add to cart") : "Unavailable"}
             >
               <CartIcon />
               <span>
-                {stock < 1 ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
+                {isOutOfStock ? "Unavailable" : isInCart ? `Added (${cartQuantity})` : "Add to cart"}
               </span>
             </button>
             <button
