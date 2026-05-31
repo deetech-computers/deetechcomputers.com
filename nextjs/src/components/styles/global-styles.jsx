@@ -5146,9 +5146,27 @@ button, input, select, textarea { font: inherit; }
   min-height: 90px;
   padding: 12px 14px;
   text-align: left;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+.checkout-payment__flow .checkout-payment__radio {
+  margin-top: 2px;
+}
+.checkout-payment__flow.is-active .checkout-payment__radio {
+  border-color: #0d56da;
+}
+.checkout-payment__flow.is-active .checkout-payment__radio::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #0d56da;
+}
+.checkout-payment__flow-copy {
   display: grid;
   gap: 4px;
-  cursor: pointer;
 }
 .checkout-payment__flow strong {
   color: #1f1d1b;

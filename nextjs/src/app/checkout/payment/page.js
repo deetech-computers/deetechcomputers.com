@@ -1007,8 +1007,11 @@ export default function CheckoutPaymentPage() {
                   className={isAutoFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
                   onClick={selectAutomaticPayment}
                 >
-                  <strong>Automatic payment</strong>
-                  <small>Pay quickly through secure Hubtel checkout. No screenshot upload needed.</small>
+                  <span className="checkout-payment__radio" aria-hidden="true" />
+                  <span className="checkout-payment__flow-copy">
+                    <strong>Automatic payment</strong>
+                    <small>Pay quickly through secure Hubtel checkout. No screenshot upload needed.</small>
+                  </span>
                 </button>
                 <button
                   ref={isManualFlow ? registerFieldRef("paymentFlow") : undefined}
@@ -1016,8 +1019,11 @@ export default function CheckoutPaymentPage() {
                   className={isManualFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
                   onClick={selectManualPayment}
                 >
-                  <strong>Manual payment</strong>
-                  <small>Choose a payment method, transfer manually, then upload proof.</small>
+                  <span className="checkout-payment__radio" aria-hidden="true" />
+                  <span className="checkout-payment__flow-copy">
+                    <strong>Manual payment</strong>
+                    <small>Choose a payment method, transfer manually, then upload proof.</small>
+                  </span>
                 </button>
               </div>
             </section>
