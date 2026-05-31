@@ -1052,7 +1052,7 @@ export async function createOrder(req, res) {
     },
   });
 
-  if (trimmedOrderRef) {
+  if (trimmedOrderRef && !shouldForceNewPaymentAttempt) {
     const existingOrder = await Order.findOne({
       user: req.user._id,
       clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
@@ -1437,7 +1437,7 @@ export async function createGuestOrder(req, res) {
     throw new Error("Payment screenshot is required");
   }
 
-  if (trimmedOrderRef) {
+  if (trimmedOrderRef && !shouldForceNewPaymentAttempt) {
       const existingGuestOrder = await Order.findOne({
         clientOrderRef: resolvedClientOrderRef || trimmedOrderRef,
         $or: [

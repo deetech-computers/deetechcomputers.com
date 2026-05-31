@@ -709,12 +709,13 @@ export default function CheckoutPaymentPage() {
       return;
     }
 
-    const clientOrderRef =
-      clientOrderRefRef.current ||
-      String(form.clientOrderRef || "").trim() ||
-      buildClientOrderRef();
+    const clientOrderRef = isAutoFlow
+      ? buildClientOrderRef()
+      : clientOrderRefRef.current ||
+        String(form.clientOrderRef || "").trim() ||
+        buildClientOrderRef();
     clientOrderRefRef.current = clientOrderRef;
-    if (!String(form.clientOrderRef || "").trim()) {
+    if (isAutoFlow || !String(form.clientOrderRef || "").trim()) {
       setForm((current) => ({ ...current, clientOrderRef }));
     }
     const shippingName = [form.firstName, form.lastName].filter(Boolean).join(" ").trim();
@@ -728,7 +729,7 @@ export default function CheckoutPaymentPage() {
       frontendOrigin:
         typeof window !== "undefined" ? window.location.origin : undefined,
       clientOrderRef,
-      forceNewPaymentAttempt: Boolean(form.forceNewPaymentAttempt),
+      forceNewPaymentAttempt: isAutoFlow || Boolean(form.forceNewPaymentAttempt),
       paymentScreenshotUrl: isAutoFlow ? "" : form.paymentProofUrl,
       discountCode: String(form.discountCode || "").trim().toUpperCase() || undefined,
       affiliateCode: String(form.affiliateCode || "").trim() || undefined,
@@ -805,7 +806,11 @@ export default function CheckoutPaymentPage() {
         setTransitionStage("idle");
         setHubtelCheckoutUrl(checkoutUrl);
         setHubtelModalOpen(true);
-        setForm((current) => ({ ...current, forceNewPaymentAttempt: false }));
+        setForm((current) => ({
+          ...current,
+          clientOrderRef,
+          forceNewPaymentAttempt: false,
+        }));
         pushToast("Hubtel checkout is ready. Continue from the popup menu.", "success");
         return;
       }
