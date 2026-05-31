@@ -331,15 +331,17 @@ function buildHubtelStatusToken(clientReference) {
     .digest("hex");
 }
 
-function buildHubtelReturnToken(clientReference) {
+function buildHubtelReturnToken(clientReference, order = null) {
   if (!HUBTEL_STATUS_TOKEN) {
     throw new Error("HUBTEL_STATUS_TOKEN is missing on the backend.");
   }
   const reference = String(clientReference || "").trim();
   if (!reference) return "";
+  const orderId = String(order?._id || "").trim();
+  const totalPrice = Number(order?.totalPrice || 0).toFixed(2);
   return crypto
     .createHmac("sha256", HUBTEL_STATUS_TOKEN)
-    .update(`hubtel-return:${reference}`)
+    .update(`hubtel-return:${reference}:${orderId}:${totalPrice}`)
     .digest("hex");
 }
 
@@ -1256,7 +1258,7 @@ export async function createOrder(req, res) {
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
       const statusToken = buildHubtelStatusToken(clientReference);
-      const returnToken = buildHubtelReturnToken(clientReference);
+      const returnToken = buildHubtelReturnToken(clientReference, order);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
@@ -1671,7 +1673,7 @@ export async function createGuestOrder(req, res) {
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
       const statusToken = buildHubtelStatusToken(clientReference);
-      const returnToken = buildHubtelReturnToken(clientReference);
+      const returnToken = buildHubtelReturnToken(clientReference, order);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
@@ -2074,11 +2076,6 @@ export async function handleHubtelReturnConfirmation(req, res) {
     res.status(401);
     throw new Error("Unauthorized payment status request");
   }
-  if (!timingSafeEqualText(returnToken, buildHubtelReturnToken(clientReference))) {
-    res.status(401);
-    throw new Error("Unauthorized payment return request");
-  }
-
   const order = await Order.findOne({ clientOrderRef: clientReference })
     .sort({ createdAt: -1 })
     .populate("orderItems.product", "name brand category images image");
@@ -2093,6 +2090,10 @@ export async function handleHubtelReturnConfirmation(req, res) {
     });
     res.status(404);
     throw new Error("Order not found");
+  }
+  if (!timingSafeEqualText(returnToken, buildHubtelReturnToken(clientReference, order))) {
+    res.status(401);
+    throw new Error("Unauthorized payment return request");
   }
 
   const isAutoHubtel =
