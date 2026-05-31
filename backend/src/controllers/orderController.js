@@ -356,6 +356,7 @@ function buildHubtelCallbackUrl(baseUrl, clientReference) {
     throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
   }
   const query = new URLSearchParams({
+    clientReference: String(clientReference || "").trim(),
     token: String(HUBTEL_CALLBACK_TOKEN || "").trim(),
     sig: buildHubtelCallbackSignature(clientReference),
   });
@@ -1752,8 +1753,10 @@ export async function createGuestOrder(req, res) {
 export async function handleHubtelCallback(req, res) {
   const payload = req.body || {};
   const rawData = payload?.Data && typeof payload.Data === "object" ? payload.Data : {};
+  const signedClientReference = String(req.query?.clientReference || "").trim();
   const clientReference = String(
-    payload?.ClientReference ||
+    signedClientReference ||
+      payload?.ClientReference ||
       rawData?.ClientReference ||
       rawData?.clientReference ||
       rawData?.CheckoutId ||
@@ -1789,7 +1792,24 @@ export async function handleHubtelCallback(req, res) {
     return res.status(401).json({ ok: false, message: "Unauthorized callback signature." });
   }
 
-  const order = await Order.findOne({ clientOrderRef: clientReference }).sort({ createdAt: -1 });
+  const payloadReferences = [
+    signedClientReference,
+    payload?.ClientReference,
+    rawData?.ClientReference,
+    rawData?.clientReference,
+    rawData?.CheckoutId,
+    rawData?.checkoutId,
+    rawData?.TransactionId,
+    rawData?.transactionId,
+  ]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+  const order = await Order.findOne({
+    $or: [
+      { clientOrderRef: { $in: payloadReferences } },
+      { paymentGatewayReference: { $in: payloadReferences } },
+    ],
+  }).sort({ createdAt: -1 });
   if (!order) {
     await writeOrderAttemptLog({
       req,
@@ -1805,7 +1825,29 @@ export async function handleHubtelCallback(req, res) {
   const responseCode = String(payload?.ResponseCode || "").trim();
   const statusText = String(rawData?.Status || payload?.Status || "").trim().toLowerCase();
   const wasPaidBefore = order.paymentStatus === "paid";
-  const isSuccess = responseCode === "0000" && statusText === "success";
+  const successCodes = new Set(["0000", "000", "00", "0", "200"]);
+  const successStatuses = new Set([
+    "success",
+    "successful",
+    "paid",
+    "completed",
+    "complete",
+    "payment_success",
+    "payment_successful",
+    "payment successful",
+  ]);
+  const failureStatuses = new Set([
+    "failed",
+    "failure",
+    "cancelled",
+    "canceled",
+    "declined",
+    "payment_failed",
+    "payment failed",
+  ]);
+  const isSuccess =
+    successStatuses.has(statusText) ||
+    (successCodes.has(responseCode) && (!statusText || successStatuses.has(statusText)));
   const callbackAmount = extractHubtelAmount(payload, rawData);
   const expectedAmount = Number(order.totalPrice || 0);
   const callbackGatewayReference = extractHubtelGatewayReference(payload, rawData);
@@ -1877,7 +1919,7 @@ export async function handleHubtelCallback(req, res) {
     if (!order.estimatedDeliveryDate) {
       order.estimatedDeliveryDate = defaultEstimatedDeliveryFrom(order.paidAt);
     }
-  } else if (statusText === "failed" || statusText === "cancelled" || responseCode === "1001") {
+  } else if (failureStatuses.has(statusText) || responseCode === "1001") {
     await releaseOrderStockReservation(order);
     order.paymentStatus = "failed";
     order.orderStatus = "cancelled";

@@ -29,6 +29,14 @@ function buildSavedOrderItem(item) {
   };
 }
 
+function readFirstParam(params, keys) {
+  for (const key of keys) {
+    const value = String(params.get(key) || "").trim();
+    if (value) return value;
+  }
+  return "";
+}
+
 export default function HubtelPaymentSuccessClient() {
   const router = useRouter();
   const params = useSearchParams();
@@ -37,11 +45,17 @@ export default function HubtelPaymentSuccessClient() {
   const [message, setMessage] = useState("Confirming your payment...");
 
   const clientReference = useMemo(
-    () => String(params.get("clientReference") || "").trim(),
+    () =>
+      readFirstParam(params, [
+        "clientReference",
+        "ClientReference",
+        "client_reference",
+        "reference",
+      ]),
     [params]
   );
   const statusToken = useMemo(
-    () => String(params.get("statusToken") || "").trim(),
+    () => readFirstParam(params, ["statusToken", "StatusToken", "status_token", "token"]),
     [params]
   );
 
@@ -56,7 +70,7 @@ export default function HubtelPaymentSuccessClient() {
       }
 
       const startedAt = Date.now();
-      const maxWaitMs = 60 * 1000;
+      const maxWaitMs = 120 * 1000;
       const delayMs = 2500;
 
       while (!ignore && Date.now() - startedAt < maxWaitMs) {
@@ -65,7 +79,8 @@ export default function HubtelPaymentSuccessClient() {
             `${API_BASE_ORDERS}/hubtel/status/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`
           );
           const order = result?.order;
-          if (result?.paymentStatus === "paid" && order) {
+          const paymentStatus = String(result?.paymentStatus || "").trim().toLowerCase();
+          if (paymentStatus === "paid" && order) {
             const pendingRaw =
               typeof window !== "undefined"
                 ? window.localStorage.getItem("deetech-hubtel-pending")
@@ -109,7 +124,14 @@ export default function HubtelPaymentSuccessClient() {
             }
 
             clearCart();
+            setStatus("success");
+            setMessage("Payment confirmed. Taking you to your receipt...");
             router.replace("/order-completed");
+            return;
+          }
+          if (paymentStatus === "failed") {
+            setStatus("error");
+            setMessage("Hubtel did not complete this payment. Please retry checkout or contact support if you were debited.");
             return;
           }
         } catch {
@@ -121,7 +143,7 @@ export default function HubtelPaymentSuccessClient() {
 
       if (!ignore) {
         setStatus("pending");
-        setMessage("Payment confirmation is taking longer than expected. Please check your orders shortly.");
+        setMessage("Payment confirmation is taking longer than expected. Please refresh this check or contact support if you were debited.");
       }
     }
 
@@ -134,8 +156,24 @@ export default function HubtelPaymentSuccessClient() {
   return (
     <main className="shell page-section">
       <section className="panel cart-empty">
-        <h1>{status === "error" ? "Payment Reference Missing" : "Finalizing Payment"}</h1>
+        <h1>
+          {status === "error"
+            ? "Payment Needs Attention"
+            : status === "pending"
+              ? "Still Confirming Payment"
+              : "Finalizing Payment"}
+        </h1>
         <p className="hero-copy">{message}</p>
+        {status === "pending" || status === "error" ? (
+          <div className="hero-actions">
+            <button type="button" className="primary-link" onClick={() => window.location.reload()}>
+              Check again
+            </button>
+            <button type="button" className="ghost-button" onClick={() => router.replace("/account")}>
+              Open my account
+            </button>
+          </div>
+        ) : null}
       </section>
     </main>
   );
