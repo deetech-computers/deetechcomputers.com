@@ -523,6 +523,18 @@ function buildRecentDuplicateWindowDate() {
   return new Date(Date.now() - 10 * 60 * 1000);
 }
 
+function visibleOrderQuery(extra = {}) {
+  return {
+    ...extra,
+    $or: [
+      { paymentFlow: { $ne: "auto" } },
+      { paymentMethod: { $ne: "hubtel" } },
+      { paymentStatus: "paid" },
+      { orderStatus: { $ne: "pending" } },
+    ],
+  };
+}
+
 async function findRecentDuplicateOrder({
   userId = null,
   shippingEmail = "",
@@ -1103,11 +1115,14 @@ export async function createOrder(req, res) {
       ? Number(((pricing.discountedItemsPrice * commissionRate) / 100).toFixed(2))
       : 0;
 
+    const shouldReserveStockNow = normalizedPaymentFlow !== "auto";
     const stockAdjustments = processedItems.map((item) => ({
       productId: item.product,
       qty: Number(item.qty || 0),
     }));
-    reservedStock = await reserveStockAdjustments(stockAdjustments);
+    if (shouldReserveStockNow) {
+      reservedStock = await reserveStockAdjustments(stockAdjustments);
+    }
 
     if (discounted.discount) {
       const consumed = await consumeDiscountCode(discounted.discount, req.user?._id, null);
@@ -1139,7 +1154,7 @@ export async function createOrder(req, res) {
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
-      stockReserved: true,
+      stockReserved: shouldReserveStockNow,
       discountCode: discounted.discount?.code,
       discountPercent: pricing.discountPercent,
       discountAmount: pricing.discountAmount,
@@ -1507,11 +1522,14 @@ export async function createGuestOrder(req, res) {
       ? Number(((pricing.discountedItemsPrice * commissionRate) / 100).toFixed(2))
       : 0;
 
+    const shouldReserveStockNow = normalizedPaymentFlow !== "auto";
     const stockAdjustments = processedItems.map((item) => ({
       productId: item.product,
       qty: Number(item.qty || 0),
     }));
-    reservedStock = await reserveStockAdjustments(stockAdjustments);
+    if (shouldReserveStockNow) {
+      reservedStock = await reserveStockAdjustments(stockAdjustments);
+    }
 
     if (discounted.discount) {
       const consumed = await consumeDiscountCode(discounted.discount, null, null);
@@ -1543,7 +1561,7 @@ export async function createGuestOrder(req, res) {
       paymentStatus: "pending",
       orderStatus: "pending",
       isDelivered: false,
-      stockReserved: true,
+      stockReserved: shouldReserveStockNow,
       discountCode: discounted.discount?.code,
       discountPercent: pricing.discountPercent,
       discountAmount: pricing.discountAmount,
@@ -2002,7 +2020,7 @@ export async function getHubtelPaymentStatus(req, res) {
 
 // Get logged-in user's orders
 export async function getMyOrders(req, res) {
-  const orders = await Order.find({ user: req.user._id })
+  const orders = await Order.find(visibleOrderQuery({ user: req.user._id }))
     .sort({ createdAt: -1 })
     .populate("orderItems.product", "name price brand category images image");
   res.json(orders);
@@ -2023,7 +2041,7 @@ export async function getMyOrderById(req, res) {
 
 // Get all orders (admin only)
 export async function getAllOrders(req, res) {
-  const orders = await Order.find()
+  const orders = await Order.find(visibleOrderQuery())
     .sort({ createdAt: -1 })
     .populate("user", "name email")
     .populate("orderItems.product", "name price brand");
