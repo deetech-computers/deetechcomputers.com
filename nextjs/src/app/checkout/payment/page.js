@@ -46,6 +46,37 @@ function buildSavedOrderItem(item) {
   };
 }
 
+function stableCartValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((entry) => stableCartValue(entry));
+  }
+  if (value && typeof value === "object") {
+    return Object.keys(value)
+      .sort()
+      .reduce((normalized, key) => {
+        normalized[key] = stableCartValue(value[key]);
+        return normalized;
+      }, {});
+  }
+  return value;
+}
+
+function buildHubtelPendingCartKey(items) {
+  return JSON.stringify(
+    buildOrderItems(items)
+      .map((item) => ({
+        product: item.product,
+        qty: item.qty,
+        selectedUpgrades: stableCartValue(item.selectedUpgrades || {}),
+      }))
+      .sort((a, b) =>
+        `${a.product}:${JSON.stringify(a.selectedUpgrades)}`.localeCompare(
+          `${b.product}:${JSON.stringify(b.selectedUpgrades)}`
+        )
+      )
+  );
+}
+
 export default function CheckoutPaymentPage() {
   const PROCESSING_FLOOR_MS = 1800;
   const SUCCESS_FLOOR_MS = 3000;
@@ -100,6 +131,7 @@ export default function CheckoutPaymentPage() {
   const hubtelFinalizedRef = useRef(false);
   const submitLockRef = useRef(false);
   const clientOrderRefRef = useRef("");
+  const hubtelPendingPayloadRef = useRef(null);
   const pricingPreviewSeq = useRef(0);
   const [pricingPreview, setPricingPreview] = useState(null);
 
@@ -121,10 +153,36 @@ export default function CheckoutPaymentPage() {
       const pendingRef = String(pending?.clientOrderRef || "").trim();
       const pendingStatusToken = String(pending?.statusToken || "").trim();
       const awaitingAutoHubtel = Boolean(pending?.awaitingAutoHubtel);
-      if (!pendingRef || !pendingStatusToken || !awaitingAutoHubtel) {
+      const pendingCartKey = String(pending?.cartKey || "").trim();
+      const currentCartKey = buildHubtelPendingCartKey(items);
+      const pendingCreatedAt = Number(pending?.createdAt || 0);
+      const pendingIsFresh =
+        Number.isFinite(pendingCreatedAt) &&
+        pendingCreatedAt > 0 &&
+        Date.now() - pendingCreatedAt < HUBTEL_MAX_WAIT_MS;
+      const draft = readCheckoutDraft(user) || {};
+      const draftMatchesPendingAttempt =
+        String(draft?.clientOrderRef || "").trim() === pendingRef &&
+        String(draft?.paymentMethod || "").trim().toLowerCase() === "hubtel" &&
+        String(draft?.paymentFlow || "").trim().toLowerCase() === "auto";
+      const pendingMatchesCurrentCart =
+        Boolean(pendingCartKey) &&
+        Boolean(currentCartKey) &&
+        pendingCartKey === currentCartKey;
+
+      if (
+        !pendingRef ||
+        !pendingStatusToken ||
+        !awaitingAutoHubtel ||
+        !pendingIsFresh ||
+        !draftMatchesPendingAttempt ||
+        !pendingMatchesCurrentCart
+      ) {
         window.localStorage.removeItem("deetech-hubtel-pending");
+        prepareHubtelRetryDrafts();
         return;
       }
+      hubtelPendingPayloadRef.current = pending;
       setHubtelClientReference(pendingRef);
       setHubtelStatusToken(pendingStatusToken);
       setHubtelWaiting(true);
@@ -137,7 +195,7 @@ export default function CheckoutPaymentPage() {
     } catch {
       window.localStorage.removeItem("deetech-hubtel-pending");
     }
-  }, []);
+  }, [items, user]);
 
   useEffect(() => {
     let cancelled = false;
@@ -211,6 +269,24 @@ export default function CheckoutPaymentPage() {
     if (!ready) return;
     writeCheckoutDraft(form, user);
   }, [form, ready, user]);
+
+  useEffect(() => {
+    if (hubtelFinalizedRef.current) return;
+    const pendingCartKey = String(hubtelPendingPayloadRef.current?.cartKey || "").trim();
+    if (!pendingCartKey) return;
+    const currentCartKey = buildHubtelPendingCartKey(items);
+    if (currentCartKey && pendingCartKey === currentCartKey) return;
+
+    clearStoredHubtelPending({ prepareRetry: true });
+    setHubtelClientReference("");
+    setHubtelStatusToken("");
+    setHubtelCheckoutUrl("");
+    setHubtelModalOpen(false);
+    setHubtelWaiting(false);
+    setTransitionStage("idle");
+    setSubmitting(false);
+    submitLockRef.current = false;
+  }, [items]);
 
   useEffect(() => {
     if (!ready) return;
@@ -361,6 +437,16 @@ export default function CheckoutPaymentPage() {
     setHubtelCheckoutUrl("");
   }
 
+  function clearStoredHubtelPending({ prepareRetry = false } = {}) {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("deetech-hubtel-pending");
+      if (prepareRetry) {
+        prepareHubtelRetryDrafts();
+      }
+    }
+    hubtelPendingPayloadRef.current = null;
+  }
+
   async function finalizePaidHubtelOrder(order, fallbackReference = "") {
     const ref = String(order?._id || fallbackReference || "").trim();
     if (!ref) return;
@@ -401,7 +487,7 @@ export default function CheckoutPaymentPage() {
     });
 
     if (typeof window !== "undefined") {
-      window.localStorage.removeItem("deetech-hubtel-pending");
+      clearStoredHubtelPending();
       window.sessionStorage.setItem("deetech-order-complete-animate", "1");
       window.sessionStorage.setItem("deetech-order-complete-pending", "1");
     }
@@ -426,6 +512,15 @@ export default function CheckoutPaymentPage() {
       pushToast("Popup blocked. Allow popups, then tap continue again.", "warning");
       return;
     }
+    if (hubtelPendingPayloadRef.current) {
+      window.localStorage.setItem(
+        "deetech-hubtel-pending",
+        JSON.stringify({
+          ...hubtelPendingPayloadRef.current,
+          openedAt: Date.now(),
+        })
+      );
+    }
     closeHubtelModal();
     setHubtelWaiting(true);
     setTransitionStage("processing");
@@ -433,10 +528,7 @@ export default function CheckoutPaymentPage() {
   }
 
   function stopWaitingForHubtelPayment() {
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("deetech-hubtel-pending");
-      prepareHubtelRetryDrafts();
-    }
+    clearStoredHubtelPending({ prepareRetry: true });
     const nextClientOrderRef = buildClientOrderRef();
     clientOrderRefRef.current = nextClientOrderRef;
     setHubtelWaiting(false);
@@ -461,7 +553,7 @@ export default function CheckoutPaymentPage() {
   }
 
   useEffect(() => {
-    if (!hubtelClientReference || !hubtelStatusToken || hubtelFinalizedRef.current) return;
+    if (!hubtelWaiting || !hubtelClientReference || !hubtelStatusToken || hubtelFinalizedRef.current) return;
     let ignore = false;
 
     async function pollHubtelStatus() {
@@ -479,10 +571,7 @@ export default function CheckoutPaymentPage() {
             return;
           }
           if (paymentStatus === "failed") {
-            if (typeof window !== "undefined") {
-              window.localStorage.removeItem("deetech-hubtel-pending");
-              prepareHubtelRetryDrafts();
-            }
+            clearStoredHubtelPending({ prepareRetry: true });
             setHubtelWaiting(false);
             setTransitionStage("idle");
             setHubtelClientReference("");
@@ -492,9 +581,7 @@ export default function CheckoutPaymentPage() {
           }
         } catch (error) {
           if (Number(error?.status || 0) === 404) {
-            if (typeof window !== "undefined") {
-              window.localStorage.removeItem("deetech-hubtel-pending");
-            }
+            clearStoredHubtelPending();
             setHubtelWaiting(false);
             setTransitionStage("idle");
             setHubtelClientReference("");
@@ -508,10 +595,7 @@ export default function CheckoutPaymentPage() {
       }
 
       if (!ignore && !hubtelFinalizedRef.current) {
-        if (typeof window !== "undefined") {
-          window.localStorage.removeItem("deetech-hubtel-pending");
-          prepareHubtelRetryDrafts();
-        }
+        clearStoredHubtelPending({ prepareRetry: true });
         setHubtelWaiting(false);
         setTransitionStage("idle");
         setHubtelClientReference("");
@@ -524,7 +608,7 @@ export default function CheckoutPaymentPage() {
     return () => {
       ignore = true;
     };
-  }, [hubtelClientReference, hubtelStatusToken, pushToast]);
+  }, [hubtelClientReference, hubtelStatusToken, hubtelWaiting, pushToast]);
 
   function registerFieldRef(key) {
     return (element) => {
@@ -695,29 +779,26 @@ export default function CheckoutPaymentPage() {
           throw new Error("Unable to verify Hubtel payment status. Please try again.");
         }
         const orderRef = String(order?.clientOrderRef || clientOrderRef || "").trim();
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(
-            "deetech-hubtel-pending",
-            JSON.stringify({
-              clientOrderRef: orderRef,
-              statusToken,
-              orderId: result?.orderId || order?._id || "",
-              paymentMethod: selectedPaymentMethodId,
-              subtotal,
-              shipping,
-              taxes,
-              awaitingAutoHubtel: true,
-              discountCode: String(order?.discountCode || form.discountCode || "").trim().toUpperCase(),
-              discountPercent: Number(order?.discountPercent || form.discountPercent || 0),
-              discountAmount: Number(order?.discountAmount || couponDiscount || 0),
-              email: form.shippingEmail,
-              phone: form.mobileNumber,
-              address: form.shippingAddress,
-              city: form.shippingCity,
-              items: items.map((item) => buildSavedOrderItem(item)),
-            })
-          );
-        }
+        hubtelPendingPayloadRef.current = {
+          clientOrderRef: orderRef,
+          statusToken,
+          orderId: result?.orderId || order?._id || "",
+          paymentMethod: selectedPaymentMethodId,
+          subtotal,
+          shipping,
+          taxes,
+          cartKey: buildHubtelPendingCartKey(items),
+          createdAt: Date.now(),
+          awaitingAutoHubtel: true,
+          discountCode: String(order?.discountCode || form.discountCode || "").trim().toUpperCase(),
+          discountPercent: Number(order?.discountPercent || form.discountPercent || 0),
+          discountAmount: Number(order?.discountAmount || couponDiscount || 0),
+          email: form.shippingEmail,
+          phone: form.mobileNumber,
+          address: form.shippingAddress,
+          city: form.shippingCity,
+          items: items.map((item) => buildSavedOrderItem(item)),
+        };
         setHubtelClientReference(orderRef);
         setHubtelStatusToken(statusToken);
         setHubtelWaiting(false);
@@ -894,13 +975,21 @@ export default function CheckoutPaymentPage() {
                   ref={method.id === form.paymentMethod ? registerFieldRef("paymentMethod") : undefined}
                   type="button"
                   className={method.id === form.paymentMethod ? "checkout-payment__option is-active" : "checkout-payment__option"}
-                  onClick={() =>
+                  onClick={() => {
+                    if (method.id !== "hubtel") {
+                      clearStoredHubtelPending({ prepareRetry: true });
+                      setHubtelClientReference("");
+                      setHubtelStatusToken("");
+                      setHubtelCheckoutUrl("");
+                      setHubtelModalOpen(false);
+                      setHubtelWaiting(false);
+                    }
                     setForm((current) => ({
                       ...current,
                       paymentMethod: method.id,
                       paymentFlow: method.id === "hubtel" ? current.paymentFlow : "manual",
-                    }))
-                  }
+                    }));
+                  }}
                 >
                   <span className="checkout-payment__radio" aria-hidden="true" />
                   <StableImage
@@ -925,7 +1014,15 @@ export default function CheckoutPaymentPage() {
                       ref={registerFieldRef("paymentFlow")}
                       type="button"
                       className={isManualFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
-                      onClick={() => setForm((current) => ({ ...current, paymentFlow: "manual" }))}
+                      onClick={() => {
+                        clearStoredHubtelPending({ prepareRetry: true });
+                        setHubtelClientReference("");
+                        setHubtelStatusToken("");
+                        setHubtelCheckoutUrl("");
+                        setHubtelModalOpen(false);
+                        setHubtelWaiting(false);
+                        setForm((current) => ({ ...current, paymentFlow: "manual" }));
+                      }}
                     >
                       <strong>Hubtel Manual</strong>
                       <small>Use Hubtel details and upload payment proof.</small>
