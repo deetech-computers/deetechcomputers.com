@@ -15,7 +15,7 @@ import {
   HUBTEL_STATUS_TOKEN,
 } from "../config/env.js";
 import { sendOrderNotification, sendOrderConfirmation } from "../utils/emailService.js";
-import { initiateHubtelCheckout } from "../utils/hubtelService.js";
+import { getHubtelCheckoutUrl, initiateHubtelCheckout } from "../utils/hubtelService.js";
 import { deleteStoredMedia } from "../utils/mediaStorage.js";
 import { buildOrderPricing, getCommissionableAmount } from "../utils/orderPricing.js";
 import { getProductPricing } from "../utils/productPricing.js";
@@ -129,12 +129,6 @@ export async function previewOrderPricing(req, res) {
     totalPrice: pricing.totalPrice,
     discountCode: discounted.discount?.code || "",
   });
-}
-
-function getHubtelCheckoutUrl(response) {
-  const direct = String(response?.data?.checkoutDirectUrl || "").trim();
-  const checkout = String(response?.data?.checkoutUrl || "").trim();
-  return direct || checkout || "";
 }
 
 function resolvePublicBaseUrl() {
@@ -337,6 +331,18 @@ function buildHubtelStatusToken(clientReference) {
     .digest("hex");
 }
 
+function buildHubtelReturnToken(clientReference) {
+  if (!HUBTEL_STATUS_TOKEN) {
+    throw new Error("HUBTEL_STATUS_TOKEN is missing on the backend.");
+  }
+  const reference = String(clientReference || "").trim();
+  if (!reference) return "";
+  return crypto
+    .createHmac("sha256", HUBTEL_STATUS_TOKEN)
+    .update(`hubtel-return:${reference}`)
+    .digest("hex");
+}
+
 function buildHubtelCallbackSignature(clientReference) {
   if (!HUBTEL_CALLBACK_TOKEN) {
     throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
@@ -363,13 +369,17 @@ function buildHubtelCallbackUrl(baseUrl, clientReference) {
   return `${trimmedBase}?${query.toString()}`;
 }
 
-function buildHubtelResultUrl(baseUrl, clientReference, statusToken) {
+function buildHubtelResultUrl(baseUrl, clientReference, statusToken, extra = {}) {
   const trimmedBase = String(baseUrl || "").trim();
   if (!trimmedBase) return "";
   const query = new URLSearchParams({
     clientReference: String(clientReference || "").trim(),
     statusToken: String(statusToken || "").trim(),
   });
+  for (const [key, value] of Object.entries(extra || {})) {
+    const normalizedValue = String(value || "").trim();
+    if (normalizedValue) query.set(key, normalizedValue);
+  }
   return `${trimmedBase}?${query.toString()}`;
 }
 
@@ -407,10 +417,16 @@ function extractHubtelAmount(payload = {}, rawData = {}) {
   const candidates = [
     rawData?.Amount,
     rawData?.amount,
+    rawData?.TotalAmount,
+    rawData?.totalAmount,
     payload?.Amount,
     payload?.amount,
+    payload?.TotalAmount,
+    payload?.totalAmount,
     rawData?.Data?.Amount,
     rawData?.Data?.amount,
+    rawData?.data?.Amount,
+    rawData?.data?.amount,
   ];
 
   for (const value of candidates) {
@@ -426,12 +442,16 @@ function extractHubtelGatewayReference(payload = {}, rawData = {}) {
   const candidates = [
     rawData?.PaylinkId,
     rawData?.paylinkId,
+    rawData?.PayLinkId,
+    rawData?.payLinkId,
     rawData?.CheckoutId,
     rawData?.checkoutId,
     rawData?.TransactionId,
     rawData?.transactionId,
     payload?.PaylinkId,
     payload?.paylinkId,
+    payload?.PayLinkId,
+    payload?.payLinkId,
     payload?.CheckoutId,
     payload?.checkoutId,
     payload?.TransactionId,
@@ -454,6 +474,8 @@ function listExpectedHubtelGatewayReferences(order = {}) {
     order?.paymentGatewayReference,
     payloadData?.paylinkId,
     payloadData?.PaylinkId,
+    payloadData?.payLinkId,
+    payloadData?.PayLinkId,
     payloadData?.checkoutId,
     payloadData?.CheckoutId,
     payloadData?.transactionId,
@@ -590,6 +612,33 @@ async function findRecentDuplicateOrder({
     ...activeStates,
     $or: emailConditions,
   }).sort({ createdAt: -1 });
+}
+
+async function finalizePaidHubtelOrder(order) {
+  const wasPaidBefore = order.paymentStatus === "paid";
+  await ensureOrderStockReserved(order);
+  order.paymentGateway = "hubtel";
+  order.paymentStatus = "paid";
+  order.orderStatus = order.orderStatus === "pending" ? "processing" : order.orderStatus;
+  if (!order.paidAt) order.paidAt = new Date();
+  if (!order.estimatedDeliveryDate) {
+    order.estimatedDeliveryDate = defaultEstimatedDeliveryFrom(order.paidAt);
+  }
+  await order.save();
+  try {
+    await ensureReferralSyncedForOrder(order);
+  } catch (referralError) {
+    console.warn("Referral sync skipped:", referralError?.message || referralError);
+  }
+  if (!wasPaidBefore) {
+    try {
+      const orderForEmail = await Order.findById(order._id).populate("orderItems.product", "name");
+      await sendOrderEmailsBestEffort(orderForEmail || order);
+    } catch (emailError) {
+      console.warn("Order paid email dispatch skipped:", emailError?.message || emailError);
+    }
+  }
+  return order;
 }
 
 async function applyDiscount(codeRaw, total, userId, session) {
@@ -1207,6 +1256,7 @@ export async function createOrder(req, res) {
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
       const statusToken = buildHubtelStatusToken(clientReference);
+      const returnToken = buildHubtelReturnToken(clientReference);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
@@ -1217,7 +1267,9 @@ export async function createOrder(req, res) {
           `${backendBase}/api/orders/hubtel/callback`,
           clientReference
         ),
-        returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken),
+        returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken, {
+          returnToken,
+        }),
         cancellationUrl: buildHubtelResultUrl(
           `${frontendBase}/payment/cancelled`,
           clientReference,
@@ -1619,6 +1671,7 @@ export async function createGuestOrder(req, res) {
       }
       const clientReference = toHubtelClientReference(order.clientOrderRef || `ord_${order._id}`);
       const statusToken = buildHubtelStatusToken(clientReference);
+      const returnToken = buildHubtelReturnToken(clientReference);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
       const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
       const hubtel = await initiateHubtelCheckout({
@@ -1629,7 +1682,9 @@ export async function createGuestOrder(req, res) {
           `${backendBase}/api/orders/hubtel/callback`,
           clientReference
         ),
-        returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken),
+        returnUrl: buildHubtelResultUrl(`${frontendBase}/payment/success`, clientReference, statusToken, {
+          returnToken,
+        }),
         cancellationUrl: buildHubtelResultUrl(
           `${frontendBase}/payment/cancelled`,
           clientReference,
@@ -1769,14 +1824,23 @@ export async function createGuestOrder(req, res) {
 // Hubtel callback (public)
 export async function handleHubtelCallback(req, res) {
   const payload = req.body || {};
-  const rawData = payload?.Data && typeof payload.Data === "object" ? payload.Data : {};
+  const rawData =
+    payload?.Data && typeof payload.Data === "object"
+      ? payload.Data
+      : payload?.data && typeof payload.data === "object"
+        ? payload.data
+        : {};
   const signedClientReference = String(req.query?.clientReference || "").trim();
   const clientReference = String(
     signedClientReference ||
       payload?.ClientReference ||
+      payload?.clientReference ||
       rawData?.ClientReference ||
       rawData?.clientReference ||
       rawData?.CheckoutId ||
+      rawData?.checkoutId ||
+      rawData?.PaylinkId ||
+      rawData?.paylinkId ||
       ""
   ).trim();
   const callbackToken = String(req.query?.token || "").trim();
@@ -1812,10 +1876,15 @@ export async function handleHubtelCallback(req, res) {
   const payloadReferences = [
     signedClientReference,
     payload?.ClientReference,
+    payload?.clientReference,
     rawData?.ClientReference,
     rawData?.clientReference,
     rawData?.CheckoutId,
     rawData?.checkoutId,
+    rawData?.PaylinkId,
+    rawData?.paylinkId,
+    rawData?.PayLinkId,
+    rawData?.payLinkId,
     rawData?.TransactionId,
     rawData?.transactionId,
   ]
@@ -1839,8 +1908,16 @@ export async function handleHubtelCallback(req, res) {
     return res.status(200).json({ ok: true, ignored: true });
   }
 
-  const responseCode = String(payload?.ResponseCode || "").trim();
-  const statusText = String(rawData?.Status || payload?.Status || "").trim().toLowerCase();
+  const responseCode = String(payload?.ResponseCode || payload?.responseCode || payload?.code || "").trim();
+  const statusText = String(
+    rawData?.Status ||
+      rawData?.status ||
+      payload?.Status ||
+      payload?.status ||
+      ""
+  )
+    .trim()
+    .toLowerCase();
   const wasPaidBefore = order.paymentStatus === "paid";
   const successCodes = new Set(["0000", "000", "00", "0", "200"]);
   const successStatuses = new Set([
@@ -1981,6 +2058,83 @@ export async function handleHubtelCallback(req, res) {
   }
 
   return res.status(200).json({ ok: true });
+}
+
+// Hubtel success return fallback (public, signed)
+export async function handleHubtelReturnConfirmation(req, res) {
+  const clientReference = String(req.params.clientReference || req.body?.clientReference || "").trim();
+  const statusToken = String(req.query?.token || req.body?.statusToken || "").trim();
+  const returnToken = String(req.query?.returnToken || req.body?.returnToken || "").trim();
+
+  if (!clientReference) {
+    res.status(400);
+    throw new Error("Client reference is required");
+  }
+  if (!timingSafeEqualText(statusToken, buildHubtelStatusToken(clientReference))) {
+    res.status(401);
+    throw new Error("Unauthorized payment status request");
+  }
+  if (!timingSafeEqualText(returnToken, buildHubtelReturnToken(clientReference))) {
+    res.status(401);
+    throw new Error("Unauthorized payment return request");
+  }
+
+  const order = await Order.findOne({ clientOrderRef: clientReference })
+    .sort({ createdAt: -1 })
+    .populate("orderItems.product", "name brand category images image");
+  if (!order) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "system",
+      stage: "return_confirmation",
+      outcome: "missing_order",
+      clientOrderRef: clientReference,
+      reason: "Hubtel success return received for unknown order reference",
+    });
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  const isAutoHubtel =
+    String(order.paymentMethod || "").toLowerCase() === "hubtel" &&
+    String(order.paymentFlow || "").toLowerCase() === "auto";
+  if (!isAutoHubtel) {
+    res.status(400);
+    throw new Error("Order is not a Hubtel automatic checkout");
+  }
+  if (order.paymentStatus === "failed" || order.orderStatus === "cancelled") {
+    res.status(409);
+    throw new Error("This Hubtel order is already cancelled or failed");
+  }
+
+  order.paymentGatewayStatus = order.paymentGatewayStatus || "success_return";
+  const finalizedOrder = await finalizePaidHubtelOrder(order);
+  await writeOrderAttemptLog({
+    req,
+    order: finalizedOrder,
+    user: finalizedOrder.user,
+    scope: finalizedOrder.user ? "authenticated" : "guest",
+    stage: "return_confirmation",
+    outcome: finalizedOrder.paymentStatus,
+    clientOrderRef: clientReference,
+    paymentMethod: finalizedOrder.paymentMethod,
+    paymentFlow: finalizedOrder.paymentFlow,
+    itemCount: countOrderItems(finalizedOrder.orderItems),
+    totalPrice: Number(finalizedOrder.totalPrice || 0),
+    shippingEmail: finalizedOrder.shippingEmail,
+    guestEmail: finalizedOrder.guestEmail,
+    mobileNumber: finalizedOrder.mobileNumber,
+    metadata: {
+      gatewayStatus: finalizedOrder.paymentGatewayStatus,
+    },
+  });
+
+  return res.json({
+    clientReference,
+    paymentStatus: finalizedOrder.paymentStatus,
+    orderStatus: finalizedOrder.orderStatus,
+    order: finalizedOrder,
+  });
 }
 
 // Hubtel status check (public by client order reference)

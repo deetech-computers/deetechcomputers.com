@@ -20,6 +20,15 @@ function authHeader() {
   return `Basic ${token}`;
 }
 
+export function getHubtelCheckoutUrl(response) {
+  const direct = String(response?.data?.checkoutDirectUrl || "").trim();
+  const checkout = String(response?.data?.checkoutUrl || "").trim();
+  const paylink = String(response?.data?.paylinkUrl || "").trim();
+  const topLevelCheckout = String(response?.checkoutUrl || "").trim();
+  const topLevelPaylink = String(response?.paylinkUrl || "").trim();
+  return direct || checkout || paylink || topLevelCheckout || topLevelPaylink || "";
+}
+
 export async function initiateHubtelCheckout({
   amount,
   description,

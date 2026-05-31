@@ -16,6 +16,7 @@ import {
   deleteOrder,
   resyncAffiliateReferrals,
   handleHubtelCallback,
+  handleHubtelReturnConfirmation,
   getHubtelPaymentStatus,
 } from "../controllers/orderController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -32,6 +33,7 @@ router
 router.post("/guest", asyncHandler(createGuestOrder));
 router.post("/preview", asyncHandler(previewOrderPricing));
 router.post("/hubtel/callback", asyncHandler(handleHubtelCallback));
+router.post("/hubtel/return/:clientReference", asyncHandler(handleHubtelReturnConfirmation));
 router.get("/hubtel/status/:clientReference", asyncHandler(getHubtelPaymentStatus));
 router.get("/attempts", protect, admin, asyncHandler(getRecentOrderAttempts));
 
