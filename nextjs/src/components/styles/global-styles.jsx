@@ -455,7 +455,7 @@ button, input, select, textarea { font: inherit; }
 .cart-feedback {
   position: fixed;
   inset: 0;
-  z-index: 120;
+  z-index: 1300;
   display: flex;
   justify-content: flex-end;
   min-height: 100svh;
@@ -13371,9 +13371,15 @@ button, input, select, textarea { font: inherit; }
   .shop-mobile-bar {
     z-index: 160;
   }
+  .shop-mobile-bar {
+    z-index: 70;
+  }
   .toast-stack {
     left: 12px;
     right: 12px;
+    top: auto;
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    z-index: 90;
   }
   .toast {
     width: 100%;
