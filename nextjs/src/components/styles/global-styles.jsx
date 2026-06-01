@@ -13191,6 +13191,195 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.88rem;
   }
 }
+@media (max-width: 1099px) {
+  .shell {
+    width: min(100%, calc(100vw - clamp(24px, 4vw, 32px)));
+  }
+  .page-section {
+    padding-block: clamp(22px, 6vw, 36px);
+  }
+  .hero-panel,
+  .panel {
+    padding: clamp(18px, 4vw, 24px);
+  }
+}
+@media (max-width: 760px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .shell {
+    width: min(100%, calc(100vw - 24px));
+  }
+  .shop-toolbar__controls,
+  .checkout-payment__flow-grid,
+  .checkout-fields,
+  .checkout-delivery__options,
+  .checkout-customer-grid,
+  .admin-form__split,
+  .admin-form--inline,
+  .admin-upgrade-panel__grid,
+  .admin-upgrade-editor__row,
+  .admin-order-detail-grid,
+  .admin-meta-grid,
+  .admin-stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .cart-shell,
+  .wishlist-shell,
+  .checkout-shell {
+    padding: 18px 14px;
+  }
+  .checkout-form,
+  .checkout-payment,
+  .checkout-payment__details,
+  .checkout-summary,
+  .cart-summary,
+  .wishlist-table,
+  .admin-manager,
+  .admin-record,
+  .admin-create-panel {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .checkout-payment__option,
+  .checkout-payment__flow,
+  .checkout-payment__auto-head,
+  .checkout-payment__instruction-head,
+  .admin-hero,
+  .admin-record__head,
+  .admin-record__item,
+  .admin-support-ticket__summary,
+  .admin-support-ticket__thread-toggle,
+  .wishlist-actions__link {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    align-items: start;
+  }
+  .admin-hero__badge {
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: auto;
+    min-height: 92px;
+    border-radius: 20px;
+  }
+  .admin-record__main {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .admin-record__image {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+  }
+  .admin-actions,
+  .admin-chip-row,
+  .checkout-summary__actions,
+  .account-dashboard__actions,
+  .account-dashboard__cta-row {
+    align-items: stretch;
+  }
+  .admin-actions > *,
+  .checkout-summary__button,
+  .checkout-payment__secondary,
+  .checkout-payment__upload-button,
+  .account-dashboard__actions > *,
+  .account-dashboard__cta-row > * {
+    width: 100%;
+  }
+  .shop-toolbar__controls,
+  .shop-toolbar__sort,
+  .shop-toolbar__sort select,
+  .checkout-payment__copy,
+  .checkout-summary__line strong,
+  .cart-summary__line strong,
+  .wishlist-row__meta,
+  .admin-record__main,
+  .admin-record__items,
+  .admin-support-ticket__summary-copy,
+  .account-support-chat__thread-head,
+  .account-support-chat__bubble-meta {
+    min-width: 0;
+  }
+  .shop-toolbar__sort {
+    width: 100%;
+  }
+  .shop-toolbar__sort select {
+    min-width: 0;
+  }
+  .checkout-summary__line,
+  .checkout-summary__total,
+  .cart-summary__line,
+  .cart-summary__total {
+    align-items: flex-start;
+  }
+  .checkout-summary__line strong,
+  .cart-summary__line strong {
+    max-width: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .checkout-payment__proof-preview {
+    grid-template-columns: 1fr;
+  }
+  .checkout-payment__proof-thumb {
+    width: 100%;
+    height: 180px;
+  }
+  .account-support-chat__composer-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .account-support-chat__send {
+    width: 100%;
+  }
+}
+@media (max-width: 520px) {
+  .product-grid--catalog,
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .homepage-products__title-row,
+  .homepage-products__section-head,
+  .related-products__header,
+  .shop-toolbar__controls {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .shop-active-filters,
+  .admin-record__items,
+  .admin-chip-row {
+    gap: 7px;
+  }
+  .shop-active-filter,
+  .admin-chip,
+  .admin-record__items span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .checkout-payment__option,
+  .checkout-payment__flow,
+  .checkout-payment__instruction-card,
+  .checkout-payment__upload-card,
+  .checkout-payment__auto-card,
+  .checkout-customer-card {
+    padding: 16px;
+  }
+  .checkout-mobile-action-bar,
+  .shop-mobile-bar {
+    z-index: 160;
+  }
+  .toast-stack {
+    left: 12px;
+    right: 12px;
+  }
+  .toast {
+    width: 100%;
+    max-width: none;
+  }
+}
 `;
 
 export default function GlobalStyles() {
