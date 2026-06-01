@@ -13378,7 +13378,7 @@ button, input, select, textarea { font: inherit; }
     right: 12px;
     top: auto;
     bottom: calc(74px + env(safe-area-inset-bottom));
-    z-index: 90;
+    z-index: 1400;
   }
   .toast {
     width: 100%;
