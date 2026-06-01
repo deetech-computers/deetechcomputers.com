@@ -13380,6 +13380,9 @@ button, input, select, textarea { font: inherit; }
     bottom: calc(74px + env(safe-area-inset-bottom));
     z-index: 1400;
   }
+  body:has(.cart-feedback) .toast-stack {
+    bottom: calc(220px + env(safe-area-inset-bottom));
+  }
   .toast {
     width: 100%;
     max-width: none;
