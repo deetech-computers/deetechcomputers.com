@@ -13367,8 +13367,7 @@ button, input, select, textarea { font: inherit; }
   .checkout-customer-card {
     padding: 16px;
   }
-  .checkout-mobile-action-bar,
-  .shop-mobile-bar {
+  .checkout-mobile-action-bar {
     z-index: 160;
   }
   .shop-mobile-bar {
