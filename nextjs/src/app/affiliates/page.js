@@ -526,7 +526,7 @@ export default function AffiliatesPage() {
                     />
                   </label>
                   <p className="affiliate-muted">
-                    Create with your MoMo number for direct commission payment and quick contact if payout confirmation is needed.
+                    This payout number is saved once when your code is created. To change it later, contact admin for verification.
                   </p>
                   <button type="button" className="affiliate-primary" onClick={handleRegister} disabled={joining}>
                     {joining ? "Creating..." : "Create affiliate code"}

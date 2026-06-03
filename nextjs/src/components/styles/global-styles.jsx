@@ -7838,7 +7838,7 @@ button, input, select, textarea { font: inherit; }
   position: relative;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(320px, 1.1fr);
   gap: 24px;
   align-items: center;
   padding: clamp(24px, 4vw, 42px);
@@ -7870,6 +7870,13 @@ button, input, select, textarea { font: inherit; }
   z-index: 1;
   display: grid;
   gap: 10px;
+}
+.affiliate-join-card__form {
+  width: min(100%, 520px);
+  justify-self: end;
+}
+.affiliate-command .affiliate-code-card {
+  justify-self: end;
 }
 .affiliate-payout-field span {
   color: #1f1d1b;
@@ -12272,6 +12279,11 @@ button, input, select, textarea { font: inherit; }
   .affiliate-command,
   .affiliate-referral-row {
     grid-template-columns: 1fr;
+  }
+  .affiliate-join-card__form,
+  .affiliate-command .affiliate-code-card {
+    justify-self: stretch;
+    width: 100%;
   }
   .affiliate-primary,
   .affiliate-code-card__actions button,
