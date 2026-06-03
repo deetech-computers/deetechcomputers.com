@@ -16,7 +16,12 @@ function normalizeMomoNumber(raw) {
 
 function isValidGhanaMomoNumber(value) {
   const normalized = normalizeMomoNumber(value);
-  return /^(?:\+233|233|0)(?:2|5)\d{8}$/.test(normalized);
+  const local = normalized.startsWith("+233")
+    ? `0${normalized.slice(4)}`
+    : normalized.startsWith("233")
+      ? `0${normalized.slice(3)}`
+      : normalized;
+  return /^(020|023|024|025|026|027|028|029|050|053|054|055|056|057|059)\d{7}$/.test(local);
 }
 
 function buildCodeFromUser(user) {
@@ -141,7 +146,7 @@ export async function registerAffiliate(req, res) {
   const momoNumber = normalizeMomoNumber(req.body?.momoNumber || req.body?.momo_number);
   if (!isValidGhanaMomoNumber(momoNumber)) {
     res.status(400);
-    throw new Error("A valid Ghana mobile money number is required to create an affiliate code");
+    throw new Error("Enter a valid Ghana MoMo number, for example 0240000000 or +233240000000");
   }
 
   const user = await User.findById(req.user._id).select(

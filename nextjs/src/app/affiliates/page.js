@@ -71,6 +71,23 @@ function referralStatusLabel(status) {
   return "Pending";
 }
 
+function normalizeMomoNumber(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[^\d+]/g, "")
+    .replace(/^00/, "+");
+}
+
+function isValidGhanaMomoNumber(value) {
+  const normalized = normalizeMomoNumber(value);
+  const local = normalized.startsWith("+233")
+    ? `0${normalized.slice(4)}`
+    : normalized.startsWith("233")
+      ? `0${normalized.slice(3)}`
+      : normalized;
+  return /^(020|023|024|025|026|027|028|029|050|053|054|055|056|057|059)\d{7}$/.test(local);
+}
+
 function AffiliateIcon({ type }) {
   const paths = {
     referrals: "M7 13a4 4 0 1 1 8 0M4 21a7 7 0 0 1 14 0M17 11h5M19.5 8.5v5",
@@ -348,6 +365,10 @@ export default function AffiliatesPage() {
       pushToast("Enter your mobile money number to create your affiliate code", "warning");
       return;
     }
+    if (!isValidGhanaMomoNumber(payoutNumber)) {
+      pushToast("Enter a valid Ghana MoMo number, for example 0240000000 or +233240000000", "warning");
+      return;
+    }
     setJoining(true);
     try {
       await requestWithToken(`${API_BASE}/affiliates/register`, token, {
@@ -521,8 +542,10 @@ export default function AffiliatesPage() {
                       type="tel"
                       value={momoNumber}
                       onChange={(event) => setMomoNumber(event.target.value)}
-                      placeholder="024 000 0000"
+                      placeholder="0240000000 or +233240000000"
                       autoComplete="tel"
+                      inputMode="tel"
+                      pattern="(0(20|23|24|25|26|27|28|29|50|53|54|55|56|57|59)[0-9]{7}|\\+?233(20|23|24|25|26|27|28|29|50|53|54|55|56|57|59)[0-9]{7})"
                     />
                   </label>
                   <p className="affiliate-muted">
