@@ -11,6 +11,7 @@ import {
   getAffiliateByIdAdmin,
   deleteAffiliateAdmin,
   updateAffiliateStatusAdmin,
+  updateAffiliateMomoVerificationAdmin,
 } from "../controllers/affiliateController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -27,5 +28,6 @@ router.get("/admin", protect, admin, asyncHandler(getAllAffiliatesAdmin));
 router.get("/admin/:id", protect, admin, asyncHandler(getAffiliateByIdAdmin));
 router.delete("/admin/:id", protect, admin, asyncHandler(deleteAffiliateAdmin));
 router.put("/admin/:id/status", protect, admin, asyncHandler(updateAffiliateStatusAdmin));
+router.put("/admin/:id/momo-verification", protect, admin, asyncHandler(updateAffiliateMomoVerificationAdmin));
 
 export default router;

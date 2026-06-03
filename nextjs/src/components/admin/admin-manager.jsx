@@ -1624,6 +1624,13 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
             </div>
             <div className="admin-actions">
               <button className="ghost-button" disabled={busy} onClick={() => onAction("copyAffiliateCode", item)}>Copy Code</button>
+              <button
+                className="ghost-button"
+                disabled={busy || !item.momoNumber}
+                onClick={() => onAction("affiliateMomoVerification", item, null, !item.momoNumberVerified)}
+              >
+                {item.momoNumberVerified ? "Mark MoMo Unverified" : "Verify MoMo"}
+              </button>
               <button className="ghost-button" disabled={busy} onClick={() => onAction("affiliateStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
               <button className="danger-button" disabled={busy} onClick={() => onAction("deleteAffiliate", item)}>Delete</button>
             </div>
@@ -2391,6 +2398,12 @@ export default function AdminManager({ type, productMode = "list", productId = "
       if (action === "moderateReview") await requestWithToken(`${API_BASE}/reviews/${item._id}/moderate`, token, { method: "PUT", body: JSON.stringify({ approved: value }) });
       if (action === "deleteReview") await requestWithToken(`${API_BASE}/reviews/${item._id}`, token, { method: "DELETE" });
       if (action === "affiliateStatus") await requestWithToken(`${API_BASE}/affiliates/admin/${item._id}/status`, token, { method: "PUT", body: JSON.stringify({ isActive: value }) });
+      if (action === "affiliateMomoVerification") {
+        await requestWithToken(`${API_BASE}/affiliates/admin/${item._id}/momo-verification`, token, {
+          method: "PUT",
+          body: JSON.stringify({ momoNumberVerified: value }),
+        });
+      }
       if (action === "deleteAffiliate") await requestWithToken(`${API_BASE}/affiliates/admin/${item._id}`, token, { method: "DELETE" });
       if (action === "copyAffiliateCode") {
         const code = normalizeText(item?.code);

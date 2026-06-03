@@ -377,6 +377,37 @@ export async function updateAffiliateStatusAdmin(req, res) {
   });
 }
 
+// @desc    Admin: mark affiliate MoMo payout number as verified/unverified
+// @route   PUT /api/affiliates/admin/:id/momo-verification
+// @access  Admin
+export async function updateAffiliateMomoVerificationAdmin(req, res) {
+  const { momoNumberVerified } = req.body;
+  if (typeof momoNumberVerified !== "boolean") {
+    res.status(400);
+    throw new Error("momoNumberVerified must be boolean");
+  }
+
+  const affiliate = await Affiliate.findById(req.params.id);
+  if (!affiliate) {
+    res.status(404);
+    throw new Error("Affiliate not found");
+  }
+  if (!affiliate.momoNumber) {
+    res.status(400);
+    throw new Error("Affiliate has no MoMo payout number to verify");
+  }
+
+  affiliate.momoNumberVerified = momoNumberVerified;
+  await affiliate.save();
+
+  return res.json({
+    _id: affiliate._id,
+    momoNumber: affiliate.momoNumber,
+    momoNumberVerified: affiliate.momoNumberVerified,
+    updatedAt: affiliate.updatedAt,
+  });
+}
+
 // @desc    Public/User: read affiliate program settings
 // @route   GET /api/affiliates/settings
 // @access  Public
