@@ -1768,6 +1768,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const [affiliateStatusFilter, setAffiliateStatusFilter] = useState("all");
   const [affiliateSort, setAffiliateSort] = useState("earned-desc");
   const [affiliateSettingsOpen, setAffiliateSettingsOpen] = useState(false);
+  const [affiliateLeaderboardOpen, setAffiliateLeaderboardOpen] = useState(false);
   const [reviewStatusFilter, setReviewStatusFilter] = useState("all");
   const [reviewRatingFilter, setReviewRatingFilter] = useState("all");
   const [reviewSort, setReviewSort] = useState("newest");
@@ -2845,37 +2846,50 @@ export default function AdminManager({ type, productMode = "list", productId = "
         ) : null}
 
         {type === "affiliates" && affiliateLeaderboard.length ? (
-          <section className="panel admin-affiliate-leaderboard">
-            <div className="admin-affiliate-leaderboard__head">
+          <section className="panel admin-affiliate-leaderboard admin-collapsible">
+            <button
+              type="button"
+              className="admin-collapsible__header admin-affiliate-leaderboard__head"
+              onClick={() => setAffiliateLeaderboardOpen((current) => !current)}
+              aria-expanded={affiliateLeaderboardOpen}
+              aria-controls="affiliate-leaderboard-body"
+            >
               <div>
                 <p className="section-kicker">Affiliate leaderboard</p>
                 <h2>Top affiliates by earnings and referrals</h2>
               </div>
-              <span className="admin-chip is-success">{affiliateLeaderboard.length} ranked</span>
-            </div>
-            <div className="admin-affiliate-leaderboard__list">
-              {affiliateLeaderboard.map((affiliate, index) => (
-                <a key={affiliate._id || affiliate.code} className="admin-affiliate-leaderboard__row" href={`#admin-affiliate-${affiliate._id}`}>
-                  <span className="admin-affiliate-leaderboard__rank">#{index + 1}</span>
-                  <span className="admin-affiliate-leaderboard__identity">
-                    <strong>{affiliate.code || "Affiliate"}</strong>
-                    <small>{affiliate.user?.name || affiliate.user?.email || affiliate.momoNumber || "Affiliate user"}</small>
-                  </span>
-                  <span>
-                    <small>Earned</small>
-                    <strong>{formatCurrency(Number(affiliate.stats?.earnedCommission || 0))}</strong>
-                  </span>
-                  <span>
-                    <small>Referrals</small>
-                    <strong>{affiliate.stats?.totalReferrals || 0}</strong>
-                  </span>
-                  <span>
-                    <small>MoMo</small>
-                    <strong>{affiliate.momoNumber || "Missing"}</strong>
-                  </span>
-                </a>
-              ))}
-            </div>
+              <span className="admin-collapsible__icon" aria-hidden="true">{affiliateLeaderboardOpen ? "-" : "+"}</span>
+            </button>
+            {affiliateLeaderboardOpen ? (
+              <div id="affiliate-leaderboard-body" className="admin-collapsible__body">
+                <div className="admin-chip-row">
+                  <span className="admin-chip is-success">{affiliateLeaderboard.length} ranked</span>
+                </div>
+                <div className="admin-affiliate-leaderboard__list">
+                  {affiliateLeaderboard.map((affiliate, index) => (
+                    <a key={affiliate._id || affiliate.code} className="admin-affiliate-leaderboard__row" href={`#admin-affiliate-${affiliate._id}`}>
+                      <span className="admin-affiliate-leaderboard__rank">#{index + 1}</span>
+                      <span className="admin-affiliate-leaderboard__identity">
+                        <strong>{affiliate.code || "Affiliate"}</strong>
+                        <small>{affiliate.user?.name || affiliate.user?.email || affiliate.momoNumber || "Affiliate user"}</small>
+                      </span>
+                      <span>
+                        <small>Earned</small>
+                        <strong>{formatCurrency(Number(affiliate.stats?.earnedCommission || 0))}</strong>
+                      </span>
+                      <span>
+                        <small>Referrals</small>
+                        <strong>{affiliate.stats?.totalReferrals || 0}</strong>
+                      </span>
+                      <span>
+                        <small>MoMo</small>
+                        <strong>{affiliate.momoNumber || "Missing"}</strong>
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         ) : null}
 
