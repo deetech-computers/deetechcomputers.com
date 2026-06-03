@@ -78,6 +78,14 @@ function normalizeMomoNumber(value) {
     .replace(/^00/, "+");
 }
 
+function sanitizeMomoInput(value) {
+  const raw = String(value || "").replace(/[^\d+]/g, "");
+  const plus = raw.startsWith("+") ? "+" : "";
+  const digits = raw.replace(/\+/g, "");
+  const maxDigits = plus ? 12 : 12;
+  return `${plus}${digits.slice(0, maxDigits)}`;
+}
+
 function isValidGhanaMomoNumber(value) {
   const normalized = normalizeMomoNumber(value);
   const local = normalized.startsWith("+233")
@@ -541,10 +549,11 @@ export default function AffiliatesPage() {
                       className="field"
                       type="tel"
                       value={momoNumber}
-                      onChange={(event) => setMomoNumber(event.target.value)}
+                      onChange={(event) => setMomoNumber(sanitizeMomoInput(event.target.value))}
                       placeholder="0240000000 or +233240000000"
                       autoComplete="tel"
                       inputMode="tel"
+                      maxLength={13}
                       pattern="(0(20|23|24|25|26|27|28|29|50|53|54|55|56|57|59)[0-9]{7}|\\+?233(20|23|24|25|26|27|28|29|50|53|54|55|56|57|59)[0-9]{7})"
                     />
                   </label>
