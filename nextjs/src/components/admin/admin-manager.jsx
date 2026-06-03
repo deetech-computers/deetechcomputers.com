@@ -1591,7 +1591,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const active = item.isActive !== false;
     const affiliateBodyId = `admin-affiliate-body-${collapsibleIdBase}`;
     return (
-      <article className="admin-record panel admin-collapsible">
+      <article id={`admin-affiliate-${item._id}`} className="admin-record panel admin-collapsible">
         <button
           type="button"
           className="admin-collapsible__header admin-record-card__toggle"
@@ -1617,6 +1617,10 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
               <span>Pending <strong>{formatCurrency(Number(item.stats?.pendingCommission || 0))}</strong></span>
               <span>Earned <strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></span>
               <span>Rate <strong>{Number(item.commissionRate || 0)}%</strong></span>
+              <span>MoMo payout number <strong>{item.momoNumber || "Not provided"}</strong></span>
+              <span>MoMo status <strong>{item.momoNumberVerified ? "Verified" : "Needs confirmation"}</strong></span>
+              <span>User phone <strong>{item.user?.phone || "Not provided"}</strong></span>
+              <span>Email <strong>{item.user?.email || "Not provided"}</strong></span>
             </div>
             <div className="admin-actions">
               <button className="ghost-button" disabled={busy} onClick={() => onAction("copyAffiliateCode", item)}>Copy Code</button>
@@ -2080,6 +2084,18 @@ export default function AdminManager({ type, productMode = "list", productId = "
       totalReferrals,
     };
   }, [items.length, payload, type]);
+  const affiliateLeaderboard = useMemo(() => {
+    if (type !== "affiliates") return [];
+    return [...(Array.isArray(payload) ? payload : [])]
+      .sort((a, b) => {
+        const earnedDiff = Number(b?.stats?.earnedCommission || 0) - Number(a?.stats?.earnedCommission || 0);
+        if (earnedDiff) return earnedDiff;
+        const referralDiff = Number(b?.stats?.totalReferrals || 0) - Number(a?.stats?.totalReferrals || 0);
+        if (referralDiff) return referralDiff;
+        return String(a?.code || "").localeCompare(String(b?.code || ""));
+      })
+      .slice(0, 10);
+  }, [payload, type]);
   const reviewStats = useMemo(() => {
     if (type !== "reviews") return null;
     const all = Array.isArray(payload) ? payload : [];
@@ -2812,6 +2828,41 @@ export default function AdminManager({ type, productMode = "list", productId = "
                 }))}
               formatter={(value) => formatCurrency(value)}
             />
+          </section>
+        ) : null}
+
+        {type === "affiliates" && affiliateLeaderboard.length ? (
+          <section className="panel admin-affiliate-leaderboard">
+            <div className="admin-affiliate-leaderboard__head">
+              <div>
+                <p className="section-kicker">Affiliate leaderboard</p>
+                <h2>Top affiliates by earnings and referrals</h2>
+              </div>
+              <span className="admin-chip is-success">{affiliateLeaderboard.length} ranked</span>
+            </div>
+            <div className="admin-affiliate-leaderboard__list">
+              {affiliateLeaderboard.map((affiliate, index) => (
+                <a key={affiliate._id || affiliate.code} className="admin-affiliate-leaderboard__row" href={`#admin-affiliate-${affiliate._id}`}>
+                  <span className="admin-affiliate-leaderboard__rank">#{index + 1}</span>
+                  <span className="admin-affiliate-leaderboard__identity">
+                    <strong>{affiliate.code || "Affiliate"}</strong>
+                    <small>{affiliate.user?.name || affiliate.user?.email || affiliate.momoNumber || "Affiliate user"}</small>
+                  </span>
+                  <span>
+                    <small>Earned</small>
+                    <strong>{formatCurrency(Number(affiliate.stats?.earnedCommission || 0))}</strong>
+                  </span>
+                  <span>
+                    <small>Referrals</small>
+                    <strong>{affiliate.stats?.totalReferrals || 0}</strong>
+                  </span>
+                  <span>
+                    <small>MoMo</small>
+                    <strong>{affiliate.momoNumber || "Missing"}</strong>
+                  </span>
+                </a>
+              ))}
+            </div>
           </section>
         ) : null}
 

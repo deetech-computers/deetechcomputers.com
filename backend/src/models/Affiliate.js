@@ -25,6 +25,15 @@ const affiliateSchema = new mongoose.Schema(
       min: 0,
       max: 100,
     },
+    momoNumber: {
+      type: String,
+      trim: true,
+      maxlength: 24,
+    },
+    momoNumberVerified: {
+      type: Boolean,
+      default: false,
+    },
     isActive: {
       type: Boolean,
       default: true,

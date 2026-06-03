@@ -6624,6 +6624,67 @@ button, input, select, textarea { font: inherit; }
   color: var(--text);
   overflow-wrap: anywhere;
 }
+.admin-affiliate-leaderboard {
+  display: grid;
+  gap: 16px;
+}
+.admin-affiliate-leaderboard__head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.admin-affiliate-leaderboard__head h2 {
+  margin: 4px 0 0;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+}
+.admin-affiliate-leaderboard__list {
+  display: grid;
+  gap: 10px;
+}
+.admin-affiliate-leaderboard__row {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1.2fr) repeat(3, minmax(120px, 0.6fr));
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid rgba(24, 79, 39, 0.14);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff, #fbfdfb);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.admin-affiliate-leaderboard__row:hover {
+  border-color: rgba(24, 79, 39, 0.34);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(24, 79, 39, 0.08);
+}
+.admin-affiliate-leaderboard__rank {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(217, 164, 65, 0.16);
+  color: #8a5a00;
+  font-weight: 900;
+}
+.admin-affiliate-leaderboard__identity,
+.admin-affiliate-leaderboard__row > span:not(.admin-affiliate-leaderboard__rank) {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.admin-affiliate-leaderboard__row strong {
+  color: #162012;
+  overflow-wrap: anywhere;
+}
+.admin-affiliate-leaderboard__row small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
 .admin-collapsible {
   gap: 0;
   overflow: hidden;
@@ -7802,6 +7863,22 @@ button, input, select, textarea { font: inherit; }
   margin: 0;
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 1;
+}
+.affiliate-join-card__form,
+.affiliate-payout-field {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+}
+.affiliate-payout-field span {
+  color: #1f1d1b;
+  font-weight: 800;
+}
+.affiliate-payout-field .field {
+  min-height: 52px;
+  border-color: rgba(25, 79, 33, 0.2);
+  background: rgba(255, 255, 255, 0.92);
 }
 .affiliate-join-card p,
 .affiliate-command p,
@@ -13288,6 +13365,12 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__actions > *,
   .account-dashboard__cta-row > * {
     width: 100%;
+  }
+  .admin-affiliate-leaderboard__row {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .admin-affiliate-leaderboard__row > span:not(.admin-affiliate-leaderboard__rank):not(.admin-affiliate-leaderboard__identity) {
+    grid-column: 2;
   }
   .shop-toolbar__controls,
   .shop-toolbar__sort,

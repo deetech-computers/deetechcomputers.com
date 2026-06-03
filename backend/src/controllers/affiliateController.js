@@ -7,6 +7,18 @@ function normalizeCode(raw) {
   return String(raw || "").trim().toUpperCase();
 }
 
+function normalizeMomoNumber(raw) {
+  return String(raw || "")
+    .trim()
+    .replace(/[^\d+]/g, "")
+    .replace(/^00/, "+");
+}
+
+function isValidGhanaMomoNumber(value) {
+  const normalized = normalizeMomoNumber(value);
+  return /^(?:\+233|233|0)(?:2|5)\d{8}$/.test(normalized);
+}
+
 function buildCodeFromUser(user) {
   const baseName = String(
     user?.firstName || user?.name || user?.email || "AFFILIATE"
@@ -126,6 +138,11 @@ export async function registerAffiliate(req, res) {
     return res.status(200).json(existing);
   }
   const settings = await getProgramSettings();
+  const momoNumber = normalizeMomoNumber(req.body?.momoNumber || req.body?.momo_number);
+  if (!isValidGhanaMomoNumber(momoNumber)) {
+    res.status(400);
+    throw new Error("A valid Ghana mobile money number is required to create an affiliate code");
+  }
 
   const user = await User.findById(req.user._id).select(
     "name firstName lastName email"
@@ -142,6 +159,8 @@ export async function registerAffiliate(req, res) {
     commissionRate: Number(
       settings?.defaultCommissionRate ?? DEFAULT_SETTINGS.defaultCommissionRate
     ),
+    momoNumber,
+    momoNumberVerified: false,
     isActive: true,
     tier: "starter",
   });

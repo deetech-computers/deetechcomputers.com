@@ -172,6 +172,7 @@ export default function AffiliatesPage() {
   const { pushToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
+  const [momoNumber, setMomoNumber] = useState("");
   const [dashboard, setDashboard] = useState(null);
   const [settings, setSettings] = useState(null);
 
@@ -342,10 +343,19 @@ export default function AffiliatesPage() {
       pushToast("Login first to join the affiliate program", "info");
       return;
     }
+    const payoutNumber = momoNumber.trim();
+    if (!payoutNumber) {
+      pushToast("Enter your mobile money number to create your affiliate code", "warning");
+      return;
+    }
     setJoining(true);
     try {
-      await requestWithToken(`${API_BASE}/affiliates/register`, token, { method: "POST" });
+      await requestWithToken(`${API_BASE}/affiliates/register`, token, {
+        method: "POST",
+        body: JSON.stringify({ momoNumber: payoutNumber }),
+      });
       pushToast("Affiliate profile created successfully", "success");
+      setMomoNumber("");
       await loadAffiliate();
     } catch (error) {
       pushToast(error.message || "Could not create affiliate profile", "warning");
@@ -503,9 +513,25 @@ export default function AffiliatesPage() {
                     New partners start at {Number(settings?.defaultCommissionRate || 5)}% commission. Referrals are recorded when a customer uses your code at checkout, then move to earned when the order is delivered.
                   </p>
                 </div>
-                <button type="button" className="affiliate-primary" onClick={handleRegister} disabled={joining}>
-                  {joining ? "Creating..." : "Create affiliate code"}
-                </button>
+                <div className="affiliate-join-card__form">
+                  <label className="affiliate-payout-field">
+                    <span>Mobile money number for payouts</span>
+                    <input
+                      className="field"
+                      type="tel"
+                      value={momoNumber}
+                      onChange={(event) => setMomoNumber(event.target.value)}
+                      placeholder="024 000 0000"
+                      autoComplete="tel"
+                    />
+                  </label>
+                  <p className="affiliate-muted">
+                    Create with your MoMo number for direct commission payment and quick contact if payout confirmation is needed.
+                  </p>
+                  <button type="button" className="affiliate-primary" onClick={handleRegister} disabled={joining}>
+                    {joining ? "Creating..." : "Create affiliate code"}
+                  </button>
+                </div>
               </section>
 
               {affiliateLearnSection}
