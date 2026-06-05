@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
+import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
+import { formatCurrency } from "@/lib/format";
 import {
   buildProductsHref,
   canonicalCategory,
@@ -16,6 +18,7 @@ import {
   getStorefrontCategoryLabel,
   getProductRating,
   getProductStock,
+  resolveProductImage,
 } from "@/lib/products";
 
 const SORT_OPTIONS = [
@@ -73,6 +76,64 @@ function getProductLatestTimestamp(product) {
 
 function getProductId(product) {
   return String(product?._id || product?.id || "");
+}
+
+function normalizeDisplayTitle(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "Product";
+  if (/[a-z]/.test(raw)) return raw;
+  return raw.toLowerCase().replace(/\b([a-z])/g, (match) => match.toUpperCase());
+}
+
+function ProductListView({ products }) {
+  return (
+    <div className="product-list-view" role="table" aria-label="Products list">
+      <div className="product-list-view__row product-list-view__row--head" role="row">
+        <span role="columnheader">Product name</span>
+        <span role="columnheader">Image</span>
+        <span role="columnheader">Price</span>
+        <span role="columnheader">View</span>
+      </div>
+      {products.map((product, index) => {
+        const productId = getProductId(product);
+        const image = resolveProductImage(product?.images?.[0] || product?.image);
+        const title = normalizeDisplayTitle(product?.name || product?.title);
+        const href = productId ? `/products/${productId}` : "/products";
+
+        return (
+          <div key={productId || `product-list-${index}`} className="product-list-view__row" role="row">
+            <Link className="product-list-view__name" href={href} role="cell">
+              {title}
+            </Link>
+            <Link className="product-list-view__image" href={href} role="cell" aria-label={`View ${title}`}>
+              {image ? (
+                <StableImage
+                  src={image}
+                  alt={title}
+                  width={96}
+                  height={82}
+                  loading="lazy"
+                  decoding="async"
+                  fallback={<span className="product-list-view__placeholder">No image</span>}
+                />
+              ) : (
+                <span className="product-list-view__placeholder">No image</span>
+              )}
+            </Link>
+            <span className="product-list-view__price" role="cell">{formatCurrency(getProductPrice(product))}</span>
+            <Link className="product-list-view__view" href={href} role="cell" aria-label={`View ${title}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M12 5.5c4.6 0 8.1 3.2 9.5 6.5-1.4 3.3-4.9 6.5-9.5 6.5S3.9 15.3 2.5 12C3.9 8.7 7.4 5.5 12 5.5Zm0 2C8.7 7.5 6 9.5 4.8 12c1.2 2.5 3.9 4.5 7.2 4.5s6-2 7.2-4.5C18 9.5 15.3 7.5 12 7.5Zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </Link>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function getProductSpecs(product) {
@@ -170,6 +231,7 @@ export default function ProductsPageClient({ initialFilters }) {
   const [reviewMin, setReviewMin] = useState("all");
   const [promotion, setPromotion] = useState(canonicalHomeSectionKey(initialFilters.promotion || "all"));
   const [selectedSpecs, setSelectedSpecs] = useState({});
+  const [catalogView, setCatalogView] = useState("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [itemsPerPage] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
@@ -903,14 +965,36 @@ export default function ProductsPageClient({ initialFilters }) {
                       ))}
                     </select>
                   </label>
+                  <div className="shop-toolbar__view-mode" role="group" aria-label="Product view">
+                    <button
+                      type="button"
+                      className={catalogView === "grid" ? "is-active" : ""}
+                      onClick={() => setCatalogView("grid")}
+                      aria-pressed={catalogView === "grid"}
+                    >
+                      Grid
+                    </button>
+                    <button
+                      type="button"
+                      className={catalogView === "list" ? "is-active" : ""}
+                      onClick={() => setCatalogView("list")}
+                      aria-pressed={catalogView === "list"}
+                    >
+                      List
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="product-grid product-grid--catalog">
-                {pagedProducts.map((product) => (
-                  <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} variant="catalog" />
-                ))}
-              </div>
+              {catalogView === "list" ? (
+                <ProductListView products={pagedProducts} />
+              ) : (
+                <div className="product-grid product-grid--catalog">
+                  {pagedProducts.map((product) => (
+                    <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} variant="catalog" />
+                  ))}
+                </div>
+              )}
 
               {totalPages > 1 ? (
                 <nav className="shop-pagination" aria-label="Products pagination">
