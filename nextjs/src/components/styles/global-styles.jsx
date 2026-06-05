@@ -4902,14 +4902,14 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid #e6dfd2;
   background: #fff;
   color: #1b1916;
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.1;
   cursor: pointer;
-  min-height: 38px;
+  min-height: 44px;
   width: 100%;
-  padding: 0 14px;
-  border-radius: 999px;
+  padding: 0 18px;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -12371,10 +12371,13 @@ button, input, select, textarea { font: inherit; }
     gap: 10px;
   }
   .wishlist-row__remove-mobile {
-    min-height: 48px;
+    min-height: 52px;
     border: 1px solid #e5ddd0;
     background: #ffffff;
     color: #1f1d1b;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -12382,8 +12385,8 @@ button, input, select, textarea { font: inherit; }
     cursor: pointer;
   }
   .wishlist-row__remove-mobile svg {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
   }
   .wishlist-row__cart {
     width: 100%;
