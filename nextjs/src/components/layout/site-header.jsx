@@ -880,17 +880,12 @@ export default function SiteHeader() {
       <div className="notification-dropdown__content">
         <div className="notification-dropdown__head">
           <div className="notification-dropdown__title">
-            <strong>Messages</strong>
-            <span>https://www.deetechcomputers.com/</span>
+            <strong>NOTIFICATION</strong>
           </div>
           <button type="button" className="notification-dropdown__close" onClick={closeNotificationMenu} aria-label="Close notifications">
             <span />
             <span />
           </button>
-        </div>
-        <div className="notification-dropdown__filters">
-          <span>All types</span>
-          <span aria-hidden="true">▾</span>
         </div>
         <div className="notification-dropdown__status">
           <span className={unreadCount > 0 ? "notification-dropdown__check is-unread" : "notification-dropdown__check is-read"} aria-hidden="true" />
