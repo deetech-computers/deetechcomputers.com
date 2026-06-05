@@ -2774,7 +2774,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-list-view__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 112px 112px 54px;
+  grid-template-columns: minmax(0, 1fr) 116px 150px;
   align-items: start;
   gap: 16px;
   min-height: 116px;
@@ -2826,25 +2826,11 @@ button, input, select, textarea { font: inherit; }
   font-size: 0.95rem;
   line-height: 1.35;
   white-space: nowrap;
-}
-.product-list-view__view {
-  display: inline-grid;
-  place-items: center;
-  width: 40px;
-  height: 34px;
-  border-radius: 4px;
-  background: #56bee0;
-  color: #fff;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
+  font-weight: 500;
 }
-.product-list-view__view:hover {
-  background: #0b83ac;
-  transform: translateY(-1px);
-}
-.product-list-view__view svg {
-  width: 18px;
-  height: 18px;
+.product-list-view__price:hover {
+  color: #004aad;
 }
 .shop-active-filter {
   border: 0; border-radius: 999px; background: linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%); color: #fff;
@@ -13293,9 +13279,9 @@ button, input, select, textarea { font: inherit; }
     overflow-x: hidden;
   }
   .product-list-view__row {
-    grid-template-columns: minmax(92px, 1fr) 82px 76px 38px;
+    grid-template-columns: minmax(92px, 1fr) 78px 82px;
     gap: 8px;
-    min-height: 112px;
+    min-height: 104px;
     padding: 8px 6px;
   }
   .product-list-view__row--head {
@@ -13306,7 +13292,7 @@ button, input, select, textarea { font: inherit; }
   }
   .product-list-view__name,
   .product-list-view__price {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     line-height: 1.3;
   }
   .product-list-view__price {
@@ -13316,12 +13302,8 @@ button, input, select, textarea { font: inherit; }
   .product-list-view__image,
   .product-list-view__image img,
   .product-list-view__placeholder {
-    width: 82px;
-    height: 72px;
-  }
-  .product-list-view__view {
-    width: 34px;
-    height: 32px;
+    width: 78px;
+    height: 68px;
   }
   .product-card--catalog .product-card__media {
     padding: 0;
@@ -13409,7 +13391,7 @@ button, input, select, textarea { font: inherit; }
 }
 @media (max-width: 420px) {
   .product-list-view__row {
-    grid-template-columns: minmax(76px, 1fr) 72px 72px 34px;
+    grid-template-columns: minmax(84px, 1fr) 68px 76px;
     gap: 5px;
     padding-left: 4px;
     padding-right: 4px;
@@ -13419,17 +13401,13 @@ button, input, select, textarea { font: inherit; }
   }
   .product-list-view__name,
   .product-list-view__price {
-    font-size: 0.74rem;
+    font-size: 0.7rem;
   }
   .product-list-view__image,
   .product-list-view__image img,
   .product-list-view__placeholder {
-    width: 72px;
-    height: 64px;
-  }
-  .product-list-view__view {
-    width: 32px;
-    height: 30px;
+    width: 68px;
+    height: 60px;
   }
   .affiliate-stats {
     grid-template-columns: 1fr;

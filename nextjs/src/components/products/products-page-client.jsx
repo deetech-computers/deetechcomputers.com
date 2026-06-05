@@ -92,7 +92,6 @@ function ProductListView({ products }) {
         <span role="columnheader">Product name</span>
         <span role="columnheader">Image</span>
         <span role="columnheader">Price</span>
-        <span role="columnheader">View</span>
       </div>
       {products.map((product, index) => {
         const productId = getProductId(product);
@@ -120,14 +119,8 @@ function ProductListView({ products }) {
                 <span className="product-list-view__placeholder">No image</span>
               )}
             </Link>
-            <span className="product-list-view__price" role="cell">{formatCurrency(getProductPrice(product))}</span>
-            <Link className="product-list-view__view" href={href} role="cell" aria-label={`View ${title}`}>
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M12 5.5c4.6 0 8.1 3.2 9.5 6.5-1.4 3.3-4.9 6.5-9.5 6.5S3.9 15.3 2.5 12C3.9 8.7 7.4 5.5 12 5.5Zm0 2C8.7 7.5 6 9.5 4.8 12c1.2 2.5 3.9 4.5 7.2 4.5s6-2 7.2-4.5C18 9.5 15.3 7.5 12 7.5Zm0 1.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"
-                  fill="currentColor"
-                />
-              </svg>
+            <Link className="product-list-view__price" href={href} role="cell" aria-label={`View ${title}`}>
+              {formatCurrency(getProductPrice(product))}
             </Link>
           </div>
         );
