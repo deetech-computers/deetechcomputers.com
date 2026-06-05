@@ -13293,7 +13293,7 @@ button, input, select, textarea { font: inherit; }
     overflow-x: hidden;
   }
   .product-list-view__row {
-    grid-template-columns: minmax(96px, 1fr) 92px 66px 42px;
+    grid-template-columns: minmax(92px, 1fr) 82px 76px 38px;
     gap: 8px;
     min-height: 112px;
     padding: 8px 6px;
@@ -13316,12 +13316,12 @@ button, input, select, textarea { font: inherit; }
   .product-list-view__image,
   .product-list-view__image img,
   .product-list-view__placeholder {
-    width: 92px;
-    height: 76px;
+    width: 82px;
+    height: 72px;
   }
   .product-list-view__view {
-    width: 38px;
-    height: 34px;
+    width: 34px;
+    height: 32px;
   }
   .product-card--catalog .product-card__media {
     padding: 0;
@@ -13409,8 +13409,8 @@ button, input, select, textarea { font: inherit; }
 }
 @media (max-width: 420px) {
   .product-list-view__row {
-    grid-template-columns: minmax(82px, 1fr) 82px 58px 38px;
-    gap: 6px;
+    grid-template-columns: minmax(76px, 1fr) 72px 72px 34px;
+    gap: 5px;
     padding-left: 4px;
     padding-right: 4px;
   }
@@ -13424,12 +13424,12 @@ button, input, select, textarea { font: inherit; }
   .product-list-view__image,
   .product-list-view__image img,
   .product-list-view__placeholder {
-    width: 82px;
-    height: 70px;
+    width: 72px;
+    height: 64px;
   }
   .product-list-view__view {
-    width: 34px;
-    height: 32px;
+    width: 32px;
+    height: 30px;
   }
   .affiliate-stats {
     grid-template-columns: 1fr;
