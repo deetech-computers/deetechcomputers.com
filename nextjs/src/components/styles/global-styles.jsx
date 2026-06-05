@@ -2775,7 +2775,7 @@ button, input, select, textarea { font: inherit; }
 .product-list-view__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 116px 150px;
-  align-items: start;
+  align-items: center;
   gap: 16px;
   min-height: 116px;
   padding: 10px 8px;
@@ -2825,7 +2825,7 @@ button, input, select, textarea { font: inherit; }
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
-  align-self: start;
+  align-self: center;
   color: #1f2937;
   font-size: 0.95rem;
   line-height: 1.35;
@@ -13307,7 +13307,7 @@ button, input, select, textarea { font: inherit; }
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
-    align-self: start;
+    align-self: center;
     gap: 1px;
     white-space: normal;
     word-break: keep-all;
