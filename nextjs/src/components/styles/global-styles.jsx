@@ -1072,17 +1072,13 @@ button, input, select, textarea { font: inherit; }
   border-color: #b3b6bb;
   background: #b3b6bb;
 }
-.notification-dropdown__check.is-read::after,
-.notification-dropdown__check.is-unread::after {
+.notification-dropdown__check.is-read::after {
   content: "";
   width: 8px;
   height: 5px;
   border-left: 2px solid #fff;
   border-bottom: 2px solid #fff;
   transform: rotate(-45deg) translateY(-1px);
-}
-.notification-dropdown__check.is-unread::after {
-  opacity: 0;
 }
 .notification-dropdown__cta {
   margin: 0;
