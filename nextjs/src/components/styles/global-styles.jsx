@@ -4855,6 +4855,24 @@ button, input, select, textarea { font: inherit; }
   background: #ffffff;
   padding: 28px 30px 30px;
 }
+.wishlist-hero h1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.wishlist-hero__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #d39a21;
+  color: #15130f;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+}
 .wishlist-table {
   padding: 0;
   background: #ffffff;
@@ -12296,6 +12314,15 @@ button, input, select, textarea { font: inherit; }
   .wishlist-shell {
     gap: 18px;
     padding: 18px 14px 24px;
+  }
+  .wishlist-hero h1 {
+    gap: 9px;
+  }
+  .wishlist-hero__count {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    font-size: 0.78rem;
   }
   .wishlist-table__head {
     display: none;

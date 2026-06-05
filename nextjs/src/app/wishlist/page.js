@@ -139,7 +139,12 @@ export default function WishlistPage() {
   return (
     <main className="shell page-section">
       <section className="cart-hero wishlist-hero">
-        <h1>Wishlist</h1>
+        <h1>
+          Wishlist
+          {isAuthenticated && status === "ready" ? (
+            <span className="wishlist-hero__count">{wishlistItems.length}</span>
+          ) : null}
+        </h1>
         <p className="cart-hero__crumbs">
           <Link href="/">Home</Link>
           <span>/</span>
