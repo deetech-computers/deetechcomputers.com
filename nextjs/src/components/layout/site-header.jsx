@@ -1082,7 +1082,12 @@ export default function SiteHeader() {
                       </svg>
                     </Link>
                     <Link href="/wishlist" className="mobile-menu__top-link" onClick={closeMobileMenu}>
-                      <span>Wishlist</span>
+                      <span className="mobile-menu__label-with-count">
+                        Wishlist
+                        {wishlistPreviewItems.length > 0 ? (
+                          <span className="mobile-menu__count">{wishlistBadgeText}</span>
+                        ) : null}
+                      </span>
                       <svg viewBox="0 0 24 24" aria-hidden="true" className="mobile-menu__top-link-icon">
                         <path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -1143,7 +1148,12 @@ export default function SiteHeader() {
                         className={isActivePath(pathname, "/wishlist") ? "mobile-menu__link is-active" : "mobile-menu__link"}
                         onClick={closeMobileMenu}
                       >
-                        <span>Wishlist</span>
+                        <span className="mobile-menu__label-with-count">
+                          Wishlist
+                          {wishlistPreviewItems.length > 0 ? (
+                            <span className="mobile-menu__count">{wishlistBadgeText}</span>
+                          ) : null}
+                        </span>
                       </Link>
 
                     </div>
