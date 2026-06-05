@@ -2822,6 +2822,10 @@ button, input, select, textarea { font: inherit; }
   text-align: center;
 }
 .product-list-view__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  align-self: start;
   color: #1f2937;
   font-size: 0.95rem;
   line-height: 1.35;
@@ -2831,6 +2835,10 @@ button, input, select, textarea { font: inherit; }
 }
 .product-list-view__price:hover {
   color: #004aad;
+}
+.product-list-view__currency,
+.product-list-view__amount {
+  display: inline-block;
 }
 .shop-active-filter {
   border: 0; border-radius: 999px; background: linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%); color: #fff;
@@ -13296,8 +13304,21 @@ button, input, select, textarea { font: inherit; }
     line-height: 1.3;
   }
   .product-list-view__price {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: start;
+    gap: 1px;
     white-space: normal;
     word-break: keep-all;
+  }
+  .product-list-view__currency {
+    font-size: 0.72rem;
+    line-height: 1.05;
+  }
+  .product-list-view__amount {
+    font-size: 0.76rem;
+    line-height: 1.12;
   }
   .product-list-view__image,
   .product-list-view__image img,
@@ -13401,6 +13422,12 @@ button, input, select, textarea { font: inherit; }
   }
   .product-list-view__name,
   .product-list-view__price {
+    font-size: 0.7rem;
+  }
+  .product-list-view__currency {
+    font-size: 0.66rem;
+  }
+  .product-list-view__amount {
     font-size: 0.7rem;
   }
   .product-list-view__image,

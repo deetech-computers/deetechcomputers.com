@@ -85,6 +85,14 @@ function normalizeDisplayTitle(value) {
   return raw.toLowerCase().replace(/\b([a-z])/g, (match) => match.toUpperCase());
 }
 
+function getListPriceParts(product) {
+  const formatted = formatCurrency(getProductPrice(product));
+  return {
+    currency: "GHC",
+    amount: formatted.replace(/^GH[₵C]\s*/i, "").trim() || formatted,
+  };
+}
+
 function ProductListView({ products }) {
   return (
     <div className="product-list-view" role="table" aria-label="Products list">
@@ -98,6 +106,7 @@ function ProductListView({ products }) {
         const image = resolveProductImage(product?.images?.[0] || product?.image);
         const title = normalizeDisplayTitle(product?.name || product?.title);
         const href = productId ? `/products/${productId}` : "/products";
+        const priceParts = getListPriceParts(product);
 
         return (
           <div key={productId || `product-list-${index}`} className="product-list-view__row" role="row">
@@ -120,7 +129,8 @@ function ProductListView({ products }) {
               )}
             </Link>
             <Link className="product-list-view__price" href={href} role="cell" aria-label={`View ${title}`}>
-              {formatCurrency(getProductPrice(product))}
+              <span className="product-list-view__currency">{priceParts.currency}</span>
+              <span className="product-list-view__amount">{priceParts.amount}</span>
             </Link>
           </div>
         );
