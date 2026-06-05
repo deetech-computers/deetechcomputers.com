@@ -936,7 +936,8 @@ button, input, select, textarea { font: inherit; }
 .notification-dropdown__content {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
 }
 .notification-dropdown__head {
   display: flex;
@@ -996,6 +997,9 @@ button, input, select, textarea { font: inherit; }
   min-height: 0;
   max-height: none;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   background: #fff;
 }
 .notification-dropdown__close {
