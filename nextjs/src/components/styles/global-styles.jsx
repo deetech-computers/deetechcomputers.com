@@ -4651,28 +4651,33 @@ button, input, select, textarea { font: inherit; }
   border-bottom: 0;
 }
 .cart-row__remove {
-  border: 0;
-  background: transparent;
-  color: #0d56da;
+  border: 1px solid #e6dfd2;
+  background: #fff;
+  color: #1b1916;
   cursor: pointer;
-  width: auto;
-  height: auto;
-  padding: 0;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 18px;
   border-radius: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.2;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 .cart-row__remove svg {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  display: block;
 }
 .cart-row__remove:hover {
+  border-color: #0d56da;
   color: #0a43ad;
+  background: rgba(13, 86, 218, 0.05);
 }
 .cart-row__subtotal-block {
   display: grid;
