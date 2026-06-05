@@ -4917,8 +4917,10 @@ button, input, select, textarea { font: inherit; }
   white-space: nowrap;
 }
 .wishlist-row__remove svg {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  display: block;
 }
 .wishlist-row__remove:hover {
   border-color: #0d56da;
@@ -12387,6 +12389,8 @@ button, input, select, textarea { font: inherit; }
   .wishlist-row__remove-mobile svg {
     width: 17px;
     height: 17px;
+    flex: 0 0 17px;
+    display: block;
   }
   .wishlist-row__cart {
     width: 100%;
