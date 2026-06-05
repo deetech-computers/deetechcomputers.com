@@ -880,7 +880,7 @@ export default function SiteHeader() {
       <div className="notification-dropdown__content">
         <div className="notification-dropdown__head">
           <div className="notification-dropdown__title">
-            <strong>NOTIFICATION</strong>
+            <strong>Notification</strong>
           </div>
           <button type="button" className="notification-dropdown__close" onClick={closeNotificationMenu} aria-label="Close notifications">
             <span />

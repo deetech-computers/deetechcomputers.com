@@ -955,9 +955,9 @@ button, input, select, textarea { font: inherit; }
 }
 .notification-dropdown__title strong {
   color: #202124;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0;
   line-height: 1.15;
 }
 .notification-dropdown__status {
