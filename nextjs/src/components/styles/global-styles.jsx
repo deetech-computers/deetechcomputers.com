@@ -13343,13 +13343,15 @@ button, input, select, textarea { font: inherit; }
   }
   .shop-toolbar__controls {
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
   }
   .shop-toolbar__view {
+    flex: 1 0 100%;
     font-size: 0.76rem;
   }
   .shop-toolbar__sort {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
     min-height: 38px;
     padding: 4px 6px;
   }
@@ -13357,7 +13359,7 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.74rem;
   }
   .shop-toolbar__sort select {
-    min-width: 120px;
+    min-width: 0;
     width: 100%;
     font-size: 0.82rem;
   }
