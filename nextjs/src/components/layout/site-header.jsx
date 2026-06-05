@@ -34,7 +34,6 @@ import {
 } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
 import {
-  dismissNotifications,
   buildAdminNotifications,
   buildQuickNotificationItems,
   buildNotificationScope,
@@ -313,8 +312,12 @@ export default function SiteHeader() {
           safeNotificationReadIds,
           safeNotificationDismissedIds
         );
-  const latestHeaderNotification = quickNotificationItems[0] || null;
   const unseenNotificationCount = quickNotificationItems.length;
+  const recentNotificationItems = isAuthenticated && isNotificationItemsSynced
+    ? [...notificationItems]
+        .sort((a, b) => Number(b?.timestamp || 0) - Number(a?.timestamp || 0))
+        .slice(0, 8)
+    : [];
   const notificationBadgeText = String(unseenNotificationCount || 0);
   const notificationTargetHref = "/account?tab=notifications";
   const desktopCategoryNavItems = categoryNavItems.filter((item) => item.slug !== "others");
@@ -784,7 +787,6 @@ export default function SiteHeader() {
     if (isAuthenticated && quickNotificationItems.length) {
       const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
-      dismissNotifications(notificationScope, currentIds);
     }
     setNotificationMenuOpen(false);
   }
@@ -801,7 +803,6 @@ export default function SiteHeader() {
     if (isAuthenticated) {
       const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
-      dismissNotifications(notificationScope, currentIds);
     }
     closeNotificationMenu();
   }
@@ -810,7 +811,6 @@ export default function SiteHeader() {
     if (isAuthenticated && quickNotificationItems.length) {
       const currentIds = quickNotificationItems.map((item) => item?.id);
       markNotificationsAsRead(notificationScope, currentIds);
-      dismissNotifications(notificationScope, currentIds);
     }
     setNotificationMenuOpen(false);
   }
@@ -832,13 +832,15 @@ export default function SiteHeader() {
   }
 
   function renderNotificationMenuContent() {
-    const roleLabel = user?.role === "admin" ? "Admin notifications" : "Your notifications";
     const primaryHref = notificationTargetHref;
     const onSelect = () => {
       closeNotificationMenu();
     };
+    const unreadIds = new Set(quickNotificationItems.map((item) => String(item?.id || "")).filter(Boolean));
+    const unreadCount = quickNotificationItems.length;
+    const totalCount = recentNotificationItems.length;
 
-    if (!quickNotificationItems.length) {
+    if (!recentNotificationItems.length) {
       return (
         <div className="notification-dropdown__empty">
           <p>{isAuthenticated ? "No new notifications right now." : "Sign in to see notifications."}</p>
@@ -858,18 +860,28 @@ export default function SiteHeader() {
     return (
       <div className="notification-dropdown__content">
         <div className="notification-dropdown__head">
-          <strong>{roleLabel}</strong>
-          <span>{unseenNotificationCount > 0 ? `${unseenNotificationCount} new` : "All caught up"}</span>
+          <div className="notification-dropdown__title">
+            <strong>Messages</strong>
+            <span>https://www.deetechcomputers.com/</span>
+          </div>
           <button type="button" className="notification-dropdown__close" onClick={closeNotificationMenu} aria-label="Close notifications">
             <span />
             <span />
           </button>
         </div>
+        <div className="notification-dropdown__filters">
+          <span>All types</span>
+          <span aria-hidden="true">▾</span>
+        </div>
+        <div className="notification-dropdown__status">
+          <span className={unreadCount > 0 ? "notification-dropdown__check is-unread" : "notification-dropdown__check is-read"} aria-hidden="true" />
+          <span>{unreadCount} unread out of {totalCount}</span>
+        </div>
         <div className="notification-dropdown__items">
-            {quickNotificationItems.length ? (
-              quickNotificationItems.map((item) => {
+            {recentNotificationItems.length ? (
+              recentNotificationItems.map((item) => {
                 const itemId = String(item?.id || "");
-                const isUnread = !safeNotificationReadIds.includes(itemId);
+                const isUnread = unreadIds.has(itemId);
                 return (
                   <Link
                     key={itemId}
@@ -877,11 +889,12 @@ export default function SiteHeader() {
                     className={isUnread ? "notification-dropdown__item is-unread" : "notification-dropdown__item"}
                     onClick={handleNotificationItemSelect}
                   >
+                    <span className={isUnread ? "notification-dropdown__check is-unread" : "notification-dropdown__check is-read"} aria-hidden="true" />
                     <div className="notification-dropdown__meta">
                       <strong>{item.title}</strong>
                       <p>{item.body}</p>
+                      <span>{formatNotificationTime(item.timestamp)} · {item.kind || "notification"}</span>
                     </div>
-                    <span>{formatNotificationTime(item.timestamp)}</span>
                   </Link>
                 );
               })
