@@ -7661,6 +7661,10 @@ button, input, select, textarea { font: inherit; }
 .account-dashboard__sidebar {
   display: grid;
   gap: 14px;
+  align-self: start;
+  position: static;
+  max-height: none;
+  overflow: visible;
 }
 .account-dashboard__nav {
   width: 100%;
@@ -12441,6 +12445,11 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__sidebar {
     display: grid;
     gap: 10px;
+    max-height: calc(100dvh - 130px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 16px;
   }
   .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__content {
     display: none;
