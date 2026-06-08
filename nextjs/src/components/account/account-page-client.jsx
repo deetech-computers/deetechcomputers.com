@@ -415,33 +415,124 @@ function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
 }
 
 function AffiliateSection({ summary }) {
+  const totalReferrals = Number(summary.referrals || 0);
+  const deliveredReferrals = Number(summary.deliveredReferrals || 0);
+  const pendingReferrals = Number(summary.pendingReferrals || 0);
+  const cancelledReferrals = Number(summary.cancelledReferrals || 0);
+  const pendingCommission = Number(summary.pendingCommission || 0);
+  const earnedCommission = Number(summary.earned || 0);
+  const lifetimeGenerated = pendingCommission + earnedCommission;
+  const successRate = totalReferrals ? Math.round((deliveredReferrals / totalReferrals) * 100) : 0;
+  const commissionRate = Number(summary.commissionRate || 0);
+  const tier = summary.tier || "starter";
+  const statCards = [
+    {
+      tone: "green",
+      icon: "R",
+      label: "Total Referrals",
+      value: totalReferrals,
+      helper: `${deliveredReferrals} successful - ${pendingReferrals} pending`,
+    },
+    {
+      tone: "gold",
+      icon: "P",
+      label: "Pending Commission",
+      value: formatCurrency(pendingCommission),
+      helper: "Awaiting delivery completion",
+    },
+    {
+      tone: "emerald",
+      icon: "G",
+      label: "Total Paid Out",
+      value: formatCurrency(earnedCommission),
+      helper: "Approved commissions",
+    },
+    {
+      tone: "blue",
+      icon: "L",
+      label: "Lifetime Generated",
+      value: formatCurrency(lifetimeGenerated),
+      helper: "Pending + paid-out orders",
+    },
+    {
+      tone: "amber",
+      icon: "C",
+      label: "Cancelled Referrals",
+      value: cancelledReferrals,
+      helper: "Orders not completed",
+    },
+    {
+      tone: "green",
+      icon: "%",
+      label: "Success Rate",
+      value: `${successRate}%`,
+      helper: "Referral conversion",
+    },
+  ];
+
   return (
     <section className="account-dashboard__section">
       <div className="account-dashboard__section-head">
         <h2>Affiliates</h2>
-        <p>A quick snapshot of your referral status before you open the full affiliate page.</p>
+        <p>Track your referral code, commissions, and payout progress from your account.</p>
       </div>
 
-      <div className="account-mini-grid">
-        <div className="panel account-mini-card">
-          <span>Affiliate Status</span>
-          <strong>{summary.isAffiliate ? "Active" : "Not active yet"}</strong>
-          <p>{summary.isAffiliate ? `Code: ${summary.code || "N/A"}` : "Create your affiliate profile to start earning commission on qualified sales."}</p>
+      <div className="account-affiliate-hero panel">
+        <div>
+          <span className={`account-affiliate-status ${summary.isAffiliate ? "is-active" : "is-inactive"}`}>
+            {summary.isAffiliate ? "Active affiliate" : "Not active yet"}
+          </span>
+          <h3>{summary.isAffiliate ? "Your affiliate hub is ready." : "Start earning with DEETECH referrals."}</h3>
+          <p>
+            {summary.isAffiliate
+              ? "Share your code, watch qualified orders mature, and use the full affiliate page for deeper referral history."
+              : "Create your affiliate profile to receive a referral code and start earning on confirmed orders."}
+          </p>
         </div>
-        <div className="panel account-mini-card">
-          <span>Commission Earned</span>
-          <strong>{formatCurrency(Number(summary.earned || 0))}</strong>
-          <p>{summary.referrals} referral{summary.referrals === 1 ? "" : "s"} recorded so far.</p>
+        <dl className="account-affiliate-meta">
+          <div>
+            <dt>Code</dt>
+            <dd>{summary.code || "Not created"}</dd>
+          </div>
+          <div>
+            <dt>Tier</dt>
+            <dd>{tier}</dd>
+          </div>
+          <div>
+            <dt>Rate</dt>
+            <dd>{commissionRate ? `${commissionRate}%` : "N/A"}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div className="account-affiliate-stats">
+        {statCards.map((card) => (
+          <article key={card.label} className={`account-affiliate-stat is-${card.tone}`}>
+            <div className="account-affiliate-stat__head">
+              <span className="account-affiliate-stat__icon" aria-hidden="true">{card.icon}</span>
+              <span>{card.label}</span>
+            </div>
+            <strong>{card.value}</strong>
+            <small>{card.helper}</small>
+          </article>
+        ))}
+      </div>
+
+      <div className="account-affiliate-breakdown panel">
+        <div>
+          <span>Referral breakdown</span>
+          <strong>{totalReferrals} total referral{totalReferrals === 1 ? "" : "s"}</strong>
+          <p>{deliveredReferrals} successful, {pendingReferrals} pending, {cancelledReferrals} cancelled.</p>
         </div>
-        <div className="panel account-mini-card">
-          <span>Pending Commission</span>
-          <strong>{formatCurrency(Number(summary.pendingCommission || 0))}</strong>
-          <p>{summary.pendingReferrals} pending referral{summary.pendingReferrals === 1 ? "" : "s"} waiting to mature.</p>
+        <div>
+          <span>Next payout focus</span>
+          <strong>{formatCurrency(pendingCommission)}</strong>
+          <p>Pending commission becomes payable after qualifying delivery completion.</p>
         </div>
-        <div className="panel account-mini-card">
-          <span>Successful Referrals</span>
-          <strong>{Number(summary.deliveredReferrals || 0)}</strong>
-          <p>{summary.cancelledReferrals} cancelled referral{summary.cancelledReferrals === 1 ? "" : "s"} recorded so far.</p>
+        <div>
+          <span>Lifetime value</span>
+          <strong>{formatCurrency(lifetimeGenerated)}</strong>
+          <p>Combined pending and paid-out affiliate value.</p>
         </div>
       </div>
 
@@ -791,6 +882,8 @@ export default function AccountPageClient({ initialTab = "" }) {
   const [affiliateSummary, setAffiliateSummary] = useState({
     isAffiliate: false,
     code: "",
+    tier: "starter",
+    commissionRate: 0,
     earned: 0,
     referrals: 0,
     pendingCommission: 0,
@@ -914,6 +1007,8 @@ export default function AccountPageClient({ initialTab = "" }) {
         setAffiliateSummary({
           isAffiliate: Boolean(payload?.isAffiliate),
           code: payload?.affiliate?.code || payload?.affiliate?.affiliateCode || "",
+          tier: payload?.affiliate?.tier || "starter",
+          commissionRate: Number(payload?.affiliate?.commissionRate || payload?.settings?.defaultCommissionRate || 0),
           earned: Number(payload?.stats?.earnedCommission || payload?.affiliate?.earnedCommission || 0),
           referrals: Number(payload?.stats?.totalReferrals || payload?.referrals?.length || 0),
           pendingCommission: Number(payload?.stats?.pendingCommission || 0),
