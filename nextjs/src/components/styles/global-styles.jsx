@@ -7670,23 +7670,8 @@ button, input, select, textarea { font: inherit; }
 .account-dashboard__sidebar-scroll {
   display: grid;
   gap: 14px;
-  max-height: calc(100dvh - 170px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  padding-right: 4px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(24, 79, 39, 0.42) transparent;
-}
-.account-dashboard__sidebar-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.account-dashboard__sidebar-scroll::-webkit-scrollbar-thumb {
-  background: rgba(24, 79, 39, 0.36);
-  border-radius: 999px;
-}
-.account-dashboard__sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
+  max-height: none;
+  overflow: visible;
 }
 .account-dashboard__nav {
   width: 100%;
@@ -9268,8 +9253,8 @@ button, input, select, textarea { font: inherit; }
   }
   .account-dashboard__sidebar-scroll {
     gap: 14px;
-    max-height: calc(100dvh - 170px);
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
   }
   .account-dashboard__content {
     display: block;
@@ -13509,8 +13494,8 @@ button, input, select, textarea { font: inherit; }
   }
   .account-dashboard__sidebar-scroll {
     gap: 10px;
-    max-height: calc(100dvh - 150px);
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
   }
   .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__content {
     display: none;
