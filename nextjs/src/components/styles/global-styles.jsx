@@ -1,4 +1,5 @@
 const styles = `
+/* Vercel redeploy trigger: no visual behavior change. */
 :root {
   color-scheme: light;
   --panel: #ffffff;
