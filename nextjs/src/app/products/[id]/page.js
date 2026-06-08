@@ -552,6 +552,7 @@ export default function ProductDetailPage() {
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
+    .slice(0, 12)
     .map((item, index) => ({ item, index }))
     .sort((a, b) => {
       const aOutOfStock = getProductStock(a.item) < 1;
@@ -559,8 +560,7 @@ export default function ProductDetailPage() {
       if (aOutOfStock !== bOutOfStock) return aOutOfStock ? 1 : -1;
       return a.index - b.index;
     })
-    .map(({ item }) => item)
-    .slice(0, 12);
+    .map(({ item }) => item);
 
   const previewModal = previewOpen && currentImage
     ? createPortal(
