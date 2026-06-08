@@ -1870,7 +1870,7 @@ button, input, select, textarea { font: inherit; }
 }
 .primary-link, .primary-button {
   background: linear-gradient(135deg, var(--brand), var(--brand-strong));
-  color: #171513; box-shadow: var(--shadow); font-weight: 700;
+  color: #fff; box-shadow: var(--shadow); font-weight: 700;
 }
 .ghost-link, .ghost-button { background: white; color: var(--text); border: 1px solid var(--line); }
 .cart-pill { background: var(--text); color: white; }
