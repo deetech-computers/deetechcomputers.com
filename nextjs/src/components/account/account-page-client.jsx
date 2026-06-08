@@ -180,33 +180,35 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
       <div className="account-mobile-sidebar-head">
         <strong>Account Sections</strong>
       </div>
-      {sections.map((item) => {
-        if (item.href) {
+      <div className="account-dashboard__sidebar-scroll">
+        {sections.map((item) => {
+          if (item.href) {
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className="account-dashboard__nav"
+                onClick={onMobileItemSelect}
+              >
+                {item.label}
+              </Link>
+            );
+          }
           return (
-            <Link
+            <button
               key={item.id}
-              href={item.href}
-              className="account-dashboard__nav"
-              onClick={onMobileItemSelect}
+              type="button"
+              className={!suppressActive && activeSection === item.id ? "account-dashboard__nav is-active" : "account-dashboard__nav"}
+              onClick={() => {
+                onChange(item.id);
+                onMobileItemSelect?.();
+              }}
             >
               {item.label}
-            </Link>
+            </button>
           );
-        }
-        return (
-          <button
-            key={item.id}
-            type="button"
-            className={!suppressActive && activeSection === item.id ? "account-dashboard__nav is-active" : "account-dashboard__nav"}
-            onClick={() => {
-              onChange(item.id);
-              onMobileItemSelect?.();
-            }}
-          >
-            {item.label}
-          </button>
-        );
-      })}
+        })}
+      </div>
     </aside>
   );
 }

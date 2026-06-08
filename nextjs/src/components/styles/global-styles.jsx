@@ -7648,6 +7648,7 @@ button, input, select, textarea { font: inherit; }
   padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: white; color: var(--muted);
 }
 .account-nav a:hover, .account-nav a.active { background: rgba(24, 79, 39, 0.1); color: #184f27; border-color: rgba(24, 79, 39, 0.28); }
+/* Account dashboard - shared/base styles */
 .account-dashboard-shell {
   display: grid;
   gap: 10px;
@@ -7665,6 +7666,27 @@ button, input, select, textarea { font: inherit; }
   position: static;
   max-height: none;
   overflow: visible;
+}
+.account-dashboard__sidebar-scroll {
+  display: grid;
+  gap: 14px;
+  max-height: calc(100dvh - 170px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(24, 79, 39, 0.42) transparent;
+}
+.account-dashboard__sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.account-dashboard__sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(24, 79, 39, 0.36);
+  border-radius: 999px;
+}
+.account-dashboard__sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 .account-dashboard__nav {
   width: 100%;
@@ -9229,6 +9251,53 @@ button, input, select, textarea { font: inherit; }
 .account-hero {
   margin-bottom: 28px;
 }
+
+/* Account dashboard - desktop only */
+@media (min-width: 641px) {
+  .account-dashboard {
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 28px;
+  }
+  .account-dashboard__sidebar {
+    display: grid;
+    gap: 14px;
+    align-self: start;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  .account-dashboard__sidebar-scroll {
+    gap: 14px;
+    max-height: calc(100dvh - 170px);
+    overflow-y: auto;
+  }
+  .account-dashboard__content {
+    display: block;
+  }
+  .account-dashboard__nav {
+    min-height: 84px;
+    padding: 0 24px;
+    border-radius: 24px;
+  }
+  .account-dashboard__section-head--row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .account-dashboard__form,
+  .account-mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .account-order-card__summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .account-order-card__item {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
+  .account-order-card__summary > div + div {
+    border-left: 1px solid rgba(255,255,255,0.18);
+    border-top: 0;
+  }
+}
+
 .resource-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .resource-card { padding: 18px; border-radius: 20px; border: 1px solid var(--line); background: #fff; }
 .resource-card h3 { margin-top: 0; }
@@ -12435,55 +12504,7 @@ button, input, select, textarea { font: inherit; }
     width: 100%;
     text-align: center;
   }
-  .account-dashboard {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .account-dashboard__sidebar {
-    display: none;
-  }
-  .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__sidebar {
-    display: grid;
-    gap: 10px;
-    max-height: calc(100dvh - 130px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 16px;
-  }
-  .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__content {
-    display: none;
-  }
-  .account-mobile-sidebar-head {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 12px;
-    margin-bottom: 2px;
-  }
-  .account-mobile-sidebar-head strong {
-    font-size: 0.96rem;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #334155;
-  }
-  .account-mobile-content-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .account-mobile-content-head .ghost-button {
-    min-height: 38px;
-    padding: 0 14px;
-  }
-  .account-mobile-content-head strong {
-    font-size: 0.92rem;
-    color: #334155;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
+  /* Account mobile rules are isolated in the dedicated account section below. */
   .affiliate-join-card,
   .affiliate-command,
   .affiliate-referral-row {
@@ -12554,57 +12575,6 @@ button, input, select, textarea { font: inherit; }
   .affiliate-referrals__head {
     align-items: stretch;
   }
-  .account-dashboard__sidebar {
-    gap: 10px;
-  }
-  .account-dashboard__nav {
-    min-height: 72px;
-    padding: 0 18px;
-    border-radius: 20px;
-  }
-  .account-dashboard__section-head h2 {
-    font-size: clamp(1.7rem, 6vw, 2.4rem);
-  }
-  .account-notification-card__head {
-    display: grid;
-  }
-  .account-notification-card__status {
-    justify-items: start;
-    text-align: left;
-  }
-  .account-support-chat {
-    grid-template-columns: 1fr;
-    padding: 10px;
-  }
-  .account-support-chat__tickets {
-    max-height: none;
-  }
-  .account-support-chat__thread-wrap {
-    grid-template-rows: auto auto auto;
-  }
-  .account-support-chat__thread {
-    max-height: 420px;
-  }
-  .account-support-chat__bubble {
-    max-width: 100%;
-  }
-  .account-support-chat__quick {
-    flex-direction: column;
-  }
-  .account-support-chat__quick .ghost-button {
-    width: 100%;
-  }
-  .account-support-chat__composer-row {
-    align-items: stretch;
-  }
-  .account-support-chat__input {
-    min-height: 46px;
-    border-radius: 16px;
-  }
-  .account-support-chat__send {
-    min-height: 46px;
-    min-width: 64px;
-  }
   .admin-upgrade-panel__grid {
     grid-template-columns: 1fr;
   }
@@ -12613,50 +12583,6 @@ button, input, select, textarea { font: inherit; }
   }
   .admin-upgrade-editor__remove,
   .admin-upgrade-editor__head .ghost-button {
-    width: 100%;
-  }
-  .account-dashboard__section-head--row {
-    grid-template-columns: 1fr;
-  }
-  .account-dashboard__form,
-  .account-mini-grid,
-  .account-order-card__summary {
-    grid-template-columns: 1fr;
-  }
-  .account-mini-row,
-  .account-review-card,
-  .account-order-card__item {
-    grid-template-columns: 64px minmax(0, 1fr);
-  }
-  .account-mini-row,
-  .account-review-card {
-    grid-template-columns: 1fr;
-  }
-  .account-mini-row__product,
-  .account-review-card__product {
-    grid-template-columns: 64px minmax(0, 1fr);
-  }
-  .account-mini-row__meta {
-    grid-column: 1 / -1;
-    text-align: left;
-  }
-  .account-order-card__summary > div + div {
-    border-left: 0;
-    border-top: 1px solid rgba(255,255,255,0.12);
-  }
-  .account-order-card__footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .account-order-card__actions,
-  .account-dashboard__actions,
-  .account-dashboard__cta-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .account-order-card__actions .primary-button,
-  .account-order-card__actions .ghost-button,
-  .account-dashboard__submit {
     width: 100%;
   }
   .faq-showcase__layout {
@@ -13567,6 +13493,145 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.88rem;
   }
 }
+/* Account dashboard - mobile only */
+@media (max-width: 640px) {
+  .account-dashboard {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .account-dashboard__sidebar {
+    display: none;
+    gap: 10px;
+  }
+  .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__sidebar {
+    display: grid;
+    padding-bottom: 16px;
+  }
+  .account-dashboard__sidebar-scroll {
+    gap: 10px;
+    max-height: calc(100dvh - 150px);
+    overflow-y: auto;
+  }
+  .account-dashboard.account-dashboard--mobile-nav-open .account-dashboard__content {
+    display: none;
+  }
+  .account-mobile-sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 2px;
+  }
+  .account-mobile-sidebar-head strong {
+    font-size: 0.96rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #334155;
+  }
+  .account-mobile-content-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .account-mobile-content-head .ghost-button {
+    min-height: 38px;
+    padding: 0 14px;
+  }
+  .account-mobile-content-head strong {
+    font-size: 0.92rem;
+    color: #334155;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .account-dashboard__nav {
+    min-height: 72px;
+    padding: 0 18px;
+    border-radius: 20px;
+  }
+  .account-dashboard__section-head h2 {
+    font-size: clamp(1.7rem, 6vw, 2.4rem);
+  }
+  .account-dashboard__section-head--row,
+  .account-dashboard__form,
+  .account-mini-grid,
+  .account-order-card__summary {
+    grid-template-columns: 1fr;
+  }
+  .account-notification-card__head {
+    display: grid;
+  }
+  .account-notification-card__status {
+    justify-items: start;
+    text-align: left;
+  }
+  .account-mini-row,
+  .account-review-card {
+    grid-template-columns: 1fr;
+  }
+  .account-order-card__item,
+  .account-mini-row__product,
+  .account-review-card__product {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .account-mini-row__meta {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  .account-order-card__summary > div + div {
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .account-order-card__footer,
+  .account-order-card__actions,
+  .account-dashboard__actions,
+  .account-dashboard__cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .account-order-card__actions .primary-button,
+  .account-order-card__actions .ghost-button,
+  .account-dashboard__submit {
+    width: 100%;
+  }
+  .account-support-chat {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+  .account-support-chat__tickets {
+    max-height: none;
+  }
+  .account-support-chat__thread-wrap {
+    grid-template-rows: auto auto auto;
+  }
+  .account-support-chat__thread {
+    max-height: 420px;
+  }
+  .account-support-chat__bubble {
+    max-width: 100%;
+  }
+  .account-support-chat__quick {
+    flex-direction: column;
+  }
+  .account-support-chat__quick .ghost-button {
+    width: 100%;
+  }
+  .account-support-chat__composer-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+  .account-support-chat__input {
+    min-height: 46px;
+    border-radius: 16px;
+  }
+  .account-support-chat__send {
+    min-height: 46px;
+    min-width: 64px;
+    width: 100%;
+  }
+}
 @media (max-width: 1099px) {
   .shell {
     width: min(100%, calc(100vw - clamp(24px, 4vw, 32px)));
@@ -13652,17 +13717,13 @@ button, input, select, textarea { font: inherit; }
   }
   .admin-actions,
   .admin-chip-row,
-  .checkout-summary__actions,
-  .account-dashboard__actions,
-  .account-dashboard__cta-row {
+  .checkout-summary__actions {
     align-items: stretch;
   }
   .admin-actions > *,
   .checkout-summary__button,
   .checkout-payment__secondary,
-  .checkout-payment__upload-button,
-  .account-dashboard__actions > *,
-  .account-dashboard__cta-row > * {
+  .checkout-payment__upload-button {
     width: 100%;
   }
   .admin-affiliate-leaderboard__row {
@@ -13680,9 +13741,7 @@ button, input, select, textarea { font: inherit; }
   .wishlist-row__meta,
   .admin-record__main,
   .admin-record__items,
-  .admin-support-ticket__summary-copy,
-  .account-support-chat__thread-head,
-  .account-support-chat__bubble-meta {
+  .admin-support-ticket__summary-copy {
     min-width: 0;
   }
   .shop-toolbar__sort {
@@ -13712,13 +13771,6 @@ button, input, select, textarea { font: inherit; }
     width: 100%;
     max-width: 100%;
     height: clamp(150px, 48vw, 180px);
-  }
-  .account-support-chat__composer-row {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .account-support-chat__send {
-    width: 100%;
   }
 }
 @media (max-width: 520px) {
