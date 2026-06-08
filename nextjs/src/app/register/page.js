@@ -3,18 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, loginWithGoogle } = useAuth();
+  const { isAuthenticated, loginWithGoogle, register, status } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (status === "ready" && isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isAuthenticated, router, status]);
+
+  if (status === "loading" || isAuthenticated) {
+    return (
+      <main className="auth-hp-page">
+        <section className="auth-hp-card auth-hp-card--register">
+          <div className="auth-hp-frame">
+            <h1>Checking session...</h1>
+            <p className="hero-copy">Please wait while we confirm your login.</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault();

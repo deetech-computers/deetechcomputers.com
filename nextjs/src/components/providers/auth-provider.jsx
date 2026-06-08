@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import {
   fetchProfile,
   googleAuthUser,
@@ -22,6 +22,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const { pushToast } = useToast();
+  const [hydrated, setHydrated] = useState(false);
   const session = useSyncExternalStore(
     subscribeToSession,
     readSessionSnapshot,
@@ -29,7 +30,11 @@ export function AuthProvider({ children }) {
   );
   const user = session.user;
   const token = session.token;
-  const status = "ready";
+  const status = hydrated ? "ready" : "loading";
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   const normalizeAuthResult = (data) => {
     const tokenValue = data?.token || null;
