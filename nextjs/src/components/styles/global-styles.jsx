@@ -7652,12 +7652,14 @@ button, input, select, textarea { font: inherit; }
 .account-dashboard-shell {
   display: grid;
   gap: 10px;
+  min-height: calc(100dvh - 170px);
 }
 .account-dashboard {
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
   gap: 28px;
   align-items: start;
+  min-height: inherit;
 }
 .account-dashboard__sidebar {
   display: grid;
@@ -9242,6 +9244,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard {
     grid-template-columns: 360px minmax(0, 1fr);
     gap: 28px;
+    min-height: calc(100dvh - 170px);
   }
   .account-dashboard__sidebar {
     display: grid;
@@ -13485,6 +13488,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard {
     grid-template-columns: 1fr;
     gap: 20px;
+    min-height: 0;
   }
   .account-dashboard__sidebar {
     display: none;

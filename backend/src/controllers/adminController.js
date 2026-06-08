@@ -101,6 +101,11 @@ export async function deleteUserById(req, res) {
     throw new Error("Admins cannot delete themselves");
   }
 
+  if (String(user.role || "").toLowerCase() === "admin") {
+    res.status(403);
+    throw new Error("Admin accounts cannot be deleted");
+  }
+
   await user.deleteOne();
   res.json({ message: "User removed" });
 }

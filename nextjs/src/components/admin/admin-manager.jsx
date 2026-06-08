@@ -1467,6 +1467,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
 
   if (type === "users") {
     const active = item.isActive !== false;
+    const isAdminUser = String(item?.role || "").toLowerCase() === "admin";
     const email = normalizeEmail(item?.email);
     const insight = email ? userInsights?.[email] : null;
     const wishlistCount = Array.isArray(item?.wishlist) ? item.wishlist.length : 0;
@@ -1519,7 +1520,11 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
             <div className="admin-actions">
               <button className="ghost-button" type="button" onClick={() => onAction("openUser360", item)}>View User 360</button>
               <button className="ghost-button" disabled={busy} onClick={() => onAction("userStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
-              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteUser", item)}>Delete</button>
+              {isAdminUser ? (
+                <span className="admin-chip is-success">Protected admin account</span>
+              ) : (
+                <button className="danger-button" disabled={busy} onClick={() => onAction("deleteUser", item)}>Delete</button>
+              )}
             </div>
           </div>
         ) : null}
@@ -2395,7 +2400,12 @@ export default function AdminManager({ type, productMode = "list", productId = "
         }
       }
       if (action === "userStatus") await requestWithToken(`${API_BASE_USERS}/admin/users/${item._id}/status`, token, { method: "PUT", body: JSON.stringify({ isActive: value }) });
-      if (action === "deleteUser") await requestWithToken(`${API_BASE_USERS}/admin/users/${item._id}`, token, { method: "DELETE" });
+      if (action === "deleteUser") {
+        if (String(item?.role || "").toLowerCase() === "admin") {
+          throw new Error("Admin accounts cannot be deleted");
+        }
+        await requestWithToken(`${API_BASE_USERS}/admin/users/${item._id}`, token, { method: "DELETE" });
+      }
       if (action === "moderateReview") await requestWithToken(`${API_BASE}/reviews/${item._id}/moderate`, token, { method: "PUT", body: JSON.stringify({ approved: value }) });
       if (action === "deleteReview") await requestWithToken(`${API_BASE}/reviews/${item._id}`, token, { method: "DELETE" });
       if (action === "affiliateStatus") await requestWithToken(`${API_BASE}/affiliates/admin/${item._id}/status`, token, { method: "PUT", body: JSON.stringify({ isActive: value }) });

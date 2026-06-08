@@ -88,6 +88,12 @@ export async function deleteUser(req, res) {
     res.status(404);
     throw new Error("User not found");
   }
+
+  if (String(user.role || "").toLowerCase() === "admin") {
+    res.status(403);
+    throw new Error("Admin accounts cannot be deleted");
+  }
+
   await user.deleteOne();
   res.json({ message: "User deleted successfully" });
 }
@@ -129,6 +135,11 @@ export async function deleteUserAdmin(req, res) {
   if (!user) {
     res.status(404);
     throw new Error("User not found");
+  }
+
+  if (String(user.role || "").toLowerCase() === "admin") {
+    res.status(403);
+    throw new Error("Admin accounts cannot be deleted");
   }
 
   await user.deleteOne();
