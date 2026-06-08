@@ -73,7 +73,7 @@ export default function FaqPage() {
         <section className="policy-content-section policy-content-section--cta">
           <h2>Need More Help?</h2>
           <p>Our support team can assist with product guidance, payment issues, delivery updates, and warranty requests.</p>
-          <div className="policy-cta-actions">
+          <div className="policy-cta-actions faq-support-actions">
             <Link href="/contact">Contact Technical Support</Link>
             <a href="mailto:deetechcomputers01@gmail.com">Email Support Team</a>
           </div>

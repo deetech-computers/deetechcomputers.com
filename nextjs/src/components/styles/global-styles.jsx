@@ -9762,6 +9762,49 @@ button, input, select, textarea { font: inherit; }
   background: #0a4fcf;
   color: #fff;
 }
+.faq-support-actions a {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+}
+.faq-support-actions a::after {
+  content: "";
+  position: absolute;
+  inset: -45% auto -45% -35%;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  opacity: 0;
+  transform: translateX(-20%) rotate(14deg);
+  transition: opacity 0.22s ease, transform 0.32s ease;
+  pointer-events: none;
+}
+.faq-support-actions a:hover,
+.faq-support-actions a:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(10, 79, 207, 0.16);
+  border-color: #004aad;
+}
+.faq-support-actions a:hover::after,
+.faq-support-actions a:focus-visible::after {
+  opacity: 1;
+  transform: translateX(260%) rotate(14deg);
+}
+.faq-support-actions a:active {
+  transform: translateY(0);
+  box-shadow: 0 7px 16px rgba(10, 79, 207, 0.13);
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-support-actions a,
+  .faq-support-actions a::after {
+    transition: none;
+  }
+  .faq-support-actions a:hover,
+  .faq-support-actions a:focus-visible,
+  .faq-support-actions a:active {
+    transform: none;
+  }
+}
 .developer-profile {
   display: grid;
   gap: 24px;
