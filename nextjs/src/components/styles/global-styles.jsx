@@ -4902,14 +4902,6 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
   padding: 22px 0;
   border-bottom: 1px solid #ece5d9;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
-}
-.wishlist-row:hover,
-.wishlist-row:focus-within {
-  transform: translateY(-2px);
-  border-color: rgba(24, 77, 34, 0.18);
-  background: linear-gradient(90deg, rgba(24, 77, 34, 0.035), rgba(255, 255, 255, 0));
-  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.07);
 }
 .wishlist-row__remove {
   border: 1px solid #e6dfd2;
@@ -4967,7 +4959,6 @@ button, input, select, textarea { font: inherit; }
   overflow: hidden;
   background: #f6f1e7;
   border-radius: 16px;
-  transition: transform 0.2s ease, box-shadow 0.22s ease;
 }
 .wishlist-row__thumb img {
   width: 100%;
@@ -4992,11 +4983,6 @@ button, input, select, textarea { font: inherit; }
 .wishlist-row__product:hover .wishlist-row__meta h3,
 .wishlist-row__product:focus-visible .wishlist-row__meta h3 {
   color: var(--brand-strong);
-}
-.wishlist-row__product:hover .wishlist-row__thumb,
-.wishlist-row__product:focus-visible .wishlist-row__thumb {
-  transform: scale(1.025);
-  box-shadow: 0 14px 26px rgba(17, 24, 39, 0.1);
 }
 .wishlist-row__price,
 .wishlist-row__date,
@@ -5123,26 +5109,20 @@ button, input, select, textarea { font: inherit; }
   justify-items: start;
 }
 @media (prefers-reduced-motion: reduce) {
-  .wishlist-row,
   .wishlist-row__remove,
   .wishlist-row__remove-mobile,
-  .wishlist-row__thumb,
   .wishlist-row__cart,
   .wishlist-actions__copy,
   .wishlist-actions__add-all,
   .wishlist-actions__clear {
     transition: none;
   }
-  .wishlist-row:hover,
-  .wishlist-row:focus-within,
   .wishlist-row__remove:hover,
   .wishlist-row__remove:focus-visible,
   .wishlist-row__remove:active,
   .wishlist-row__remove-mobile:hover,
   .wishlist-row__remove-mobile:focus-visible,
   .wishlist-row__remove-mobile:active,
-  .wishlist-row__product:hover .wishlist-row__thumb,
-  .wishlist-row__product:focus-visible .wishlist-row__thumb,
   .wishlist-row__cart:hover,
   .wishlist-row__cart:focus-visible,
   .wishlist-row__cart:active,
@@ -7879,16 +7859,10 @@ button, input, select, textarea { font: inherit; }
   gap: 16px;
   padding: 22px;
   border-radius: 24px;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .account-notification-card.is-unread {
   border-color: rgba(24, 79, 39, 0.26);
   background: linear-gradient(180deg, #f6fbf7 0%, #ffffff 100%);
-}
-.account-notification-card:hover,
-.account-notification-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-notification-card__head {
   display: flex;
@@ -9214,7 +9188,6 @@ button, input, select, textarea { font: inherit; }
 .account-address-card {
   display: grid;
   gap: 8px;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .account-mini-grid {
   display: grid;
@@ -9224,14 +9197,6 @@ button, input, select, textarea { font: inherit; }
 .account-mini-card {
   display: grid;
   gap: 8px;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-.account-address-card:hover,
-.account-address-card:focus-within,
-.account-mini-card:hover,
-.account-mini-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-mini-card span {
   color: var(--muted);
@@ -9250,14 +9215,6 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: center;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-.account-mini-row:hover,
-.account-mini-row:focus-within,
-.account-review-card:hover,
-.account-review-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-mini-row__product,
 .account-review-card__product {
@@ -9338,12 +9295,6 @@ button, input, select, textarea { font: inherit; }
 .account-order-card {
   padding: 0;
   overflow: hidden;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-.account-order-card:hover,
-.account-order-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 42px rgba(17, 24, 39, 0.09);
 }
 .account-order-card__summary {
   display: grid;
@@ -9455,13 +9406,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__content .primary-button,
   .account-dashboard__content .primary-link,
   .account-dashboard__content .ghost-button,
-  .account-dashboard__content .danger-button,
-  .account-address-card,
-  .account-mini-card,
-  .account-mini-row,
-  .account-review-card,
-  .account-order-card,
-  .account-notification-card {
+  .account-dashboard__content .danger-button {
     transition: none;
   }
   .account-dashboard__nav:hover,
@@ -9474,19 +9419,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__content .primary-button:hover,
   .account-dashboard__content .primary-link:hover,
   .account-dashboard__content .ghost-button:hover,
-  .account-dashboard__content .danger-button:hover,
-  .account-address-card:hover,
-  .account-address-card:focus-within,
-  .account-mini-card:hover,
-  .account-mini-card:focus-within,
-  .account-mini-row:hover,
-  .account-mini-row:focus-within,
-  .account-review-card:hover,
-  .account-review-card:focus-within,
-  .account-order-card:hover,
-  .account-order-card:focus-within,
-  .account-notification-card:hover,
-  .account-notification-card:focus-within {
+  .account-dashboard__content .danger-button:hover {
     transform: none;
   }
 }
