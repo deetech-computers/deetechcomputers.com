@@ -5398,6 +5398,7 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 16px;
   background: #fff;
+  min-width: 0;
 }
 .checkout-payment__auto-card {
   border: 1px solid #cfe1fb;
@@ -5507,6 +5508,8 @@ button, input, select, textarea { font: inherit; }
   padding: 14px;
   background: #faf7f1;
   border: 1px solid #efe7db;
+  min-width: 0;
+  max-width: 100%;
 }
 .checkout-payment__proof-thumb {
   width: 82px;
@@ -5523,6 +5526,14 @@ button, input, select, textarea { font: inherit; }
 .checkout-payment__proof-meta {
   display: grid;
   gap: 4px;
+  min-width: 0;
+}
+.checkout-payment__proof-meta strong,
+.checkout-payment__proof-meta small {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .checkout-payment__upload {
   display: grid;
@@ -12088,10 +12099,13 @@ button, input, select, textarea { font: inherit; }
   }
   .checkout-payment__proof-preview {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
   }
   .checkout-payment__proof-thumb {
     width: 100%;
-    height: 180px;
+    max-width: 100%;
+    height: clamp(140px, 48vw, 170px);
   }
   .checkout-payment__secondary,
   .checkout-payment__upload-button {
@@ -13682,10 +13696,13 @@ button, input, select, textarea { font: inherit; }
   }
   .checkout-payment__proof-preview {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
   }
   .checkout-payment__proof-thumb {
     width: 100%;
-    height: 180px;
+    max-width: 100%;
+    height: clamp(150px, 48vw, 180px);
   }
   .account-support-chat__composer-row {
     display: grid;
