@@ -6309,10 +6309,28 @@ button, input, select, textarea { font: inherit; }
   background: #184f27;
   color: #fff;
   box-shadow: 0 16px 34px rgba(24, 79, 39, 0.18);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+.auth-submit:not(:disabled):hover,
+.auth-submit:not(:disabled):focus-visible {
+  transform: translateY(-2px);
+  background: #145021;
+  border-color: #145021;
+  box-shadow: 0 20px 42px rgba(24, 79, 39, 0.25);
+}
+.auth-submit:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 12px 26px rgba(24, 79, 39, 0.18);
 }
 .auth-submit:disabled {
   opacity: 0.72;
   cursor: wait;
+  transform: none;
+  box-shadow: 0 12px 24px rgba(24, 79, 39, 0.12);
 }
 .auth-links {
   display: flex;
@@ -6327,6 +6345,16 @@ button, input, select, textarea { font: inherit; }
   font-weight: 800;
   text-decoration-color: rgba(24, 79, 39, 0.35);
   text-underline-offset: 4px;
+  transition:
+    color 0.18s ease,
+    text-decoration-color 0.18s ease,
+    transform 0.18s ease;
+}
+.auth-links a:hover,
+.auth-links a:focus-visible {
+  color: #0d56da;
+  text-decoration-color: rgba(13, 86, 218, 0.45);
+  transform: translateY(-1px);
 }
 .auth-message,
 .form-error {
@@ -6503,6 +6531,14 @@ button, input, select, textarea { font: inherit; }
   font-weight: 700;
   cursor: pointer;
   padding: 4px 0;
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.auth-hp-form .password-field__toggle:hover,
+.auth-hp-form .password-field__toggle:focus-visible {
+  color: #004aad;
+  transform: translateY(calc(-50% - 1px));
 }
 .auth-hp-form .password-field__toggle:focus-visible {
   outline: 2px solid #0d56da;
@@ -6525,15 +6561,39 @@ button, input, select, textarea { font: inherit; }
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease;
 }
 .auth-hp-btn--primary {
   background: #0d56da;
   border-color: #0d56da;
   color: #fff;
+  box-shadow: 0 14px 30px rgba(13, 86, 218, 0.2);
+}
+.auth-hp-btn:not(:disabled):hover,
+.auth-hp-btn:not(:disabled):focus-visible {
+  transform: translateY(-2px);
+}
+.auth-hp-btn--primary:not(:disabled):hover,
+.auth-hp-btn--primary:not(:disabled):focus-visible {
+  background: #004aad;
+  border-color: #004aad;
+  color: #fff;
+  box-shadow: 0 18px 38px rgba(13, 86, 218, 0.28);
+}
+.auth-hp-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 10px 22px rgba(13, 86, 218, 0.18);
 }
 .auth-hp-btn:disabled {
   opacity: 0.72;
   cursor: wait;
+  transform: none;
+  box-shadow: none;
 }
 .auth-google {
   display: grid;
@@ -6562,10 +6622,21 @@ button, input, select, textarea { font: inherit; }
   min-height: 44px;
   display: grid;
   justify-content: center;
+  border-radius: 14px;
+  transition:
+    transform 0.18s ease,
+    filter 0.22s ease;
+}
+.auth-google__button:not(.is-disabled):hover,
+.auth-google__button:not(.is-disabled):focus-within {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 12px 22px rgba(13, 86, 218, 0.14));
 }
 .auth-google__button.is-disabled {
   pointer-events: none;
   opacity: 0.72;
+  transform: none;
+  filter: none;
 }
 .auth-google__button > div {
   width: 100% !important;
@@ -6584,9 +6655,17 @@ button, input, select, textarea { font: inherit; }
   text-decoration: none;
   text-underline-offset: 2px;
   font-weight: 500;
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease,
+    text-decoration-color 0.18s ease;
 }
-.auth-hp-link-row:hover {
+.auth-hp-link-row:hover,
+.auth-hp-link-row:focus-visible {
+  color: #004aad;
   text-decoration: underline;
+  text-decoration-color: rgba(0, 74, 173, 0.5);
+  transform: translateY(-1px);
 }
 .auth-hp-foot {
   display: grid;
@@ -6608,12 +6687,47 @@ button, input, select, textarea { font: inherit; }
   color: #8a8f9b;
   font-size: 0.86rem;
   text-decoration: none;
-  transition: color 140ms ease, text-decoration-color 140ms ease;
+  transition:
+    color 0.18s ease,
+    text-decoration-color 0.18s ease,
+    transform 0.18s ease;
 }
-.auth-hp-privacy:hover {
+.auth-hp-privacy:hover,
+.auth-hp-privacy:focus-visible {
   color: #0d56da;
   text-decoration: underline;
   text-underline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-submit,
+  .auth-links a,
+  .auth-hp-form .password-field__toggle,
+  .auth-hp-btn,
+  .auth-google__button,
+  .auth-hp-link-row,
+  .auth-hp-privacy {
+    transition: none;
+  }
+  .auth-submit:not(:disabled):hover,
+  .auth-submit:not(:disabled):focus-visible,
+  .auth-submit:not(:disabled):active,
+  .auth-links a:hover,
+  .auth-links a:focus-visible,
+  .auth-hp-form .password-field__toggle:hover,
+  .auth-hp-form .password-field__toggle:focus-visible,
+  .auth-hp-btn:not(:disabled):hover,
+  .auth-hp-btn:not(:disabled):focus-visible,
+  .auth-hp-btn:not(:disabled):active,
+  .auth-google__button:not(.is-disabled):hover,
+  .auth-google__button:not(.is-disabled):focus-within,
+  .auth-hp-link-row:hover,
+  .auth-hp-link-row:focus-visible,
+  .auth-hp-privacy:hover,
+  .auth-hp-privacy:focus-visible {
+    transform: none;
+  }
 }
 
 .site-footer {
