@@ -7686,7 +7686,18 @@ button, input, select, textarea { font: inherit; }
   text-align: left;
   font-size: 1rem;
   font-weight: 700;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 6px 18px rgba(12, 20, 32, 0);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.account-dashboard__nav:hover,
+.account-dashboard__nav:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(24, 79, 39, 0.28);
+  box-shadow: 0 14px 28px rgba(24, 79, 39, 0.1);
+}
+.account-dashboard__nav:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(24, 79, 39, 0.08);
 }
 .account-dashboard__nav.is-active {
   background: #184f27;
@@ -7757,10 +7768,16 @@ button, input, select, textarea { font: inherit; }
   gap: 16px;
   padding: 22px;
   border-radius: 24px;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .account-notification-card.is-unread {
   border-color: rgba(24, 79, 39, 0.26);
   background: linear-gradient(180deg, #f6fbf7 0%, #ffffff 100%);
+}
+.account-notification-card:hover,
+.account-notification-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-notification-card__head {
   display: flex;
@@ -7804,19 +7821,79 @@ button, input, select, textarea { font: inherit; }
   background: linear-gradient(135deg, #1d6a33, #184f27);
   color: #ffffff;
   box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
 }
 .account-dashboard__content .primary-link {
   background: linear-gradient(135deg, #1d6a33, #184f27);
   color: #ffffff;
   box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
 }
 .account-dashboard .primary-button:hover,
 .account-dashboard .primary-link:hover,
 .account-dashboard__content .primary-button:hover {
   background: linear-gradient(135deg, #16572a, #123f1f);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(24, 79, 39, 0.28);
 }
 .account-dashboard__content .primary-link:hover {
   background: linear-gradient(135deg, #16572a, #123f1f);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(24, 79, 39, 0.28);
+}
+.account-dashboard .primary-button:focus-visible,
+.account-dashboard .primary-link:focus-visible,
+.account-dashboard__content .primary-button:focus-visible,
+.account-dashboard__content .primary-link:focus-visible {
+  outline: 3px solid rgba(24, 79, 39, 0.18);
+  outline-offset: 3px;
+}
+.account-dashboard .primary-button:active,
+.account-dashboard .primary-link:active,
+.account-dashboard__content .primary-button:active,
+.account-dashboard__content .primary-link:active {
+  transform: translateY(0);
+  box-shadow: 0 9px 22px rgba(24, 79, 39, 0.2);
+}
+.account-dashboard .primary-button:disabled,
+.account-dashboard__content .primary-button:disabled {
+  transform: none;
+  box-shadow: 0 14px 32px rgba(24, 79, 39, 0.12);
+}
+.account-dashboard .ghost-button,
+.account-dashboard .danger-button,
+.account-dashboard__content .ghost-button,
+.account-dashboard__content .danger-button {
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+}
+.account-dashboard .ghost-button:hover,
+.account-dashboard .ghost-button:focus-visible,
+.account-dashboard__content .ghost-button:hover,
+.account-dashboard__content .ghost-button:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(24, 79, 39, 0.24);
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.08);
+}
+.account-dashboard .danger-button:hover,
+.account-dashboard .danger-button:focus-visible,
+.account-dashboard__content .danger-button:hover,
+.account-dashboard__content .danger-button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(183, 28, 28, 0.1);
+}
+.account-dashboard .ghost-button:active,
+.account-dashboard .danger-button:active,
+.account-dashboard__content .ghost-button:active,
+.account-dashboard__content .danger-button:active {
+  transform: translateY(0);
+  box-shadow: 0 7px 16px rgba(17, 24, 39, 0.07);
+}
+.account-dashboard .ghost-button:disabled,
+.account-dashboard .danger-button:disabled,
+.account-dashboard__content .ghost-button:disabled,
+.account-dashboard__content .danger-button:disabled {
+  transform: none;
+  box-shadow: none;
 }
 .account-support-chat {
   display: grid;
@@ -9026,6 +9103,7 @@ button, input, select, textarea { font: inherit; }
 .account-address-card {
   display: grid;
   gap: 8px;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .account-mini-grid {
   display: grid;
@@ -9035,6 +9113,14 @@ button, input, select, textarea { font: inherit; }
 .account-mini-card {
   display: grid;
   gap: 8px;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.account-address-card:hover,
+.account-address-card:focus-within,
+.account-mini-card:hover,
+.account-mini-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-mini-card span {
   color: var(--muted);
@@ -9053,6 +9139,14 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: center;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.account-mini-row:hover,
+.account-mini-row:focus-within,
+.account-review-card:hover,
+.account-review-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(17, 24, 39, 0.08);
 }
 .account-mini-row__product,
 .account-review-card__product {
@@ -9133,6 +9227,12 @@ button, input, select, textarea { font: inherit; }
 .account-order-card {
   padding: 0;
   overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.account-order-card:hover,
+.account-order-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 42px rgba(17, 24, 39, 0.09);
 }
 .account-order-card__summary {
   display: grid;
@@ -9234,6 +9334,50 @@ button, input, select, textarea { font: inherit; }
 .account-order-card__actions .primary-button,
 .account-order-card__actions .ghost-button {
   min-width: 150px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-dashboard__nav,
+  .account-dashboard .primary-button,
+  .account-dashboard .primary-link,
+  .account-dashboard .ghost-button,
+  .account-dashboard .danger-button,
+  .account-dashboard__content .primary-button,
+  .account-dashboard__content .primary-link,
+  .account-dashboard__content .ghost-button,
+  .account-dashboard__content .danger-button,
+  .account-address-card,
+  .account-mini-card,
+  .account-mini-row,
+  .account-review-card,
+  .account-order-card,
+  .account-notification-card {
+    transition: none;
+  }
+  .account-dashboard__nav:hover,
+  .account-dashboard__nav:focus-visible,
+  .account-dashboard__nav:active,
+  .account-dashboard .primary-button:hover,
+  .account-dashboard .primary-link:hover,
+  .account-dashboard .ghost-button:hover,
+  .account-dashboard .danger-button:hover,
+  .account-dashboard__content .primary-button:hover,
+  .account-dashboard__content .primary-link:hover,
+  .account-dashboard__content .ghost-button:hover,
+  .account-dashboard__content .danger-button:hover,
+  .account-address-card:hover,
+  .account-address-card:focus-within,
+  .account-mini-card:hover,
+  .account-mini-card:focus-within,
+  .account-mini-row:hover,
+  .account-mini-row:focus-within,
+  .account-review-card:hover,
+  .account-review-card:focus-within,
+  .account-order-card:hover,
+  .account-order-card:focus-within,
+  .account-notification-card:hover,
+  .account-notification-card:focus-within {
+    transform: none;
+  }
 }
 .account-hero {
   margin-bottom: 28px;
