@@ -9247,9 +9247,11 @@ button, input, select, textarea { font: inherit; }
     display: grid;
     gap: 14px;
     align-self: start;
-    position: static;
+    position: sticky;
+    top: 108px;
     max-height: none;
     overflow: visible;
+    height: fit-content;
   }
   .account-dashboard__sidebar-scroll {
     gap: 14px;
