@@ -810,15 +810,26 @@ export default function AccountPageClient({ initialTab = "" }) {
     confirmPassword: "",
   });
   const profileHydratedRef = useRef(false);
-  const activeSection = normalizeAccountTab(String(initialTab || "").toLowerCase());
+  const userSelectedSectionRef = useRef(false);
+  const [activeSection, setActiveSection] = useState(() =>
+    normalizeAccountTab(String(initialTab || "").toLowerCase())
+  );
+
+  useEffect(() => {
+    setActiveSection(normalizeAccountTab(String(initialTab || "").toLowerCase()));
+  }, [initialTab]);
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
 
     const mediaQuery = window.matchMedia("(max-width: 980px)");
-    const hasExplicitTab = Boolean(String(initialTab || "").trim());
     const syncMobileMenuState = () => {
       if (mediaQuery.matches) {
+        const hasExplicitTab = Boolean(String(initialTab || "").trim());
+        if (userSelectedSectionRef.current) {
+          setMobileNavOpen(false);
+          return;
+        }
         setMobileNavOpen(!hasExplicitTab);
         return;
       }
@@ -1030,6 +1041,9 @@ export default function AccountPageClient({ initialTab = "" }) {
   function handleSectionChange(section) {
     const nextSection = normalizeAccountTab(String(section || "").toLowerCase());
     const nextHref = nextSection === "personal" ? "/account" : `/account?tab=${encodeURIComponent(nextSection)}`;
+    userSelectedSectionRef.current = true;
+    setActiveSection(nextSection);
+    setMobileNavOpen(false);
     router.replace(nextHref, { scroll: false });
   }
 
