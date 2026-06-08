@@ -5269,8 +5269,39 @@ button, input, select, textarea { font: inherit; }
 }
 .wishlist-empty {
   display: grid;
-  gap: 14px;
+  gap: 18px;
   justify-items: start;
+}
+.wishlist-empty .stack-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wishlist-empty .primary-link,
+.wishlist-empty .ghost-link {
+  min-width: 166px;
+  min-height: 50px;
+  padding: 0 24px;
+  text-align: center;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+}
+.wishlist-empty .primary-link:hover,
+.wishlist-empty .primary-link:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(10, 79, 207, 0.24);
+}
+.wishlist-empty .ghost-link:hover,
+.wishlist-empty .ghost-link:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(13, 86, 218, 0.3);
+  color: #0a43ad;
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.08);
+}
+.wishlist-empty .primary-link:active,
+.wishlist-empty .ghost-link:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
 }
 @media (prefers-reduced-motion: reduce) {
   .wishlist-row__remove,
@@ -5278,7 +5309,9 @@ button, input, select, textarea { font: inherit; }
   .wishlist-row__cart,
   .wishlist-actions__copy,
   .wishlist-actions__add-all,
-  .wishlist-actions__clear {
+  .wishlist-actions__clear,
+  .wishlist-empty .primary-link,
+  .wishlist-empty .ghost-link {
     transition: none;
   }
   .wishlist-row__remove:hover,
@@ -5297,7 +5330,13 @@ button, input, select, textarea { font: inherit; }
   .wishlist-actions__add-all:focus-visible,
   .wishlist-actions__add-all:active,
   .wishlist-actions__clear:hover,
-  .wishlist-actions__clear:focus-visible {
+  .wishlist-actions__clear:focus-visible,
+  .wishlist-empty .primary-link:hover,
+  .wishlist-empty .primary-link:focus-visible,
+  .wishlist-empty .primary-link:active,
+  .wishlist-empty .ghost-link:hover,
+  .wishlist-empty .ghost-link:focus-visible,
+  .wishlist-empty .ghost-link:active {
     transform: none;
   }
 }
@@ -12991,6 +13030,15 @@ button, input, select, textarea { font: inherit; }
   .wishlist-shell {
     gap: 18px;
     padding: 18px 14px 24px;
+  }
+  .wishlist-empty .stack-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .wishlist-empty .primary-link,
+  .wishlist-empty .ghost-link {
+    width: 100%;
   }
   .wishlist-table__head {
     display: none;
