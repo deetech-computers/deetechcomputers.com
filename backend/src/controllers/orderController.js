@@ -345,6 +345,36 @@ function buildHubtelReturnToken(clientReference, order = null) {
     .digest("hex");
 }
 
+function buildGuestTrackingToken(order = null) {
+  const signingSecret = HUBTEL_STATUS_TOKEN || HUBTEL_CALLBACK_TOKEN;
+  if (!signingSecret) return "";
+  const orderId = String(order?._id || "").trim();
+  const guestEmail = normalizeOrderEmailAddress(order?.guestEmail || order?.shippingEmail || "");
+  const createdAt = order?.createdAt ? new Date(order.createdAt).toISOString() : "";
+  if (!orderId || !guestEmail || !createdAt) return "";
+  return crypto
+    .createHmac("sha256", signingSecret)
+    .update(`guest-track:${orderId}:${guestEmail}:${createdAt}`)
+    .digest("hex");
+}
+
+function buildGuestTrackingFields(order = null) {
+  if (!order || order.user) return {};
+  const token = buildGuestTrackingToken(order);
+  if (!token) return {};
+  return {
+    guestTrackingToken: token,
+    guestTrackingUrl: `/orders/${order._id}?token=${token}`,
+  };
+}
+
+function buildAbsoluteGuestTrackingUrl(order = null) {
+  const fields = buildGuestTrackingFields(order);
+  if (!fields.guestTrackingUrl) return "";
+  const frontendBaseUrl = String(FRONTEND_URL || "").split(",")[0].trim().replace(/\/+$/, "");
+  return frontendBaseUrl ? `${frontendBaseUrl}${fields.guestTrackingUrl}` : fields.guestTrackingUrl;
+}
+
 function buildHubtelCallbackSignature(clientReference) {
   if (!HUBTEL_CALLBACK_TOKEN) {
     throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
@@ -794,6 +824,7 @@ async function sendOrderEmailsBestEffort(order) {
     discountAmount: Number(order.discountAmount || 0),
     totalPrice: Number(order.totalPrice || 0),
     orderItems: buildOrderItemsForEmail(order),
+    trackingUrl: buildAbsoluteGuestTrackingUrl(order),
   };
 
   if (ADMIN_EMAIL) {
@@ -1521,6 +1552,7 @@ export async function createGuestOrder(req, res) {
         message: "Order already submitted",
         order: existingGuestOrder,
         orderId: existingGuestOrder._id,
+        ...buildGuestTrackingFields(existingGuestOrder),
         ...buildHubtelCheckoutResumeFields(existingGuestOrder),
       });
     }
@@ -1555,6 +1587,7 @@ export async function createGuestOrder(req, res) {
       message: "Order already submitted",
       order: existingGuestFingerprintOrder,
       orderId: existingGuestFingerprintOrder._id,
+      ...buildGuestTrackingFields(existingGuestFingerprintOrder),
       ...buildHubtelCheckoutResumeFields(existingGuestFingerprintOrder),
     });
   }
@@ -1756,6 +1789,7 @@ export async function createGuestOrder(req, res) {
       order,
       orderId: order?._id,
       paymentFlow: normalizedPaymentFlow,
+      ...buildGuestTrackingFields(order),
       statusToken:
         normalizedPaymentFlow === "auto"
           ? buildHubtelStatusToken(order.clientOrderRef)
@@ -1789,6 +1823,7 @@ export async function createGuestOrder(req, res) {
           message: "Order already submitted",
           order: existingGuestOrder,
           orderId: existingGuestOrder._id,
+          ...buildGuestTrackingFields(existingGuestOrder),
           ...buildHubtelCheckoutResumeFields(existingGuestOrder),
         });
       }
@@ -2135,6 +2170,7 @@ export async function handleHubtelReturnConfirmation(req, res) {
     paymentStatus: finalizedOrder.paymentStatus,
     orderStatus: finalizedOrder.orderStatus,
     order: finalizedOrder,
+    ...buildGuestTrackingFields(finalizedOrder),
   });
 }
 
@@ -2192,6 +2228,7 @@ export async function getHubtelPaymentStatus(req, res) {
     orderStatus: order.orderStatus,
     paymentMethod: order.paymentMethod,
     paymentFlow: order.paymentFlow || "manual",
+    ...buildGuestTrackingFields(order),
     order: {
       _id: order._id,
       createdAt: order.createdAt,
@@ -2238,6 +2275,37 @@ export async function getMyOrders(req, res) {
     .sort({ createdAt: -1 })
     .populate("orderItems.product", "name price brand category images image");
   res.json(orders);
+}
+
+// Guest order tracking by signed token
+export async function getGuestOrderById(req, res) {
+  const orderId = String(req.params.id || "").trim();
+  const token = String(req.query?.token || "").trim();
+
+  if (!orderId || !token) {
+    res.status(401);
+    throw new Error("Guest tracking token is required");
+  }
+  if (!/^[0-9a-fA-F]{24}$/.test(orderId)) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  const order = await Order.findOne({ _id: orderId, user: null })
+    .populate("orderItems.product", "name price brand category images image");
+
+  if (!order) {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+
+  const expectedToken = buildGuestTrackingToken(order);
+  if (!timingSafeEqualText(token, expectedToken)) {
+    res.status(401);
+    throw new Error("Invalid guest tracking token");
+  }
+
+  res.json(order);
 }
 
 // Get logged-in user's single order

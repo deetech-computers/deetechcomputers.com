@@ -495,6 +495,8 @@ export default function CheckoutPaymentPage() {
       phone: order?.mobileNumber || pending?.phone || "",
       address: order?.shippingAddress || order?.guestAddress || pending?.address || "",
       city: order?.shippingCity || order?.guestCity || pending?.city || "",
+      guestTrackingToken: order?.guestTrackingToken || pending?.guestTrackingToken || "",
+      guestTrackingUrl: order?.guestTrackingUrl || pending?.guestTrackingUrl || "",
     });
 
     if (typeof window !== "undefined") {
@@ -578,7 +580,14 @@ export default function CheckoutPaymentPage() {
           const paymentStatus = String(result?.paymentStatus || "").toLowerCase();
           if (paymentStatus === "paid" && result?.order) {
             hubtelFinalizedRef.current = true;
-            await finalizePaidHubtelOrder(result.order, hubtelClientReference);
+            await finalizePaidHubtelOrder(
+              {
+                ...result.order,
+                guestTrackingToken: result?.guestTrackingToken || "",
+                guestTrackingUrl: result?.guestTrackingUrl || "",
+              },
+              hubtelClientReference
+            );
             return;
           }
           if (paymentStatus === "failed") {
@@ -834,6 +843,8 @@ export default function CheckoutPaymentPage() {
           phone: form.mobileNumber,
           address: form.shippingAddress,
           city: form.shippingCity,
+          guestTrackingToken: result?.guestTrackingToken || "",
+          guestTrackingUrl: result?.guestTrackingUrl || "",
           items: items.map((item) => buildSavedOrderItem(item)),
         };
         setHubtelClientReference(orderRef);
@@ -869,6 +880,8 @@ export default function CheckoutPaymentPage() {
         phone: form.mobileNumber,
         address: form.shippingAddress,
         city: form.shippingCity,
+        guestTrackingToken: result?.guestTrackingToken || "",
+        guestTrackingUrl: result?.guestTrackingUrl || "",
       });
 
       pushToast("Order placed successfully", "success");

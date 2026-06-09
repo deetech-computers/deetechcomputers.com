@@ -112,6 +112,8 @@ export default function HubtelPaymentSuccessClient() {
           phone: order?.mobileNumber || pending?.phone || "",
           address: order?.shippingAddress || order?.guestAddress || pending?.address || "",
           city: order?.shippingCity || order?.guestCity || pending?.city || "",
+          guestTrackingToken: order?.guestTrackingToken || pending?.guestTrackingToken || "",
+          guestTrackingUrl: order?.guestTrackingUrl || pending?.guestTrackingUrl || "",
         });
 
         if (typeof window !== "undefined") {
@@ -135,7 +137,11 @@ export default function HubtelPaymentSuccessClient() {
           const order = result?.order;
           const paymentStatus = String(result?.paymentStatus || "").trim().toLowerCase();
           if (paymentStatus === "paid" && order) {
-            await completePaidOrder(order);
+            await completePaidOrder({
+              ...order,
+              guestTrackingToken: result?.guestTrackingToken || "",
+              guestTrackingUrl: result?.guestTrackingUrl || "",
+            });
             return;
           }
           if (paymentStatus === "failed") {
@@ -153,7 +159,11 @@ export default function HubtelPaymentSuccessClient() {
             );
             const confirmedStatus = String(confirmed?.paymentStatus || "").trim().toLowerCase();
             if (confirmedStatus === "paid" && confirmed?.order) {
-              await completePaidOrder(confirmed.order);
+              await completePaidOrder({
+                ...confirmed.order,
+                guestTrackingToken: confirmed?.guestTrackingToken || "",
+                guestTrackingUrl: confirmed?.guestTrackingUrl || "",
+              });
               return;
             }
           }

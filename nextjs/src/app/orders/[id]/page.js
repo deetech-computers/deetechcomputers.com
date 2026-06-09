@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import StableImage from "@/components/ui/stable-image";
 import { useAuth } from "@/hooks/use-auth";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
+import { requestJson } from "@/lib/http";
 import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { requestWithToken } from "@/lib/resource";
@@ -131,6 +132,8 @@ function buildTrackingState(order) {
 export default function TrackOrderPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const guestToken = String(searchParams.get("token") || "").trim();
   const { token, isAuthenticated, status } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -138,6 +141,25 @@ export default function TrackOrderPage() {
 
   useEffect(() => {
     if (status !== "ready") return;
+    if (guestToken) {
+      setLoading(true);
+      requestJson(
+        `${API_BASE_ORDERS}/guest-track/${encodeURIComponent(id)}?token=${encodeURIComponent(guestToken)}`,
+        { retries: 1 }
+      )
+        .then((payload) => {
+          setOrder(payload || null);
+          setError("");
+        })
+        .catch((err) => {
+          setError(err.message || "Could not load this guest order");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return;
+    }
+
     if (!isAuthenticated || !token) {
       setLoading(false);
       return;
@@ -154,7 +176,7 @@ export default function TrackOrderPage() {
       .finally(() => {
         setLoading(false);
       });
-  }, [id, isAuthenticated, status, token]);
+  }, [guestToken, id, isAuthenticated, status, token]);
 
   const steps = useMemo(() => buildTrackingState(order), [order]);
   const progressRatio = Math.max(0, (steps.filter((step) => step.done).length - 1) / (steps.length - 1));
@@ -167,7 +189,7 @@ export default function TrackOrderPage() {
         <p className="checkout-hero__crumbs">
           <Link href="/">Home</Link>
           <span>/</span>
-          <Link href="/account?tab=orders">My Orders</Link>
+          {guestToken ? <span>Guest Tracking</span> : <Link href="/account?tab=orders">My Orders</Link>}
           <span>/</span>
           <span>Track Your Order</span>
         </p>
@@ -177,18 +199,18 @@ export default function TrackOrderPage() {
         <section className="panel wishlist-empty">
           <h2>Loading tracking details...</h2>
         </section>
-      ) : !isAuthenticated ? (
+      ) : !guestToken && !isAuthenticated ? (
         <section className="panel wishlist-empty">
           <h2>Login required</h2>
-          <p className="hero-copy">Sign in to track your order progress and see the purchased products.</p>
+          <p className="hero-copy">Sign in to track account orders. Guest orders can be tracked from the secure link sent to the checkout email.</p>
           <Link href="/login" className="primary-link">Go to login</Link>
         </section>
       ) : error || !order ? (
         <section className="panel wishlist-empty">
           <h2>Order not available</h2>
           <p className="hero-copy">{error || "We could not load this order right now."}</p>
-          <button type="button" className="ghost-button" onClick={() => router.push("/account?tab=orders")}>
-            Back to My Orders
+          <button type="button" className="ghost-button" onClick={() => router.push(guestToken ? "/" : "/account?tab=orders")}>
+            {guestToken ? "Back to Home" : "Back to My Orders"}
           </button>
         </section>
       ) : (
@@ -196,9 +218,15 @@ export default function TrackOrderPage() {
           <div className="track-order-top panel">
             <div className="track-order-top__header">
               <div>
-                <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
-                  Back to My Orders
-                </Link>
+                {guestToken ? (
+                  <Link href="/" className="ghost-link track-order-top__back">
+                    Back to Home
+                  </Link>
+                ) : (
+                  <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
+                    Back to My Orders
+                  </Link>
+                )}
                 <h2>Order Status</h2>
                 <p>Order ID : #{order.orderNumber || order._id}</p>
               </div>

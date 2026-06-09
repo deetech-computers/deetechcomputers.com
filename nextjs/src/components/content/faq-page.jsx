@@ -14,7 +14,7 @@ const items = [
   ["Do you offer nationwide delivery?", "Yes. We deliver to all regions of Ghana through trusted logistics partners. Delivery usually takes about 8 to 24 hours depending on location and product readiness."],
   ["How much does delivery cost?", "Delivery is free on all laptop orders. For non-laptop orders, delivery is free below GHC 60, GHC 30 from GHC 60 to GHC 299, GHC 50 from GHC 300 to GHC 999, GHC 100 for GHC 1,000 to GHC 1,999, and free again once the product subtotal reaches GHC 2,000 or more."],
   ["Do you offer customer support?", "Yes. DEETECH support is available for product questions, order help, payment issues, warranty guidance, and after-sales assistance through phone, email, and WhatsApp."],
-  ["How do I track my order?", "Once your order is confirmed, you can open the Track Order page from your account to follow the progress from order placed to delivery."],
+  ["How do I track my order?", "Logged-in customers can track orders from their account. Guest customers can use the secure tracking link sent to the checkout email after the order is confirmed."],
   ["Can I track my delivery?", "Yes. Once your order has been shipped, you will receive a tracking update or a call from our delivery team with the expected delivery timeline."],
   ["Can I order without creating an account?", "Yes. Guest checkout is available, but creating an account gives you easier order history, wishlist access, and tracking for each purchase."],
   ["Why should I create a DEETECH account?", "A DEETECH account helps you manage orders, track delivery, save favorite products, and enjoy a faster checkout experience on future purchases."],

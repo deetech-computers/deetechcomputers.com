@@ -505,7 +505,7 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
       support_phone: SUPPORT_PHONE,
       current_year: String(new Date().getFullYear()),
       website_url: websiteUrl,
-      order_tracking_url: `${websiteUrl}/order-completed`,
+      order_tracking_url: orderDetails.trackingUrl || `${websiteUrl}/order-completed`,
       estimated_delivery: "24 hours Delivery",
       shipping_method: shippingMethodLabel(orderDetails.shippingPrice),
       subject: `Order Confirmation #${orderId} - ${COMPANY_NAME}`,
@@ -516,7 +516,7 @@ export async function sendOrderConfirmation(to, orderDetails = {}) {
   const items = orderItemsForEmail(orderDetails.orderItems || []);
   const created = formatDateTime(orderDetails.createdAt);
   const frontendBaseUrl = trimTrailingSlash(FRONTEND_URL);
-  const trackingUrl = frontendBaseUrl ? `${frontendBaseUrl}/orders.html?tab=orders` : "#";
+  const trackingUrl = orderDetails.trackingUrl || (frontendBaseUrl ? `${frontendBaseUrl}/account?tab=orders` : "#");
   const subtotal = Number(orderDetails.itemsPrice || 0);
   const shipping = Number(orderDetails.shippingPrice || 0);
   const discountAmount = Number(orderDetails.discountAmount || 0);
