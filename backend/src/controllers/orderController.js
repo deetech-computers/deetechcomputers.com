@@ -375,6 +375,49 @@ function buildAbsoluteGuestTrackingUrl(order = null) {
   return frontendBaseUrl ? `${frontendBaseUrl}${fields.guestTrackingUrl}` : fields.guestTrackingUrl;
 }
 
+function serializeGuestTrackOrder(order = null) {
+  if (!order) return null;
+  return {
+    _id: order._id,
+    createdAt: order.createdAt,
+    paidAt: order.paidAt,
+    deliveredAt: order.deliveredAt,
+    estimatedDeliveryDate: order.estimatedDeliveryDate,
+    paymentMethod: order.paymentMethod,
+    paymentStatus: order.paymentStatus,
+    orderStatus: order.orderStatus,
+    isDelivered: order.isDelivered,
+    itemsPrice: order.itemsPrice,
+    shippingPrice: order.shippingPrice,
+    discountedItemsPrice: order.discountedItemsPrice,
+    discountCode: order.discountCode,
+    discountPercent: order.discountPercent,
+    discountAmount: order.discountAmount,
+    totalPrice: order.totalPrice,
+    orderItems: Array.isArray(order.orderItems)
+      ? order.orderItems.map((item) => ({
+          qty: item.qty,
+          price: item.price,
+          originalPrice: item.originalPrice,
+          discountPrice: item.discountPrice,
+          discountApplied: item.discountApplied,
+          selectedUpgrades: item.selectedUpgrades,
+          product: item.product
+            ? {
+                _id: item.product._id,
+                name: item.product.name,
+                price: item.product.price,
+                brand: item.product.brand,
+                category: item.product.category,
+                images: item.product.images,
+                image: item.product.image,
+              }
+            : null,
+        }))
+      : [],
+  };
+}
+
 function buildHubtelCallbackSignature(clientReference) {
   if (!HUBTEL_CALLBACK_TOKEN) {
     throw new Error("HUBTEL_CALLBACK_TOKEN is missing on the backend.");
@@ -2305,7 +2348,7 @@ export async function getGuestOrderById(req, res) {
     throw new Error("Invalid guest tracking token");
   }
 
-  res.json(order);
+  res.json(serializeGuestTrackOrder(order));
 }
 
 // Get logged-in user's single order
