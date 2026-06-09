@@ -14,8 +14,8 @@ export function calculateShippingPrice(itemsPrice = 0, categoryInputs = []) {
   if (allLaptops) return 0;
   if (safeItemsPrice >= 2000) return 0;
   if (safeItemsPrice >= 1000) return 100;
-  if (safeItemsPrice >= 300) return 50;
-  if (safeItemsPrice > 0) return 30;
+  if (safeItemsPrice > 300) return 50;
+  if (safeItemsPrice >= 60) return 30;
   return 0;
 }
 
