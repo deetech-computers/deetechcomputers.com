@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { API_BASE_ORDERS } from "@/lib/config";
@@ -43,25 +43,20 @@ export default function HubtelPaymentSuccessClient() {
   const { clearCart } = useCart();
   const [status, setStatus] = useState("checking");
   const [message, setMessage] = useState("Confirming your payment...");
-
-  const clientReference = useMemo(
-    () =>
-      readFirstParam(params, [
+  const initialPaymentParamsRef = useRef(null);
+  if (!initialPaymentParamsRef.current) {
+    initialPaymentParamsRef.current = {
+      clientReference: readFirstParam(params, [
         "clientReference",
         "ClientReference",
         "client_reference",
         "reference",
       ]),
-    [params]
-  );
-  const statusToken = useMemo(
-    () => readFirstParam(params, ["statusToken", "StatusToken", "status_token", "token"]),
-    [params]
-  );
-  const returnToken = useMemo(
-    () => readFirstParam(params, ["returnToken", "ReturnToken", "return_token"]),
-    [params]
-  );
+      statusToken: readFirstParam(params, ["statusToken", "StatusToken", "status_token", "token"]),
+      returnToken: readFirstParam(params, ["returnToken", "ReturnToken", "return_token"]),
+    };
+  }
+  const { clientReference, statusToken, returnToken } = initialPaymentParamsRef.current;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -150,7 +145,7 @@ export default function HubtelPaymentSuccessClient() {
           }
           if (returnToken) {
             const confirmed = await requestJson(
-              `${API_BASE_ORDERS}/hubtel/return/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}`,
+              `${API_BASE_ORDERS}/hubtel/return/${encodeURIComponent(clientReference)}?token=${encodeURIComponent(statusToken)}&returnToken=${encodeURIComponent(returnToken)}`,
               {
                 method: "POST",
                 body: JSON.stringify({ returnToken }),
