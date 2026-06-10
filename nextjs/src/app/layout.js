@@ -14,7 +14,7 @@ const defaultOgImage = {
   height: 630,
   alt: "Deetech Computers",
 };
-const siteIconHref = "/favicon-removebg-preview.png?v=deetech-20260521a";
+const siteIconHref = "/favicon-removebg-preview-mobile.png?v=deetech-20260610a";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -27,7 +27,7 @@ export const metadata = {
   icons: {
     icon: [
       { url: "/icon.png", type: "image/png", sizes: "512x512" },
-      { url: siteIconHref, type: "image/png", sizes: "512x512" },
+      { url: siteIconHref, type: "image/png", sizes: "96x96" },
     ],
     shortcut: [{ url: siteIconHref, type: "image/png" }],
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],

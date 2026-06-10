@@ -10,6 +10,7 @@ import {
   getProductRating,
   getProductReviewCount,
   isProductDiscountActive,
+  optimizeCloudinaryImage,
   resolveProductImage,
 } from "@/lib/products";
 import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
@@ -83,9 +84,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   );
   const [justAdded, setJustAdded] = useState(false);
   const highlightTimerRef = useRef(null);
-  const image = resolveProductImage(product.images?.[0] || product.image);
-  const hoverImage = resolveProductImage(product.images?.[1] || "");
-  const hasHoverImage = Boolean(hoverImage);
+  const image = optimizeCloudinaryImage(product.images?.[0] || product.image, { width: 420, height: 420 });
+  const hoverImage = optimizeCloudinaryImage(product.images?.[1] || "", { width: 420, height: 420 });
+  const [supportsHoverPreview, setSupportsHoverPreview] = useState(false);
+  const hasHoverImage = Boolean(hoverImage && supportsHoverPreview);
   const price = getProductPrice(product);
   const originalPrice = getProductOriginalPrice(product);
   const hasDiscount = isProductDiscountActive(product);
@@ -130,10 +132,26 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return undefined;
+    const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => setSupportsHoverPreview(media.matches);
+    sync();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", sync);
+      return () => media.removeEventListener("change", sync);
+    }
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
+
+  useEffect(() => {
     if (shouldLoadImage || typeof window === "undefined" || !imageShellRef.current) {
       return;
     }
 
+    const isSmallScreen =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 640px)").matches;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -143,7 +161,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
           }
         });
       },
-      { rootMargin: "360px 0px" }
+      { rootMargin: isSmallScreen ? "120px 0px" : "360px 0px" }
     );
 
     observer.observe(imageShellRef.current);

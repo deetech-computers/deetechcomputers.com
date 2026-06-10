@@ -572,7 +572,7 @@ export default function HomePage() {
         <StableImage
           src={categoryImage.src}
           srcSet={getCategoryImageSrcSet(categoryImage)}
-          sizes="(max-width: 640px) 320px, 720px"
+          sizes="(max-width: 640px) 180px, 720px"
           alt={`${item?.label || "Category"} preview`}
           width={720}
           height={420}
@@ -736,12 +736,10 @@ export default function HomePage() {
                     aria-label="Use scroll view"
                     title="Scroll view"
                   >
-                    <img
-                      src="/list%201.png"
-                      alt=""
-                      className="homepage-products__view-mode-image"
-                      aria-hidden="true"
-                    />
+                    <span className="homepage-products__view-icon homepage-products__view-icon--list" aria-hidden="true">
+                      <span />
+                      <span />
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -751,12 +749,12 @@ export default function HomePage() {
                     aria-label="Use grid view"
                     title="Grid view"
                   >
-                    <img
-                      src="/menu.png"
-                      alt=""
-                      className="homepage-products__view-mode-image"
-                      aria-hidden="true"
-                    />
+                    <span className="homepage-products__view-icon homepage-products__view-icon--grid" aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </span>
                   </button>
                 </div>
               ) : null}
