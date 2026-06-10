@@ -139,6 +139,38 @@ function ProductListView({ products }) {
   );
 }
 
+function ProductGridSkeleton() {
+  return (
+    <div className="shop-layout shop-layout--loading" id="shop-results" aria-busy="true">
+      <aside className="shop-sidebar panel" aria-label="Filter options">
+        <div className="shop-skeleton shop-skeleton--heading" />
+        <div className="shop-skeleton shop-skeleton--line" />
+        <div className="shop-skeleton shop-skeleton--line" />
+        <div className="shop-skeleton shop-skeleton--line" />
+      </aside>
+
+      <section className="shop-content">
+        <div className="shop-toolbar panel">
+          <div className="shop-skeleton shop-skeleton--toolbar" />
+        </div>
+        <div className="product-grid product-grid--catalog shop-product-skeleton-grid" aria-label="Loading products">
+          {Array.from({ length: 6 }, (_, index) => (
+            <article key={`shop-skeleton-${index}`} className="product-card product-card--catalog product-card--skeleton">
+              <div className="product-card__skeleton-media" />
+              <div className="product-card__skeleton-body">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="product-card__skeleton-footer" />
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function getProductSpecs(product) {
   const specs = product?.specs;
   if (!specs) return {};
@@ -925,7 +957,7 @@ export default function ProductsPageClient({ initialFilters }) {
         <h1>{activeCategoryLabel}</h1>
       </section>
 
-      {status === "loading" && <div className="panel shop-loading-panel">Loading products...</div>}
+      {status === "loading" && <ProductGridSkeleton />}
       {status === "error" && <div className="panel">Could not load products: {error}</div>}
 
       {status === "ready" && (

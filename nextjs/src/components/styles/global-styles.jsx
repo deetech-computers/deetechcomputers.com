@@ -2685,11 +2685,69 @@ button, input, select, textarea { font: inherit; }
   display: grid; gap: 14px;
   scroll-margin-top: 110px;
 }
-.shop-loading-panel {
-  min-height: 1080px;
+.shop-layout--loading {
+  min-height: 1140px;
+}
+.shop-skeleton,
+.product-card--skeleton span,
+.product-card__skeleton-media,
+.product-card__skeleton-footer {
+  display: block;
+  border-radius: 0;
+  background: linear-gradient(90deg, #f1ece3 0%, #faf7f0 48%, #f1ece3 100%);
+  background-size: 220% 100%;
+  animation: shopSkeletonPulse 1.2s ease-in-out infinite;
+}
+.shop-skeleton--heading {
+  width: 70%;
+  height: 22px;
+}
+.shop-skeleton--line {
+  width: 100%;
+  height: 18px;
+}
+.shop-skeleton--line:nth-child(4) {
+  width: 78%;
+}
+.shop-skeleton--toolbar {
+  width: 100%;
+  min-height: 68px;
+}
+.product-card--skeleton {
   display: grid;
-  place-items: center;
-  text-align: center;
+  grid-template-rows: auto 1fr auto;
+  min-height: 345px;
+  pointer-events: none;
+}
+.product-card__skeleton-media {
+  aspect-ratio: 1 / 1;
+}
+.product-card__skeleton-body {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  align-content: start;
+}
+.product-card__skeleton-body span {
+  height: 14px;
+}
+.product-card__skeleton-body span:first-child {
+  width: 90%;
+}
+.product-card__skeleton-body span:nth-child(2) {
+  width: 72%;
+}
+.product-card__skeleton-body span:nth-child(3) {
+  width: 46%;
+  height: 18px;
+  margin-top: 4px;
+}
+.product-card__skeleton-footer {
+  min-height: 36px;
+}
+@keyframes shopSkeletonPulse {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 .shop-sidebar,
 .shop-toolbar {
@@ -12378,8 +12436,8 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 260px minmax(0, 1fr);
     align-items: start;
   }
-  .shop-loading-panel {
-    min-height: 680px;
+  .shop-layout--loading {
+    min-height: 760px;
   }
   .shop-toolbar {
     grid-template-columns: 1fr;
@@ -14352,6 +14410,15 @@ button, input, select, textarea { font: inherit; }
   }
   .product-card__cart-button {
     min-height: 34px; border-radius: 0; font-size: 0.62rem;
+  }
+  .shop-layout--loading {
+    min-height: 1180px;
+  }
+  .product-card--skeleton {
+    min-height: 315px;
+  }
+  .shop-skeleton--toolbar {
+    min-height: 106px;
   }
   .hero-speaker--rear {
     width: 88px; height: 168px;
