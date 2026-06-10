@@ -1930,6 +1930,7 @@ button, input, select, textarea { font: inherit; }
   position: relative;
   width: 100%;
   height: 100%;
+  background: #f4f6fa;
 }
 .hero-banner__slide-image {
   position: absolute;
@@ -2146,15 +2147,32 @@ button, input, select, textarea { font: inherit; }
   background: rgba(255, 255, 255, 0.86);
 }
 .hero-banner__dot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.hero-banner__dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 9px;
   height: 9px;
   border-radius: 999px;
-  border: 0;
   background: #9fcae2;
-  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: background 160ms ease, transform 160ms ease;
 }
-.hero-banner__dot.is-active {
+.hero-banner__dot:hover::before,
+.hero-banner__dot.is-active::before {
   background: #0d85be;
+}
+.hero-banner__dot.is-active::before {
+  transform: translate(-50%, -50%) scale(1.18);
 }
 .hero-speaker {
   position: relative; flex: 0 0 auto; background: linear-gradient(180deg, #2f2f2f 0%, #090909 100%);
@@ -14161,8 +14179,8 @@ button, input, select, textarea { font: inherit; }
     width: fit-content;
   }
   .hero-banner__dot {
-    width: 8px;
-    height: 8px;
+    width: 24px;
+    height: 24px;
   }
   .home-logo-marquee {
     margin-top: 0;

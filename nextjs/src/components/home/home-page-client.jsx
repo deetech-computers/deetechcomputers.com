@@ -404,29 +404,21 @@ export default function HomePage() {
     setBannerIndex((prev) => (prev + 1) % heroBanners.length);
   };
   const renderHeroSlide = (item, idx) => {
+    const isActiveSlide = idx === bannerIndex;
     const imageNode = item.imageUrl ? (
       <div className="hero-banner__slide-media">
-        <StableImage
-          src={item.imageUrl}
-          alt=""
-          width={1920}
-          height={720}
-          loading={idx === 0 ? "eager" : "lazy"}
-          fetchPriority={idx === 0 ? "high" : "low"}
-          decoding="async"
-          className="hero-banner__slide-image hero-banner__slide-image--bg"
-          aria-hidden="true"
-        />
-        <StableImage
-          src={item.imageUrl}
-          alt="Featured banner image"
-          width={1920}
-          height={720}
-          loading={idx === 0 ? "eager" : "lazy"}
-          fetchPriority={idx === 0 ? "high" : "low"}
-          decoding="async"
-          className="hero-banner__slide-image hero-banner__slide-image--fg"
-        />
+        {isActiveSlide ? (
+          <StableImage
+            src={item.imageUrl}
+            alt="Featured banner image"
+            width={1920}
+            height={720}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="hero-banner__slide-image hero-banner__slide-image--fg"
+          />
+        ) : null}
       </div>
     ) : (
       <div className="hero-banner__slide-fallback" />

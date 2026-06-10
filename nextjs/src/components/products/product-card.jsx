@@ -230,7 +230,11 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
         {hasDiscount && discountPercent > 0 ? (
           <span className="product-card__discount-badge">-{discountPercent}%</span>
         ) : null}
-        <Link href={productHref} className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}>
+        <Link
+          href={productHref}
+          className={`product-card__link${isCatalog || isRelated ? " product-card__link--media" : ""}`}
+          aria-label={`View ${displayName}`}
+        >
           <div className="product-card__media">
             <div className={`product-card__image-shell${isOutOfStock ? " is-out-of-stock" : ""}`} ref={imageShellRef}>
               {image && shouldLoadImage ? (
