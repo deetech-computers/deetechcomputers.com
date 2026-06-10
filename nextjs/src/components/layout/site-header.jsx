@@ -65,8 +65,8 @@ const BRAND_FALLBACK = (
     DEETECH
   </div>
 );
-const BRAND_LOGO_SRC = "/favicon-removebg-preview.png";
-const BRAND_LOGO_SRC_SET = "/favicon-removebg-preview-mobile.png 96w, /favicon-removebg-preview.png 500w";
+const BRAND_LOGO_SRC = "/favicon-removebg-preview-display.png";
+const BRAND_LOGO_SRC_SET = "/favicon-removebg-preview-mobile.png 96w, /favicon-removebg-preview-display.png 180w";
 const HEADER_NOTIFICATION_REFRESH_MS = 30_000;
 
 function isActivePath(pathname, href) {

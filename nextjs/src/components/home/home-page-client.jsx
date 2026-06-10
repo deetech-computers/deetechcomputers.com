@@ -74,44 +74,52 @@ const HOME_LOGOS = HOME_LOGO_FILES.map((file) => ({
 }));
 const HOME_CATEGORY_IMAGES = {
   laptops: {
-    src: "/home-edited/laptops-removebg-preview.png",
+    src: "/home-edited/laptops-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/laptops-removebg-preview-mobile.png",
     mobileWidth: 360,
+    displayWidth: 360,
   },
   phones: {
-    src: "/home-edited/mobilephones-removebg-preview.png",
+    src: "/home-edited/mobilephones-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/mobilephones-removebg-preview-mobile.png",
     mobileWidth: 320,
+    displayWidth: 320,
   },
   monitors: {
-    src: "/home-edited/monitors-removebg-preview.png",
+    src: "/home-edited/monitors-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/monitors-removebg-preview-mobile.png",
     mobileWidth: 260,
+    displayWidth: 260,
   },
   accessories: {
-    src: "/home-edited/accessories-removebg-preview.png",
+    src: "/home-edited/accessories-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/accessories-removebg-preview-mobile.png",
     mobileWidth: 260,
+    displayWidth: 260,
   },
   printers: {
-    src: "/home-edited/printers-removebg-preview.png",
+    src: "/home-edited/printers-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/printers-removebg-preview-mobile.png",
     mobileWidth: 320,
+    displayWidth: 320,
   },
   storage: {
-    src: "/home-edited/storage_devices-removebg-preview.png",
+    src: "/home-edited/storage_devices-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/storage_devices-removebg-preview-mobile.png",
     mobileWidth: 340,
+    displayWidth: 340,
   },
   others: {
-    src: "/home-edited/others-removebg-preview.png",
+    src: "/home-edited/others-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/others-removebg-preview-mobile.png",
     mobileWidth: 260,
+    displayWidth: 260,
   },
   projectors: {
-    src: "/home-edited/projectors-removebg-preview.png",
+    src: "/home-edited/projectors-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/projectors-removebg-preview-mobile.png",
     mobileWidth: 260,
+    displayWidth: 260,
   },
 };
 
@@ -147,7 +155,7 @@ function getCategoryTileImage(slug) {
 
 function getCategoryImageSrcSet(image) {
   if (!image?.mobileSrc || !image?.src) return undefined;
-  return `${image.mobileSrc} ${image.mobileWidth || 320}w, ${image.src} 720w`;
+  return `${image.mobileSrc} ${image.mobileWidth || 320}w, ${image.src} ${image.displayWidth || 360}w`;
 }
 
 function isLaptopDesktopCategory(item) {
