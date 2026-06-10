@@ -74,7 +74,7 @@ function ActionIcon({ src, alt }) {
   );
 }
 
-export default function ProductCard({ product, onAddToCart, variant = "default" }) {
+export default function ProductCard({ product, onAddToCart, variant = "default", priority = false }) {
   const { pushToast } = useToast();
   const { items } = useCart();
   const { isAuthenticated } = useAuth();
@@ -88,7 +88,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const isCatalog = variant === "catalog";
   const isRelated = variant === "related";
   const isHome = variant === "default";
-  const cardImageSize = isHome ? 320 : 420;
+  const cardImageSize = isRelated ? 420 : 320;
   const image = optimizeCloudinaryImage(product.images?.[0] || product.image, { width: cardImageSize, height: cardImageSize });
   const hoverImage = optimizeCloudinaryImage(product.images?.[1] || "", { width: cardImageSize, height: cardImageSize });
   const [supportsHoverPreview, setSupportsHoverPreview] = useState(false);
@@ -101,7 +101,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const rating = Math.round(ratingValue);
   const reviewCount = getProductReviewCount(product);
   const imageShellRef = useRef(null);
-  const [shouldLoadImage, setShouldLoadImage] = useState(false);
+  const [shouldLoadImage, setShouldLoadImage] = useState(priority);
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const isOutOfStock = stock < 1;
   const summary = getSummary(product);
@@ -146,6 +146,11 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   }, []);
 
   useEffect(() => {
+    if (priority) {
+      setShouldLoadImage(true);
+      return;
+    }
+
     if (shouldLoadImage || typeof window === "undefined" || !imageShellRef.current) {
       return;
     }
@@ -168,7 +173,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
     observer.observe(imageShellRef.current);
 
     return () => observer.disconnect();
-  }, [shouldLoadImage]);
+  }, [priority, shouldLoadImage]);
 
   function toggleWishlist() {
     if (!productId) return;
@@ -262,6 +267,8 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
                     src={image}
                     alt={getImageAlt(product)}
                     className={`product-card__image product-card__image--primary${hasHoverImage ? " has-hover-image" : ""}`}
+                    loading={priority ? "eager" : "lazy"}
+                    fetchPriority={priority ? "high" : "low"}
                     width={cardImageSize}
                     height={cardImageSize}
                   />
@@ -270,6 +277,8 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
                       src={hoverImage}
                       alt={`${getImageAlt(product)} alternate view`}
                       className="product-card__image product-card__image--secondary"
+                      loading="lazy"
+                      fetchPriority="low"
                       width={cardImageSize}
                       height={cardImageSize}
                     />

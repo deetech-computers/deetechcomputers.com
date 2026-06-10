@@ -925,7 +925,7 @@ export default function ProductsPageClient({ initialFilters }) {
         <h1>{activeCategoryLabel}</h1>
       </section>
 
-      {status === "loading" && <div className="panel">Loading products...</div>}
+      {status === "loading" && <div className="panel shop-loading-panel">Loading products...</div>}
       {status === "error" && <div className="panel">Could not load products: {error}</div>}
 
       {status === "ready" && (
@@ -993,8 +993,14 @@ export default function ProductsPageClient({ initialFilters }) {
                 <ProductListView products={pagedProducts} />
               ) : (
                 <div className="product-grid product-grid--catalog">
-                  {pagedProducts.map((product) => (
-                    <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} variant="catalog" />
+                  {pagedProducts.map((product, index) => (
+                    <ProductCard
+                      key={product._id}
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      variant="catalog"
+                      priority={index === 0}
+                    />
                   ))}
                 </div>
               )}

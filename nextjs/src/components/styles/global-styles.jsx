@@ -2685,6 +2685,12 @@ button, input, select, textarea { font: inherit; }
   display: grid; gap: 14px;
   scroll-margin-top: 110px;
 }
+.shop-loading-panel {
+  min-height: 1080px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
 .shop-sidebar,
 .shop-toolbar {
   border-radius: 0;
@@ -12371,6 +12377,9 @@ button, input, select, textarea { font: inherit; }
   .shop-layout {
     grid-template-columns: 260px minmax(0, 1fr);
     align-items: start;
+  }
+  .shop-loading-panel {
+    min-height: 680px;
   }
   .shop-toolbar {
     grid-template-columns: 1fr;
