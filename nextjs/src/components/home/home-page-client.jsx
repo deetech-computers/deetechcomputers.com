@@ -573,8 +573,9 @@ export default function HomePage() {
     };
   }, [homeSectionsSignature, isMobileHomeProducts, mobileHomeProductsView, status]);
 
-  function renderCategoryMedia(item, artKey) {
+  function renderCategoryMedia(item, artKey, options = {}) {
     const categoryImage = getCategoryTileImage(item?.slug);
+    const isPriority = Boolean(options.priority);
     if (categoryImage) {
       return (
         <StableImage
@@ -584,8 +585,9 @@ export default function HomePage() {
           alt={`${item?.label || "Category"} preview`}
           width={720}
           height={420}
-          loading="lazy"
+          loading={isPriority ? "eager" : "lazy"}
           decoding="async"
+          fetchPriority={isPriority ? "high" : "low"}
           className={`category-tile__image${isLaptopDesktopCategory(item) ? " category-tile__image--laptops-desktops" : ""}`}
           fallback={<div className={`category-art category-art--${artKey}`} aria-hidden="true" />}
           fallbackClassName="category-tile__fallback"
@@ -684,7 +686,8 @@ export default function HomePage() {
               <div className="category-tile__media" aria-hidden="true">
                 {renderCategoryMedia(
                   featuredCategory,
-                  getCategoryArtKey(featuredCategory.slug, featuredCategory.label, 0)
+                  getCategoryArtKey(featuredCategory.slug, featuredCategory.label, 0),
+                  { priority: true }
                 )}
               </div>
               <div className="category-tile__overlay" />
@@ -782,7 +785,8 @@ export default function HomePage() {
                     const useMobileScroll = isMobileHomeProducts && mobileHomeProductsView === "scroll";
                     const useMobileGrid = isMobileHomeProducts && mobileHomeProductsView === "grid";
                     const listedProducts = useMobileGrid ? section.products.slice(0, 4) : section.products;
-                    const mobileScrollProducts = section.allProducts?.length ? section.allProducts : section.products;
+                    const mobileScrollSource = section.allProducts?.length ? section.allProducts : section.products;
+                    const mobileScrollProducts = mobileScrollSource.slice(0, 6);
                     return (
                       <>
                   <div className="homepage-products__section-head">

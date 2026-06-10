@@ -5,7 +5,7 @@ const styles = `
   --panel: #ffffff;
   --panel-soft: #f8f2e6;
   --text: #1b1916;
-  --muted: #7f7668;
+  --muted: #665d52;
   --line: #e8e0d4;
   --brand: #d9a441;
   --brand-strong: #b98014;
@@ -3516,7 +3516,7 @@ button, input, select, textarea { font: inherit; }
   margin-left: 6px; font-size: 0.76rem; color: #5c503f;
 }
 .product-card__description {
-  margin: 0; font-size: 0.72rem; line-height: 1.45; color: #817567;
+  margin: 0; font-size: 0.72rem; line-height: 1.45; color: #665d52;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .product-card__price-wrap {
@@ -3525,7 +3525,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-card__price-old {
   margin: 0;
-  color: #8f8a80;
+  color: #665d52;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: line-through;

@@ -84,8 +84,13 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   );
   const [justAdded, setJustAdded] = useState(false);
   const highlightTimerRef = useRef(null);
-  const image = optimizeCloudinaryImage(product.images?.[0] || product.image, { width: 420, height: 420 });
-  const hoverImage = optimizeCloudinaryImage(product.images?.[1] || "", { width: 420, height: 420 });
+  const productHref = `/products/${productId}`;
+  const isCatalog = variant === "catalog";
+  const isRelated = variant === "related";
+  const isHome = variant === "default";
+  const cardImageSize = isHome ? 320 : 420;
+  const image = optimizeCloudinaryImage(product.images?.[0] || product.image, { width: cardImageSize, height: cardImageSize });
+  const hoverImage = optimizeCloudinaryImage(product.images?.[1] || "", { width: cardImageSize, height: cardImageSize });
   const [supportsHoverPreview, setSupportsHoverPreview] = useState(false);
   const hasHoverImage = Boolean(hoverImage && supportsHoverPreview);
   const price = getProductPrice(product);
@@ -95,10 +100,6 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
   const ratingValue = Math.max(0, Math.min(5, getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = getProductReviewCount(product);
-  const productHref = `/products/${productId}`;
-  const isCatalog = variant === "catalog";
-  const isRelated = variant === "related";
-  const isHome = variant === "default";
   const imageShellRef = useRef(null);
   const [shouldLoadImage, setShouldLoadImage] = useState(false);
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
@@ -261,16 +262,16 @@ export default function ProductCard({ product, onAddToCart, variant = "default" 
                     src={image}
                     alt={getImageAlt(product)}
                     className={`product-card__image product-card__image--primary${hasHoverImage ? " has-hover-image" : ""}`}
-                    width="420"
-                    height="420"
+                    width={cardImageSize}
+                    height={cardImageSize}
                   />
                   {hasHoverImage ? (
                     <StableImage
                       src={hoverImage}
                       alt={`${getImageAlt(product)} alternate view`}
                       className="product-card__image product-card__image--secondary"
-                      width="420"
-                      height="420"
+                      width={cardImageSize}
+                      height={cardImageSize}
                     />
                   ) : null}
                 </>
