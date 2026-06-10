@@ -73,14 +73,46 @@ const HOME_LOGOS = HOME_LOGO_FILES.map((file) => ({
     .trim(),
 }));
 const HOME_CATEGORY_IMAGES = {
-  laptops: "/home-edited/laptops-removebg-preview.png",
-  phones: "/home-edited/mobilephones-removebg-preview.png",
-  monitors: "/home-edited/monitors-removebg-preview.png",
-  accessories: "/home-edited/accessories-removebg-preview.png",
-  printers: "/home-edited/printers-removebg-preview.png",
-  storage: "/home-edited/storage_devices-removebg-preview.png",
-  others: "/home-edited/others-removebg-preview.png",
-  projectors: "/home-edited/projectors-removebg-preview.png",
+  laptops: {
+    src: "/home-edited/laptops-removebg-preview.png",
+    mobileSrc: "/home-edited/laptops-removebg-preview-mobile.png",
+    mobileWidth: 360,
+  },
+  phones: {
+    src: "/home-edited/mobilephones-removebg-preview.png",
+    mobileSrc: "/home-edited/mobilephones-removebg-preview-mobile.png",
+    mobileWidth: 320,
+  },
+  monitors: {
+    src: "/home-edited/monitors-removebg-preview.png",
+    mobileSrc: "/home-edited/monitors-removebg-preview-mobile.png",
+    mobileWidth: 260,
+  },
+  accessories: {
+    src: "/home-edited/accessories-removebg-preview.png",
+    mobileSrc: "/home-edited/accessories-removebg-preview-mobile.png",
+    mobileWidth: 260,
+  },
+  printers: {
+    src: "/home-edited/printers-removebg-preview.png",
+    mobileSrc: "/home-edited/printers-removebg-preview-mobile.png",
+    mobileWidth: 320,
+  },
+  storage: {
+    src: "/home-edited/storage_devices-removebg-preview.png",
+    mobileSrc: "/home-edited/storage_devices-removebg-preview-mobile.png",
+    mobileWidth: 340,
+  },
+  others: {
+    src: "/home-edited/others-removebg-preview.png",
+    mobileSrc: "/home-edited/others-removebg-preview-mobile.png",
+    mobileWidth: 260,
+  },
+  projectors: {
+    src: "/home-edited/projectors-removebg-preview.png",
+    mobileSrc: "/home-edited/projectors-removebg-preview-mobile.png",
+    mobileWidth: 260,
+  },
 };
 
 function getCategoryArtKey(slug, label, index) {
@@ -111,6 +143,11 @@ function getCategoryFilterHref(slug) {
 function getCategoryTileImage(slug) {
   const key = canonicalCategory(slug);
   return HOME_CATEGORY_IMAGES[key] || "";
+}
+
+function getCategoryImageSrcSet(image) {
+  if (!image?.mobileSrc || !image?.src) return undefined;
+  return `${image.mobileSrc} ${image.mobileWidth || 320}w, ${image.src} 720w`;
 }
 
 function isLaptopDesktopCategory(item) {
@@ -533,7 +570,9 @@ export default function HomePage() {
     if (categoryImage) {
       return (
         <StableImage
-          src={categoryImage}
+          src={categoryImage.src}
+          srcSet={getCategoryImageSrcSet(categoryImage)}
+          sizes="(max-width: 640px) 320px, 720px"
           alt={`${item?.label || "Category"} preview`}
           width={720}
           height={420}

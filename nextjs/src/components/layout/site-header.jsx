@@ -65,6 +65,8 @@ const BRAND_FALLBACK = (
     DEETECH
   </div>
 );
+const BRAND_LOGO_SRC = "/favicon-removebg-preview.png";
+const BRAND_LOGO_SRC_SET = "/favicon-removebg-preview-mobile.png 96w, /favicon-removebg-preview.png 500w";
 const HEADER_NOTIFICATION_REFRESH_MS = 30_000;
 
 function isActivePath(pathname, href) {
@@ -1397,7 +1399,9 @@ export default function SiteHeader() {
               <div className="header-search-mode">
                 <Link href="/" className="brand-mark header-search-mode__brand" aria-label="Go to homepage">
                   <StableImage
-                    src="/favicon-removebg-preview.png"
+                    src={BRAND_LOGO_SRC}
+                    srcSet={BRAND_LOGO_SRC_SET}
+                    sizes="(max-width: 640px) 96px, 170px"
                     alt="Deetech Computers logo"
                     width={170}
                     height={48}
@@ -1464,7 +1468,9 @@ export default function SiteHeader() {
                     </button>
                     <Link href="/" className="brand-mark brand-mark--mobile">
                       <StableImage
-                        src="/favicon-removebg-preview.png"
+                        src={BRAND_LOGO_SRC}
+                        srcSet={BRAND_LOGO_SRC_SET}
+                        sizes="96px"
                         alt="Deetech Computers logo"
                         width={190}
                         height={56}
@@ -1546,7 +1552,9 @@ export default function SiteHeader() {
 
                 <Link href="/" className="brand-mark brand-mark--desktop-shell">
                   <StableImage
-                    src="/favicon-removebg-preview.png"
+                    src={BRAND_LOGO_SRC}
+                    srcSet={BRAND_LOGO_SRC_SET}
+                    sizes="170px"
                     alt="Deetech Computers logo"
                     width={170}
                     height={48}
