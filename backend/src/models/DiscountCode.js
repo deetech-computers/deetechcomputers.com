@@ -13,5 +13,9 @@ const discountCodeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+discountCodeSchema.index({ code: 1, used: 1 });
+discountCodeSchema.index({ used: 1, createdAt: -1 });
+discountCodeSchema.index({ createdAt: -1 });
+
 const DiscountCode = mongoose.model("DiscountCode", discountCodeSchema);
 export default DiscountCode;

@@ -157,6 +157,10 @@ orderSchema.index({ clientOrderRef: 1 }, {
   partialFilterExpression: { clientOrderRef: { $exists: true, $type: "string" } },
 });
 orderSchema.index({ clientOrderRef: 1, createdAt: -1 });
+orderSchema.index({ paymentGatewayReference: 1, createdAt: -1 });
+orderSchema.index({ paymentStatus: 1, createdAt: -1 });
+orderSchema.index({ orderStatus: 1, createdAt: -1 });
+orderSchema.index({ paymentFlow: 1, paymentMethod: 1, paymentStatus: 1, orderStatus: 1, createdAt: -1 });
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;

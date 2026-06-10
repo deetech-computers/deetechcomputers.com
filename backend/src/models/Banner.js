@@ -13,5 +13,7 @@ const bannerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+bannerSchema.index({ order: 1, createdAt: -1 });
+
 const Banner = mongoose.model("Banner", bannerSchema);
 export default Banner;

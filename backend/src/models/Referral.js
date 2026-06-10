@@ -55,6 +55,8 @@ const referralSchema = new mongoose.Schema(
 );
 
 referralSchema.index({ affiliate: 1, createdAt: -1 });
+referralSchema.index({ affiliate: 1, status: 1, createdAt: -1 });
+referralSchema.index({ status: 1, createdAt: -1 });
 
 const Referral = mongoose.model("Referral", referralSchema);
 export default Referral;

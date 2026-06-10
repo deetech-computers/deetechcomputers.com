@@ -26,5 +26,10 @@ const supportSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+supportSchema.index({ email: 1, updatedAt: -1 });
+supportSchema.index({ email: 1, createdAt: -1 });
+supportSchema.index({ status: 1, updatedAt: -1 });
+supportSchema.index({ createdAt: -1 });
+
 const Support = mongoose.model("Support", supportSchema);
 export default Support;

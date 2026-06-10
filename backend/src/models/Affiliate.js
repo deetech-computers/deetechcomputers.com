@@ -49,6 +49,8 @@ const affiliateSchema = new mongoose.Schema(
 );
 
 affiliateSchema.index({ user: 1, isActive: 1 });
+affiliateSchema.index({ isActive: 1, createdAt: -1 });
+affiliateSchema.index({ tier: 1, createdAt: -1 });
 
 const Affiliate = mongoose.model("Affiliate", affiliateSchema);
 export default Affiliate;
