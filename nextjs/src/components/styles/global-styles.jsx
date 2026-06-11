@@ -23,7 +23,7 @@ html, body {
 body {
   background: #f5f6f7;
   color: var(--text);
-  font-family: "Poppins", sans-serif;
+  font-family: inherit;
 }
 img, svg, video, canvas {
   max-width: 100%;
@@ -2686,7 +2686,7 @@ button, input, select, textarea { font: inherit; }
   scroll-margin-top: 110px;
 }
 .shop-layout--loading {
-  min-height: 1140px;
+  min-height: 1280px;
 }
 .shop-skeleton,
 .product-card--skeleton span,
@@ -3325,6 +3325,9 @@ button, input, select, textarea { font: inherit; }
 }
 .homepage-products__section {
   display: grid; gap: 14px;
+}
+.homepage-products__skeleton-grid {
+  min-height: 320px;
 }
 .homepage-products__rail-wrap {
   position: relative;
@@ -13844,6 +13847,7 @@ button, input, select, textarea { font: inherit; }
   }
   .shop-page {
     padding-bottom: 96px;
+    min-height: 1880px;
   }
   .shop-hero {
     padding: 0;
@@ -14412,7 +14416,7 @@ button, input, select, textarea { font: inherit; }
     min-height: 34px; border-radius: 0; font-size: 0.62rem;
   }
   .shop-layout--loading {
-    min-height: 1180px;
+    min-height: 1420px;
   }
   .product-card--skeleton {
     min-height: 315px;

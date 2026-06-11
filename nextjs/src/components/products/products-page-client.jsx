@@ -1031,7 +1031,7 @@ export default function ProductsPageClient({ initialFilters }) {
                       product={product}
                       onAddToCart={handleAddToCart}
                       variant="catalog"
-                      priority={index === 0}
+                      priority={index < 2}
                     />
                   ))}
                 </div>

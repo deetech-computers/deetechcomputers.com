@@ -6,6 +6,7 @@ import GlobalStyles from "@/components/styles/global-styles";
 import AffiliateLinkCapture from "@/components/tracking/affiliate-link-capture";
 import UserBehaviorTracker from "@/components/tracking/user-behavior-tracker";
 import { APP_NAME, SITE_URL, buildSiteUrl } from "@/lib/config";
+import { Poppins } from "next/font/google";
 import { Suspense } from "react";
 
 const defaultOgImage = {
@@ -15,6 +16,11 @@ const defaultOgImage = {
   alt: "Deetech Computers",
 };
 const siteIconHref = "/favicon-removebg-preview-mobile.png?v=deetech-20260610a";
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -73,14 +79,8 @@ export default function RootLayout({ children }) {
         <link rel="shortcut icon" href={siteIconHref} type="image/png" />
         <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
-      <body>
+      <body className={poppins.className}>
         <AppProviders>
           <div className="app-shell">
             <Suspense fallback={null}>

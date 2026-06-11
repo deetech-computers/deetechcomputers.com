@@ -164,6 +164,34 @@ function isLaptopDesktopCategory(item) {
   return slug === "laptops" || label.includes("desktop");
 }
 
+function HomeProductsSkeleton() {
+  return (
+    <div className="homepage-products__stack" aria-busy="true">
+      <section className="homepage-products__section">
+        <div className="homepage-products__section-head">
+          <div>
+            <div className="shop-skeleton shop-skeleton--heading" />
+            <div className="shop-skeleton shop-skeleton--line" />
+          </div>
+        </div>
+        <div className="product-grid homepage-products__skeleton-grid" aria-label="Loading homepage products">
+          {Array.from({ length: 4 }, (_, index) => (
+            <article key={`home-product-skeleton-${index}`} className="product-card product-card--home product-card--skeleton">
+              <div className="product-card__skeleton-media" />
+              <div className="product-card__skeleton-body">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="product-card__skeleton-footer" />
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function getHomeSectionFilterHref(sectionKey, category = "all") {
   return buildProductsHref({
     category,
@@ -773,7 +801,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {status === "loading" && <div className="panel">Loading products...</div>}
+        {status === "loading" && <HomeProductsSkeleton />}
         {status === "error" && <div className="panel">Could not load products: {error}</div>}
 
         {status === "ready" &&
