@@ -167,7 +167,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
           }
         });
       },
-      { rootMargin: isSmallScreen ? "120px 0px" : "360px 0px" }
+      { rootMargin: isSmallScreen ? "720px 0px" : "540px 0px" }
     );
 
     observer.observe(imageShellRef.current);

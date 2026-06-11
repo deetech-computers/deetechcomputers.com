@@ -23,9 +23,10 @@ export default function StableImage({
   const showFallback = !normalizedSrc || failed;
   const widthValue = Number(width) > 0 ? Number(width) : 320;
   const heightValue = Number(height) > 0 ? Number(height) : 320;
+  const isRemoteProductCdn = /^https:\/\/(?:i\.postimg\.cc|res\.cloudinary\.com)\//i.test(normalizedSrc);
   const canUseNextImage =
-    /^https:\/\/(?:i\.postimg\.cc|res\.cloudinary\.com)\//i.test(normalizedSrc) ||
-    normalizedSrc.startsWith("/");
+    normalizedSrc.startsWith("/") &&
+    !normalizedSrc.startsWith("//");
   const shouldOptimize =
     canUseNextImage &&
     !normalizedSrc.startsWith("data:") &&
@@ -48,7 +49,7 @@ export default function StableImage({
     );
   }
 
-  if (shouldOptimize) {
+  if (shouldOptimize && !isRemoteProductCdn) {
     return (
       <Image
         src={normalizedSrc}

@@ -1791,6 +1791,8 @@ export default function SiteHeader() {
                                 alt={item?.name || "Cart product"}
                                 width={84}
                                 height={84}
+                                loading="eager"
+                                fetchPriority="high"
                               />
                             </Link>
                             <div className="cart-feedback__meta">
