@@ -27,6 +27,7 @@ import {
   getProductReviewCount,
   getProductStock,
   isProductDiscountActive,
+  optimizeCloudinaryImage,
   resolveProductImage,
 } from "@/lib/products";
 import { getProductPricing } from "@/lib/product-pricing";
@@ -334,6 +335,14 @@ export default function ProductDetailPage() {
 
   const images = useMemo(() => getProductImages(product), [product]);
   const currentImage = images[activeImage] || images[0] || "";
+  const optimizedCurrentImage = useMemo(
+    () => optimizeCloudinaryImage(currentImage, { width: 900, height: 900 }),
+    [currentImage]
+  );
+  const optimizedThumbnailImages = useMemo(
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 180, height: 180 })),
+    [images]
+  );
 
   useEffect(() => {
     setActiveImage(0);
@@ -757,12 +766,14 @@ export default function ProductDetailPage() {
               onClick={() => setPreviewOpen(true)}
               aria-label="Tap to preview product image"
             >
-              {currentImage ? (
+              {optimizedCurrentImage ? (
                 <StableImage
-                  src={currentImage}
+                  src={optimizedCurrentImage}
                   alt={product.name}
                   width={1200}
                   height={1200}
+                  loading="eager"
+                  fetchPriority="high"
                   className="product-gallery__main-image"
                 />
               ) : (
@@ -811,10 +822,10 @@ export default function ProductDetailPage() {
                     aria-label={`View image ${index + 1}`}
                   >
                     <StableImage
-                      src={image}
+                      src={optimizedThumbnailImages[index] || image}
                       alt={`${product.name} ${index + 1}`}
-                      width={140}
-                      height={140}
+                      width={180}
+                      height={180}
                     />
                   </button>
                 ))}
@@ -953,6 +964,7 @@ export default function ProductDetailPage() {
 
           <div className="product-summary__buy">
             <div className="product-summary__qty-control" aria-label="Product quantity">
+              <label htmlFor="qty" className="sr-only">Quantity</label>
               <button type="button" className="product-summary__qty-button" onClick={decrementQty} aria-label="Reduce quantity">
                 -
               </button>
