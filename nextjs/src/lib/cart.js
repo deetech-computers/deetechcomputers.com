@@ -1,6 +1,6 @@
 import { API_BASE_CART } from "./config";
 import { requestJson } from "./http";
-import { resolveProductImage } from "./products";
+import { optimizeCloudinaryImage } from "./products";
 import { getProductPricing } from "./product-pricing";
 import {
   buildCartLineKey,
@@ -43,6 +43,7 @@ export function normalizeCartItems(items = []) {
     const hasDiscount =
       Boolean(item.hasDiscount || item.discountApplied) ||
       (originalPrice > 0 && originalPrice > unitPrice);
+    const normalizedImage = optimizeCloudinaryImage(item.image || "", { width: 160, height: 160 });
     const normalized = {
       ...item,
       _id: item._id || item.productId || id,
@@ -54,6 +55,7 @@ export function normalizeCartItems(items = []) {
       originalPrice: hasDiscount ? Math.max(unitPrice, originalPrice) : unitPrice,
       discountPrice: hasDiscount ? (discountPrice > 0 ? discountPrice : unitPrice) : 0,
       hasDiscount,
+      image: normalizedImage,
     };
 
     map.set(lineKey, normalized);
@@ -164,7 +166,7 @@ export function normalizeServerCart(payload) {
       originalPrice: hasDiscount ? originalPrice : price,
       discountPrice: hasDiscount ? price : 0,
       hasDiscount,
-      image: resolveProductImage(product.images?.[0] || product.image || ""),
+      image: optimizeCloudinaryImage(product.images?.[0] || product.image || "", { width: 160, height: 160 }),
       countInStock:
         product.countInStock ?? product.stock_quantity ?? product.stock ?? 0,
     };

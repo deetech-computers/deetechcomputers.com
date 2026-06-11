@@ -30,6 +30,7 @@ import {
   fetchProducts,
   formatCategoryLabel,
   getProductPrice,
+  optimizeCloudinaryImage,
   resolveProductImage,
 } from "@/lib/products";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
@@ -1786,7 +1787,7 @@ export default function SiteHeader() {
                           <article key={lineKey || `${item?.name || "item"}-${index}`} className="cart-feedback__item">
                             <Link href={id ? `/products/${id}` : "/cart"} className="cart-feedback__thumb" onClick={closeCartDrawer}>
                               <StableImage
-                                src={resolveProductImage(item?.image || item?.images?.[0])}
+                                src={optimizeCloudinaryImage(item?.image || item?.images?.[0], { width: 120, height: 120 })}
                                 alt={item?.name || "Cart product"}
                                 width={84}
                                 height={84}

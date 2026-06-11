@@ -18,7 +18,7 @@ import {
   upsertServerCartItem,
   writeStoredCart,
 } from "@/lib/cart";
-import { getProductStock, resolveProductImage } from "@/lib/products";
+import { getProductStock, optimizeCloudinaryImage } from "@/lib/products";
 import { getProductPricing } from "@/lib/product-pricing";
 import { buildCartLineKey, resolveProductUpgradeSelection } from "@/lib/product-upgrades";
 import { useAuth } from "./auth-provider";
@@ -255,7 +255,7 @@ export function CartProvider({ children }) {
             originalPrice: hasDiscount ? originalPrice : livePrice,
             discountPrice: hasDiscount ? livePrice : 0,
             hasDiscount,
-            image: resolveProductImage(product.images?.[0] || product.image || ""),
+            image: optimizeCloudinaryImage(product.images?.[0] || product.image || "", { width: 160, height: 160 }),
             countInStock: stock,
             selectedUpgrades,
             qty: serverQty,
