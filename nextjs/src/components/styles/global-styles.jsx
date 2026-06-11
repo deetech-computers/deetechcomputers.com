@@ -13927,6 +13927,43 @@ button, input, select, textarea { font: inherit; }
   .product-detail-view {
     min-height: 1080px;
   }
+  .product-detail-loading {
+    gap: 16px;
+    min-height: 1420px;
+  }
+  .product-detail-loading__top {
+    gap: 16px;
+  }
+  .product-detail-loading__gallery {
+    min-height: auto;
+    aspect-ratio: 1 / 1;
+  }
+  .product-detail-loading__summary {
+    min-height: 430px;
+    gap: 14px;
+    padding: 18px;
+  }
+  .product-detail-loading__summary span:nth-child(1) {
+    width: 72px;
+    height: 12px;
+  }
+  .product-detail-loading__summary span:nth-child(2) {
+    width: 100%;
+    height: 58px;
+  }
+  .product-detail-loading__summary span:nth-child(3) {
+    width: 140px;
+    height: 28px;
+  }
+  .product-detail-loading__summary span:nth-child(4) {
+    height: 72px;
+  }
+  .product-detail-loading__summary span:nth-child(5) {
+    height: 50px;
+  }
+  .product-detail-loading__tabs {
+    min-height: 210px;
+  }
   .product-summary {
     min-height: 560px;
   }
