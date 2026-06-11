@@ -79,7 +79,6 @@ export default function RootLayout({ children }) {
         <link rel="shortcut icon" href={siteIconHref} type="image/png" />
         <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="preconnect" href="https://i.postimg.cc" crossOrigin="" />
       </head>
       <body className={poppins.className}>
         <AppProviders>

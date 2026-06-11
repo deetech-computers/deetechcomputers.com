@@ -38,6 +38,43 @@ function RemoveIcon() {
   );
 }
 
+function WishlistSkeleton() {
+  return (
+    <section className="wishlist-shell wishlist-skeleton" aria-label="Loading wishlist">
+      <div className="wishlist-table panel">
+        <div className="wishlist-skeleton__head">
+          {Array.from({ length: 6 }, (_, index) => (
+            <span key={index} />
+          ))}
+        </div>
+        <div className="wishlist-skeleton__list">
+          {Array.from({ length: 3 }, (_, index) => (
+            <article key={index} className="wishlist-skeleton__row">
+              <span className="wishlist-skeleton__button" />
+              <div className="wishlist-skeleton__product">
+                <span className="wishlist-skeleton__thumb" />
+                <div className="wishlist-skeleton__meta">
+                  <span />
+                  <span />
+                </div>
+              </div>
+              <span />
+              <span />
+              <span />
+              <span className="wishlist-skeleton__button" />
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className="wishlist-skeleton__actions">
+        <span />
+        <span />
+        <span />
+      </div>
+    </section>
+  );
+}
+
 export default function WishlistPage() {
   const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
@@ -137,7 +174,7 @@ export default function WishlistPage() {
   }, [wishlistEntries]);
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section wishlist-page">
       <section className="cart-hero wishlist-hero">
         <h1>Wishlist</h1>
         <p className="cart-hero__crumbs">
@@ -148,9 +185,7 @@ export default function WishlistPage() {
       </section>
 
       {status === "loading" ? (
-        <section className="panel wishlist-empty">
-          <h2>Loading wishlist...</h2>
-        </section>
+        <WishlistSkeleton />
       ) : !isAuthenticated ? (
         <section className="panel wishlist-empty">
           <h2>Wishlist is for account holders</h2>
