@@ -150,6 +150,7 @@ function ProductGridSkeleton() {
       </aside>
 
       <section className="shop-content">
+        <h2 className="sr-only">Product results</h2>
         <div className="shop-toolbar panel">
           <div className="shop-skeleton shop-skeleton--toolbar" />
         </div>
@@ -968,6 +969,7 @@ export default function ProductsPageClient({ initialFilters }) {
             </aside>
 
             <section className="shop-content">
+              <h2 className="sr-only">Product results</h2>
               <div className="shop-toolbar panel">
                 <div className="shop-toolbar__summary" role="status" aria-live="polite">
                   <p className="products-results">
