@@ -336,11 +336,11 @@ export default function ProductDetailPage() {
   const images = useMemo(() => getProductImages(product), [product]);
   const currentImage = images[activeImage] || images[0] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 900, height: 900 }),
+    () => optimizeCloudinaryImage(currentImage, { width: 720, height: 720 }),
     [currentImage]
   );
   const optimizedThumbnailImages = useMemo(
-    () => images.map((image) => optimizeCloudinaryImage(image, { width: 180, height: 180 })),
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
     [images]
   );
 
@@ -517,11 +517,27 @@ export default function ProductDetailPage() {
   }, [allProducts, product?._id, product?.category]);
 
   if (status === "loading") {
-    return <main className="shell page-section"><div className="panel">Loading product...</div></main>;
+    return (
+      <main className="shell page-section product-detail-page">
+        <div className="product-detail-loading" aria-label="Loading product details">
+          <div className="product-detail-loading__top">
+            <div className="product-detail-loading__gallery panel" />
+            <div className="product-detail-loading__summary panel">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+          <div className="product-detail-loading__tabs panel" />
+        </div>
+      </main>
+    );
   }
 
   if (status === "error" || !product) {
-    return <main className="shell page-section"><div className="panel">Could not load product: {error}</div></main>;
+    return <main className="shell page-section product-detail-page"><div className="panel">Could not load product: {error}</div></main>;
   }
 
   const stock = getProductStock(product);
@@ -746,7 +762,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section product-detail-page">
       <section className="product-breadcrumbs" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
@@ -824,8 +840,8 @@ export default function ProductDetailPage() {
                     <StableImage
                       src={optimizedThumbnailImages[index] || image}
                       alt={`${product.name} ${index + 1}`}
-                      width={180}
-                      height={180}
+                      width={140}
+                      height={140}
                     />
                   </button>
                 ))}
