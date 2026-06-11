@@ -786,8 +786,8 @@ export default function ProductDetailPage() {
                 <StableImage
                   src={optimizedCurrentImage}
                   alt={product.name}
-                  width={1200}
-                  height={1200}
+                  width={720}
+                  height={720}
                   loading="eager"
                   fetchPriority="high"
                   className="product-gallery__main-image"

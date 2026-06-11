@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 export default function StableImage({
@@ -22,6 +23,13 @@ export default function StableImage({
   const showFallback = !normalizedSrc || failed;
   const widthValue = Number(width) > 0 ? Number(width) : 320;
   const heightValue = Number(height) > 0 ? Number(height) : 320;
+  const canUseNextImage =
+    /^https:\/\/(?:i\.postimg\.cc|res\.cloudinary\.com)\//i.test(normalizedSrc) ||
+    normalizedSrc.startsWith("/");
+  const shouldOptimize =
+    canUseNextImage &&
+    !normalizedSrc.startsWith("data:") &&
+    !/\.svg(?:[?#]|$)/i.test(normalizedSrc);
   const mergedStyle = {
     aspectRatio: `${widthValue} / ${heightValue}`,
     ...style,
@@ -37,6 +45,25 @@ export default function StableImage({
       >
         {fallbackText}
       </div>
+    );
+  }
+
+  if (shouldOptimize) {
+    return (
+      <Image
+        src={normalizedSrc}
+        alt={alt || "Image"}
+        className={className ? `stable-image ${className}` : "stable-image"}
+        loading={loading}
+        decoding={decoding}
+        fetchPriority={fetchPriority}
+        width={widthValue}
+        height={heightValue}
+        style={mergedStyle}
+        draggable={false}
+        onError={() => setFailed(true)}
+        {...rest}
+      />
     );
   }
 

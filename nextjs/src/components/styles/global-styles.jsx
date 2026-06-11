@@ -3960,7 +3960,7 @@ button, input, select, textarea { font: inherit; }
 }
 .product-summary__price-old {
   margin: 0;
-  color: #8f8a80;
+  color: #665d52;
   font-size: 1rem;
   font-weight: 600;
   text-decoration: line-through;
