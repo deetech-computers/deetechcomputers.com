@@ -243,7 +243,7 @@ export default function ProductDetailPage() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
-  const [mainImageReadySrc, setMainImageReadySrc] = useState("");
+  const [initialMainImageReady, setInitialMainImageReady] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -385,7 +385,7 @@ export default function ProductDetailPage() {
     [images]
   );
 
-  const mainImageReady = Boolean(optimizedCurrentImage && mainImageReadySrc === optimizedCurrentImage);
+  const showGalleryControls = Boolean(initialMainImageReady || !optimizedCurrentImage);
 
   useEffect(() => {
     setActiveImage(0);
@@ -394,6 +394,7 @@ export default function ProductDetailPage() {
     setSelectedUpgrades({});
     setUpgradePanelOpen(false);
     setPreviewOpen(false);
+    setInitialMainImageReady(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
 
@@ -836,13 +837,13 @@ export default function ProductDetailPage() {
                   loading="eager"
                   fetchPriority="high"
                   className="product-gallery__main-image"
-                  onLoad={() => setMainImageReadySrc(optimizedCurrentImage)}
+                  onLoad={() => setInitialMainImageReady(true)}
                 />
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
             </button>
-            {images.length > 1 && mainImageReady ? (
+            {images.length > 1 && showGalleryControls ? (
               <>
                 <button
                   type="button"
@@ -866,7 +867,7 @@ export default function ProductDetailPage() {
 
           {images.length ? (
             <div
-              className={mainImageReady ? "product-gallery__selector" : "product-gallery__selector product-gallery__selector--pending"}
+              className={showGalleryControls ? "product-gallery__selector" : "product-gallery__selector product-gallery__selector--pending"}
               aria-label="Product images"
             >
               <button
@@ -879,9 +880,9 @@ export default function ProductDetailPage() {
               </button>
               <div
                 ref={thumbnailRailRef}
-                className={mainImageReady ? "product-gallery__thumbs" : "product-gallery__thumbs product-gallery__thumbs--loading"}
+                className={showGalleryControls ? "product-gallery__thumbs" : "product-gallery__thumbs product-gallery__thumbs--loading"}
               >
-                {mainImageReady
+                {showGalleryControls
                   ? images.map((image, index) => (
                       <button
                         key={`${image}-${index}`}
