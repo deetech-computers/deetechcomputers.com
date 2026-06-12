@@ -3430,16 +3430,6 @@ button, input, select, textarea { font: inherit; }
   width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden;
   position: relative;
 }
-.product-card__image-shell.is-image-loading::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(90deg, rgba(250, 246, 239, 0.9), rgba(255, 255, 255, 0.96), rgba(250, 246, 239, 0.9));
-  background-size: 220% 100%;
-  animation: skeleton-shimmer 1.2s ease-in-out infinite;
-}
 .product-card__image-shell.is-out-of-stock::after {
   content: "";
   position: absolute;
@@ -3481,13 +3471,7 @@ button, input, select, textarea { font: inherit; }
   width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
 }
 .product-card__image {
-  position: relative;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 220ms ease, transform 280ms ease;
-}
-.product-card__image.is-loaded {
-  opacity: 1;
+  transition: opacity 280ms ease, transform 280ms ease;
 }
 .product-card__image--secondary {
   position: absolute;
@@ -3686,7 +3670,7 @@ button, input, select, textarea { font: inherit; }
   background: transparent; box-shadow: none; cursor: not-allowed; color: #a0978a;
 }
 @media (hover: hover) and (pointer: fine) and (min-width: 900px) {
-  .product-card__image--primary.has-hover-image.is-loaded {
+  .product-card__image--primary.has-hover-image {
     opacity: 1;
   }
   .product-card:hover .product-card__image--primary.has-hover-image,
