@@ -102,6 +102,7 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
   const reviewCount = getProductReviewCount(product);
   const imageShellRef = useRef(null);
   const [shouldLoadImage, setShouldLoadImage] = useState(priority);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const stock = Number(product?.countInStock ?? product?.stock_quantity ?? product?.stock ?? 0);
   const isOutOfStock = stock < 1;
   const summary = getSummary(product);
@@ -174,6 +175,10 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
 
     return () => observer.disconnect();
   }, [priority, shouldLoadImage]);
+
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [image]);
 
   function toggleWishlist() {
     if (!productId) return;
@@ -260,17 +265,21 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
           aria-label={`View ${displayName}`}
         >
           <div className="product-card__media">
-            <div className={`product-card__image-shell${isOutOfStock ? " is-out-of-stock" : ""}`} ref={imageShellRef}>
+            <div
+              className={`product-card__image-shell${isOutOfStock ? " is-out-of-stock" : ""}${image && shouldLoadImage && !imageLoaded ? " is-image-loading" : ""}`}
+              ref={imageShellRef}
+            >
               {image && shouldLoadImage ? (
                 <>
                   <StableImage
                     src={image}
                     alt={getImageAlt(product)}
-                    className={`product-card__image product-card__image--primary${hasHoverImage ? " has-hover-image" : ""}`}
+                    className={`product-card__image product-card__image--primary${hasHoverImage ? " has-hover-image" : ""}${imageLoaded ? " is-loaded" : ""}`}
                     loading={priority ? "eager" : "lazy"}
                     fetchPriority={priority ? "high" : "low"}
                     width={cardImageSize}
                     height={cardImageSize}
+                    onLoad={() => setImageLoaded(true)}
                   />
                   {hasHoverImage ? (
                     <StableImage
