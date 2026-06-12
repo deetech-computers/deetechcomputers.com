@@ -23,6 +23,7 @@ import {
 } from "@/lib/wishlist";
 import { CART_ITEM_ADDED_EVENT } from "@/lib/cart";
 import {
+  buildCloudinarySrcSet,
   buildProductsHref,
   canonicalCategory,
   DEFAULT_STOREFRONT_CATEGORIES,
@@ -1787,12 +1788,14 @@ export default function SiteHeader() {
                           <article key={lineKey || `${item?.name || "item"}-${index}`} className="cart-feedback__item">
                             <Link href={id ? `/products/${id}` : "/cart"} className="cart-feedback__thumb" onClick={closeCartDrawer}>
                               <StableImage
-                                src={optimizeCloudinaryImage(item?.image || item?.images?.[0], { width: 120, height: 120 })}
+                                src={optimizeCloudinaryImage(item?.image || item?.images?.[0], { width: 96, height: 96, force: true })}
+                                srcSet={buildCloudinarySrcSet(item?.image || item?.images?.[0], [64, 96, 128], { force: true })}
+                                sizes="(max-width: 900px) 64px, 84px"
                                 alt={item?.name || "Cart product"}
                                 width={84}
                                 height={84}
-                                loading="eager"
-                                fetchPriority="high"
+                                loading={index === 0 ? "eager" : "lazy"}
+                                fetchPriority={index === 0 ? "high" : "low"}
                               />
                             </Link>
                             <div className="cart-feedback__meta">

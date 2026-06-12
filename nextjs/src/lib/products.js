@@ -44,13 +44,18 @@ export function resolveProductImage(src) {
 export function optimizeCloudinaryImage(src, options = {}) {
   const url = resolveProductImage(src);
   if (!url || !/res\.cloudinary\.com\/[^/]+\/image\/upload\//i.test(url)) return url;
-  if (/\/image\/upload\/[^/]*(?:f_auto|q_auto|w_\d+)/i.test(url)) return url;
-
   const width = Math.max(1, Number(options.width || 420));
   const height = Math.max(1, Number(options.height || width));
   const crop = String(options.crop || "fill").replace(/[^a-z_]/gi, "") || "fill";
   const gravity = String(options.gravity || "auto").replace(/[^a-z_]/gi, "") || "auto";
   const transform = `f_auto,q_auto,c_${crop},g_${gravity},w_${width},h_${height}`;
+  const hasExistingTransform = /\/image\/upload\/[^/]*(?:f_auto|q_auto|w_\d+)/i.test(url);
+
+  if (hasExistingTransform && options.force) {
+    return url.replace(/\/image\/upload\/[^/]+\//i, `/image/upload/${transform}/`);
+  }
+
+  if (hasExistingTransform) return url;
 
   return url.replace("/image/upload/", `/image/upload/${transform}/`);
 }

@@ -243,6 +243,7 @@ export default function ProductDetailPage() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+  const [mainImageReadySrc, setMainImageReadySrc] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -372,17 +373,19 @@ export default function ProductDetailPage() {
   const images = useMemo(() => getProductImages(product), [product]);
   const currentImage = images[activeImage] || images[0] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 640, height: 640 }),
+    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 560, force: true }),
     [currentImage]
   );
   const optimizedCurrentImageSrcSet = useMemo(
-    () => buildCloudinarySrcSet(currentImage, [420, 560, 640, 720, 960], { crop: "fill", gravity: "auto" }),
+    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true }),
     [currentImage]
   );
   const optimizedThumbnailImages = useMemo(
     () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
     [images]
   );
+
+  const mainImageReady = Boolean(optimizedCurrentImage && mainImageReadySrc === optimizedCurrentImage);
 
   useEffect(() => {
     setActiveImage(0);
@@ -828,11 +831,12 @@ export default function ProductDetailPage() {
                   srcSet={optimizedCurrentImageSrcSet}
                   sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
                   alt={product.name}
-                  width={640}
-                  height={640}
+                  width={560}
+                  height={560}
                   loading="eager"
                   fetchPriority="high"
                   className="product-gallery__main-image"
+                  onLoad={() => setMainImageReadySrc(optimizedCurrentImage)}
                 />
               ) : (
                 <div className="product-card__placeholder">No image</div>
@@ -870,23 +874,30 @@ export default function ProductDetailPage() {
               >
                 &lsaquo;
               </button>
-              <div ref={thumbnailRailRef} className="product-gallery__thumbs">
-                {images.map((image, index) => (
-                  <button
-                    key={`${image}-${index}`}
-                    type="button"
-                    className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
-                    onClick={() => setActiveImage(index)}
-                    aria-label={`View image ${index + 1}`}
-                  >
-                    <StableImage
-                      src={optimizedThumbnailImages[index] || image}
-                      alt={`${product.name} ${index + 1}`}
-                      width={140}
-                      height={140}
-                    />
-                  </button>
-                ))}
+              <div
+                ref={thumbnailRailRef}
+                className={mainImageReady ? "product-gallery__thumbs" : "product-gallery__thumbs product-gallery__thumbs--loading"}
+              >
+                {mainImageReady
+                  ? images.map((image, index) => (
+                      <button
+                        key={`${image}-${index}`}
+                        type="button"
+                        className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
+                        onClick={() => setActiveImage(index)}
+                        aria-label={`View image ${index + 1}`}
+                      >
+                        <StableImage
+                          src={optimizedThumbnailImages[index] || image}
+                          alt={`${product.name} ${index + 1}`}
+                          width={140}
+                          height={140}
+                        />
+                      </button>
+                    ))
+                  : Array.from({ length: Math.min(Math.max(images.length, 3), 4) }, (_, index) => (
+                      <span key={`thumb-loading-${index}`} className="product-gallery__thumb product-gallery__thumb--placeholder" />
+                    ))}
               </div>
               <button
                 type="button"

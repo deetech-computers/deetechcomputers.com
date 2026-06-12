@@ -3865,6 +3865,7 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: 36px minmax(0, 1fr) 36px;
   gap: 12px;
   align-items: center;
+  min-height: 86px;
 }
 .product-gallery__arrow {
   border: 1px solid #d4deef;
@@ -3917,6 +3918,14 @@ button, input, select, textarea { font: inherit; }
   aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
+}
+.product-gallery__thumb--placeholder {
+  pointer-events: none;
+  cursor: default;
+  background:
+    linear-gradient(90deg, rgba(239, 244, 250, 0.82), rgba(255, 255, 255, 0.96), rgba(239, 244, 250, 0.82));
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
 }
 .product-summary {
   display: grid;
@@ -14156,6 +14165,7 @@ button, input, select, textarea { font: inherit; }
   .product-gallery__selector {
     grid-template-columns: 28px minmax(0, 1fr) 28px;
     gap: 8px;
+    min-height: 64px;
   }
   .product-gallery__arrow {
     width: 30px;
