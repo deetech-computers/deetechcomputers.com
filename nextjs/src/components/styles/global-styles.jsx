@@ -3867,6 +3867,10 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
   min-height: 86px;
 }
+.product-gallery__selector--pending {
+  visibility: hidden;
+  pointer-events: none;
+}
 .product-gallery__arrow {
   border: 1px solid #d4deef;
   border-radius: 999px;

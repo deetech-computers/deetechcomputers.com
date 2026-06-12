@@ -842,7 +842,7 @@ export default function ProductDetailPage() {
                 <div className="product-card__placeholder">No image</div>
               )}
             </button>
-            {images.length > 1 ? (
+            {images.length > 1 && mainImageReady ? (
               <>
                 <button
                   type="button"
@@ -865,7 +865,10 @@ export default function ProductDetailPage() {
           </div>
 
           {images.length ? (
-            <div className="product-gallery__selector" aria-label="Product images">
+            <div
+              className={mainImageReady ? "product-gallery__selector" : "product-gallery__selector product-gallery__selector--pending"}
+              aria-label="Product images"
+            >
               <button
                 type="button"
                 className="product-gallery__arrow"
