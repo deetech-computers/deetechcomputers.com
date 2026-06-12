@@ -16,6 +16,7 @@ import { requestWithToken } from "@/lib/resource";
 import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import { normalizeAffiliateCode } from "@/lib/affiliate-attribution";
 import {
+  buildCloudinarySrcSet,
   canonicalCategory,
   fetchProductById,
   fetchProducts,
@@ -260,19 +261,54 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!productId) return;
 
+    let cancelled = false;
+    let idleHandle = null;
+    let timerHandle = null;
+
     setStatus("loading");
     setError("");
+    setProduct(null);
+    setAllProducts([]);
 
-    Promise.all([fetchProductById(productId), fetchProducts()])
-      .then(([item, items]) => {
+    fetchProductById(productId)
+      .then((item) => {
+        if (cancelled) return;
         setProduct(item);
-        setAllProducts(items);
         setStatus("ready");
+
+        const loadRelatedProducts = () => {
+          fetchProducts()
+            .then((items) => {
+              if (!cancelled) setAllProducts(items);
+            })
+            .catch(() => {
+              if (!cancelled) setAllProducts([]);
+            });
+        };
+
+        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+          idleHandle = window.requestIdleCallback(loadRelatedProducts, { timeout: 1800 });
+        } else if (typeof window !== "undefined") {
+          timerHandle = window.setTimeout(loadRelatedProducts, 450);
+        } else {
+          loadRelatedProducts();
+        }
       })
       .catch((err) => {
+        if (cancelled) return;
         setError(err.message);
         setStatus("error");
       });
+
+    return () => {
+      cancelled = true;
+      if (idleHandle && typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timerHandle && typeof window !== "undefined") {
+        window.clearTimeout(timerHandle);
+      }
+    };
   }, [productId]);
 
   useEffect(() => {
@@ -336,7 +372,11 @@ export default function ProductDetailPage() {
   const images = useMemo(() => getProductImages(product), [product]);
   const currentImage = images[activeImage] || images[0] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 720, height: 720 }),
+    () => optimizeCloudinaryImage(currentImage, { width: 640, height: 640 }),
+    [currentImage]
+  );
+  const optimizedCurrentImageSrcSet = useMemo(
+    () => buildCloudinarySrcSet(currentImage, [420, 560, 640, 720, 960], { crop: "fill", gravity: "auto" }),
     [currentImage]
   );
   const optimizedThumbnailImages = useMemo(
@@ -785,9 +825,11 @@ export default function ProductDetailPage() {
               {optimizedCurrentImage ? (
                 <StableImage
                   src={optimizedCurrentImage}
+                  srcSet={optimizedCurrentImageSrcSet}
+                  sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
                   alt={product.name}
-                  width={720}
-                  height={720}
+                  width={640}
+                  height={640}
                   loading="eager"
                   fetchPriority="high"
                   className="product-gallery__main-image"
@@ -871,7 +913,9 @@ export default function ProductDetailPage() {
               <strong>{ratingValue.toFixed(1)}</strong>
               <small>{`(${reviewCount} reviews)`}</small>
             </div>
-          ) : null}
+          ) : (
+            <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
+          )}
           <div className="product-summary__price-group">
             {hasDiscount && discountPercent > 0 ? (
               <span className="product-summary__discount-badge">Save {discountPercent}%</span>

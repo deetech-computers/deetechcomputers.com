@@ -55,6 +55,32 @@ export function optimizeCloudinaryImage(src, options = {}) {
   return url.replace("/image/upload/", `/image/upload/${transform}/`);
 }
 
+export function buildCloudinarySrcSet(src, widths = [], options = {}) {
+  const uniqueWidths = [...new Set(
+    (widths || [])
+      .map((value) => Math.round(Number(value || 0)))
+      .filter((value) => value > 0)
+  )].sort((a, b) => a - b);
+
+  if (!uniqueWidths.length) return undefined;
+
+  const entries = uniqueWidths
+    .map((width) => {
+      const height = options.heightRatio
+        ? Math.max(1, Math.round(width * Number(options.heightRatio)))
+        : width;
+      const url = optimizeCloudinaryImage(src, {
+        ...options,
+        width,
+        height,
+      });
+      return url ? `${url} ${width}w` : "";
+    })
+    .filter(Boolean);
+
+  return entries.length ? entries.join(", ") : undefined;
+}
+
 export function getProductStock(product) {
   return Number(
     product?.countInStock ??

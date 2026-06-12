@@ -79,6 +79,8 @@ export default function RootLayout({ children }) {
         <link rel="shortcut icon" href={siteIconHref} type="image/png" />
         <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body className={poppins.className}>
         <AppProviders>

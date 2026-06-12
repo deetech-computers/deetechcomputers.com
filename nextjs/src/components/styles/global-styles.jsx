@@ -3948,6 +3948,10 @@ button, input, select, textarea { font: inherit; }
 .product-summary__rating small {
   color: var(--muted);
 }
+.product-summary__rating--placeholder {
+  min-height: 20px;
+  visibility: hidden;
+}
 .product-summary__price {
   margin: 0;
   color: #1f1d1b;
