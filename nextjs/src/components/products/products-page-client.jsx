@@ -359,6 +359,18 @@ export default function ProductsPageClient({ initialFilters }) {
       },
     ];
   }, [category, products]);
+
+  useEffect(() => {
+    if (status !== "ready" || typeof router.prefetch !== "function") return;
+
+    const hrefs = new Set(["/products#shop-results"]);
+    categories.forEach((item) => {
+      hrefs.add(buildProductsHref({ category: item.slug, hash: "shop-results" }));
+    });
+
+    hrefs.forEach((href) => router.prefetch(href));
+  }, [categories, router, status]);
+
   const scopedProducts = useMemo(() => {
     if (category === "all") return products;
     return products.filter((product) => canonicalCategory(product.category) === category);

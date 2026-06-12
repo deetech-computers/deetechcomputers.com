@@ -2685,6 +2685,9 @@ button, input, select, textarea { font: inherit; }
   display: grid; gap: 14px;
   scroll-margin-top: 110px;
 }
+.shop-layout:not(.shop-layout--loading) {
+  animation: shopCatalogSettle 180ms ease-out both;
+}
 .shop-layout--loading {
   min-height: 1280px;
 }
@@ -2748,6 +2751,16 @@ button, input, select, textarea { font: inherit; }
 @keyframes shopSkeletonPulse {
   0% { background-position: 100% 0; }
   100% { background-position: -100% 0; }
+}
+@keyframes shopCatalogSettle {
+  from {
+    opacity: 0.96;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .shop-sidebar,
 .shop-toolbar {
