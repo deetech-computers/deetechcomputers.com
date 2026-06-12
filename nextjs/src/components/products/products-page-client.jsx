@@ -18,6 +18,7 @@ import {
   getStorefrontCategoryLabel,
   getProductRating,
   getProductStock,
+  readProductsCache,
   resolveProductImage,
 } from "@/lib/products";
 
@@ -256,8 +257,9 @@ export default function ProductsPageClient({ initialFilters }) {
   const router = useRouter();
   const pathname = usePathname();
   const { addItem } = useCart();
-  const [products, setProducts] = useState([]);
-  const [status, setStatus] = useState("loading");
+  const initialCachedProducts = useMemo(() => readProductsCache({ allowStale: true }), []);
+  const [products, setProducts] = useState(() => initialCachedProducts);
+  const [status, setStatus] = useState(() => (initialCachedProducts.length ? "ready" : "loading"));
   const [error, setError] = useState("");
   const [search, setSearch] = useState(initialFilters.search);
   const [category, setCategory] = useState(initialFilters.category);
@@ -295,16 +297,24 @@ export default function ProductsPageClient({ initialFilters }) {
   }, [initialFilters.brand, initialFilters.category, initialFilters.search, initialFilters.promotion]);
 
   useEffect(() => {
-    fetchProducts()
+    let cancelled = false;
+
+    fetchProducts({ force: initialCachedProducts.length > 0 })
       .then((items) => {
+        if (cancelled) return;
         setProducts(items);
         setStatus("ready");
       })
       .catch((err) => {
+        if (cancelled) return;
         setError(err.message);
-        setStatus("error");
+        setStatus(initialCachedProducts.length ? "ready" : "error");
       });
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [initialCachedProducts.length]);
 
   useEffect(() => {
     if (!mobileFiltersOpen) return undefined;

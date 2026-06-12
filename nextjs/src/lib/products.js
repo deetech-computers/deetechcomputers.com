@@ -327,7 +327,42 @@ export function deriveCategoryBrands(products, options = {}) {
   );
 }
 
-export async function fetchProducts() {
+const PRODUCT_CACHE_TTL_MS = 60 * 1000;
+let productsCacheItems = [];
+let productsCacheTimestamp = 0;
+let productsCachePromise = null;
+
+export function readProductsCache(options = {}) {
+  const allowStale = Boolean(options.allowStale);
+  const maxAge = Number(options.maxAge || PRODUCT_CACHE_TTL_MS);
+  if (!productsCacheItems.length) return [];
+  if (allowStale || Date.now() - productsCacheTimestamp <= maxAge) {
+    return productsCacheItems;
+  }
+  return [];
+}
+
+export async function fetchProducts(options = {}) {
+  const force = Boolean(options.force);
+  const cached = force ? [] : readProductsCache();
+  if (cached.length) return cached;
+  if (productsCachePromise) return productsCachePromise;
+
+  productsCachePromise = requestJson(API_BASE_PRODUCTS)
+    .then((payload) => {
+      const items = normalizeProductsPayload(payload);
+      productsCacheItems = items;
+      productsCacheTimestamp = Date.now();
+      return items;
+    })
+    .finally(() => {
+      productsCachePromise = null;
+    });
+
+  return productsCachePromise;
+}
+
+export async function fetchProductsUncached() {
   const payload = await requestJson(API_BASE_PRODUCTS);
   return normalizeProductsPayload(payload);
 }
