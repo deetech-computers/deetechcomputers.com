@@ -384,6 +384,7 @@ export default function ProductDetailPage() {
     () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
     [images]
   );
+  const currentThumbnailImage = optimizedThumbnailImages[activeImageIndex] || currentImage;
 
   useEffect(() => {
     setActiveImage(0);
@@ -824,17 +825,30 @@ export default function ProductDetailPage() {
               aria-label="Tap to preview product image"
             >
               {optimizedCurrentImage ? (
-                <StableImage
-                  src={optimizedCurrentImage}
-                  srcSet={optimizedCurrentImageSrcSet}
-                  sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
-                  alt={product.name}
-                  width={560}
-                  height={560}
-                  loading="eager"
-                  fetchPriority="high"
-                  className="product-gallery__main-image"
-                />
+                <>
+                  <StableImage
+                    key={`preview-${currentThumbnailImage}`}
+                    src={currentThumbnailImage}
+                    alt={product.name}
+                    width={140}
+                    height={140}
+                    loading="eager"
+                    fetchPriority="high"
+                    className="product-gallery__main-image product-gallery__main-image--preview"
+                  />
+                  <StableImage
+                    key={`main-${optimizedCurrentImage}`}
+                    src={optimizedCurrentImage}
+                    srcSet={optimizedCurrentImageSrcSet}
+                    sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
+                    alt={product.name}
+                    width={560}
+                    height={560}
+                    loading="eager"
+                    fetchPriority="high"
+                    className="product-gallery__main-image product-gallery__main-image--full"
+                  />
+                </>
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}

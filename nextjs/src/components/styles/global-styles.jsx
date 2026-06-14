@@ -3829,6 +3829,7 @@ button, input, select, textarea { font: inherit; }
   padding: 0;
   border: 0;
   border-radius: 10px;
+  position: relative;
 }
 .product-gallery__preview-trigger {
   width: 100%;
@@ -3843,6 +3844,19 @@ button, input, select, textarea { font: inherit; }
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.product-gallery__main-image {
+  grid-area: 1 / 1;
+}
+.product-gallery__main-image--preview {
+  filter: blur(10px);
+  opacity: 0.72;
+  transform: scale(1.04);
+}
+.product-gallery__main-image--full {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .product-gallery__stage-arrow {
   position: absolute;
