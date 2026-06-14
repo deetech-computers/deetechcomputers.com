@@ -384,7 +384,6 @@ export default function ProductDetailPage() {
     () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
     [images]
   );
-  const currentThumbnailImage = optimizedThumbnailImages[activeImageIndex] || currentImage;
 
   useEffect(() => {
     setActiveImage(0);
@@ -825,30 +824,18 @@ export default function ProductDetailPage() {
               aria-label="Tap to preview product image"
             >
               {optimizedCurrentImage ? (
-                <>
-                  <StableImage
-                    key={`preview-${currentThumbnailImage}`}
-                    src={currentThumbnailImage}
-                    alt={product.name}
-                    width={140}
-                    height={140}
-                    loading="eager"
-                    fetchPriority="high"
-                    className="product-gallery__main-image product-gallery__main-image--preview"
-                  />
-                  <StableImage
-                    key={`main-${optimizedCurrentImage}`}
-                    src={optimizedCurrentImage}
-                    srcSet={optimizedCurrentImageSrcSet}
-                    sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
-                    alt={product.name}
-                    width={560}
-                    height={560}
-                    loading="eager"
-                    fetchPriority="high"
-                    className="product-gallery__main-image product-gallery__main-image--full"
-                  />
-                </>
+                <StableImage
+                  key={`main-${currentImage}`}
+                  src={optimizedCurrentImage}
+                  srcSet={optimizedCurrentImageSrcSet}
+                  sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
+                  alt={product.name}
+                  width={560}
+                  height={560}
+                  loading="eager"
+                  fetchPriority="high"
+                  className="product-gallery__main-image"
+                />
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
@@ -858,7 +845,7 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   className="product-gallery__stage-arrow product-gallery__stage-arrow--left"
-                  onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+                  onClick={() => setActiveImage(activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1)}
                   aria-label="Previous product image"
                 >
                   &lsaquo;
@@ -866,7 +853,7 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   className="product-gallery__stage-arrow product-gallery__stage-arrow--right"
-                  onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+                  onClick={() => setActiveImage(activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1)}
                   aria-label="Next product image"
                 >
                   &rsaquo;

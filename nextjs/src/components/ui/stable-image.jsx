@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function StableImage({
   src,
@@ -35,6 +35,10 @@ export default function StableImage({
     aspectRatio: `${widthValue} / ${heightValue}`,
     ...style,
   };
+
+  useEffect(() => {
+    setFailed(false);
+  }, [normalizedSrc]);
 
   if (showFallback) {
     if (fallback) return fallback;
