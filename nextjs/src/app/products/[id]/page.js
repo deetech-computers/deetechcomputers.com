@@ -243,7 +243,6 @@ export default function ProductDetailPage() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
-  const [initialMainImageReady, setInitialMainImageReady] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -371,7 +370,8 @@ export default function ProductDetailPage() {
   }, [affiliateShareCode]);
 
   const images = useMemo(() => getProductImages(product), [product]);
-  const currentImage = images[activeImage] || images[0] || "";
+  const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
+  const currentImage = images[activeImageIndex] || "";
   const optimizedCurrentImage = useMemo(
     () => optimizeCloudinaryImage(currentImage, { width: 560, height: 560, force: true }),
     [currentImage]
@@ -385,8 +385,6 @@ export default function ProductDetailPage() {
     [images]
   );
 
-  const showGalleryControls = Boolean(initialMainImageReady || !optimizedCurrentImage);
-
   useEffect(() => {
     setActiveImage(0);
     setActiveTab("description");
@@ -394,7 +392,6 @@ export default function ProductDetailPage() {
     setSelectedUpgrades({});
     setUpgradePanelOpen(false);
     setPreviewOpen(false);
-    setInitialMainImageReady(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
 
@@ -677,7 +674,7 @@ export default function ProductDetailPage() {
                 <button
                   key={`preview-${image}-${index}`}
                   type="button"
-                  className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
+                  className={activeImageIndex === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
                   onClick={() => setActiveImage(index)}
                   aria-label={`Preview image ${index + 1}`}
                 >
@@ -837,13 +834,12 @@ export default function ProductDetailPage() {
                   loading="eager"
                   fetchPriority="high"
                   className="product-gallery__main-image"
-                  onLoad={() => setInitialMainImageReady(true)}
                 />
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
             </button>
-            {images.length > 1 && showGalleryControls ? (
+            {images.length > 1 ? (
               <>
                 <button
                   type="button"
@@ -867,7 +863,7 @@ export default function ProductDetailPage() {
 
           {images.length ? (
             <div
-              className={showGalleryControls ? "product-gallery__selector" : "product-gallery__selector product-gallery__selector--pending"}
+              className="product-gallery__selector"
               aria-label="Product images"
             >
               <button
@@ -880,28 +876,24 @@ export default function ProductDetailPage() {
               </button>
               <div
                 ref={thumbnailRailRef}
-                className={showGalleryControls ? "product-gallery__thumbs" : "product-gallery__thumbs product-gallery__thumbs--loading"}
+                className="product-gallery__thumbs"
               >
-                {showGalleryControls
-                  ? images.map((image, index) => (
-                      <button
-                        key={`${image}-${index}`}
-                        type="button"
-                        className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
-                        onClick={() => setActiveImage(index)}
-                        aria-label={`View image ${index + 1}`}
-                      >
-                        <StableImage
-                          src={optimizedThumbnailImages[index] || image}
-                          alt={`${product.name} ${index + 1}`}
-                          width={140}
-                          height={140}
-                        />
-                      </button>
-                    ))
-                  : Array.from({ length: Math.min(Math.max(images.length, 3), 4) }, (_, index) => (
-                      <span key={`thumb-loading-${index}`} className="product-gallery__thumb product-gallery__thumb--placeholder" />
-                    ))}
+                {images.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    className={activeImageIndex === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
+                    onClick={() => setActiveImage(index)}
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    <StableImage
+                      src={optimizedThumbnailImages[index] || image}
+                      alt={`${product.name} ${index + 1}`}
+                      width={140}
+                      height={140}
+                    />
+                  </button>
+                ))}
               </div>
               <button
                 type="button"
