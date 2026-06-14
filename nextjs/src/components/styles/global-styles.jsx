@@ -3829,6 +3829,7 @@ button, input, select, textarea { font: inherit; }
   padding: 0;
   border: 0;
   border-radius: 10px;
+  position: relative;
 }
 .product-gallery__preview-trigger {
   width: 100%;
@@ -3843,6 +3844,15 @@ button, input, select, textarea { font: inherit; }
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.product-gallery__main-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(248, 245, 240, 0.08), rgba(255, 255, 255, 0.28), rgba(248, 245, 240, 0.08));
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 0.9s ease-in-out infinite;
 }
 .product-gallery__stage-arrow {
   position: absolute;

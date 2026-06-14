@@ -243,6 +243,8 @@ export default function ProductDetailPage() {
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+  const [loadedMainImage, setLoadedMainImage] = useState({ image: "", src: "", srcSet: undefined });
+  const [mainImageLoading, setMainImageLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -380,13 +382,24 @@ export default function ProductDetailPage() {
     () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true }),
     [currentImage]
   );
+  const optimizedGalleryImages = useMemo(
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 560, force: true })),
+    [images]
+  );
   const optimizedThumbnailImages = useMemo(
     () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
     [images]
   );
+  const hasLoadedSelectedMainImage = loadedMainImage.src === optimizedCurrentImage;
+  const visibleMainImage =
+    loadedMainImage.src && !hasLoadedSelectedMainImage
+      ? loadedMainImage
+      : { image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet };
 
   useEffect(() => {
     setActiveImage(0);
+    setLoadedMainImage({ image: "", src: "", srcSet: undefined });
+    setMainImageLoading(false);
     setActiveTab("description");
     setQty(1);
     setSelectedUpgrades({});
@@ -394,6 +407,58 @@ export default function ProductDetailPage() {
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    optimizedGalleryImages.forEach((src) => {
+      if (!src) return;
+      const image = new window.Image();
+      image.src = src;
+    });
+  }, [optimizedGalleryImages]);
+
+  useEffect(() => {
+    if (!optimizedCurrentImage) {
+      setLoadedMainImage({ image: "", src: "", srcSet: undefined });
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    if (loadedMainImage.src === optimizedCurrentImage) {
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setMainImageLoading(Boolean(loadedMainImage.src));
+
+    if (typeof window === "undefined") {
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    const image = new window.Image();
+    image.onload = () => {
+      if (cancelled) return;
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+    };
+    image.onerror = () => {
+      if (cancelled) return;
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+    };
+    if (optimizedCurrentImageSrcSet) {
+      image.srcset = optimizedCurrentImageSrcSet;
+      image.sizes = "(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px";
+    }
+    image.src = optimizedCurrentImage;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentImage, loadedMainImage.src, optimizedCurrentImage, optimizedCurrentImageSrcSet]);
 
   useEffect(() => {
     if (!product?._id) return;
@@ -823,19 +888,21 @@ export default function ProductDetailPage() {
               onClick={() => setPreviewOpen(true)}
               aria-label="Tap to preview product image"
             >
-              {optimizedCurrentImage ? (
-                <StableImage
-                  key={`main-${currentImage}`}
-                  src={optimizedCurrentImage}
-                  srcSet={optimizedCurrentImageSrcSet}
-                  sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
-                  alt={product.name}
-                  width={560}
-                  height={560}
-                  loading="eager"
-                  fetchPriority="high"
-                  className="product-gallery__main-image"
-                />
+              {visibleMainImage.src ? (
+                <>
+                  <StableImage
+                    src={visibleMainImage.src}
+                    srcSet={visibleMainImage.srcSet}
+                    sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
+                    alt={product.name}
+                    width={560}
+                    height={560}
+                    loading="eager"
+                    fetchPriority="high"
+                    className="product-gallery__main-image"
+                  />
+                  {mainImageLoading ? <span className="product-gallery__main-loading" aria-hidden="true" /> : null}
+                </>
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
