@@ -9120,8 +9120,8 @@ button, input, select, textarea { font: inherit; }
   line-height: 1.45;
 }
 .account-dashboard__nav--logout {
-  margin-top: 34px;
-  padding-top: 14px;
+  margin-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid #c1c9bd;
   border-radius: 0;
 }
@@ -10898,8 +10898,8 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__sidebar-scroll {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
-    height: 100%;
+    min-height: 0;
+    height: auto;
     gap: 4px;
     overflow: visible;
   }
@@ -10940,7 +10940,7 @@ button, input, select, textarea { font: inherit; }
     display: none;
   }
   .account-dashboard__nav--logout {
-    margin-top: auto;
+    margin-top: 12px;
   }
   .account-dashboard__section-head--row {
     grid-template-columns: minmax(0, 1fr) auto;
