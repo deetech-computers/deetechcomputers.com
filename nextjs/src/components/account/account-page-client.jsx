@@ -414,7 +414,7 @@ function AccountNavIcon({ name }) {
   );
 }
 
-function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, onMobileItemSelect, suppressActive = false, profile }) {
+function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, profile }) {
   const sections = ACCOUNT_SECTIONS.filter((item) => {
     if (item.id === "messages" && !hasSupportTickets) return false;
     if (item.id === "logout") return false;
@@ -425,9 +425,6 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
   const completion = getProfileCompletion(profile);
   return (
     <aside className="account-dashboard__sidebar" aria-label="Account sections">
-      <div className="account-mobile-sidebar-head">
-        <strong>Account Sections</strong>
-      </div>
       <div className="account-dashboard__sidebar-scroll">
         <div className="account-sidebar-brand">
           <strong>DEETECH Computers</strong>
@@ -456,7 +453,6 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
                 key={item.id}
                 href={item.href}
                 className="account-dashboard__nav"
-                onClick={onMobileItemSelect}
               >
                 <AccountNavIcon name={item.icon} />
                 <span>{item.label}</span>
@@ -467,10 +463,9 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
             <button
               key={item.id}
               type="button"
-              className={!suppressActive && activeSection === item.id ? "account-dashboard__nav is-active" : "account-dashboard__nav"}
+              className={activeSection === item.id ? "account-dashboard__nav is-active" : "account-dashboard__nav"}
               onClick={() => {
                 onChange(item.id);
-                onMobileItemSelect?.();
               }}
             >
               <AccountNavIcon name={item.icon} />
@@ -481,10 +476,9 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
         {logoutItem ? (
           <button
             type="button"
-            className={!suppressActive && activeSection === "logout" ? "account-dashboard__nav account-dashboard__nav--logout is-active" : "account-dashboard__nav account-dashboard__nav--logout"}
+            className={activeSection === "logout" ? "account-dashboard__nav account-dashboard__nav--logout is-active" : "account-dashboard__nav account-dashboard__nav--logout"}
             onClick={() => {
               onChange("logout");
-              onMobileItemSelect?.();
             }}
           >
             <AccountNavIcon name={logoutItem.icon} />
@@ -1408,7 +1402,6 @@ export default function AccountPageClient({ initialTab = "" }) {
   const router = useRouter();
   const { pushToast } = useToast();
   const { isAuthenticated, logout, refreshProfile, saveProfile, status, token, user } = useAuth();
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
@@ -1448,7 +1441,6 @@ export default function AccountPageClient({ initialTab = "" }) {
     confirmPassword: "",
   });
   const profileHydratedRef = useRef(false);
-  const userSelectedSectionRef = useRef(false);
   const [activeSection, setActiveSection] = useState(() =>
     normalizeAccountTab(String(initialTab || "").toLowerCase())
   );
@@ -1458,31 +1450,9 @@ export default function AccountPageClient({ initialTab = "" }) {
   }, [initialTab]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const mediaQuery = window.matchMedia("(max-width: 980px)");
-    const syncMobileMenuState = () => {
-      if (mediaQuery.matches) {
-        const hasExplicitTab = Boolean(String(initialTab || "").trim());
-        if (userSelectedSectionRef.current) {
-          setMobileNavOpen(false);
-          return;
-        }
-        setMobileNavOpen(!hasExplicitTab);
-        return;
-      }
-      setMobileNavOpen(false);
-    };
-
-    syncMobileMenuState();
-    mediaQuery.addEventListener("change", syncMobileMenuState);
-    return () => mediaQuery.removeEventListener("change", syncMobileMenuState);
-  }, [initialTab]);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || mobileNavOpen) return;
+    if (typeof window === "undefined") return;
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activeSection, mobileNavOpen]);
+  }, [activeSection]);
 
   useEffect(() => {
     const notificationScope = buildNotificationScope(user);
@@ -1665,25 +1635,10 @@ export default function AccountPageClient({ initialTab = "" }) {
     router.push("/");
   }
 
-  function handleMobileMenuBack() {
-    setMobileNavOpen(true);
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }
-
-  function handleMobileSidebarItemSelect() {
-    if (typeof window !== "undefined" && window.innerWidth <= 980) {
-      setMobileNavOpen(false);
-    }
-  }
-
   function handleSectionChange(section) {
     const nextSection = normalizeAccountTab(String(section || "").toLowerCase());
     const nextHref = nextSection === "personal" ? "/account" : `/account?tab=${encodeURIComponent(nextSection)}`;
-    userSelectedSectionRef.current = true;
     setActiveSection(nextSection);
-    setMobileNavOpen(false);
     router.replace(nextHref, { scroll: false });
   }
 
@@ -1780,11 +1735,6 @@ export default function AccountPageClient({ initialTab = "" }) {
     return <PersonalSection form={profileForm} onFieldChange={handleProfileFieldChange} onSubmit={handleProfileSubmit} submitting={savingProfile} />;
   }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, wishlistItems]);
 
-  const activeSectionLabel = useMemo(() => {
-    const match = ACCOUNT_SECTIONS.find((item) => item.id === activeSection);
-    return match?.label || "Account";
-  }, [activeSection]);
-
   useEffect(() => {
     if (status !== "loading" && !isAuthenticated) {
       router.replace("/login");
@@ -1818,23 +1768,15 @@ export default function AccountPageClient({ initialTab = "" }) {
   return (
     <main className="shell page-section account-page-main">
       <section className="account-dashboard-shell">
-        <div className={mobileNavOpen ? "account-dashboard account-dashboard--mobile-nav-open" : "account-dashboard"}>
+        <div className="account-dashboard">
           <AccountSidebar
             activeSection={activeSection}
             onChange={handleSectionChange}
             isAdmin={user?.role === "admin"}
             hasSupportTickets={supportTickets.length > 0}
-            onMobileItemSelect={handleMobileSidebarItemSelect}
-            suppressActive={mobileNavOpen}
             profile={profileForm}
           />
           <div className="account-dashboard__content">
-            <div className="account-mobile-content-head">
-              <button type="button" className="ghost-button" onClick={handleMobileMenuBack}>
-                Back to menu
-              </button>
-              <strong>{activeSectionLabel}</strong>
-            </div>
             {content}
           </div>
         </div>
