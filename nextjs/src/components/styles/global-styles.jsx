@@ -12191,7 +12191,7 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-personal {
     display: block;
     min-height: 100dvh;
-    padding-bottom: 98px;
+    padding-bottom: 82px;
     background: #f5f6f7;
     color: #111827;
   }
@@ -12200,8 +12200,8 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: auto minmax(0, 1fr);
     gap: 18px;
     align-items: center;
-    min-height: 64px;
-    padding: 0 24px;
+    min-height: 56px;
+    padding: 0 18px;
     border-bottom: 1px solid #d7ddd2;
     background: #fbfbff;
     box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
@@ -12209,7 +12209,7 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-personal__head a {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 44px;
     color: #003714;
     font-weight: 900;
@@ -12218,18 +12218,18 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-personal__head h1 {
     margin: 0;
     color: #003714;
-    font-size: clamp(1.35rem, 6vw, 1.65rem);
+    font-size: clamp(1.18rem, 5.2vw, 1.42rem);
     line-height: 1.1;
   }
   .account-mobile-personal__icon {
-    width: 24px;
-    height: 24px;
+    width: 21px;
+    height: 21px;
     flex: 0 0 auto;
   }
   .account-mobile-personal__body {
     display: grid;
-    gap: 34px;
-    padding: 60px 24px 26px;
+    gap: 24px;
+    padding: 36px 16px 22px;
   }
   .account-mobile-personal__identity {
     display: grid;
@@ -12241,74 +12241,74 @@ button, input, select, textarea { font: inherit; }
     position: relative;
     display: grid;
     place-items: center;
-    width: 136px;
-    height: 136px;
-    border: 6px solid #ffffff;
-    border-radius: 16px;
+    width: 108px;
+    height: 108px;
+    border: 5px solid #ffffff;
+    border-radius: 14px;
     background: #18572a;
     color: #a6dbaa;
-    font-size: 2.9rem;
+    font-size: 2.25rem;
     font-weight: 900;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.18);
   }
   .account-mobile-personal__avatar span {
     position: absolute;
-    right: -10px;
-    bottom: -10px;
+    right: -8px;
+    bottom: -8px;
     display: grid;
     place-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
     background: #00401b;
     color: #ffffff;
     box-shadow: 0 8px 18px rgba(0, 64, 27, 0.26);
   }
   .account-mobile-personal__avatar span .account-mobile-personal__icon {
-    width: 26px;
-    height: 26px;
+    width: 21px;
+    height: 21px;
   }
   .account-mobile-personal__identity strong {
-    margin-top: 24px;
+    margin-top: 16px;
     color: #111827;
-    font-size: 1.85rem;
+    font-size: 1.48rem;
     line-height: 1.1;
   }
   .account-mobile-personal__identity p {
     margin: 0;
     color: #202624;
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
   .account-mobile-personal__form {
     display: grid;
-    gap: 24px;
-    padding: 36px;
-    border-radius: 10px;
+    gap: 18px;
+    padding: 24px;
+    border-radius: 9px;
     background: #ffffff;
     box-shadow: 0 3px 12px rgba(27, 25, 22, 0.06);
   }
   .account-mobile-personal__form label {
     display: grid;
-    gap: 10px;
+    gap: 8px;
   }
   .account-mobile-personal__form label > span {
     color: #252b24;
-    font-size: 0.95rem;
+    font-size: 0.84rem;
     font-weight: 900;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
   .account-mobile-personal__form input {
     width: 100%;
     min-width: 0;
-    min-height: 84px;
+    min-height: 62px;
     border: 0;
     border-radius: 7px;
     outline: 0;
     background: #edf2f6;
     color: #111827;
     font: inherit;
-    font-size: 1.25rem;
-    padding: 0 24px;
+    font-size: 1rem;
+    padding: 0 18px;
   }
   .account-mobile-personal__form input:focus {
     box-shadow: inset 0 0 0 2px #00401b;
@@ -12327,7 +12327,7 @@ button, input, select, textarea { font: inherit; }
     background: transparent;
   }
   .account-mobile-personal__readonly .account-mobile-personal__icon {
-    margin-right: 24px;
+    margin-right: 18px;
     color: #7d837e;
   }
   .account-mobile-personal__phone {
@@ -12336,12 +12336,12 @@ button, input, select, textarea { font: inherit; }
     background: #edf2f6;
   }
   .account-mobile-personal__phone .account-mobile-personal__icon {
-    margin-left: 24px;
+    margin-left: 18px;
     color: #7d837e;
   }
   .account-mobile-personal__form small {
     color: #343b35;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     font-style: italic;
   }
   .account-mobile-personal__preferences {
@@ -12352,24 +12352,24 @@ button, input, select, textarea { font: inherit; }
   }
   .account-mobile-personal__preferences h2 {
     margin: 0;
-    padding: 26px 26px;
+    padding: 18px 22px;
     border-bottom: 1px solid #c1c9bd;
     background: #eef1fb;
     color: #003714;
-    font-size: 1rem;
+    font-size: 0.86rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   .account-mobile-personal__preferences a {
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr) auto auto;
-    gap: 18px;
+    grid-template-columns: 28px minmax(0, 1fr) auto auto;
+    gap: 14px;
     align-items: center;
-    min-height: 110px;
-    padding: 0 36px;
+    min-height: 78px;
+    padding: 0 24px;
     border-bottom: 1px solid #c1c9bd;
     color: #111827;
-    font-size: 1.25rem;
+    font-size: 1rem;
     text-decoration: none;
   }
   .account-mobile-personal__preferences a:last-child {
@@ -12379,27 +12379,27 @@ button, input, select, textarea { font: inherit; }
     font-weight: 500;
   }
   .account-mobile-personal__preferences a .account-mobile-personal__icon:last-child {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
   }
   .account-mobile-personal__submit {
     position: sticky;
     bottom: 0;
     z-index: 15;
-    padding: 24px;
+    padding: 16px;
     border-top: 1px solid #c1c9bd;
     background: rgba(245, 246, 247, 0.96);
     backdrop-filter: blur(12px);
   }
   .account-mobile-personal__submit button {
     width: 100%;
-    min-height: 84px;
+    min-height: 60px;
     border: 0;
     border-radius: 10px;
     background: #18572a;
     color: #ffffff;
     font: inherit;
-    font-size: 1.35rem;
+    font-size: 1.05rem;
     font-weight: 800;
     box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
   }
