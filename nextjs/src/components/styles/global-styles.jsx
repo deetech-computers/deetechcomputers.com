@@ -10804,14 +10804,14 @@ button, input, select, textarea { font: inherit; }
     max-width: none;
     margin-inline: 0;
     padding: 0;
-    background: #f5f6f7;
+    background: linear-gradient(90deg, #ffffff 0 300px, #f5f6f7 300px 100%);
   }
   .account-page-main .account-dashboard-shell {
     min-height: calc(100dvh - 116px);
     padding: 0 clamp(24px, 3vw, 48px) 0 0;
   }
   .account-dashboard {
-    grid-template-columns: 256px minmax(0, 1fr);
+    grid-template-columns: 300px minmax(0, 1fr);
     gap: clamp(32px, 4vw, 56px);
     align-items: stretch;
     min-height: inherit;
