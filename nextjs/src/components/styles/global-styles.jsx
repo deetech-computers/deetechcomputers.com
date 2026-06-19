@@ -8514,19 +8514,72 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 18px;
 }
+.account-notifications-section {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.account-notifications-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 28px;
+  margin-bottom: 34px;
+}
+.account-notifications-header h2 {
+  margin: 0 0 8px;
+  color: #101826;
+  font-size: clamp(2rem, 3vw, 2.45rem);
+  line-height: 1.05;
+}
+.account-notifications-header p {
+  max-width: 760px;
+  margin: 0;
+  color: #4f565f;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.account-notifications-mark-read {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 2px solid #14552b;
+  border-radius: 8px;
+  background: transparent;
+  color: #14552b;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.account-notifications-mark-read .account-dashboard__nav-icon {
+  width: 18px;
+  height: 18px;
+}
+.account-notifications-mark-read:hover {
+  background: #14552b;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
 .account-notification-history {
   display: grid;
   gap: 18px;
 }
 .account-notification-card {
   display: grid;
-  gap: 16px;
-  padding: 22px;
-  border-radius: 24px;
+  gap: 10px;
+  padding: 26px 28px;
+  border: 1px solid #cbd5c7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 30px rgba(27, 25, 22, 0.035);
 }
 .account-notification-card.is-unread {
-  border-color: rgba(24, 79, 39, 0.26);
-  background: linear-gradient(180deg, #f6fbf7 0%, #ffffff 100%);
+  border-color: #d6e7dc;
+  background: #f0f8f3;
 }
 .account-notification-card__head {
   display: flex;
@@ -8534,35 +8587,101 @@ button, input, select, textarea { font: inherit; }
   justify-content: space-between;
   gap: 18px;
 }
-.account-notification-card__head h3 {
-  margin: 4px 0 0;
-  font-size: 1.18rem;
+.account-notification-card__eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .account-notification-card__eyebrow {
-  color: #1d6a33;
-  font-size: 0.8rem;
-  font-weight: 800;
+  color: #2e6842;
+  font-size: 0.76rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 }
-.account-notification-card__status {
-  display: grid;
-  justify-items: end;
-  gap: 4px;
-  text-align: right;
+.account-notification-card__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #dfe9fb;
+  color: #263446;
+  font-size: 0.67rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.account-notification-card__status strong {
-  color: #184f27;
+.account-notification-card__pill.is-unread {
+  background: #1e6b38;
+  color: #ffffff;
+}
+.account-notification-card__time {
+  color: #2d2b28;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
-.account-notification-card__status span {
-  color: var(--muted);
-  font-size: 0.84rem;
+.account-notification-card h3 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(1.32rem, 2vw, 1.62rem);
+  line-height: 1.18;
 }
 .account-notification-card p {
   margin: 0;
-  color: #3f4a59;
-  line-height: 1.6;
+  max-width: 900px;
+  color: #4c4f55;
+  font-size: 1rem;
+  line-height: 1.62;
+}
+.account-notification-card__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 8px;
+  color: #14552b;
+  font-weight: 900;
+  text-decoration: none;
+}
+.account-notification-card__open .account-dashboard__nav-icon {
+  width: 17px;
+  height: 17px;
+  transition: transform 0.18s ease;
+}
+.account-notification-card__open:hover .account-dashboard__nav-icon {
+  transform: translateX(3px);
+}
+.account-notification-older {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  min-height: 190px;
+  margin-top: 26px;
+  padding: 34px;
+  border: 1px dashed #bdc8b8;
+  border-radius: 10px;
+  background: #f2f5fb;
+  text-align: center;
+}
+.account-notification-older .account-dashboard__nav-icon {
+  width: 42px;
+  height: 42px;
+  color: #aeb8a8;
+}
+.account-notification-older p {
+  margin: 0;
+  color: #3f454d;
+}
+.account-notification-older button {
+  border: 0;
+  background: transparent;
+  color: #14552b;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
 }
 .account-dashboard .primary-button,
 .account-dashboard .primary-link,
@@ -15859,12 +15978,20 @@ button, input, select, textarea { font: inherit; }
     border-left: 0;
     border-top: 1px solid #eadfce;
   }
+  .account-notifications-header {
+    grid-template-columns: 1fr;
+  }
+  .account-notifications-mark-read {
+    width: 100%;
+  }
   .account-notification-card__head {
     display: grid;
   }
-  .account-notification-card__status {
-    justify-items: start;
-    text-align: left;
+  .account-notification-card {
+    padding: 22px;
+  }
+  .account-notification-older {
+    padding: 28px 18px;
   }
   .account-mini-row,
   .account-review-card {

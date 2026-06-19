@@ -322,6 +322,27 @@ function AccountNavIcon({ name }) {
         <path d="m22 2-7 20-4-9-9-4 20-7Z" />
       </>
     ),
+    check: (
+      <>
+        <path d="m20 6-11 11-5-5" />
+        <path d="M16 6h4v4" />
+      </>
+    ),
+    arrowRight: (
+      <>
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </>
+    ),
+    archive: (
+      <>
+        <rect x="3" y="4" width="18" height="5" rx="1" />
+        <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" />
+        <path d="M10 13h4" />
+        <path d="m12 17 3-3" />
+        <path d="m12 17-3-3" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -1112,15 +1133,16 @@ function MessagesSection({
 
 function NotificationsSection({ notifications, readIds, onOpenNotification, onMarkAllRead }) {
   return (
-    <section className="account-dashboard__section">
-      <div className="account-dashboard__section-head account-dashboard__section-head--row">
+    <section className="account-dashboard__section account-notifications-section">
+      <div className="account-notifications-header">
         <div>
           <h2>Notifications</h2>
           <p>Read your latest order and support updates here. The navbar only shows a quick preview, while the full history stays in this section.</p>
         </div>
         {notifications.length ? (
-          <button type="button" className="ghost-button" onClick={onMarkAllRead}>
-            Mark all as read
+          <button type="button" className="account-notifications-mark-read" onClick={onMarkAllRead}>
+            <AccountNavIcon name="check" />
+            <span>Mark all as read</span>
           </button>
         ) : null}
       </div>
@@ -1137,30 +1159,34 @@ function NotificationsSection({ notifications, readIds, onOpenNotification, onMa
             const itemId = String(item?.id || "");
             const isUnread = !readIds.includes(itemId);
             return (
-              <article key={itemId} className={isUnread ? "account-notification-card panel is-unread" : "account-notification-card panel"}>
+              <article key={itemId} className={isUnread ? "account-notification-card is-unread" : "account-notification-card"}>
                 <div className="account-notification-card__head">
-                  <div>
+                  <div className="account-notification-card__eyebrow-row">
                     <span className="account-notification-card__eyebrow">{item.kind === "message" ? "Support update" : "Order update"}</span>
-                    <h3>{item.title}</h3>
+                    <span className={isUnread ? "account-notification-card__pill is-unread" : "account-notification-card__pill"}>{isUnread ? "Unread" : "Read"}</span>
                   </div>
-                  <div className="account-notification-card__status">
-                    <strong>{isUnread ? "Unread" : "Read"}</strong>
-                    <span>{formatNotificationTime(item.timestamp)}</span>
-                  </div>
+                  <time className="account-notification-card__time" dateTime={item.timestamp || undefined}>
+                    {formatNotificationTime(item.timestamp)}
+                  </time>
                 </div>
+                <h3>{item.title}</h3>
                 <p>{item.body}</p>
-                <div className="account-dashboard__actions">
-                  <Link
-                    href={item.href}
-                    className="primary-link"
-                    onClick={() => onOpenNotification(itemId)}
-                  >
-                    Open update
-                  </Link>
-                </div>
+                <Link
+                  href={item.href}
+                  className="account-notification-card__open"
+                  onClick={() => onOpenNotification(itemId)}
+                >
+                  <span>Open update</span>
+                  <AccountNavIcon name="arrowRight" />
+                </Link>
               </article>
             );
           })}
+          <div className="account-notification-older" aria-label="Older notifications">
+            <AccountNavIcon name="archive" />
+            <p>That's everything from the last 30 days.</p>
+            <button type="button">View Older Notifications</button>
+          </div>
         </div>
       )}
     </section>
