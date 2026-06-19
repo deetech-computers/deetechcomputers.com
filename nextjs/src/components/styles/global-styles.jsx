@@ -10880,14 +10880,14 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-dashboard__sidebar {
-    position: relative;
-    top: auto;
-    align-self: stretch;
+    position: sticky;
+    top: 116px;
+    align-self: start;
     z-index: 2;
     width: auto;
     height: auto;
     max-height: none;
-    min-height: 100%;
+    min-height: calc(100dvh - 116px);
     padding: 28px 24px 24px;
     overflow: visible;
     border: 0;
