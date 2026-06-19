@@ -965,18 +965,18 @@ function AffiliateSection({ summary }) {
 
 function WishlistSection({ items }) {
   return (
-    <section className="account-dashboard__section">
-      <div className="account-dashboard__section-head">
+    <section className="account-dashboard__section account-wishlist-section">
+      <div className="account-wishlist-section__head">
         <h2>Wishlist</h2>
         <p>A mini wishlist preview linked to your main saved-products page.</p>
       </div>
 
       {items.length ? (
-        <div className="account-dashboard__stack">
+        <div className="account-wishlist-list">
           {items.slice(0, 3).map((item) => (
-            <article key={item.id} className="account-mini-row panel">
-              <Link href={`/products/${item.id}`} className="account-mini-row__product">
-                <div className="account-mini-row__thumb">
+            <article key={item.id} className="account-wishlist-row">
+              <Link href={`/products/${item.id}`} className="account-wishlist-row__product">
+                <div className="account-wishlist-row__thumb">
                   <StableImage
                     src={item.image}
                     alt={item.name}
@@ -984,15 +984,15 @@ function WishlistSection({ items }) {
                     height={112}
                   />
                 </div>
-                <div className="account-mini-row__copy">
+                <div className="account-wishlist-row__copy">
+                  <span>{item.category || "Product"}</span>
                   <strong>{item.name}</strong>
-                  <span>{item.category}</span>
+                  <small>{formatCurrency(item.price)}</small>
                 </div>
               </Link>
-              <div className="account-mini-row__meta">
-                <strong>{formatCurrency(item.price)}</strong>
-                <span>{item.inStock ? "Instock" : "Out of stock"}</span>
-              </div>
+              <span className={item.inStock ? "account-wishlist-stock is-in-stock" : "account-wishlist-stock is-out"}>
+                {item.inStock ? "In Stock" : "Out of Stock"}
+              </span>
             </article>
           ))}
         </div>
@@ -1004,8 +1004,11 @@ function WishlistSection({ items }) {
         />
       )}
 
-      <div className="account-dashboard__cta-row">
-        <Link href="/wishlist" className="primary-link">Open Wishlist</Link>
+      <div className="account-wishlist-actions">
+        <Link href="/wishlist" className="primary-link">
+          <span>Open Wishlist</span>
+          <AccountNavIcon name="arrowRight" />
+        </Link>
       </div>
     </section>
   );
