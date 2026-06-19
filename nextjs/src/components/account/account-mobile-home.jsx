@@ -47,12 +47,6 @@ function MobileAccountIcon({ name }) {
     strokeWidth: 2,
   };
   const paths = {
-    arrowLeft: (
-      <>
-        <path d="M19 12H5" />
-        <path d="m12 19-7-7 7-7" />
-      </>
-    ),
     chevronRight: <path d="m9 18 6-6-6-6" />,
     person: (
       <>
@@ -145,16 +139,6 @@ export default function MobileAccountHome({
 
   return (
     <section className="account-mobile-home" aria-label="Mobile account menu">
-      <header className="account-mobile-home__topbar">
-        <Link href="/" aria-label="Back to home">
-          <MobileAccountIcon name="arrowLeft" />
-        </Link>
-        <strong>DEETECH</strong>
-        <Link href="/account?tab=personal" aria-label="Personal information">
-          <MobileAccountIcon name="person" />
-        </Link>
-      </header>
-
       <div className="account-mobile-home__body">
         <nav className="account-mobile-home__breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>

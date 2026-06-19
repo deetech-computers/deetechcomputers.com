@@ -12008,37 +12008,6 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
     color: #10261a;
   }
-  .account-mobile-home__topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: grid;
-    grid-template-columns: 36px minmax(0, 1fr) 36px;
-    gap: 8px;
-    align-items: center;
-    min-height: 64px;
-    padding: 0 16px;
-    border-bottom: 1px solid #d7ddd2;
-    background: #fbfbff;
-    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
-  }
-  .account-mobile-home__topbar a {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    color: #0b4423;
-    text-decoration: none;
-  }
-  .account-mobile-home__topbar a:last-child {
-    color: #414940;
-  }
-  .account-mobile-home__topbar strong {
-    color: #003714;
-    font-size: 1rem;
-    font-weight: 900;
-    letter-spacing: 0.01em;
-  }
   .account-mobile-home__icon {
     width: 23px;
     height: 23px;
