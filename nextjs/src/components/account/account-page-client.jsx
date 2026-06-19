@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import MobileAccountHome from "@/components/account/account-mobile-home";
+import MobilePersonalInfo from "@/components/account/account-mobile-personal";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -1681,6 +1682,7 @@ export default function AccountPageClient({ initialTab = "" }) {
     ? buildAdminNotifications(orders, supportTickets)
     : buildUserNotifications(orders, supportTickets);
   const hasExplicitAccountTab = Boolean(String(initialTab || "").trim());
+  const shouldShowMobilePersonal = hasExplicitAccountTab && activeSection === "personal";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1769,7 +1771,11 @@ export default function AccountPageClient({ initialTab = "" }) {
   }
 
   return (
-    <main className={hasExplicitAccountTab ? "shell page-section account-page-main" : "shell page-section account-page-main has-mobile-home"}>
+    <main className={[
+      "shell page-section account-page-main",
+      !hasExplicitAccountTab ? "has-mobile-home" : "",
+      shouldShowMobilePersonal ? "has-mobile-personal" : "",
+    ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
           profile={profileForm}
@@ -1778,6 +1784,14 @@ export default function AccountPageClient({ initialTab = "" }) {
           supportTicketsCount={supportTickets.length}
           unreadNotifications={unreadAccountNotifications}
           onLogout={handleLogout}
+        />
+      ) : null}
+      {shouldShowMobilePersonal ? (
+        <MobilePersonalInfo
+          form={profileForm}
+          onFieldChange={handleProfileFieldChange}
+          onSubmit={handleProfileSubmit}
+          submitting={savingProfile}
         />
       ) : null}
       <section className="account-dashboard-shell">
