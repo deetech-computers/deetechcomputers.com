@@ -387,6 +387,25 @@ function AccountNavIcon({ name }) {
         <path d="m9 9 6 6" />
       </>
     ),
+    eye: (
+      <>
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+    device: (
+      <>
+        <rect x="3" y="4" width="18" height="14" rx="2" />
+        <path d="M8 22h8" />
+        <path d="M12 18v4" />
+      </>
+    ),
+    phoneDevice: (
+      <>
+        <rect x="7" y="2" width="10" height="20" rx="2" />
+        <path d="M11 18h2" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -1088,32 +1107,81 @@ function PasswordSection({
   submitting,
 }) {
   return (
-    <section className="account-dashboard__section">
-      <div className="account-dashboard__section-head">
+    <section className="account-dashboard__section account-password-section">
+      <div className="account-password-section__head">
         <h2>Password Manager</h2>
         <p>Update your password securely from your account dashboard.</p>
       </div>
 
-      <form className="account-dashboard__form" onSubmit={onSubmit}>
-        <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Password *</span>
-          <input className="field" type="password" value={currentPassword} onChange={(event) => onChange("currentPassword", event.target.value)} placeholder="Enter Password" required />
+      <form className="account-password-form" onSubmit={onSubmit}>
+        <label className="account-password-field account-password-field--full">
+          <span>Current Password</span>
+          <div className="account-password-input">
+            <input type="password" value={currentPassword} onChange={(event) => onChange("currentPassword", event.target.value)} placeholder="Enter current password" required />
+            <AccountNavIcon name="eye" />
+          </div>
         </label>
-        <label className="account-dashboard__field account-dashboard__field--full">
+        <label className="account-password-field">
           <span>New Password</span>
-          <input className="field" type="password" value={newPassword} onChange={(event) => onChange("newPassword", event.target.value)} placeholder="Enter Password" required />
+          <div className="account-password-input">
+            <input type="password" value={newPassword} onChange={(event) => onChange("newPassword", event.target.value)} placeholder="Create a strong password" required />
+            <AccountNavIcon name="eye" />
+          </div>
+          <small>Min. 8 characters, 1 number, 1 symbol.</small>
         </label>
-        <label className="account-dashboard__field account-dashboard__field--full">
+        <label className="account-password-field">
           <span>Confirm New Password</span>
-          <input className="field" type="password" value={confirmPassword} onChange={(event) => onChange("confirmPassword", event.target.value)} placeholder="Enter Password" required />
+          <div className="account-password-input">
+            <input type="password" value={confirmPassword} onChange={(event) => onChange("confirmPassword", event.target.value)} placeholder="Repeat new password" required />
+            <AccountNavIcon name="eye" />
+          </div>
         </label>
-        <div className="account-dashboard__actions">
+        <div className="account-password-actions">
           <button type="submit" className="primary-button" disabled={submitting}>
             {submitting ? "Updating..." : "Update Password"}
           </button>
-          <Link href="/forgot-password" className="ghost-link">Forgot Password?</Link>
+          <Link href="/forgot-password">Forgot Password?</Link>
+          <span>
+            <AccountNavIcon name="shield" />
+            End-to-end encrypted
+          </span>
         </div>
       </form>
+
+      <div className="account-password-security-grid">
+        <article className="account-password-security-card">
+          <div className="account-password-security-card__head">
+            <span aria-hidden="true">AUTHENTICATOR</span>
+            <div>
+              <h3>Two-Factor Authentication</h3>
+              <small>Highly recommended</small>
+            </div>
+          </div>
+          <p>Add an extra layer of security to your DEETECH account by requiring a code from your phone as well as your password.</p>
+          <button type="button" className="ghost-button">Setup 2FA</button>
+        </article>
+
+        <article className="account-password-security-card account-password-security-card--sessions">
+          <div className="account-password-security-card__head">
+            <span aria-hidden="true"><AccountNavIcon name="device" /></span>
+            <div>
+              <h3>Active Sessions</h3>
+              <small>2 devices logged in</small>
+            </div>
+          </div>
+          <dl>
+            <div>
+              <dt>Current browser</dt>
+              <dd>Current</dd>
+            </div>
+            <div>
+              <dt>Mobile session</dt>
+              <dd>Log out</dd>
+            </div>
+          </dl>
+          <button type="button">Review all sessions</button>
+        </article>
+      </div>
     </section>
   );
 }
