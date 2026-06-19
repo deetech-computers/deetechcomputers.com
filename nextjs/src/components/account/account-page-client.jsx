@@ -365,7 +365,6 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
 
 function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
   const displayName = getAccountDisplayName(form);
-  const completion = getProfileCompletion(form);
   return (
     <section className="account-dashboard__section account-personal-section">
       <div className="account-dashboard__section-head">
@@ -382,14 +381,6 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
             <strong>{displayName}</strong>
             <p>{form.email || "Email not available"}</p>
           </div>
-        </div>
-        <div className="account-personal-completion" aria-label={`Profile ${completion}% complete`}>
-          <div>
-            <span>Profile completeness</span>
-            <strong>{completion}%</strong>
-          </div>
-          <i style={{ width: `${completion}%` }} />
-          <small>Verify secondary email</small>
         </div>
       </div>
 
@@ -443,9 +434,8 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
         <span><AccountNavIcon name="shield" /></span>
         <div>
           <strong>Account Security</strong>
-          <p>Your account is currently protected with standard security. Enable Two-Factor Authentication (2FA) for institutional-grade protection.</p>
+          <p>Your account is currently protected with standard security.</p>
         </div>
-        <button type="button">Secure Account</button>
       </div>
     </section>
   );

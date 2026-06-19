@@ -8734,16 +8734,17 @@ button, input, select, textarea { font: inherit; }
 }
 .account-personal-card--summary {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
   align-items: center;
   flex-wrap: wrap;
 }
 .account-personal-profile {
   display: flex;
-  gap: 18px;
+  gap: 20px;
   align-items: center;
   min-width: 0;
+  flex: 1 1 auto;
 }
 .account-personal-profile__avatar {
   width: 70px;
@@ -8989,17 +8990,7 @@ button, input, select, textarea { font: inherit; }
   line-height: 1.22;
 }
 .account-personal-card--summary {
-  min-height: 130px;
-}
-.account-personal-completion {
-  display: grid;
-  gap: 10px;
-}
-.account-personal-completion small {
-  color: #184f27;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
+  min-height: 112px;
 }
 .account-personal-divider {
   grid-column: 1 / -1;
@@ -9102,10 +9093,10 @@ button, input, select, textarea { font: inherit; }
 }
 .account-security-strip {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 22px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
   align-items: center;
-  padding: 30px 24px;
+  padding: 24px;
   border-radius: 12px;
   background: #7c2f43;
   color: #ffffff;
@@ -9127,16 +9118,6 @@ button, input, select, textarea { font: inherit; }
   margin: 4px 0 0;
   color: rgba(255, 255, 255, 0.86);
   line-height: 1.45;
-}
-.account-security-strip button {
-  min-height: 42px;
-  padding: 0 24px;
-  border: 0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #5b1d2f;
-  cursor: pointer;
-  font-weight: 900;
 }
 .account-dashboard__nav--logout {
   margin-top: 34px;
@@ -15460,10 +15441,6 @@ button, input, select, textarea { font: inherit; }
   .account-personal-profile strong {
     font-size: 1.2rem;
   }
-  .account-personal-completion {
-    max-width: none;
-    width: 100%;
-  }
   .account-personal-form {
     gap: 16px;
   }
@@ -15489,12 +15466,9 @@ button, input, select, textarea { font: inherit; }
     justify-self: end;
   }
   .account-security-strip {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 14px;
     padding: 22px;
-  }
-  .account-security-strip button {
-    width: 100%;
   }
   .account-dashboard__section-head--row,
   .account-dashboard__form,
