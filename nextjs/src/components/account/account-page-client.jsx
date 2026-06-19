@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import MobileAddress from "@/components/account/account-mobile-address";
 import MobileAccountHome from "@/components/account/account-mobile-home";
 import MobileOrders from "@/components/account/account-mobile-orders";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
@@ -1685,6 +1686,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const hasExplicitAccountTab = Boolean(String(initialTab || "").trim());
   const shouldShowMobilePersonal = hasExplicitAccountTab && activeSection === "personal";
   const shouldShowMobileOrders = hasExplicitAccountTab && activeSection === "orders";
+  const shouldShowMobileAddress = hasExplicitAccountTab && activeSection === "address";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1778,6 +1780,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       !hasExplicitAccountTab ? "has-mobile-home" : "",
       shouldShowMobilePersonal ? "has-mobile-personal" : "",
       shouldShowMobileOrders ? "has-mobile-orders" : "",
+      shouldShowMobileAddress ? "has-mobile-address" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1802,6 +1805,14 @@ export default function AccountPageClient({ initialTab = "" }) {
           orders={orders}
           router={router}
           onDownloadInvoice={downloadInvoiceHtml}
+        />
+      ) : null}
+      {shouldShowMobileAddress ? (
+        <MobileAddress
+          form={profileForm}
+          onFieldChange={handleProfileFieldChange}
+          onSubmit={handleAddressSubmit}
+          submitting={savingAddress}
         />
       ) : null}
       <section className="account-dashboard-shell">

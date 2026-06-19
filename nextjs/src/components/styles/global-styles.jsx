@@ -11990,6 +11990,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-home {
   display: none;
 }
+.account-mobile-address {
+  display: none;
+}
 .account-mobile-orders {
   display: none;
 }
@@ -11999,11 +12002,13 @@ button, input, select, textarea { font: inherit; }
 /* Account mobile home - dedicated mobile screen only */
 @media (max-width: 640px) {
   .app-shell:has(.account-mobile-personal) .site-header,
-  .app-shell:has(.account-mobile-orders) .site-header {
+  .app-shell:has(.account-mobile-orders) .site-header,
+  .app-shell:has(.account-mobile-address) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
-  .app-shell:has(.account-mobile-orders) .app-content {
+  .app-shell:has(.account-mobile-orders) .app-content,
+  .app-shell:has(.account-mobile-address) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12034,6 +12039,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-orders .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-address {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-address .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -12208,6 +12223,248 @@ button, input, select, textarea { font: inherit; }
   }
   .account-mobile-home__item--logout .account-mobile-home__icon:first-child {
     color: #c2222b;
+  }
+  .account-mobile-address {
+    display: block;
+    min-height: 100dvh;
+    padding-bottom: 100px;
+    background: #f5f6f7;
+    color: #111827;
+  }
+  .account-mobile-address__head {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    min-height: 64px;
+    padding: 8px 16px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-address__head a {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #003714;
+    text-decoration: none;
+  }
+  .account-mobile-address__head span {
+    display: block;
+    color: #252b24;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .account-mobile-address__head h1 {
+    margin: 4px 0 0;
+    color: #003714;
+    font-size: clamp(1.52rem, 7vw, 1.82rem);
+    line-height: 1;
+  }
+  .account-mobile-address__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-address__body {
+    display: grid;
+    gap: 28px;
+    padding: 24px 16px;
+  }
+  .account-mobile-address__section {
+    display: grid;
+    gap: 14px;
+  }
+  .account-mobile-address__section h2 {
+    margin: 0;
+    color: #252b24;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .account-mobile-address__preview {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 36px;
+    gap: 16px;
+    align-items: start;
+    padding: 28px 20px;
+    border: 1px solid #b7c2b4;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-address__pin {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    border-radius: 15px;
+    background: #b2f6bd;
+    color: #003714;
+  }
+  .account-mobile-address__pin .account-mobile-address__icon {
+    width: 30px;
+    height: 30px;
+  }
+  .account-mobile-address__preview-copy {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+  }
+  .account-mobile-address__preview-copy strong {
+    color: #111827;
+    font-size: 1.18rem;
+    line-height: 1.18;
+  }
+  .account-mobile-address__preview-copy p,
+  .account-mobile-address__preview-copy b {
+    margin: 0;
+    color: #2c342e;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .account-mobile-address__preview-copy b {
+    margin-top: 6px;
+    color: #003714;
+    font-weight: 900;
+  }
+  .account-mobile-address__preview button {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #003714;
+  }
+  .account-mobile-address__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+  }
+  .account-mobile-address__grid label {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .account-mobile-address__grid label.is-full {
+    grid-column: 1 / -1;
+  }
+  .account-mobile-address__grid label > span {
+    color: #252b24;
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+  .account-mobile-address__grid input,
+  .account-mobile-address__grid select {
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
+    border: 0;
+    border-radius: 8px;
+    outline: 0;
+    background: #edf2f6;
+    color: #111827;
+    font: inherit;
+    font-size: 0.98rem;
+    padding: 0 16px;
+  }
+  .account-mobile-address__grid input::placeholder {
+    color: #6b7280;
+  }
+  .account-mobile-address__grid input:focus,
+  .account-mobile-address__grid select:focus {
+    box-shadow: inset 0 0 0 2px #00401b;
+  }
+  .account-mobile-address__select,
+  .account-mobile-address__phone,
+  .account-mobile-address__readonly {
+    display: grid;
+    align-items: center;
+    border-radius: 8px;
+    background: #edf2f6;
+  }
+  .account-mobile-address__select {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .account-mobile-address__select select {
+    appearance: none;
+    background: transparent;
+  }
+  .account-mobile-address__select .account-mobile-address__icon {
+    margin-right: 16px;
+    color: #4b5550;
+  }
+  .account-mobile-address__phone {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .account-mobile-address__phone em {
+    padding-left: 16px;
+    color: #111827;
+    font-size: 0.95rem;
+    font-style: normal;
+  }
+  .account-mobile-address__phone input {
+    background: transparent;
+    color: #6b7280;
+  }
+  .account-mobile-address__readonly {
+    grid-template-columns: minmax(0, 1fr) auto;
+    border: 1px solid #b7c2b4;
+    background: #f1f4fc;
+  }
+  .account-mobile-address__readonly input {
+    background: transparent;
+    color: #6f7771;
+    font-style: italic;
+  }
+  .account-mobile-address__readonly .account-mobile-address__icon {
+    margin-right: 16px;
+    color: #7d837e;
+  }
+  .account-mobile-address__grid small {
+    color: #343b35;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .account-mobile-address__submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 15;
+    padding: 16px;
+    border-top: 1px solid #c1c9bd;
+    background: rgba(245, 246, 247, 0.96);
+    backdrop-filter: blur(12px);
+  }
+  .account-mobile-address__submit button {
+    display: inline-flex;
+    width: 100%;
+    min-height: 60px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 9px;
+    background: #00401b;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 800;
+    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
+  }
+  .account-mobile-address__submit button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
   .account-mobile-orders {
     display: block;
