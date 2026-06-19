@@ -1016,38 +1016,44 @@ function WishlistSection({ items }) {
 
 function ReviewsSection({ reviews }) {
   return (
-    <section className="account-dashboard__section">
-      <div className="account-dashboard__section-head">
+    <section className="account-dashboard__section account-reviews-section">
+      <div className="account-reviews-section__head">
         <h2>Reviews</h2>
         <p>Recent customer reviews you have submitted, with a quick jump back to the main product page.</p>
       </div>
 
       {reviews.length ? (
-        <div className="account-dashboard__stack">
+        <div className="account-reviews-list">
           {reviews.slice(0, 3).map((review) => {
             const product = review?.product || {};
             const image = resolveProductImage(product?.images?.[0] || product?.image);
             const productHref = product?._id ? `/products/${product._id}?tab=reviews#reviews` : "/products";
+            const reviewedAt = review?.createdAt || review?.updatedAt || review?.date;
             return (
-              <article key={review._id} className="account-review-card panel">
-                <Link href={productHref} className="account-review-card__product">
-                  <div className="account-review-card__thumb">
-                    <StableImage
-                      src={image}
-                      alt={product?.name || "Product"}
-                      width={112}
-                      height={112}
-                    />
-                  </div>
-                  <div className="account-review-card__copy">
-                    <strong>{product?.name || "Product"}</strong>
-                    <span>{review?.title || "Customer review"}</span>
-                    <p className="account-review-card__stars">{getReviewStars(review?.rating)} <small>{Number(review?.rating || 0).toFixed(1)}</small></p>
-                  </div>
+              <article key={review._id} className="account-review-row">
+                <Link href={productHref} className="account-review-row__thumb">
+                  <StableImage
+                    src={image}
+                    alt={product?.name || "Product"}
+                    width={150}
+                    height={150}
+                  />
                 </Link>
-                <Link href={productHref} className="ghost-link">
-                  Open Product
-                </Link>
+                <div className="account-review-row__content">
+                  <Link href={productHref} className="account-review-row__title">{product?.name || "Product"}</Link>
+                  <p className="account-review-row__stars">{getReviewStars(review?.rating)}</p>
+                  <strong>&quot;{review?.title || "Customer review"}&quot;</strong>
+                  {review?.comment || review?.review ? (
+                    <p>{review?.comment || review?.review}</p>
+                  ) : (
+                    <p>Your submitted product feedback is saved with this purchase.</p>
+                  )}
+                </div>
+                <div className="account-review-row__actions">
+                  <span>Verified Purchase</span>
+                  <Link href={productHref} className="ghost-link">Open Product</Link>
+                  <small>Reviewed {formatNotificationTime(reviewedAt)}</small>
+                </div>
               </article>
             );
           })}
@@ -1059,6 +1065,16 @@ function ReviewsSection({ reviews }) {
           description="Your submitted reviews will show up here after you post them from a product page."
         />
       )}
+
+      <div className="account-reviews-cta">
+        <div>
+          <strong>Want to share more feedback?</strong>
+          <p>Every review helps us improve the DEETECH experience for the Ghanaian tech community.</p>
+        </div>
+        <Link href="/products?sort=newest">
+          Shop New Arrivals
+        </Link>
+      </div>
     </section>
   );
 }
@@ -1101,7 +1117,6 @@ function PasswordSection({
     </section>
   );
 }
-
 function LogoutSection({ onLogout }) {
   return (
     <section className="account-dashboard__section">

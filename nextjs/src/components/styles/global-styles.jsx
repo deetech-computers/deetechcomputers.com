@@ -11353,6 +11353,173 @@ button, input, select, textarea { font: inherit; }
   width: 19px;
   height: 19px;
 }
+.account-reviews-section {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.account-reviews-section__head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 46px;
+}
+.account-reviews-section__head h2 {
+  margin: 0;
+  color: #003714;
+  font-size: clamp(2rem, 3.4vw, 2.55rem);
+  line-height: 1.05;
+}
+.account-reviews-section__head p {
+  max-width: 760px;
+  margin: 0;
+  color: #4f565f;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+.account-reviews-list {
+  display: grid;
+  gap: 26px;
+}
+.account-review-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 190px;
+  gap: 28px;
+  align-items: center;
+  min-height: 188px;
+  padding: 30px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(27, 25, 22, 0.065);
+}
+.account-review-row__thumb {
+  width: 150px;
+  height: 128px;
+  overflow: hidden;
+  border: 1px solid #d7ddd2;
+  border-radius: 4px;
+  background: #f8faf8;
+  color: inherit;
+  text-decoration: none;
+}
+.account-review-row__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.account-review-row__content {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.account-review-row__title {
+  width: fit-content;
+  color: #00401b;
+  font-size: clamp(1.15rem, 2vw, 1.38rem);
+  font-weight: 900;
+  line-height: 1.15;
+  text-decoration: none;
+}
+.account-review-row__title:hover,
+.account-review-row__title:focus-visible {
+  color: #b98014;
+}
+.account-review-row__stars {
+  display: inline-flex;
+  gap: 3px;
+  margin: 0;
+  color: #d8d4cb;
+  font-size: 1.22rem;
+  line-height: 1;
+}
+.account-review-row__stars span {
+  color: #d8d4cb;
+}
+.account-review-row__stars span.is-filled {
+  color: #ffd400;
+}
+.account-review-row__stars small {
+  display: none;
+}
+.account-review-row__content > strong {
+  color: #111827;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+.account-review-row__content > p:not(.account-review-row__stars) {
+  display: -webkit-box;
+  max-width: 680px;
+  margin: 0;
+  overflow: hidden;
+  color: #4f565f;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.account-review-row__actions {
+  display: grid;
+  justify-items: end;
+  gap: 16px;
+}
+.account-review-row__actions > span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #acf0b9;
+  color: #1d6a33;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+.account-review-row__actions .ghost-link {
+  min-width: 154px;
+  min-height: 40px;
+  justify-content: center;
+  border: 2px solid #00401b;
+  border-radius: 4px;
+  color: #00401b;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+.account-review-row__actions small {
+  color: #5f5f5b;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.account-reviews-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  margin-top: 42px;
+  padding: 28px;
+  border-radius: 8px;
+  background: #14552b;
+  color: #ffffff;
+}
+.account-reviews-cta strong {
+  display: block;
+  color: #ffffff;
+  font-size: 1.06rem;
+}
+.account-reviews-cta p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+}
+.account-reviews-cta a {
+  display: inline-flex;
+  min-width: 190px;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #acf0b9;
+  color: #14552b;
+  font-weight: 900;
+  text-decoration: none;
+}
 .account-mini-row,
 .account-review-card {
   display: grid;
@@ -16392,6 +16559,34 @@ button, input, select, textarea { font: inherit; }
     justify-content: stretch;
   }
   .account-wishlist-actions .primary-link {
+    width: 100%;
+  }
+  .account-reviews-section__head {
+    margin-bottom: 28px;
+  }
+  .account-review-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 18px;
+  }
+  .account-review-row__thumb {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+  .account-review-row__actions {
+    justify-items: stretch;
+  }
+  .account-review-row__actions > span {
+    width: fit-content;
+  }
+  .account-review-row__actions .ghost-link {
+    width: 100%;
+  }
+  .account-reviews-cta {
+    grid-template-columns: 1fr;
+  }
+  .account-reviews-cta a {
     width: 100%;
   }
   .account-notifications-header {
