@@ -10808,7 +10808,7 @@ button, input, select, textarea { font: inherit; }
   }
   .account-page-main .account-dashboard-shell {
     min-height: calc(100dvh - 116px);
-    padding: 0 clamp(24px, 3vw, 48px) clamp(36px, 4vw, 56px) 0;
+    padding: 0 clamp(24px, 3vw, 48px) 0 0;
   }
   .account-dashboard {
     grid-template-columns: 256px minmax(0, 1fr);
@@ -10847,7 +10847,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__content {
     display: block;
     min-height: 0;
-    padding: clamp(44px, 5vw, 68px) 0 0;
+    padding: clamp(44px, 5vw, 68px) 0 clamp(36px, 4vw, 56px);
   }
   .account-dashboard__nav {
     display: flex;
@@ -10885,7 +10885,7 @@ button, input, select, textarea { font: inherit; }
   }
   .account-personal-section {
     max-width: min(100%, 1120px);
-    margin: 0;
+    margin-inline: auto;
     gap: 32px;
   }
   .account-personal-section .account-dashboard__section-head {
