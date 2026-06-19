@@ -27,17 +27,17 @@ import { readWishlistEntries } from "@/lib/wishlist";
 import { GHANA_REGIONS, syncCheckoutDraftProfile } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
-  { id: "personal", label: "Personal Information" },
-  { id: "orders", label: "My Orders" },
-  { id: "address", label: "Manage Address" },
-  { id: "messages", label: "Messages / Requests" },
-  { id: "notifications", label: "Notifications" },
-  { id: "admin", label: "Admin", href: "/admin", adminOnly: true },
-  { id: "affiliates", label: "Affiliates" },
-  { id: "wishlist", label: "Wishlist" },
-  { id: "reviews", label: "Reviews" },
-  { id: "password", label: "Password Manager" },
-  { id: "logout", label: "Logout" },
+  { id: "personal", label: "Personal Information", icon: "person" },
+  { id: "orders", label: "Orders", icon: "shopping_bag" },
+  { id: "address", label: "Address Book", icon: "location_on" },
+  { id: "messages", label: "Messages", icon: "mail" },
+  { id: "notifications", label: "Notifications", icon: "notifications" },
+  { id: "admin", label: "Admin", href: "/admin", adminOnly: true, icon: "admin_panel_settings" },
+  { id: "affiliates", label: "Affiliates", icon: "group" },
+  { id: "wishlist", label: "Wishlist", icon: "favorite" },
+  { id: "reviews", label: "Reviews", icon: "rate_review" },
+  { id: "password", label: "Password Manager", icon: "lock" },
+  { id: "logout", label: "Logout", icon: "logout" },
 ];
 
 const ALLOWED_ACCOUNT_TABS = new Set([
@@ -205,6 +205,10 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
         <strong>Account Sections</strong>
       </div>
       <div className="account-dashboard__sidebar-scroll">
+        <div className="account-sidebar-brand">
+          <strong>DEETECH Computers</strong>
+          <span>Premium Hardware Solutions</span>
+        </div>
         <div className="account-sidebar-profile">
           <div className="account-sidebar-profile__avatar" aria-hidden="true">
             {getAccountInitials(profile)}
@@ -230,7 +234,8 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
                 className="account-dashboard__nav"
                 onClick={onMobileItemSelect}
               >
-                {item.label}
+                <span className="account-dashboard__nav-icon" aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
               </Link>
             );
           }
@@ -244,7 +249,8 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
                 onMobileItemSelect?.();
               }}
             >
-              {item.label}
+              <span className="account-dashboard__nav-icon" aria-hidden="true">{item.icon}</span>
+              <span>{item.label}</span>
             </button>
           );
         })}
@@ -283,7 +289,7 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
       </div>
 
       <form className="account-dashboard__form account-personal-form account-personal-card" onSubmit={onSubmit}>
-        <label className="account-dashboard__field account-personal-field">
+        <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
           <span>First Name <small>*</small></span>
           <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
         </label>
@@ -299,9 +305,12 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
           </div>
           <small>Email is read-only for account security.</small>
         </label>
-        <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
+        <label className="account-dashboard__field account-personal-field">
           <span>Phone <small>*</small></span>
-          <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
+          <div className="account-phone-input">
+            <span className="account-phone-input__code">+233</span>
+            <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
+          </div>
         </label>
         <div className="account-personal-actions">
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
@@ -1340,7 +1349,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section account-page-main">
       <section className="cart-hero account-hero">
         <h1>My Account</h1>
         <p className="cart-hero__crumbs">
