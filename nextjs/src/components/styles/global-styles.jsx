@@ -8899,20 +8899,11 @@ button, input, select, textarea { font: inherit; }
 .account-dashboard__nav-icon {
   flex: 0 0 auto;
   width: 24px;
-  overflow: hidden;
   color: currentColor;
-  font-size: 0;
+  font-size: 1.15rem;
   font-weight: 400;
   line-height: 1;
   white-space: nowrap;
-}
-.account-dashboard__nav-icon::before {
-  content: "";
-  display: block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid currentColor;
-  border-radius: 7px;
 }
 .account-phone-input {
   display: flex;
@@ -10663,43 +10654,37 @@ button, input, select, textarea { font: inherit; }
 
 /* Account dashboard - desktop only */
 @media (min-width: 641px) {
-  body:has(.account-page-main) .site-header {
-    display: none;
-  }
   .account-page-main.shell {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
+    width: min(100vw - clamp(28px, 4vw, 56px), 1440px);
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-block: clamp(28px, 4vw, 48px);
     background: #f5f6f7;
   }
-  .account-page-main .account-hero {
-    display: none;
-  }
   .account-page-main .account-dashboard-shell {
-    min-height: 100dvh;
+    min-height: calc(100dvh - 180px);
   }
   .account-dashboard {
     grid-template-columns: 260px minmax(0, 1fr);
-    gap: 0;
-    min-height: 100dvh;
+    gap: 24px;
+    align-items: start;
+    min-height: inherit;
     background: #f5f6f7;
   }
   .account-dashboard__sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 90;
-    width: 260px;
-    height: 100dvh;
-    max-height: none;
+    position: sticky;
+    top: 104px;
+    z-index: 2;
+    width: auto;
+    height: auto;
+    max-height: calc(100dvh - 128px);
     padding: 24px;
     overflow-y: auto;
-    border-right: 1px solid #c1c9bd;
+    border: 1px solid #c1c9bd;
+    border-radius: 12px;
     background: #ffffff;
   }
   .account-dashboard__sidebar-scroll {
-    min-height: 100%;
     gap: 4px;
     overflow: visible;
   }
@@ -10708,9 +10693,8 @@ button, input, select, textarea { font: inherit; }
   }
   .account-dashboard__content {
     display: block;
-    grid-column: 2;
-    min-height: 100dvh;
-    padding: 40px;
+    min-height: 0;
+    padding: 0;
   }
   .account-dashboard__nav {
     display: flex;

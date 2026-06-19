@@ -27,17 +27,17 @@ import { readWishlistEntries } from "@/lib/wishlist";
 import { GHANA_REGIONS, syncCheckoutDraftProfile } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
-  { id: "personal", label: "Personal Information", icon: "person" },
-  { id: "orders", label: "Orders", icon: "shopping_bag" },
-  { id: "address", label: "Address Book", icon: "location_on" },
-  { id: "messages", label: "Messages", icon: "mail" },
-  { id: "notifications", label: "Notifications", icon: "notifications" },
-  { id: "admin", label: "Admin", href: "/admin", adminOnly: true, icon: "admin_panel_settings" },
-  { id: "affiliates", label: "Affiliates", icon: "group" },
-  { id: "wishlist", label: "Wishlist", icon: "favorite" },
-  { id: "reviews", label: "Reviews", icon: "rate_review" },
-  { id: "password", label: "Password Manager", icon: "lock" },
-  { id: "logout", label: "Logout", icon: "logout" },
+  { id: "personal", label: "Personal Information", icon: "👤" },
+  { id: "orders", label: "Orders", icon: "🛍️" },
+  { id: "address", label: "Address Book", icon: "📍" },
+  { id: "messages", label: "Messages", icon: "✉️" },
+  { id: "notifications", label: "Notifications", icon: "🔔" },
+  { id: "admin", label: "Admin", href: "/admin", adminOnly: true, icon: "🛡️" },
+  { id: "affiliates", label: "Affiliates", icon: "👥" },
+  { id: "wishlist", label: "Wishlist", icon: "❤️" },
+  { id: "reviews", label: "Reviews", icon: "⭐" },
+  { id: "password", label: "Password Manager", icon: "🔒" },
+  { id: "logout", label: "Logout", icon: "🚪" },
 ];
 
 const ALLOWED_ACCOUNT_TABS = new Set([
