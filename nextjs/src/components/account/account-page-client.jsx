@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import MobileAccountHome from "@/components/account/account-mobile-home";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -1679,6 +1680,8 @@ export default function AccountPageClient({ initialTab = "" }) {
   const accountNotifications = user?.role === "admin"
     ? buildAdminNotifications(orders, supportTickets)
     : buildUserNotifications(orders, supportTickets);
+  const hasExplicitAccountTab = Boolean(String(initialTab || "").trim());
+  const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
     if (activeSection === "notifications") {
@@ -1766,7 +1769,17 @@ export default function AccountPageClient({ initialTab = "" }) {
   }
 
   return (
-    <main className="shell page-section account-page-main">
+    <main className={hasExplicitAccountTab ? "shell page-section account-page-main" : "shell page-section account-page-main has-mobile-home"}>
+      {!hasExplicitAccountTab ? (
+        <MobileAccountHome
+          profile={profileForm}
+          isAdmin={user?.role === "admin"}
+          hasSupportTickets={supportTickets.length > 0}
+          supportTicketsCount={supportTickets.length}
+          unreadNotifications={unreadAccountNotifications}
+          onLogout={handleLogout}
+        />
+      ) : null}
       <section className="account-dashboard-shell">
         <div className="account-dashboard">
           <AccountSidebar

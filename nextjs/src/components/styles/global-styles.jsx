@@ -11987,6 +11987,226 @@ button, input, select, textarea { font: inherit; }
   border-radius: 4px;
   background: #ffffff;
 }
+.account-mobile-home {
+  display: none;
+}
+/* Account mobile home - dedicated mobile screen only */
+@media (max-width: 640px) {
+  .account-page-main.has-mobile-home {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-home .account-dashboard-shell {
+    display: none;
+  }
+  .account-mobile-home {
+    display: block;
+    min-height: 100dvh;
+    background: #f5f6f7;
+    color: #10261a;
+  }
+  .account-mobile-home__topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    gap: 8px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 16px;
+    border-bottom: 1px solid #d7ddd2;
+    background: #fbfbff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-home__topbar a {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: #0b4423;
+    text-decoration: none;
+  }
+  .account-mobile-home__topbar a:last-child {
+    color: #414940;
+  }
+  .account-mobile-home__topbar strong {
+    color: #003714;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+  }
+  .account-mobile-home__icon {
+    width: 23px;
+    height: 23px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-home__body {
+    display: grid;
+    gap: 18px;
+    padding: 16px 16px max(22px, env(safe-area-inset-bottom));
+  }
+  .account-mobile-home__breadcrumb {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #4d554f;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+  .account-mobile-home__breadcrumb a {
+    color: #4d554f;
+    text-decoration: none;
+  }
+  .account-mobile-home__breadcrumb span {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    color: #003714;
+    font-weight: 900;
+  }
+  .account-mobile-home__breadcrumb span::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-top: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .account-mobile-home h1 {
+    margin: -8px 0 10px;
+    color: #003714;
+    font-size: 1.62rem;
+    line-height: 1.1;
+  }
+  .account-mobile-home__profile {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 16px;
+    padding: 24px;
+    border: 1px solid #c1c9bd;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(27, 25, 22, 0.045);
+  }
+  .account-mobile-home__avatar {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: #a6f5af;
+    color: #27723a;
+    font-size: 1.35rem;
+    font-weight: 900;
+  }
+  .account-mobile-home__identity {
+    display: grid;
+    gap: 6px;
+    align-content: center;
+    min-width: 0;
+  }
+  .account-mobile-home__identity strong {
+    color: #003714;
+    font-size: 1.35rem;
+    line-height: 1.15;
+  }
+  .account-mobile-home__identity span {
+    min-width: 0;
+    overflow: hidden;
+    color: #414940;
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .account-mobile-home__progress {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .account-mobile-home__progress div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: #414940;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+  .account-mobile-home__progress strong {
+    color: #0b4423;
+  }
+  .account-mobile-home__progress i {
+    display: block;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #dfe6f6;
+  }
+  .account-mobile-home__progress b {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #00401b;
+  }
+  .account-mobile-home__menu {
+    display: grid;
+    gap: 8px;
+  }
+  .account-mobile-home__item {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+    min-height: 58px;
+    padding: 0 16px;
+    border: 1px solid #c1c9bd;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #003714;
+    font: inherit;
+    font-weight: 900;
+    text-align: left;
+    text-decoration: none;
+  }
+  .account-mobile-home__item .account-mobile-home__icon:first-child {
+    color: #0b4423;
+  }
+  .account-mobile-home__item .account-mobile-home__icon:last-child {
+    width: 18px;
+    height: 18px;
+    color: #7d837e;
+  }
+  .account-mobile-home__item span {
+    min-width: 0;
+  }
+  .account-mobile-home__item em {
+    display: inline-flex;
+    min-height: 20px;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #00401b;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .account-mobile-home__item--logout {
+    grid-template-columns: 28px minmax(0, 1fr);
+    margin-top: 10px;
+    border-color: #f5aaa7;
+    background: #ffd9d7;
+    color: #c2222b;
+  }
+  .account-mobile-home__item--logout .account-mobile-home__icon:first-child {
+    color: #c2222b;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .account-dashboard__nav,
   .account-dashboard .primary-button,
