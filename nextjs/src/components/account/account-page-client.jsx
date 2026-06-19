@@ -170,17 +170,57 @@ function getReviewStars(rating) {
   ));
 }
 
-function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, onMobileItemSelect, suppressActive = false }) {
+function getAccountDisplayName(profile) {
+  const fullName = `${profile?.firstName || ""} ${profile?.lastName || ""}`.trim();
+  return fullName || profile?.email || "DEETECH Customer";
+}
+
+function getAccountInitials(profile) {
+  const name = getAccountDisplayName(profile);
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "DC";
+}
+
+function getProfileCompletion(profile) {
+  const fields = [profile?.firstName, profile?.lastName, profile?.email, profile?.phone];
+  const complete = fields.filter((value) => String(value || "").trim()).length;
+  return Math.round((complete / fields.length) * 100);
+}
+
+function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, onMobileItemSelect, suppressActive = false, profile }) {
   const sections = ACCOUNT_SECTIONS.filter((item) => {
     if (item.id === "messages" && !hasSupportTickets) return false;
     return !item.adminOnly || isAdmin;
   });
+  const displayName = getAccountDisplayName(profile);
+  const completion = getProfileCompletion(profile);
   return (
     <aside className="account-dashboard__sidebar" aria-label="Account sections">
       <div className="account-mobile-sidebar-head">
         <strong>Account Sections</strong>
       </div>
       <div className="account-dashboard__sidebar-scroll">
+        <div className="account-sidebar-profile">
+          <div className="account-sidebar-profile__avatar" aria-hidden="true">
+            {getAccountInitials(profile)}
+          </div>
+          <div className="account-sidebar-profile__copy">
+            <strong>{displayName}</strong>
+            <span>{profile?.email || "Customer account"}</span>
+          </div>
+          <div className="account-sidebar-profile__progress" aria-label={`Profile ${completion}% complete`}>
+            <div>
+              <span>Profile</span>
+              <strong>{completion}%</strong>
+            </div>
+            <i style={{ width: `${completion}%` }} />
+          </div>
+        </div>
         {sections.map((item) => {
           if (item.href) {
             return (
@@ -214,32 +254,61 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
 }
 
 function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
+  const displayName = getAccountDisplayName(form);
+  const completion = getProfileCompletion(form);
   return (
-    <section className="account-dashboard__section">
+    <section className="account-dashboard__section account-personal-section">
       <div className="account-dashboard__section-head">
         <h2>Personal Information</h2>
         <p>Update the main details tied to your DEETECH account.</p>
       </div>
-      <form className="account-dashboard__form" onSubmit={onSubmit}>
-        <label className="account-dashboard__field">
-          <span>First Name *</span>
+      <div className="account-personal-card account-personal-card--summary">
+        <div className="account-personal-profile">
+          <div className="account-personal-profile__avatar" aria-hidden="true">
+            {getAccountInitials(form)}
+          </div>
+          <div>
+            <span>Account owner</span>
+            <strong>{displayName}</strong>
+            <p>{form.email || "Email not available"}</p>
+          </div>
+        </div>
+        <div className="account-personal-completion" aria-label={`Profile ${completion}% complete`}>
+          <div>
+            <span>Profile completeness</span>
+            <strong>{completion}%</strong>
+          </div>
+          <i style={{ width: `${completion}%` }} />
+        </div>
+      </div>
+
+      <form className="account-dashboard__form account-personal-form account-personal-card" onSubmit={onSubmit}>
+        <label className="account-dashboard__field account-personal-field">
+          <span>First Name <small>*</small></span>
           <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
         </label>
-        <label className="account-dashboard__field">
-          <span>Last Name *</span>
+        <label className="account-dashboard__field account-personal-field">
+          <span>Last Name <small>*</small></span>
           <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} required />
         </label>
-        <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Email *</span>
-          <input className="field disabled-field" value={form.email} disabled />
+        <label className="account-dashboard__field account-dashboard__field--full account-personal-field account-personal-field--readonly">
+          <span>Email <small>*</small></span>
+          <div className="account-readonly-input">
+            <input className="field disabled-field" value={form.email} disabled />
+            <em aria-hidden="true">Lock</em>
+          </div>
+          <small>Email is read-only for account security.</small>
         </label>
-        <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Phone *</span>
+        <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
+          <span>Phone <small>*</small></span>
           <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
         </label>
-        <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
-          {submitting ? "Updating..." : "Update Changes"}
-        </button>
+        <div className="account-personal-actions">
+          <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
+            {submitting ? "Updating..." : "Update Changes"}
+          </button>
+          <p>{submitting ? "Saving your account details..." : "Changes stay on this section after saving."}</p>
+        </div>
       </form>
     </section>
   );
@@ -1290,6 +1359,7 @@ export default function AccountPageClient({ initialTab = "" }) {
             hasSupportTickets={supportTickets.length > 0}
             onMobileItemSelect={handleMobileSidebarItemSelect}
             suppressActive={mobileNavOpen}
+            profile={profileForm}
           />
           <div className="account-dashboard__content">
             <div className="account-mobile-content-head">
