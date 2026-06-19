@@ -444,8 +444,6 @@ export default function HomePage() {
     }))
     .filter((section) => section.allProducts.length > 0);
   const homeSectionsSignature = visibleHomepageSections.map((section) => `${section.key}:${section.allProducts.length}`).join("|");
-  const dealCount = productCollections.hot_deals?.allProducts?.length || 0;
-  const justLandedCount = productCollections.just_landed?.allProducts?.length || 0;
   const categories = deriveCategories(products);
   const hasCategoryCounts = categories.some((item) => item.count > 0);
   const featuredCategoryOrder = ["laptops", "phones", "accessories", "monitors", "printers", "storage", "others"];
@@ -472,33 +470,6 @@ export default function HomePage() {
     link: "",
   };
   const heroBanners = banners.length ? banners : [fallbackHeroBanner];
-  const heroQuickLinks = [
-    {
-      label: "Shop laptops",
-      href: getCategoryFilterHref("laptops"),
-      meta: laptopProducts.length ? `${laptopProducts.length} in stock` : "Laptops and desktops",
-    },
-    {
-      label: "Shop phones",
-      href: getCategoryFilterHref("phones"),
-      meta: phoneProducts.length ? `${phoneProducts.length} in stock` : "Smartphones",
-    },
-    {
-      label: "Hot deals",
-      href: getHomeSectionFilterHref("hot_deals"),
-      meta: dealCount ? `${dealCount} offers` : "Value picks",
-    },
-    {
-      label: "Just landed",
-      href: getHomeSectionFilterHref("just_landed"),
-      meta: justLandedCount ? `${justLandedCount} new picks` : "Newest products",
-    },
-  ];
-  const heroTrustStats = [
-    { label: "Laptop deals", value: laptopProducts.length || "Ready" },
-    { label: "Phone picks", value: phoneProducts.length || "Curated" },
-    { label: "Trusted brands", value: HOME_LOGOS.length },
-  ];
   const goToPrevBanner = () => {
     setBannerIndex((prev) => (prev - 1 + heroBanners.length) % heroBanners.length);
   };
@@ -662,98 +633,43 @@ export default function HomePage() {
   }
 
   return (
-    <main className="storefront-home">
-      <section className="hero-section storefront-hero">
-        <div className="shell storefront-hero__grid">
-          <div className="storefront-hero__copy">
-            <p className="section-kicker">DEETECH Computers</p>
-            <h1>Shop trusted laptops, phones and everyday tech in Ghana.</h1>
-            <p className="hero-copy">
-              Find reliable devices, useful accessories, and fast support from a store built around real customer needs.
-            </p>
-
-            <div className="storefront-hero__actions">
-              <Link href={getCategoryFilterHref("laptops")} className="primary-link storefront-hero__primary">
-                Shop Laptops
-              </Link>
-              <Link href={getHomeSectionFilterHref("hot_deals")} className="storefront-hero__secondary">
-                View Hot Deals
-              </Link>
-            </div>
-
-            <div className="storefront-hero__quick-grid" aria-label="Quick shopping paths">
-              {heroQuickLinks.map((item) => (
-                <Link key={item.label} href={item.href} className="storefront-hero__quick-link">
-                  <span>{item.label}</span>
-                  <small>{item.meta}</small>
-                </Link>
-              ))}
-            </div>
-
-            <div className="storefront-hero__stats" aria-label="Storefront summary">
-              {heroTrustStats.map((item) => (
-                <div key={item.label} className="storefront-hero__stat">
-                  <strong>{item.value}</strong>
-                  <span>{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="storefront-hero__media">
-            <div className="hero-banner">
-              <div className="hero-banner__slides" style={{ transform: `translateX(-${bannerIndex * 100}%)` }}>
-                {heroBanners.map((item, idx) => (
-                  <div key={`hero-banner-${idx}`} className="hero-banner__slide">
-                    {renderHeroSlide(item, idx)}
-                  </div>
-                ))}
+    <main>
+      <section className="hero-section">
+        <div className="hero-banner">
+          <div className="hero-banner__slides" style={{ transform: `translateX(-${bannerIndex * 100}%)` }}>
+            {heroBanners.map((item, idx) => (
+              <div key={`hero-banner-${idx}`} className="hero-banner__slide">
+                {renderHeroSlide(item, idx)}
               </div>
-
-              {heroBanners.length > 1 ? (
-                <>
-                  <button type="button" className="hero-banner__arrow hero-banner__arrow--left" aria-label="Previous banner" onClick={goToPrevBanner}>
-                    <span />
-                  </button>
-
-                  <button type="button" className="hero-banner__arrow hero-banner__arrow--right" aria-label="Next banner" onClick={goToNextBanner}>
-                    <span />
-                  </button>
-                </>
-              ) : null}
-              {heroBanners.length > 1 ? (
-                <div className="hero-banner__dots" role="tablist" aria-label="Select banner slide">
-                  {heroBanners.map((_, idx) => (
-                    <button
-                      key={`hero-dot-${idx}`}
-                      type="button"
-                      role="tab"
-                      className={`hero-banner__dot ${idx === bannerIndex ? "is-active" : ""}`}
-                      aria-selected={idx === bannerIndex}
-                      aria-label={`Go to banner ${idx + 1}`}
-                      onClick={() => setBannerIndex(idx)}
-                    />
-                  ))}
-                </div>
-              ) : null}
-            </div>
-            <div className="storefront-hero__media-note">
-              <span>Admin banners stay live, but the page no longer depends on banner text to explain the store.</span>
-            </div>
+            ))}
           </div>
+
+          <button type="button" className="hero-banner__arrow hero-banner__arrow--left" aria-label="Previous banner" onClick={goToPrevBanner}>
+            <span />
+          </button>
+
+          <button type="button" className="hero-banner__arrow hero-banner__arrow--right" aria-label="Next banner" onClick={goToNextBanner}>
+            <span />
+          </button>
+          {heroBanners.length > 1 ? (
+            <div className="hero-banner__dots" role="tablist" aria-label="Select banner slide">
+              {heroBanners.map((_, idx) => (
+                <button
+                  key={`hero-dot-${idx}`}
+                  type="button"
+                  role="tab"
+                  className={`hero-banner__dot ${idx === bannerIndex ? "is-active" : ""}`}
+                  aria-selected={idx === bannerIndex}
+                  aria-label={`Go to banner ${idx + 1}`}
+                  onClick={() => setBannerIndex(idx)}
+                />
+              ))}
+            </div>
+          ) : null}
         </div>
       </section>
 
-      <section className="home-logo-marquee storefront-brand-strip" aria-label="Trusted brands">
-        <div className="shell storefront-brand-strip__header">
-          <div>
-            <p className="section-kicker">Trusted tech brands</p>
-            <h2>Shop familiar names with DEETECH support behind them.</h2>
-          </div>
-          <p className="hero-copy">
-            Laptops, phones, monitors, printers, storage and accessories from brands customers already know.
-          </p>
-        </div>
+      <section className="home-logo-marquee" aria-label="Trusted brands">
         <div className="home-logo-marquee__track">
           {[0, 1].map((cloneIndex) => (
             <div
@@ -782,10 +698,10 @@ export default function HomePage() {
 
       <section className="shell category-showcase">
         <div className="category-showcase__intro">
-          <p className="section-kicker">Shop by department</p>
-          <h2>Start with the product type you need.</h2>
+          <p className="section-kicker">Categories</p>
+          <h2>Quick Product Search</h2>
           <p className="hero-copy">
-            Clear category paths help customers move straight to laptops, phones, accessories and other essentials.
+            Jump straight into the department you want so it is faster to find the right products.
           </p>
         </div>
 
@@ -846,9 +762,9 @@ export default function HomePage() {
       <section className="shell homepage-products page-section">
         <div className="homepage-products__header">
           <div className="homepage-products__title">
-            <p className="section-kicker">Featured picks</p>
+            <p className="section-kicker">Homepage products</p>
             <div className="homepage-products__title-row">
-              <h2>Shop what matters today</h2>
+              <h2>Curated Home Collections</h2>
               {isMobileHomeProducts ? (
                 <div className="homepage-products__mobile-view-toggle" role="group" aria-label="Homepage product view mode">
                   <button
@@ -892,7 +808,7 @@ export default function HomePage() {
           (visibleHomepageSections.length ? (
             <div className="homepage-products__stack">
               {visibleHomepageSections.map((section) => (
-                <section key={section.key} className={`homepage-products__section homepage-products__section--${section.key}`}>
+                <section key={section.key} className="homepage-products__section">
                   {(() => {
                     const useMobileScroll = isMobileHomeProducts && mobileHomeProductsView === "scroll";
                     const useMobileGrid = isMobileHomeProducts && mobileHomeProductsView === "grid";
