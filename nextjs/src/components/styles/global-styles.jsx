@@ -10816,46 +10816,45 @@ button, input, select, textarea { font: inherit; }
     transform: none;
   }
 }
-.account-hero {
-  margin-bottom: 28px;
-}
-
 /* Account dashboard - desktop only */
 @media (min-width: 641px) {
   .account-page-main.shell {
-    width: min(100vw - clamp(28px, 4vw, 56px), 1440px);
-    max-width: 1440px;
-    margin-inline: auto;
-    padding-block: clamp(28px, 4vw, 48px);
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    padding: 0;
     background: #f5f6f7;
   }
   .account-page-main .account-dashboard-shell {
-    min-height: calc(100dvh - 180px);
+    min-height: calc(100dvh - 116px);
+    padding: 0 clamp(24px, 3vw, 48px) clamp(36px, 4vw, 56px) 0;
   }
   .account-dashboard {
-    grid-template-columns: 260px minmax(0, 1fr);
-    gap: 24px;
-    align-items: start;
+    grid-template-columns: 256px minmax(0, 1fr);
+    gap: clamp(32px, 4vw, 56px);
+    align-items: stretch;
     min-height: inherit;
     background: #f5f6f7;
   }
   .account-dashboard__sidebar {
     position: sticky;
-    top: 104px;
+    top: 116px;
     z-index: 2;
     width: auto;
     height: auto;
-    max-height: calc(100dvh - 128px);
-    padding: 24px;
-    overflow-y: auto;
-    border: 1px solid #c1c9bd;
-    border-radius: 12px;
+    max-height: none;
+    min-height: calc(100dvh - 116px);
+    padding: 28px 24px 24px;
+    overflow: visible;
+    border: 0;
+    border-right: 1px solid #c1c9bd;
+    border-radius: 0;
     background: #ffffff;
   }
   .account-dashboard__sidebar-scroll {
     display: flex;
     flex-direction: column;
-    min-height: calc(100dvh - 176px);
+    min-height: calc(100dvh - 168px);
     gap: 4px;
     overflow: visible;
   }
@@ -10865,7 +10864,7 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__content {
     display: block;
     min-height: 0;
-    padding: 0;
+    padding: clamp(44px, 5vw, 68px) 0 0;
   }
   .account-dashboard__nav {
     display: flex;
@@ -10902,8 +10901,8 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: minmax(0, 1fr) auto;
   }
   .account-personal-section {
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
     gap: 40px;
   }
   .account-personal-section .account-dashboard__section-head {

@@ -1478,15 +1478,6 @@ export default function AccountPageClient({ initialTab = "" }) {
 
   return (
     <main className="shell page-section account-page-main">
-      <section className="cart-hero account-hero">
-        <h1>My Account</h1>
-        <p className="cart-hero__crumbs">
-          <Link href="/">Home</Link>
-          <span>/</span>
-          <span>My Account</span>
-        </p>
-      </section>
-
       <section className="account-dashboard-shell">
         <div className={mobileNavOpen ? "account-dashboard account-dashboard--mobile-nav-open" : "account-dashboard"}>
           <AccountSidebar
