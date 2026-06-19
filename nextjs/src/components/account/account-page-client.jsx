@@ -343,6 +343,50 @@ function AccountNavIcon({ name }) {
         <path d="m12 17-3-3" />
       </>
     ),
+    copy: (
+      <>
+        <rect x="9" y="9" width="11" height="11" rx="2" />
+        <rect x="4" y="4" width="11" height="11" rx="2" />
+      </>
+    ),
+    money: (
+      <>
+        <rect x="3" y="6" width="18" height="12" rx="2" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M6 9v.01" />
+        <path d="M18 15v.01" />
+      </>
+    ),
+    clock: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </>
+    ),
+    bank: (
+      <>
+        <path d="m3 10 9-6 9 6" />
+        <path d="M5 10h14" />
+        <path d="M6 10v8" />
+        <path d="M10 10v8" />
+        <path d="M14 10v8" />
+        <path d="M18 10v8" />
+        <path d="M4 18h16" />
+      </>
+    ),
+    trend: (
+      <>
+        <path d="m3 17 6-6 4 4 7-8" />
+        <path d="M14 7h6v6" />
+      </>
+    ),
+    xCircle: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="m15 9-6 6" />
+        <path d="m9 9 6 6" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -723,116 +767,197 @@ function AffiliateSection({ summary }) {
   const statCards = [
     {
       tone: "green",
-      icon: "R",
+      icon: "users",
       label: "Total Referrals",
       value: totalReferrals,
       helper: `${deliveredReferrals} successful - ${pendingReferrals} pending`,
     },
     {
       tone: "gold",
-      icon: "P",
+      icon: "receipt",
       label: "Pending Commission",
       value: formatCurrency(pendingCommission),
       helper: "Awaiting delivery completion",
     },
     {
       tone: "emerald",
-      icon: "G",
+      icon: "money",
       label: "Total Paid Out",
       value: formatCurrency(earnedCommission),
       helper: "Approved commissions",
     },
     {
-      tone: "blue",
-      icon: "L",
+      tone: "green",
+      icon: "trend",
       label: "Lifetime Generated",
       value: formatCurrency(lifetimeGenerated),
       helper: "Pending + paid-out orders",
     },
     {
-      tone: "amber",
-      icon: "C",
+      tone: "danger",
+      icon: "xCircle",
       label: "Cancelled Referrals",
       value: cancelledReferrals,
       helper: "Orders not completed",
     },
     {
       tone: "green",
-      icon: "%",
+      icon: "check",
       label: "Success Rate",
       value: `${successRate}%`,
       helper: "Referral conversion",
     },
   ];
+  const conversionRows = [
+    {
+      label: "Successful referrals",
+      count: deliveredReferrals,
+      commission: earnedCommission,
+      status: "Settled",
+      tone: "settled",
+    },
+    {
+      label: "Pending referrals",
+      count: pendingReferrals,
+      commission: pendingCommission,
+      status: "Pending",
+      tone: "pending",
+    },
+    {
+      label: "Cancelled referrals",
+      count: cancelledReferrals,
+      commission: 0,
+      status: "Cancelled",
+      tone: "cancelled",
+    },
+  ];
 
   return (
-    <section className="account-dashboard__section">
-      <div className="account-dashboard__section-head">
+    <section className="account-dashboard__section account-affiliate-section">
+      <div className="account-affiliate-section__head">
         <h2>Affiliates</h2>
         <p>Track your referral code, commissions, and payout progress from your account.</p>
       </div>
 
-      <div className="account-affiliate-hero panel">
-        <div>
+      <div className="account-affiliate-hero">
+        <div className="account-affiliate-hero__copy">
           <span className={`account-affiliate-status ${summary.isAffiliate ? "is-active" : "is-inactive"}`}>
-            {summary.isAffiliate ? "Active affiliate" : "Not active yet"}
+            {summary.isAffiliate ? "Active affiliate badge" : "Not active yet"}
           </span>
           <h3>{summary.isAffiliate ? "Your affiliate hub is ready." : "Start earning with DEETECH referrals."}</h3>
-          <p>
-            {summary.isAffiliate
-              ? "Share your code, watch qualified orders mature, and use the full affiliate page for deeper referral history."
-              : "Create your affiliate profile to receive a referral code and start earning on confirmed orders."}
-          </p>
+          <dl className="account-affiliate-hero__metrics">
+            <div>
+              <dt>Tier</dt>
+              <dd>{tier}</dd>
+            </div>
+            <div>
+              <dt>Commission Rate</dt>
+              <dd>{commissionRate ? `${commissionRate}%` : "N/A"}</dd>
+            </div>
+          </dl>
         </div>
-        <dl className="account-affiliate-meta">
+        <div className="account-affiliate-code-card">
+          <span>Your Unique Referral Code</span>
           <div>
-            <dt>Code</dt>
-            <dd>{summary.code || "Not created"}</dd>
+            <strong>{summary.code || "Not created"}</strong>
+            <AccountNavIcon name="copy" />
           </div>
-          <div>
-            <dt>Tier</dt>
-            <dd>{tier}</dd>
-          </div>
-          <div>
-            <dt>Rate</dt>
-            <dd>{commissionRate ? `${commissionRate}%` : "N/A"}</dd>
-          </div>
-        </dl>
+          <p>{summary.isAffiliate ? "Share this code with your network to earn rewards." : "Open the affiliate page to create your code."}</p>
+        </div>
       </div>
 
       <div className="account-affiliate-stats">
         {statCards.map((card) => (
           <article key={card.label} className={`account-affiliate-stat is-${card.tone}`}>
-            <div className="account-affiliate-stat__head">
-              <span className="account-affiliate-stat__icon" aria-hidden="true">{card.icon}</span>
-              <span>{card.label}</span>
-            </div>
+            <AccountNavIcon name={card.icon} />
+            <span>{card.label}</span>
             <strong>{card.value}</strong>
             <small>{card.helper}</small>
           </article>
         ))}
       </div>
 
-      <div className="account-affiliate-breakdown panel">
-        <div>
-          <span>Referral breakdown</span>
-          <strong>{totalReferrals} total referral{totalReferrals === 1 ? "" : "s"}</strong>
-          <p>{deliveredReferrals} successful, {pendingReferrals} pending, {cancelledReferrals} cancelled.</p>
-        </div>
-        <div>
-          <span>Next payout focus</span>
-          <strong>{formatCurrency(pendingCommission)}</strong>
-          <p>Pending commission becomes payable after qualifying delivery completion.</p>
-        </div>
-        <div>
-          <span>Lifetime value</span>
-          <strong>{formatCurrency(lifetimeGenerated)}</strong>
-          <p>Combined pending and paid-out affiliate value.</p>
-        </div>
+      <div className="account-affiliate-panels">
+        <article className="account-affiliate-panel">
+          <div className="account-affiliate-panel__head">
+            <h3>Next Payout</h3>
+            <AccountNavIcon name="clock" />
+          </div>
+          <div className="account-affiliate-payout-box">
+            <span>Pending Commission</span>
+            <strong>{formatCurrency(pendingCommission)}</strong>
+          </div>
+          <p>Your earnings are verified after qualifying delivery completion. Pending referrals move into payout once the order is confirmed.</p>
+          <span className={pendingCommission > 0 ? "account-affiliate-checkline is-ready" : "account-affiliate-checkline"}>
+            <AccountNavIcon name={pendingCommission > 0 ? "check" : "clock"} />
+            {pendingCommission > 0 ? "Threshold active" : "Awaiting qualified referrals"}
+          </span>
+        </article>
+
+        <article className="account-affiliate-panel">
+          <div className="account-affiliate-panel__head">
+            <h3>Payout Method</h3>
+            <AccountNavIcon name="bank" />
+          </div>
+          <div className="account-affiliate-method">
+            <AccountNavIcon name="bank" />
+            <div>
+              <strong>Managed on Affiliate Page</strong>
+              <span>Review payout settings and deeper referral history.</span>
+            </div>
+          </div>
+          <p>Use the full affiliate page to manage account-level payout details and referral activity.</p>
+          <Link href="/affiliates">Edit Method <AccountNavIcon name="edit" /></Link>
+        </article>
+
+        <article className="account-affiliate-panel account-affiliate-panel--summary">
+          <div className="account-affiliate-panel__head">
+            <h3>Lifetime Summary</h3>
+            <AccountNavIcon name="trend" />
+          </div>
+          <dl>
+            <div>
+              <dt>Total Referrals</dt>
+              <dd>{totalReferrals}</dd>
+            </div>
+            <div>
+              <dt>Average Commission Rate</dt>
+              <dd>{commissionRate ? `${commissionRate}%` : "N/A"}</dd>
+            </div>
+            <div>
+              <dt>Successful Referrals</dt>
+              <dd>{deliveredReferrals}</dd>
+            </div>
+            <div>
+              <dt>Conversion Rate</dt>
+              <dd>{successRate}%</dd>
+            </div>
+          </dl>
+          <Link href="/affiliates" className="primary-link">Open Affiliate Page <AccountNavIcon name="arrowRight" /></Link>
+        </article>
       </div>
 
-      <div className="account-dashboard__cta-row">
-        <Link href="/affiliates" className="primary-link">Open Affiliate Page</Link>
+      <div className="account-affiliate-conversions">
+        <div className="account-affiliate-conversions__head">
+          <h3>Recent Conversions</h3>
+          <Link href="/affiliates">View All History</Link>
+        </div>
+        <div className="account-affiliate-conversions__table">
+          <div className="account-affiliate-conversions__row account-affiliate-conversions__row--head">
+            <span>Type</span>
+            <span>Referrals</span>
+            <span>Commission</span>
+            <span>Status</span>
+          </div>
+          {conversionRows.map((row) => (
+            <div key={row.label} className="account-affiliate-conversions__row">
+              <span>{row.label}</span>
+              <strong>{row.count}</strong>
+              <strong>{formatCurrency(row.commission)}</strong>
+              <em className={`is-${row.tone}`}>{row.status}</em>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
