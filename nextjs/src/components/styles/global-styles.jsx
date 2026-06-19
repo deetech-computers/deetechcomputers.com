@@ -8730,7 +8730,7 @@ button, input, select, textarea { font: inherit; }
   gap: 18px;
 }
 .account-personal-card {
-  padding: clamp(18px, 3vw, 28px);
+  padding: clamp(18px, 2vw, 24px);
 }
 .account-personal-card--summary {
   display: flex;
@@ -8746,10 +8746,10 @@ button, input, select, textarea { font: inherit; }
   min-width: 0;
 }
 .account-personal-profile__avatar {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   flex: 0 0 auto;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
 }
 .account-personal-profile strong {
   display: block;
@@ -8806,9 +8806,9 @@ button, input, select, textarea { font: inherit; }
   font-size: 0.82rem;
 }
 .account-personal-form .field {
-  min-height: 54px;
+  min-height: 48px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #edf2f7;
   color: #1b1916;
   font-weight: 700;
@@ -8912,7 +8912,7 @@ button, input, select, textarea { font: inherit; }
 }
 .account-phone-input__code {
   display: inline-flex;
-  min-height: 54px;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
   padding: 0 16px;
@@ -10837,13 +10837,14 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-dashboard__sidebar {
-    position: sticky;
-    top: 116px;
+    position: relative;
+    top: auto;
+    align-self: stretch;
     z-index: 2;
     width: auto;
     height: auto;
     max-height: none;
-    min-height: calc(100dvh - 116px);
+    min-height: 100%;
     padding: 28px 24px 24px;
     overflow: visible;
     border: 0;
@@ -10854,7 +10855,8 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__sidebar-scroll {
     display: flex;
     flex-direction: column;
-    min-height: calc(100dvh - 168px);
+    min-height: 100%;
+    height: 100%;
     gap: 4px;
     overflow: visible;
   }
@@ -10901,9 +10903,9 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: minmax(0, 1fr) auto;
   }
   .account-personal-section {
-    max-width: none;
+    max-width: min(100%, 1120px);
     margin: 0;
-    gap: 40px;
+    gap: 32px;
   }
   .account-personal-section .account-dashboard__section-head {
     gap: 4px;
