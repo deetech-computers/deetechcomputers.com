@@ -308,6 +308,20 @@ function AccountNavIcon({ name }) {
         <path d="M12 8h.01" />
       </>
     ),
+    refresh: (
+      <>
+        <path d="M21 12a9 9 0 0 1-15.5 6.2" />
+        <path d="M3 12A9 9 0 0 1 18.5 5.8" />
+        <path d="M18 2v4h4" />
+        <path d="M6 22v-4H2" />
+      </>
+    ),
+    send: (
+      <>
+        <path d="M22 2 11 13" />
+        <path d="m22 2-7 20-4-9-9-4 20-7Z" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -964,9 +978,11 @@ function MessagesSection({
   const composerFormRef = useRef(null);
 
   const thread = Array.isArray(activeTicket?.messages) ? activeTicket.messages : [];
+  const subject = activeTicket?.subject || "Support request";
+  const status = String(activeTicket?.status || "open");
 
   return (
-    <section className="account-dashboard__section">
+    <section className="account-dashboard__section account-messages-section">
       <div className="account-dashboard__section-head">
         <h2>Messages / Requests</h2>
         <p>Continue your support conversation with our team in real time.</p>
@@ -981,21 +997,28 @@ function MessagesSection({
           actionLabel="Open support page"
         />
       ) : (
-        <div className="account-support-chat panel">
+        <div className="account-support-chat">
           <div className="account-support-chat__thread-wrap">
             {activeTicket ? (
               <>
                 <header className="account-support-chat__thread-head">
                   <div>
-                    <strong>{activeTicket.subject || "Support request"}</strong>
-                    <p>Started {formatDateTime(activeTicket.createdAt)} / Last update {formatDateTime(activeTicket.updatedAt)}</p>
+                    <strong>{subject}</strong>
+                    <p>Ticket ID: #{activeTicket.ticketNumber || activeTicket._id || "request"} - Started {formatDateTime(activeTicket.createdAt)}</p>
                   </div>
-                  <span className={`account-order-card__pill ${String(activeTicket?.status || "new").toLowerCase() === "resolved" ? "is-success" : "is-warning"}`}>
-                    {activeTicket.status || "new"}
-                  </span>
+                  <div className="account-support-chat__head-actions">
+                    <span className={`account-order-card__pill ${status.toLowerCase() === "resolved" ? "is-success" : "is-warning"}`}>
+                      {status}
+                    </span>
+                    <button type="button" className="account-support-chat__refresh">
+                      <AccountNavIcon name="refresh" />
+                      <span>Refresh</span>
+                    </button>
+                  </div>
                 </header>
 
                 <div className="account-support-chat__thread">
+                  <div className="account-support-chat__date-pill">{formatDate(activeTicket.createdAt)}</div>
                   {thread.map((entry, index) => {
                     const sender = String(entry?.sender || "user").toLowerCase() === "admin" ? "admin" : "user";
                     const imageUrl = resolveSupportImageUrl(entry?.imageUrl);
@@ -1033,19 +1056,21 @@ function MessagesSection({
                       rows={1}
                     />
                     <button type="submit" className="primary-button account-support-chat__send" disabled={sendingReply || !replyDraft.trim()}>
-                      {sendingReply ? "..." : "Send"}
+                      <span>{sendingReply ? "..." : "Send"}</span>
+                      {!sendingReply ? <AccountNavIcon name="send" /> : null}
                     </button>
                   </div>
+                  <p className="account-support-chat__security"><AccountNavIcon name="lock" /> This conversation is encrypted and logged for quality assurance.</p>
                 </form>
               </>
             ) : null}
           </div>
-          <div className="contact-support-preview panel">
-            <h3>Need another way to reach us?</h3>
-            <p>
-              If our reply is taking longer than expected, you can also contact us on WhatsApp for faster text support.
-            </p>
-            <div className="account-dashboard__actions">
+          <aside className="account-support-sidebar">
+            <div className="contact-support-preview">
+              <h3>Need another way to reach us?</h3>
+              <p>
+                If you need immediate assistance or prefer messaging apps, our team is active on social support channels.
+              </p>
               <a
                 href={SUPPORT_WHATSAPP_LINK}
                 target="_blank"
@@ -1055,7 +1080,30 @@ function MessagesSection({
                 Chat on WhatsApp
               </a>
             </div>
-          </div>
+            <div className="account-support-side-card">
+              <h3><AccountNavIcon name="info" /> Request Details</h3>
+              <dl>
+                <div>
+                  <dt>Ticket</dt>
+                  <dd>#{activeTicket?._id || "request"}</dd>
+                </div>
+                <div>
+                  <dt>Subject</dt>
+                  <dd>{subject}</dd>
+                </div>
+                <div>
+                  <dt>Status</dt>
+                  <dd className={status.toLowerCase() === "resolved" ? "is-success" : "is-warning"}>{status}</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="account-support-side-card">
+              <h3>FAQ Quick Links</h3>
+              <p>How to track my order?</p>
+              <p>Ghana-wide delivery timelines</p>
+              <p>Return and Refund policy</p>
+            </div>
+          </aside>
         </div>
       )}
     </section>
