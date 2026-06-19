@@ -27,17 +27,17 @@ import { readWishlistEntries } from "@/lib/wishlist";
 import { GHANA_REGIONS, syncCheckoutDraftProfile } from "@/lib/checkout";
 
 const ACCOUNT_SECTIONS = [
-  { id: "personal", label: "Personal Information", icon: "👤" },
-  { id: "orders", label: "Orders", icon: "🛍️" },
-  { id: "address", label: "Address Book", icon: "📍" },
-  { id: "messages", label: "Messages", icon: "✉️" },
-  { id: "notifications", label: "Notifications", icon: "🔔" },
-  { id: "admin", label: "Admin", href: "/admin", adminOnly: true, icon: "🛡️" },
-  { id: "affiliates", label: "Affiliates", icon: "👥" },
-  { id: "wishlist", label: "Wishlist", icon: "❤️" },
-  { id: "reviews", label: "Reviews", icon: "⭐" },
-  { id: "password", label: "Password Manager", icon: "🔒" },
-  { id: "logout", label: "Logout", icon: "🚪" },
+  { id: "personal", label: "Personal Information", icon: "person" },
+  { id: "orders", label: "Orders", icon: "bag" },
+  { id: "address", label: "Address Book", icon: "pin" },
+  { id: "messages", label: "Messages", icon: "mail" },
+  { id: "notifications", label: "Notifications", icon: "bell" },
+  { id: "admin", label: "Admin", href: "/admin", adminOnly: true, icon: "shield" },
+  { id: "affiliates", label: "Affiliates", icon: "users" },
+  { id: "wishlist", label: "Wishlist", icon: "heart" },
+  { id: "reviews", label: "Reviews", icon: "review" },
+  { id: "password", label: "Password Manager", icon: "lock" },
+  { id: "logout", label: "Logout", icon: "logout" },
 ];
 
 const ALLOWED_ACCOUNT_TABS = new Set([
@@ -192,11 +192,102 @@ function getProfileCompletion(profile) {
   return Math.round((complete / fields.length) * 100);
 }
 
+function AccountNavIcon({ name }) {
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 2,
+  };
+  const paths = {
+    person: (
+      <>
+        <path d="M20 21a8 8 0 0 0-16 0" />
+        <circle cx="12" cy="7" r="4" />
+      </>
+    ),
+    bag: (
+      <>
+        <path d="M6 8h12l-1 13H7L6 8Z" />
+        <path d="M9 8a3 3 0 0 1 6 0" />
+      </>
+    ),
+    pin: (
+      <>
+        <path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </>
+    ),
+    mail: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 7 9 7 9-7" />
+      </>
+    ),
+    bell: (
+      <>
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M10 21h4" />
+      </>
+    ),
+    shield: (
+      <>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-5" />
+      </>
+    ),
+    users: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </>
+    ),
+    heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />,
+    review: (
+      <>
+        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" />
+        <path d="M8 8h8" />
+        <path d="M8 12h5" />
+      </>
+    ),
+    lock: (
+      <>
+        <rect x="5" y="11" width="14" height="10" rx="2" />
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+      </>
+    ),
+    logout: (
+      <>
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <path d="M16 17l5-5-5-5" />
+        <path d="M21 12H9" />
+      </>
+    ),
+    campaign: (
+      <>
+        <path d="M4 13h3l9 4V7l-9 4H4v2Z" />
+        <path d="M7 13v5" />
+        <path d="M19 9a4 4 0 0 1 0 6" />
+      </>
+    ),
+  };
+  return (
+    <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
+      {paths[name] || paths.person}
+    </svg>
+  );
+}
+
 function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, onMobileItemSelect, suppressActive = false, profile }) {
   const sections = ACCOUNT_SECTIONS.filter((item) => {
     if (item.id === "messages" && !hasSupportTickets) return false;
+    if (item.id === "logout") return false;
     return !item.adminOnly || isAdmin;
   });
+  const logoutItem = ACCOUNT_SECTIONS.find((item) => item.id === "logout");
   const displayName = getAccountDisplayName(profile);
   const completion = getProfileCompletion(profile);
   return (
@@ -234,7 +325,7 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
                 className="account-dashboard__nav"
                 onClick={onMobileItemSelect}
               >
-                <span className="account-dashboard__nav-icon" aria-hidden="true">{item.icon}</span>
+                <AccountNavIcon name={item.icon} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -249,11 +340,24 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, o
                 onMobileItemSelect?.();
               }}
             >
-              <span className="account-dashboard__nav-icon" aria-hidden="true">{item.icon}</span>
+              <AccountNavIcon name={item.icon} />
               <span>{item.label}</span>
             </button>
           );
         })}
+        {logoutItem ? (
+          <button
+            type="button"
+            className={!suppressActive && activeSection === "logout" ? "account-dashboard__nav account-dashboard__nav--logout is-active" : "account-dashboard__nav account-dashboard__nav--logout"}
+            onClick={() => {
+              onChange("logout");
+              onMobileItemSelect?.();
+            }}
+          >
+            <AccountNavIcon name={logoutItem.icon} />
+            <span>{logoutItem.label}</span>
+          </button>
+        ) : null}
       </div>
     </aside>
   );
@@ -285,11 +389,12 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
             <strong>{completion}%</strong>
           </div>
           <i style={{ width: `${completion}%` }} />
+          <small>Verify secondary email</small>
         </div>
       </div>
 
       <form className="account-dashboard__form account-personal-form account-personal-card" onSubmit={onSubmit}>
-        <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
+        <label className="account-dashboard__field account-personal-field">
           <span>First Name <small>*</small></span>
           <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
         </label>
@@ -298,27 +403,50 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
           <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} required />
         </label>
         <label className="account-dashboard__field account-dashboard__field--full account-personal-field account-personal-field--readonly">
-          <span>Email <small>*</small></span>
+          <span>Email Address <small>*</small></span>
           <div className="account-readonly-input">
             <input className="field disabled-field" value={form.email} disabled />
             <em aria-hidden="true">Lock</em>
           </div>
           <small>Email is read-only for account security.</small>
         </label>
-        <label className="account-dashboard__field account-personal-field">
-          <span>Phone <small>*</small></span>
+        <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
+          <span>Phone Number <small>*</small></span>
           <div className="account-phone-input">
             <span className="account-phone-input__code">+233</span>
             <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
           </div>
         </label>
+        <div className="account-personal-divider" />
+        <div className="account-communication" aria-label="Communication Preferences">
+          <h3>Communication Preferences</h3>
+          <div className="account-communication__row">
+            <span className="account-communication__icon"><AccountNavIcon name="campaign" /></span>
+            <div>
+              <strong>Marketing Communications</strong>
+              <p>Receive updates on new hardware arrivals and tech deals.</p>
+            </div>
+            <label className="account-communication__toggle">
+              <input type="checkbox" defaultChecked aria-label="Marketing communications" />
+              <span />
+            </label>
+          </div>
+        </div>
         <div className="account-personal-actions">
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
             {submitting ? "Updating..." : "Update Changes"}
           </button>
-          <p>{submitting ? "Saving your account details..." : "Changes stay on this section after saving."}</p>
+          <button type="button" className="account-personal-discard">Discard Changes</button>
         </div>
       </form>
+      <div className="account-security-strip">
+        <span><AccountNavIcon name="shield" /></span>
+        <div>
+          <strong>Account Security</strong>
+          <p>Your account is currently protected with standard security. Enable Two-Factor Authentication (2FA) for institutional-grade protection.</p>
+        </div>
+        <button type="button">Secure Account</button>
+      </div>
     </section>
   );
 }
