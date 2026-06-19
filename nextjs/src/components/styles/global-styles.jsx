@@ -10404,6 +10404,134 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 8px;
 }
+.account-address-preview {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: start;
+  padding: 28px 32px;
+  border: 1px solid #c1c9bd;
+  border-left: 5px solid #003714;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.account-address-preview__icon {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 4px;
+  background: #a6f5af;
+  color: #27723a;
+}
+.account-address-preview__copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.account-address-preview__badge {
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: 3px;
+  background: #003714;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.account-address-preview__copy strong {
+  color: #003714;
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
+.account-address-preview__copy p {
+  margin: 0;
+  color: #111c2c;
+  line-height: 1.45;
+}
+.account-address-preview__edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  color: #003714;
+  cursor: pointer;
+  font-weight: 800;
+}
+.account-address-preview__edit .account-dashboard__nav-icon,
+.account-address-tip .account-dashboard__nav-icon {
+  width: 20px;
+  height: 20px;
+}
+.account-address-form {
+  padding: 44px 46px;
+  border: 1px solid #c1c9bd;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.account-address-form h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  color: #111c2c;
+  font-size: 1.55rem;
+  line-height: 1.25;
+}
+.account-address-form .account-dashboard__field {
+  gap: 8px;
+}
+.account-address-form .account-dashboard__field span {
+  color: #414940;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+.account-address-form .field {
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: #edf2f7;
+  color: #111c2c;
+  font-weight: 600;
+}
+.account-address-form .disabled-field {
+  background: #f0f3ff;
+  color: #665d52;
+}
+.account-address-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  padding-top: 22px;
+}
+.account-address-actions .account-dashboard__submit {
+  min-width: 190px;
+  min-height: 56px;
+  border-radius: 4px;
+  background: #003714;
+  box-shadow: 0 8px 18px rgba(0, 55, 20, 0.16);
+}
+.account-address-tip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px solid #d7c4a8;
+  border-radius: 4px;
+  background: #f8f2e6;
+  color: #541b29;
+}
+.account-address-tip p {
+  margin: 0;
+  color: #541b29;
+  line-height: 1.45;
+}
 .account-mini-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -10951,6 +11079,11 @@ button, input, select, textarea { font: inherit; }
     gap: 32px;
   }
   .account-orders-section {
+    max-width: min(100%, 1120px);
+    margin-inline: auto;
+    gap: 32px;
+  }
+  .account-address-section {
     max-width: min(100%, 1120px);
     margin-inline: auto;
     gap: 32px;
@@ -15532,6 +15665,24 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: auto minmax(0, 1fr);
     gap: 14px;
     padding: 22px;
+  }
+  .account-address-preview,
+  .account-address-form,
+  .account-address-tip {
+    padding: 20px;
+  }
+  .account-address-preview {
+    grid-template-columns: 1fr;
+  }
+  .account-address-preview__edit {
+    justify-self: start;
+  }
+  .account-address-actions {
+    display: grid;
+    gap: 12px;
+  }
+  .account-address-actions .account-dashboard__submit {
+    width: 100%;
   }
   .account-dashboard__section-head--row,
   .account-dashboard__form,

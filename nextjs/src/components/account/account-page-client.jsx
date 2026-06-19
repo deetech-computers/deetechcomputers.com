@@ -288,6 +288,26 @@ function AccountNavIcon({ name }) {
         <path d="M9 15h4" />
       </>
     ),
+    home: (
+      <>
+        <path d="m3 11 9-8 9 8" />
+        <path d="M5 10v10h14V10" />
+        <path d="M9 20v-6h6v6" />
+      </>
+    ),
+    edit: (
+      <>
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
+      </>
+    ),
+    info: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4" />
+        <path d="M12 8h.01" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -573,39 +593,52 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
 }
 
 function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
+  const displayName = [form.firstName, form.lastName].filter(Boolean).join(" ") || "Account Holder";
+  const cityRegion = [form.city, form.region].filter(Boolean).join(", ") || "Add your city and region.";
   return (
-    <section className="account-dashboard__section">
+    <section className="account-dashboard__section account-address-section">
       <div className="account-dashboard__section-head">
         <h2>Manage Address</h2>
-        <p>Keep your default delivery address accurate for faster checkout.</p>
+        <p>Update your default delivery address for faster checkout.</p>
       </div>
 
-      <div className="account-address-card panel">
-        <strong>{[form.firstName, form.lastName].filter(Boolean).join(" ") || "Account Holder"}</strong>
-        <p>{form.address || "No street address added yet."}</p>
-        <p>{[form.city, form.region].filter(Boolean).join(", ") || "Add your city and region."}</p>
-        <p>{form.phone || "Add your phone number."}</p>
+      <div className="account-address-preview">
+        <span className="account-address-preview__icon" aria-hidden="true">
+          <AccountNavIcon name="home" />
+        </span>
+        <div className="account-address-preview__copy">
+          <span className="account-address-preview__badge">Default Address</span>
+          <strong>{displayName}</strong>
+          <p>{form.address || "No street address added yet."}</p>
+          <p>{cityRegion}</p>
+          <p>{form.phone || "Add your phone number."}</p>
+        </div>
+        <button type="button" className="account-address-preview__edit">
+          <AccountNavIcon name="edit" />
+          <span>Edit</span>
+        </button>
       </div>
 
-      <form className="account-dashboard__form" onSubmit={onSubmit}>
+      <form className="account-dashboard__form account-address-form" onSubmit={onSubmit}>
+        <h3>Add New Address</h3>
         <label className="account-dashboard__field">
-          <span>First Name *</span>
-          <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
+          <span>First Name</span>
+          <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} placeholder="e.g. Kwame" required />
         </label>
         <label className="account-dashboard__field">
-          <span>Last Name *</span>
-          <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} required />
+          <span>Last Name</span>
+          <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} placeholder="e.g. Mensah" required />
         </label>
         <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Street Address *</span>
-          <input className="field" value={form.address} onChange={(event) => onFieldChange("address", event.target.value)} placeholder="Enter Street Address" required />
+          <span>Street Address</span>
+          <input className="field" value={form.address} onChange={(event) => onFieldChange("address", event.target.value)} placeholder="House No., Street Name, Landmark" required />
         </label>
-        <label className="account-dashboard__field">
-          <span>City *</span>
+        <label className="account-dashboard__field account-dashboard__field--full">
+          <span>City</span>
           <input className="field" value={form.city} onChange={(event) => onFieldChange("city", event.target.value)} placeholder="Enter City" required />
         </label>
-        <label className="account-dashboard__field">
-          <span>Region *</span>
+        <label className="account-dashboard__field account-dashboard__field--full">
+          <span>Region</span>
           <select className="field" value={form.region} onChange={(event) => onFieldChange("region", event.target.value)} required>
             <option value="">Select Region</option>
             {GHANA_REGIONS.map((region) => (
@@ -616,17 +649,27 @@ function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
           </select>
         </label>
         <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Phone *</span>
-          <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
+          <span>Phone Number</span>
+          <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="+233 XX XXX XXXX" required />
         </label>
         <label className="account-dashboard__field account-dashboard__field--full">
-          <span>Email *</span>
+          <span>Email Address (Read-only)</span>
           <input className="field disabled-field" value={form.email} disabled />
         </label>
-        <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
-          {submitting ? "Saving..." : "Add Address"}
-        </button>
+        <div className="account-address-actions">
+          <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
+            {submitting ? "Saving..." : "Add Address"}
+          </button>
+          <button type="button" className="account-personal-discard">
+            Clear Form
+          </button>
+        </div>
       </form>
+
+      <div className="account-address-tip">
+        <AccountNavIcon name="info" />
+        <p><strong>Pro Tip:</strong> Setting a default address ensures that shipping costs are accurately calculated instantly when you add items to your cart.</p>
+      </div>
     </section>
   );
 }
