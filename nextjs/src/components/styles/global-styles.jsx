@@ -11995,6 +11995,12 @@ button, input, select, textarea { font: inherit; }
 }
 /* Account mobile home - dedicated mobile screen only */
 @media (max-width: 640px) {
+  .app-shell:has(.account-mobile-personal) .site-header {
+    display: none;
+  }
+  .app-shell:has(.account-mobile-personal) .app-content {
+    padding-top: 0;
+  }
   .account-page-main.has-mobile-home {
     width: 100%;
     max-width: none;
@@ -12203,7 +12209,7 @@ button, input, select, textarea { font: inherit; }
     min-height: 56px;
     padding: 0 18px;
     border-bottom: 1px solid #d7ddd2;
-    background: #fbfbff;
+    background: #ffffff;
     box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
   }
   .account-mobile-personal__head a {
