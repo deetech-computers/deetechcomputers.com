@@ -12,7 +12,7 @@ import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { formatCurrency } from "@/lib/format";
-import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
+import { getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import {
   buildAdminNotifications,
   buildNotificationScope,
@@ -273,6 +273,21 @@ function AccountNavIcon({ name }) {
         <path d="M19 9a4 4 0 0 1 0 6" />
       </>
     ),
+    map: (
+      <>
+        <path d="M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z" />
+        <path d="M9 3v15" />
+        <path d="M15 6v15" />
+      </>
+    ),
+    receipt: (
+      <>
+        <path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z" />
+        <path d="M9 7h6" />
+        <path d="M9 11h6" />
+        <path d="M9 15h4" />
+      </>
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -443,7 +458,7 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
 
 function OrdersSection({ orders, router, onDownloadInvoice }) {
   return (
-    <section className="account-dashboard__section">
+    <section className="account-dashboard__section account-orders-section">
       <div className="account-dashboard__section-head account-dashboard__section-head--row">
         <div>
           <h2>Orders ({orders.length})</h2>
@@ -453,6 +468,8 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
       <div className="account-dashboard__stack">
         {orders.length ? orders.map((order) => {
           const items = getOrderLineItems(order);
+          const visibleItems = items.slice(0, 2);
+          const overflowCount = Math.max(0, items.length - visibleItems.length);
           const itemsPrice = getOrderItemsPrice(order);
           const shippingPrice = getOrderShippingPrice(order);
           const discountAmount = getOrderDiscountAmount(order);
@@ -486,10 +503,9 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
               </div>
 
               <div className="account-order-card__items">
-                {items.slice(0, 4).map((item, index) => {
+                {visibleItems.map((item, index) => {
                   const product = item?.product || {};
                   const image = getOrderItemImage(item);
-                  const pricing = getLinePricing(item);
                   return (
                     <Link
                       key={product?._id || index}
@@ -506,14 +522,16 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                       </div>
                       <div className="account-order-card__copy">
                         <strong>{product?.name || "Product"}</strong>
-                        <span>{formatCategoryLabel(product?.category || product?.brand || "Product")}</span>
-                        {pricing.hasDiscount ? (
-                          <small>{formatCurrency(pricing.originalUnitPrice)} to {formatCurrency(pricing.currentUnitPrice)}</small>
-                        ) : null}
+                        <span>Qty: {Number(item?.qty || item?.quantity || 1)}</span>
                       </div>
                     </Link>
                   );
                 })}
+                {overflowCount > 0 ? (
+                  <div className="account-order-card__overflow" aria-label={`${overflowCount} more order items`}>
+                    +{overflowCount}
+                  </div>
+                ) : null}
               </div>
 
               <div className="account-order-card__footer">
@@ -523,14 +541,17 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
                 </div>
                 <div className="account-order-card__actions">
                   <button type="button" className="primary-button" onClick={() => router.push(`/orders/${order._id}`)}>
-                    Track Order
+                    <AccountNavIcon name="map" />
+                    <span>Track Order</span>
                   </button>
                   <button type="button" className="ghost-button" onClick={() => onDownloadInvoice(order)}>
-                    Invoice
+                    <AccountNavIcon name="receipt" />
+                    <span>Invoice</span>
                   </button>
                   {items[0]?.product?._id ? (
                     <button type="button" className="ghost-button" onClick={() => router.push(`/products/${items[0].product._id}?tab=reviews#reviews`)}>
-                      Add Review
+                      <AccountNavIcon name="review" />
+                      <span>Add Review</span>
                     </button>
                   ) : null}
                 </div>

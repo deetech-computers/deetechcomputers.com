@@ -10667,28 +10667,35 @@ button, input, select, textarea { font: inherit; }
   color: var(--text);
 }
 .account-order-card {
-  padding: 0;
+  padding: 24px;
   overflow: hidden;
+  border: 1px solid #c1c9bd;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 .account-order-card__summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
-  background: #194f21;
-  color: #fff;
+  gap: clamp(18px, 3vw, 36px);
+  padding: 0 0 22px;
+  border-bottom: 1px solid #c1c9bd;
+  color: #111c2c;
 }
 .account-order-card__summary > div {
-  padding: 22px 24px;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 .account-order-card__summary > div + div {
-  border-left: 1px solid rgba(255,255,255,0.18);
+  border-left: 0;
 }
 .account-order-card__summary span {
-  font-size: 0.88rem;
-  color: rgba(255,255,255,0.78);
+  color: #414940;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 .account-order-card__summary strong {
   font-size: clamp(0.95rem, 1.2vw, 1.22rem);
@@ -10696,18 +10703,35 @@ button, input, select, textarea { font: inherit; }
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+.account-order-card__summary > div:nth-child(2) strong {
+  color: #003714;
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  letter-spacing: -0.01em;
+}
+.account-order-card__summary small {
+  color: #665d52;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
 .account-order-card__items {
-  display: grid;
-  gap: 0;
-  padding: 10px 22px 0;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  padding: 24px 0;
+  border-bottom: 1px solid #e7eeff;
+  flex-wrap: wrap;
 }
 .account-order-card__item {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
   align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #ece3d7;
+  width: min(100%, 286px);
+  min-height: 86px;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid #d8e3fa;
+  border-radius: 4px;
+  background: #f0f3ff;
   color: inherit;
   text-decoration: none;
 }
@@ -10718,26 +10742,28 @@ button, input, select, textarea { font: inherit; }
 .account-order-card__footer {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  align-items: center;
-  padding: 20px 22px 22px;
+  gap: 24px;
+  align-items: flex-end;
+  padding: 20px 0 0;
   flex-wrap: wrap;
 }
 .account-order-card__status {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 8px;
+  align-items: start;
 }
 .account-order-card__status p {
   margin: 0;
-  font-size: 1rem;
+  color: #414940;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 .account-order-card__pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  width: fit-content;
+  min-height: 26px;
   padding: 0 16px;
   border-radius: 999px;
   font-weight: 700;
@@ -10764,12 +10790,48 @@ button, input, select, textarea { font: inherit; }
 }
 .account-order-card__actions {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .account-order-card__actions .primary-button,
 .account-order-card__actions .ghost-button {
+  display: inline-flex;
   min-width: 150px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 4px;
+  font-weight: 900;
+}
+.account-order-card__actions .primary-button {
+  background: #003714;
+  box-shadow: none;
+}
+.account-order-card__actions .ghost-button {
+  border-color: #184f27;
+  color: #184f27;
+}
+.account-order-card__actions .account-dashboard__nav-icon {
+  width: 18px;
+  height: 18px;
+}
+.account-order-card__overflow {
+  display: grid;
+  width: 72px;
+  min-height: 72px;
+  place-items: center;
+  border: 1px dashed #c1c9bd;
+  border-radius: 4px;
+  color: #414940;
+  font-weight: 900;
+}
+.account-order-card__thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  background: #ffffff;
 }
 @media (prefers-reduced-motion: reduce) {
   .account-dashboard__nav,
@@ -10888,6 +10950,11 @@ button, input, select, textarea { font: inherit; }
     margin-inline: auto;
     gap: 32px;
   }
+  .account-orders-section {
+    max-width: min(100%, 1120px);
+    margin-inline: auto;
+    gap: 32px;
+  }
   .account-personal-section .account-dashboard__section-head {
     gap: 4px;
   }
@@ -10913,11 +10980,7 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .account-order-card__item {
-    grid-template-columns: 78px minmax(0, 1fr);
-  }
-  .account-order-card__summary > div + div {
-    border-left: 1px solid rgba(255,255,255,0.18);
-    border-top: 0;
+    grid-template-columns: 72px minmax(0, 1fr);
   }
 }
 
@@ -15519,7 +15582,14 @@ button, input, select, textarea { font: inherit; }
   }
   .account-order-card__summary > div + div {
     border-left: 0;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: 1px solid #e7eeff;
+    padding-top: 14px;
+  }
+  .account-order-card__items {
+    gap: 12px;
+  }
+  .account-order-card__item {
+    width: 100%;
   }
   .account-order-card__footer,
   .account-order-card__actions,
