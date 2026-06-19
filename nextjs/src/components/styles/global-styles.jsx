@@ -11990,15 +11990,20 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-home {
   display: none;
 }
+.account-mobile-orders {
+  display: none;
+}
 .account-mobile-personal {
   display: none;
 }
 /* Account mobile home - dedicated mobile screen only */
 @media (max-width: 640px) {
-  .app-shell:has(.account-mobile-personal) .site-header {
+  .app-shell:has(.account-mobile-personal) .site-header,
+  .app-shell:has(.account-mobile-orders) .site-header {
     display: none;
   }
-  .app-shell:has(.account-mobile-personal) .app-content {
+  .app-shell:has(.account-mobile-personal) .app-content,
+  .app-shell:has(.account-mobile-orders) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12019,6 +12024,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-personal .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-orders {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-orders .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -12193,6 +12208,194 @@ button, input, select, textarea { font: inherit; }
   }
   .account-mobile-home__item--logout .account-mobile-home__icon:first-child {
     color: #c2222b;
+  }
+  .account-mobile-orders {
+    display: block;
+    min-height: 100dvh;
+    background: #f5f6f7;
+    color: #111827;
+  }
+  .account-mobile-orders__head {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-height: 56px;
+    padding: 0 16px;
+    border-bottom: 1px solid #d7ddd2;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-orders__head a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: #003714;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .account-mobile-orders__head a:last-child {
+    justify-self: end;
+  }
+  .account-mobile-orders__head h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.35rem;
+    line-height: 1.1;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .account-mobile-orders__icon {
+    width: 21px;
+    height: 21px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-orders__body {
+    display: grid;
+    gap: 16px;
+    padding: 16px 16px max(24px, env(safe-area-inset-bottom));
+  }
+  .account-mobile-orders__card,
+  .account-mobile-orders__empty {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-orders__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .account-mobile-orders__top > strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: #111827;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .account-mobile-orders__status {
+    display: inline-flex;
+    min-height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .account-mobile-orders__status.is-delivered,
+  .account-mobile-orders__status.is-transit {
+    background: #a6f5af;
+    color: #207432;
+  }
+  .account-mobile-orders__status.is-pending {
+    background: #f6d7df;
+    color: #7f3149;
+  }
+  .account-mobile-orders__status.is-cancelled {
+    background: #ffd9d7;
+    color: #c2222b;
+  }
+  .account-mobile-orders__price {
+    margin-top: 6px;
+    color: #111827;
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1.05;
+  }
+  .account-mobile-orders__date {
+    margin: -4px 0 8px;
+    color: #4b5550;
+    font-size: 0.86rem;
+  }
+  .account-mobile-orders__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 60px;
+    margin-bottom: 10px;
+  }
+  .account-mobile-orders__thumb {
+    display: grid;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    overflow: hidden;
+    border: 3px solid #ececf6;
+    background: #d5d5d5;
+    color: #111827;
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+  .account-mobile-orders__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .account-mobile-orders__thumb.is-empty {
+    border-color: #ececf6;
+  }
+  .account-mobile-orders__track {
+    min-height: 56px;
+    border: 0;
+    border-radius: 4px;
+    background: #18572a;
+    color: #a9d0ad;
+    font: inherit;
+    font-size: 0.98rem;
+    font-weight: 900;
+    box-shadow: none;
+  }
+  .account-mobile-orders__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .account-mobile-orders__actions button,
+  .account-mobile-orders__empty a {
+    min-height: 58px;
+    border: 1px solid #343b35;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #0b4423;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+  .account-mobile-orders__actions button:disabled {
+    opacity: 0.5;
+  }
+  .account-mobile-orders__empty {
+    justify-items: start;
+  }
+  .account-mobile-orders__empty h2 {
+    margin: 0;
+    color: #003714;
+    font-size: 1.2rem;
+  }
+  .account-mobile-orders__empty p {
+    margin: 0;
+    color: #4b5550;
+  }
+  .account-mobile-orders__empty a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-color: #18572a;
+    background: #18572a;
+    color: #ffffff;
   }
   .account-mobile-personal {
     display: block;

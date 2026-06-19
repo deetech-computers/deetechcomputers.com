@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import MobileAccountHome from "@/components/account/account-mobile-home";
+import MobileOrders from "@/components/account/account-mobile-orders";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
@@ -1683,6 +1684,7 @@ export default function AccountPageClient({ initialTab = "" }) {
     : buildUserNotifications(orders, supportTickets);
   const hasExplicitAccountTab = Boolean(String(initialTab || "").trim());
   const shouldShowMobilePersonal = hasExplicitAccountTab && activeSection === "personal";
+  const shouldShowMobileOrders = hasExplicitAccountTab && activeSection === "orders";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1775,6 +1777,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       "shell page-section account-page-main",
       !hasExplicitAccountTab ? "has-mobile-home" : "",
       shouldShowMobilePersonal ? "has-mobile-personal" : "",
+      shouldShowMobileOrders ? "has-mobile-orders" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1792,6 +1795,13 @@ export default function AccountPageClient({ initialTab = "" }) {
           onFieldChange={handleProfileFieldChange}
           onSubmit={handleProfileSubmit}
           submitting={savingProfile}
+        />
+      ) : null}
+      {shouldShowMobileOrders ? (
+        <MobileOrders
+          orders={orders}
+          router={router}
+          onDownloadInvoice={downloadInvoiceHtml}
         />
       ) : null}
       <section className="account-dashboard-shell">
