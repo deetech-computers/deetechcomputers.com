@@ -143,14 +143,14 @@ export default function MobileAffiliates({ summary }) {
       <header className="account-mobile-affiliates__head">
         <Link href="/account" aria-label="Back to account">
           <MobileAffiliateIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div>
-          <span>Account</span>
           <h1>Affiliates</h1>
         </div>
-        <Link href="/affiliates" aria-label="Affiliate information">
-          <MobileAffiliateIcon name="info" />
-        </Link>
+        <span className="account-mobile-affiliates__section-icon" aria-hidden="true">
+          <MobileAffiliateIcon name="users" />
+        </span>
       </header>
 
       <div className="account-mobile-affiliates__body">

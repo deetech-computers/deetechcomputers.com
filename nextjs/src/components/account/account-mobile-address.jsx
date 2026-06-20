@@ -75,11 +75,14 @@ export default function MobileAddress({ form, onFieldChange, onSubmit, submittin
       <header className="account-mobile-address__head">
         <Link href="/account" aria-label="Back to account">
           <MobileAddressIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div>
-          <span>Account</span>
           <h1>Manage Address</h1>
         </div>
+        <span className="account-mobile-address__section-icon" aria-hidden="true">
+          <MobileAddressIcon name="pin" />
+        </span>
       </header>
 
       <form id="account-mobile-address-form" className="account-mobile-address__body" onSubmit={onSubmit}>

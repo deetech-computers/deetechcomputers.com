@@ -98,14 +98,14 @@ export default function MobileReviews({ reviews }) {
       <header className="account-mobile-reviews__head">
         <Link href="/account" aria-label="Back to account">
           <MobileReviewsIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div className="account-mobile-reviews__title">
-          <span>Account <MobileReviewsIcon name="chevronRight" /> Reviews</span>
           <h1>Reviews</h1>
         </div>
-        <Link href="/account?tab=personal" aria-label="Account settings">
-          <MobileReviewsIcon name={reviews.length ? "settings" : "person"} />
-        </Link>
+        <span className="account-mobile-reviews__section-icon" aria-hidden="true">
+          <MobileReviewsIcon name="review" />
+        </span>
       </header>
 
       {reviews.length ? (

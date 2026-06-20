@@ -110,14 +110,14 @@ export default function MobileOrders({ orders, router, onDownloadInvoice }) {
       <header className="account-mobile-orders__head">
         <Link href="/account">
           <MobileOrdersIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div className="account-mobile-orders__title">
-          <span>Account</span>
           <h1>Orders</h1>
         </div>
-        <Link href="/account?tab=notifications" aria-label="Order settings">
-          <MobileOrdersIcon name={hasOrders ? "bell" : "gear"} />
-        </Link>
+        <span className="account-mobile-orders__section-icon" aria-hidden="true">
+          <MobileOrdersIcon name="bag" />
+        </span>
       </header>
 
       <div className={hasOrders ? "account-mobile-orders__body" : "account-mobile-orders__body is-empty"}>

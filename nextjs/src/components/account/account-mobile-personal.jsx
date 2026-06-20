@@ -65,6 +65,12 @@ function MobilePersonalIcon({ name }) {
         <path d="M10 21h4" />
       </>
     ),
+    person: (
+      <>
+        <path d="M20 21a8 8 0 0 0-16 0" />
+        <circle cx="12" cy="7" r="4" />
+      </>
+    ),
     chevronRight: <path d="m9 18 6-6-6-6" />,
   };
 
@@ -84,6 +90,9 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
           <span>Account</span>
         </Link>
         <h1>Personal Information</h1>
+        <span className="account-mobile-personal__section-icon" aria-hidden="true">
+          <MobilePersonalIcon name="person" />
+        </span>
       </header>
 
       <div className="account-mobile-personal__body">

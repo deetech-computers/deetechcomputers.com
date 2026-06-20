@@ -14758,7 +14758,7 @@ button, input, select, textarea { font: inherit; }
   }
   .account-mobile-address__preview {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) 36px;
+    grid-template-columns: 64px minmax(0, 1fr);
     gap: 16px;
     align-items: start;
     padding: 28px 20px;
@@ -17243,6 +17243,118 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-personal__submit button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+  .account-mobile-personal__head,
+  .account-mobile-address__head,
+  .account-mobile-affiliates__head,
+  .account-mobile-messages__head,
+  .account-mobile-notifications__head,
+  .account-mobile-orders__head,
+  .account-mobile-password__head,
+  .account-mobile-reviews__head,
+  .account-mobile-wishlist__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: minmax(82px, auto) minmax(0, 1fr) 44px;
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 18px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-personal__head a,
+  .account-mobile-address__head a,
+  .account-mobile-affiliates__head a,
+  .account-mobile-messages__head a,
+  .account-mobile-notifications__head a,
+  .account-mobile-orders__head a,
+  .account-mobile-password__head a,
+  .account-mobile-reviews__head a,
+  .account-mobile-wishlist__head a {
+    display: inline-flex;
+    width: auto;
+    min-width: 0;
+    min-height: 44px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    color: #003714;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: none;
+  }
+  .account-mobile-personal__head a span,
+  .account-mobile-address__head a span,
+  .account-mobile-affiliates__head a span,
+  .account-mobile-messages__head a span,
+  .account-mobile-notifications__head a span,
+  .account-mobile-orders__head a span,
+  .account-mobile-password__head a span,
+  .account-mobile-reviews__head a span,
+  .account-mobile-wishlist__head a span {
+    display: inline;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: 0;
+    line-height: inherit;
+    text-transform: none;
+  }
+  .account-mobile-personal__head h1,
+  .account-mobile-address__head h1,
+  .account-mobile-affiliates__head h1,
+  .account-mobile-messages__head h1,
+  .account-mobile-notifications__title h1,
+  .account-mobile-orders__title h1,
+  .account-mobile-password__head h1,
+  .account-mobile-reviews__title h1,
+  .account-mobile-wishlist__title h1 {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: #111827;
+    font-size: clamp(1.05rem, 5.1vw, 1.32rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.1;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .account-mobile-address__head > div,
+  .account-mobile-affiliates__head > div,
+  .account-mobile-notifications__title,
+  .account-mobile-orders__title,
+  .account-mobile-reviews__title,
+  .account-mobile-wishlist__title {
+    display: grid;
+    min-width: 0;
+    align-content: center;
+    justify-self: start;
+  }
+  .account-mobile-personal__section-icon,
+  .account-mobile-address__section-icon,
+  .account-mobile-affiliates__section-icon,
+  .account-mobile-messages__section-icon,
+  .account-mobile-notifications__section-icon,
+  .account-mobile-orders__section-icon,
+  .account-mobile-password__section-icon,
+  .account-mobile-reviews__section-icon,
+  .account-mobile-wishlist__section-icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    justify-self: end;
+    color: #003714;
+    pointer-events: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

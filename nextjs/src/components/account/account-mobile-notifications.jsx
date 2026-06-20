@@ -85,7 +85,6 @@ export default function MobileNotifications({
   notifications,
   readIds,
   onOpenNotification,
-  onMarkAllRead,
 }) {
   const hasNotifications = notifications.length > 0;
 
@@ -94,18 +93,14 @@ export default function MobileNotifications({
       <header className="account-mobile-notifications__head">
         <Link href="/account" aria-label="Back to account">
           <MobileNotificationsIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div className="account-mobile-notifications__title">
-          {!hasNotifications ? <span>Account</span> : null}
           <h1>Notifications</h1>
         </div>
-        {hasNotifications ? (
-          <button type="button" onClick={onMarkAllRead}>Mark all read</button>
-        ) : (
-          <Link href="/account" className="account-mobile-notifications__profile" aria-label="Account menu">
-            <MobileNotificationsIcon name="person" />
-          </Link>
-        )}
+        <span className="account-mobile-notifications__section-icon" aria-hidden="true">
+          <MobileNotificationsIcon name="bell" />
+        </span>
       </header>
 
       {hasNotifications ? (

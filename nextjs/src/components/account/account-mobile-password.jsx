@@ -100,9 +100,12 @@ export default function MobilePasswordManager({
       <header className="account-mobile-password__head">
         <Link href="/account" aria-label="Back to account">
           <MobilePasswordIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <h1>Password Manager</h1>
-        <MobilePasswordIcon name="shield" />
+        <span className="account-mobile-password__section-icon" aria-hidden="true">
+          <MobilePasswordIcon name="shield" />
+        </span>
       </header>
 
       <div className="account-mobile-password__body">

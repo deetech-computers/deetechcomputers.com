@@ -95,14 +95,14 @@ export default function MobileWishlist({ items }) {
       <header className="account-mobile-wishlist__head">
         <Link href="/account" aria-label="Back to account">
           <MobileWishlistIcon name="arrowLeft" />
+          <span>Account</span>
         </Link>
         <div className="account-mobile-wishlist__title">
-          <span>Account</span>
           <h1>Wishlist</h1>
         </div>
-        <Link href="/account?tab=personal" aria-label="Account profile">
-          <MobileWishlistIcon name={hasItems ? "user" : "heart"} />
-        </Link>
+        <span className="account-mobile-wishlist__section-icon" aria-hidden="true">
+          <MobileWishlistIcon name="heart" />
+        </span>
       </header>
 
       <div className={hasItems ? "account-mobile-wishlist__body" : "account-mobile-wishlist__body is-empty"}>

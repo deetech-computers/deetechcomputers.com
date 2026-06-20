@@ -116,6 +116,9 @@ export default function MobileMessages({
           <span>Account</span>
         </Link>
         <h1>Messages</h1>
+        <span className="account-mobile-messages__section-icon" aria-hidden="true">
+          <MobileMessagesIcon name="mail" />
+        </span>
       </header>
 
       {!activeTicket ? (
