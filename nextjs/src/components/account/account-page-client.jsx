@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import MobileAddress from "@/components/account/account-mobile-address";
+import MobileAffiliates from "@/components/account/account-mobile-affiliates";
 import MobileAccountHome from "@/components/account/account-mobile-home";
 import MobileMessages from "@/components/account/account-mobile-messages";
 import MobileNotifications from "@/components/account/account-mobile-notifications";
@@ -1691,6 +1692,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const shouldShowMobileAddress = hasExplicitAccountTab && activeSection === "address";
   const shouldShowMobileMessages = hasExplicitAccountTab && activeSection === "messages";
   const shouldShowMobileNotifications = hasExplicitAccountTab && activeSection === "notifications";
+  const shouldShowMobileAffiliates = hasExplicitAccountTab && activeSection === "affiliates";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1787,6 +1789,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       shouldShowMobileAddress ? "has-mobile-address" : "",
       shouldShowMobileMessages ? "has-mobile-messages" : "",
       shouldShowMobileNotifications ? "has-mobile-notifications" : "",
+      shouldShowMobileAffiliates ? "has-mobile-affiliates" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1837,6 +1840,9 @@ export default function AccountPageClient({ initialTab = "" }) {
           onOpenNotification={handleNotificationOpen}
           onMarkAllRead={handleMarkAllNotificationsRead}
         />
+      ) : null}
+      {shouldShowMobileAffiliates ? (
+        <MobileAffiliates summary={affiliateSummary} />
       ) : null}
       <section className="account-dashboard-shell">
         <div className="account-dashboard">

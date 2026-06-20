@@ -11993,6 +11993,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-address {
   display: none;
 }
+.account-mobile-affiliates {
+  display: none;
+}
 .account-mobile-messages {
   display: none;
 }
@@ -12011,14 +12014,16 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-orders) .site-header,
   .app-shell:has(.account-mobile-address) .site-header,
   .app-shell:has(.account-mobile-messages) .site-header,
-  .app-shell:has(.account-mobile-notifications) .site-header {
+  .app-shell:has(.account-mobile-notifications) .site-header,
+  .app-shell:has(.account-mobile-affiliates) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
   .app-shell:has(.account-mobile-orders) .app-content,
   .app-shell:has(.account-mobile-address) .app-content,
   .app-shell:has(.account-mobile-messages) .app-content,
-  .app-shell:has(.account-mobile-notifications) .app-content {
+  .app-shell:has(.account-mobile-notifications) .app-content,
+  .app-shell:has(.account-mobile-affiliates) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12079,6 +12084,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-notifications .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-affiliates {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-affiliates .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -12495,6 +12510,374 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-address__submit button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+  .account-mobile-affiliates {
+    display: block;
+    min-height: 100dvh;
+    padding-bottom: 104px;
+    background: #f7f7fb;
+    color: #111827;
+  }
+  .account-mobile-affiliates__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 10px;
+    align-items: center;
+    min-height: 64px;
+    padding: 8px 18px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-affiliates__head a {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #003714;
+    text-decoration: none;
+  }
+  .account-mobile-affiliates__head div {
+    min-width: 0;
+  }
+  .account-mobile-affiliates__head span {
+    display: block;
+    color: #252b24;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__head h1 {
+    margin: 3px 0 0;
+    color: #111827;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+  .account-mobile-affiliates__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-affiliates__body {
+    display: grid;
+    gap: 26px;
+    padding: 18px 18px 26px;
+  }
+  .account-mobile-affiliates__hero {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: 9px;
+    background: #18572a;
+    color: #a8d4ad;
+    box-shadow: 0 14px 34px rgba(0, 64, 27, 0.16);
+  }
+  .account-mobile-affiliates__hero::after {
+    content: "";
+    position: absolute;
+    top: 22px;
+    right: 18px;
+    width: 98px;
+    height: 98px;
+    border: 18px solid rgba(166, 245, 175, 0.08);
+    border-radius: 999px;
+  }
+  .account-mobile-affiliates__hero-top,
+  .account-mobile-affiliates__tier {
+    position: relative;
+    z-index: 1;
+  }
+  .account-mobile-affiliates__hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .account-mobile-affiliates__hero-top > span {
+    display: inline-flex;
+    min-height: 26px;
+    align-items: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #a6f5af;
+    color: #003714;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__hero-top > span::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-right: 6px;
+    border-radius: 999px;
+    background: #003714;
+  }
+  .account-mobile-affiliates__hero-top div {
+    display: grid;
+    justify-items: end;
+    color: rgba(255, 255, 255, 0.56);
+    line-height: 1.05;
+  }
+  .account-mobile-affiliates__hero-top small {
+    font-size: 0.82rem;
+  }
+  .account-mobile-affiliates__hero-top strong {
+    color: #a8d4ad;
+    font-size: 1.55rem;
+  }
+  .account-mobile-affiliates__hero > p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.95rem;
+  }
+  .account-mobile-affiliates__code {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.16);
+  }
+  .account-mobile-affiliates__code strong {
+    min-width: 0;
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .account-mobile-affiliates__code button {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 6px;
+    background: #a6dbaa;
+    color: #003714;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__code button:disabled {
+    opacity: 0.58;
+  }
+  .account-mobile-affiliates__code .account-mobile-affiliates__icon {
+    width: 17px;
+    height: 17px;
+  }
+  .account-mobile-affiliates__tier {
+    display: grid;
+    gap: 4px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+  }
+  .account-mobile-affiliates__tier span {
+    color: rgba(255, 255, 255, 0.52);
+  }
+  .account-mobile-affiliates__tier strong {
+    color: #a8d4ad;
+    font-size: 1.02rem;
+    text-transform: capitalize;
+  }
+  .account-mobile-affiliates__section {
+    display: grid;
+    gap: 14px;
+  }
+  .account-mobile-affiliates__section h2 {
+    margin: 0 4px;
+    color: #252b24;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .account-mobile-affiliates__stats article {
+    display: grid;
+    gap: 10px;
+    min-height: 132px;
+    align-content: center;
+    padding: 18px;
+    border: 1px solid #c1c9bd;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(27, 25, 22, 0.035);
+  }
+  .account-mobile-affiliates__stats article.is-gold {
+    border-color: #d7bc80;
+    background: #f8f2e6;
+    color: #714e13;
+  }
+  .account-mobile-affiliates__stats article.is-danger .account-mobile-affiliates__icon {
+    color: #c2222b;
+  }
+  .account-mobile-affiliates__stats span {
+    color: currentColor;
+    font-size: 0.84rem;
+    letter-spacing: 0.05em;
+  }
+  .account-mobile-affiliates__stats strong {
+    color: #111827;
+    font-size: 1.45rem;
+    line-height: 1;
+  }
+  .account-mobile-affiliates__stats .account-mobile-affiliates__icon {
+    color: #17602d;
+  }
+  .account-mobile-affiliates__payout {
+    display: grid;
+    gap: 18px;
+    padding: 28px;
+    border: 1px solid #c1c9bd;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-affiliates__payout-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+  }
+  .account-mobile-affiliates__payout h2,
+  .account-mobile-affiliates__payout h3 {
+    margin: 0;
+    color: #111827;
+  }
+  .account-mobile-affiliates__payout h2 {
+    font-size: 1.25rem;
+  }
+  .account-mobile-affiliates__payout h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__balance {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+    border-radius: 5px;
+    background: #f0f3fc;
+  }
+  .account-mobile-affiliates__balance div {
+    display: grid;
+    gap: 4px;
+  }
+  .account-mobile-affiliates__balance span {
+    color: #252b24;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__balance strong {
+    color: #003714;
+    font-size: 1.28rem;
+  }
+  .account-mobile-affiliates__bank {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #b7c2b4;
+    border-radius: 4px;
+  }
+  .account-mobile-affiliates__bank > span {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 4px;
+    background: #e7edff;
+    color: #003714;
+  }
+  .account-mobile-affiliates__bank strong {
+    display: block;
+    color: #111827;
+    font-size: 1rem;
+  }
+  .account-mobile-affiliates__bank p,
+  .account-mobile-affiliates__payout > p {
+    margin: 0;
+    color: #343b35;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+  .account-mobile-affiliates__bank a {
+    color: #003714;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .account-mobile-affiliates__invite {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid #8de99b;
+    border-radius: 8px;
+    background: #dcf8e7;
+    color: #0b4423;
+  }
+  .account-mobile-affiliates__invite strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  .account-mobile-affiliates__invite p {
+    margin: 0;
+    color: #2c342e;
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .account-mobile-affiliates__submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    padding: 18px;
+    border-top: 1px solid #c1c9bd;
+    background: rgba(247, 247, 251, 0.96);
+    backdrop-filter: blur(12px);
+  }
+  .account-mobile-affiliates__submit a {
+    display: inline-flex;
+    width: 100%;
+    min-height: 64px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 8px;
+    background: #00401b;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 900;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
   }
   .account-mobile-messages {
     display: block;
