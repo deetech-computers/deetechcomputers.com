@@ -12,6 +12,7 @@ import MobileOrders from "@/components/account/account-mobile-orders";
 import MobilePasswordManager from "@/components/account/account-mobile-password";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
 import MobileReviews from "@/components/account/account-mobile-reviews";
+import MobileWishlist from "@/components/account/account-mobile-wishlist";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -1697,6 +1698,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const shouldShowMobileAffiliates = hasExplicitAccountTab && activeSection === "affiliates";
   const shouldShowMobileReviews = hasExplicitAccountTab && activeSection === "reviews";
   const shouldShowMobilePassword = hasExplicitAccountTab && activeSection === "password";
+  const shouldShowMobileWishlist = hasExplicitAccountTab && activeSection === "wishlist";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1796,6 +1798,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       shouldShowMobileAffiliates ? "has-mobile-affiliates" : "",
       shouldShowMobileReviews ? "has-mobile-reviews" : "",
       shouldShowMobilePassword ? "has-mobile-password" : "",
+      shouldShowMobileWishlist ? "has-mobile-wishlist" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1862,6 +1865,9 @@ export default function AccountPageClient({ initialTab = "" }) {
           onSubmit={handlePasswordSubmit}
           submitting={savingPassword}
         />
+      ) : null}
+      {shouldShowMobileWishlist ? (
+        <MobileWishlist items={wishlistItems} />
       ) : null}
       <section className="account-dashboard-shell">
         <div className="account-dashboard">

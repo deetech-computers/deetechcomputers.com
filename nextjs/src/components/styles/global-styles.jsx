@@ -12014,6 +12014,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-reviews {
   display: none;
 }
+.account-mobile-wishlist {
+  display: none;
+}
 /* Account mobile home - dedicated mobile screen only */
 @media (max-width: 640px) {
   .app-shell:has(.account-mobile-personal) .site-header,
@@ -12023,7 +12026,8 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-notifications) .site-header,
   .app-shell:has(.account-mobile-affiliates) .site-header,
   .app-shell:has(.account-mobile-reviews) .site-header,
-  .app-shell:has(.account-mobile-password) .site-header {
+  .app-shell:has(.account-mobile-password) .site-header,
+  .app-shell:has(.account-mobile-wishlist) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
@@ -12033,7 +12037,8 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-notifications) .app-content,
   .app-shell:has(.account-mobile-affiliates) .app-content,
   .app-shell:has(.account-mobile-reviews) .app-content,
-  .app-shell:has(.account-mobile-password) .app-content {
+  .app-shell:has(.account-mobile-password) .app-content,
+  .app-shell:has(.account-mobile-wishlist) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12124,6 +12129,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-password .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-wishlist {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-wishlist .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -13820,6 +13835,194 @@ button, input, select, textarea { font: inherit; }
     color: #343b35;
     font-size: 1rem;
     line-height: 1.45;
+  }
+  .account-mobile-wishlist {
+    display: block;
+    min-height: 100dvh;
+    padding-bottom: 86px;
+    background: #f5f6f7;
+    color: #111827;
+  }
+  .account-mobile-wishlist__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e8e0d4;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-wishlist__head a {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #111827;
+    text-decoration: none;
+  }
+  .account-mobile-wishlist__head h1 {
+    margin: 0;
+    color: #003714;
+    font-size: 1.2rem;
+    line-height: 1.1;
+  }
+  .account-mobile-wishlist__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-wishlist__body {
+    display: grid;
+    gap: 18px;
+    padding: 18px 16px 24px;
+  }
+  .account-mobile-wishlist__body > p {
+    max-width: 340px;
+    margin: 0 8px;
+    color: #4b5550;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .account-mobile-wishlist__list {
+    display: grid;
+    gap: 16px;
+  }
+  .account-mobile-wishlist__card {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 7px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-wishlist__product {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+  }
+  .account-mobile-wishlist__thumb {
+    display: grid;
+    width: 80px;
+    height: 80px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid #d7ddd2;
+    border-radius: 5px;
+    background: #ffffff;
+  }
+  .account-mobile-wishlist__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .account-mobile-wishlist__copy {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+  .account-mobile-wishlist__copy strong {
+    min-width: 0;
+    overflow: hidden;
+    color: #003714;
+    font-size: 1rem;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .account-mobile-wishlist__copy em {
+    color: #343b35;
+    font-size: 0.76rem;
+    font-style: normal;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .account-mobile-wishlist__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #ece7de;
+  }
+  .account-mobile-wishlist__meta > strong {
+    color: #003714;
+    font-size: 0.95rem;
+    font-weight: 900;
+  }
+  .account-mobile-wishlist__meta > span {
+    display: inline-flex;
+    min-height: 24px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 0.66rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .account-mobile-wishlist__meta > span.is-in-stock {
+    background: #e7f6ed;
+    color: #17602d;
+  }
+  .account-mobile-wishlist__meta > span.is-out {
+    background: #fdeaea;
+    color: #c2222b;
+  }
+  .account-mobile-wishlist__empty {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 34px 24px;
+    border-radius: 8px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 12px 28px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-wishlist__empty .account-mobile-wishlist__icon {
+    color: #17602d;
+  }
+  .account-mobile-wishlist__empty h2 {
+    margin: 0;
+    color: #003714;
+    font-size: 1.2rem;
+  }
+  .account-mobile-wishlist__empty p {
+    margin: 0;
+    color: #4b5550;
+    line-height: 1.45;
+  }
+  .account-mobile-wishlist__submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    padding: 16px;
+    border-top: 1px solid #e8e0d4;
+    background: rgba(245, 246, 247, 0.96);
+    backdrop-filter: blur(12px);
+  }
+  .account-mobile-wishlist__submit a {
+    display: inline-flex;
+    width: 100%;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: #18572a;
+    color: #ffffff;
+    font-size: 0.98rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
   }
   .account-mobile-orders {
     display: block;
