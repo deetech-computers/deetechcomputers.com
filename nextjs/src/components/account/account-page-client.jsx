@@ -9,6 +9,7 @@ import MobileAccountHome from "@/components/account/account-mobile-home";
 import MobileMessages from "@/components/account/account-mobile-messages";
 import MobileNotifications from "@/components/account/account-mobile-notifications";
 import MobileOrders from "@/components/account/account-mobile-orders";
+import MobilePasswordManager from "@/components/account/account-mobile-password";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
 import MobileReviews from "@/components/account/account-mobile-reviews";
 import { useAuth } from "@/hooks/use-auth";
@@ -1695,6 +1696,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const shouldShowMobileNotifications = hasExplicitAccountTab && activeSection === "notifications";
   const shouldShowMobileAffiliates = hasExplicitAccountTab && activeSection === "affiliates";
   const shouldShowMobileReviews = hasExplicitAccountTab && activeSection === "reviews";
+  const shouldShowMobilePassword = hasExplicitAccountTab && activeSection === "password";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1793,6 +1795,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       shouldShowMobileNotifications ? "has-mobile-notifications" : "",
       shouldShowMobileAffiliates ? "has-mobile-affiliates" : "",
       shouldShowMobileReviews ? "has-mobile-reviews" : "",
+      shouldShowMobilePassword ? "has-mobile-password" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1849,6 +1852,16 @@ export default function AccountPageClient({ initialTab = "" }) {
       ) : null}
       {shouldShowMobileReviews ? (
         <MobileReviews reviews={reviews} />
+      ) : null}
+      {shouldShowMobilePassword ? (
+        <MobilePasswordManager
+          currentPassword={passwordForm.currentPassword}
+          newPassword={passwordForm.newPassword}
+          confirmPassword={passwordForm.confirmPassword}
+          onChange={handlePasswordFieldChange}
+          onSubmit={handlePasswordSubmit}
+          submitting={savingPassword}
+        />
       ) : null}
       <section className="account-dashboard-shell">
         <div className="account-dashboard">

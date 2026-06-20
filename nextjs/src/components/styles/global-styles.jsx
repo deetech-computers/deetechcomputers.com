@@ -12005,6 +12005,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-orders {
   display: none;
 }
+.account-mobile-password {
+  display: none;
+}
 .account-mobile-personal {
   display: none;
 }
@@ -12019,7 +12022,8 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-messages) .site-header,
   .app-shell:has(.account-mobile-notifications) .site-header,
   .app-shell:has(.account-mobile-affiliates) .site-header,
-  .app-shell:has(.account-mobile-reviews) .site-header {
+  .app-shell:has(.account-mobile-reviews) .site-header,
+  .app-shell:has(.account-mobile-password) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
@@ -12028,7 +12032,8 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-messages) .app-content,
   .app-shell:has(.account-mobile-notifications) .app-content,
   .app-shell:has(.account-mobile-affiliates) .app-content,
-  .app-shell:has(.account-mobile-reviews) .app-content {
+  .app-shell:has(.account-mobile-reviews) .app-content,
+  .app-shell:has(.account-mobile-password) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12109,6 +12114,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-reviews .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-password {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-password .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -13569,6 +13584,241 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__empty p {
     margin: 0;
     color: #4b5550;
+    line-height: 1.45;
+  }
+  .account-mobile-password {
+    display: block;
+    min-height: 100dvh;
+    background: #f5f6f7;
+    color: #111827;
+  }
+  .account-mobile-password__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 22px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-password__head a,
+  .account-mobile-password__head > .account-mobile-password__icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #003714;
+    text-decoration: none;
+  }
+  .account-mobile-password__head h1 {
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    color: #003714;
+    font-size: clamp(1.35rem, 7vw, 1.75rem);
+    line-height: 1.05;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .account-mobile-password__icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-password__body {
+    display: grid;
+    gap: 32px;
+    padding: 38px 24px max(38px, env(safe-area-inset-bottom));
+  }
+  .account-mobile-password__intro {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .account-mobile-password__seal {
+    position: relative;
+    display: grid;
+    width: 126px;
+    height: 126px;
+    place-items: center;
+    border-radius: 999px;
+    background: #18572a;
+    color: #a6dbaa;
+    box-shadow: 0 18px 34px rgba(0, 64, 27, 0.15);
+  }
+  .account-mobile-password__seal > .account-mobile-password__icon {
+    width: 72px;
+    height: 72px;
+    opacity: 0.9;
+  }
+  .account-mobile-password__seal span {
+    position: absolute;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 999px;
+    background: #18572a;
+    color: #a6dbaa;
+  }
+  .account-mobile-password__seal span .account-mobile-password__icon {
+    width: 24px;
+    height: 24px;
+  }
+  .account-mobile-password__intro h2 {
+    margin: 18px 0 0;
+    color: #111827;
+    font-size: 1.65rem;
+    line-height: 1.1;
+  }
+  .account-mobile-password__intro p {
+    max-width: 310px;
+    margin: 0;
+    color: #252b24;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .account-mobile-password__form {
+    display: grid;
+    gap: 18px;
+    padding: 34px 28px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(27, 25, 22, 0.075);
+  }
+  .account-mobile-password__form label {
+    display: grid;
+    gap: 9px;
+  }
+  .account-mobile-password__form label > span {
+    color: #252b24;
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+  .account-mobile-password__field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 52px;
+    align-items: center;
+    min-height: 64px;
+    border-radius: 9px;
+    background: #edf2f6;
+  }
+  .account-mobile-password__field input {
+    width: 100%;
+    min-width: 0;
+    min-height: 64px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #111827;
+    font: inherit;
+    font-size: 1rem;
+    padding: 0 18px;
+  }
+  .account-mobile-password__field input::placeholder {
+    color: #6b7280;
+  }
+  .account-mobile-password__field:focus-within {
+    box-shadow: inset 0 0 0 2px #00401b;
+  }
+  .account-mobile-password__field button {
+    display: grid;
+    width: 52px;
+    height: 64px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #343b35;
+  }
+  .account-mobile-password__strength {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: -12px;
+  }
+  .account-mobile-password__strength span {
+    height: 5px;
+    border-radius: 999px;
+    background: #c1c9bd;
+  }
+  .account-mobile-password__form small {
+    margin-top: -10px;
+    color: #343b35;
+    font-size: 0.78rem;
+  }
+  .account-mobile-password__form > button {
+    display: inline-flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+    border: 0;
+    border-radius: 9px;
+    background: #00401b;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 900;
+    box-shadow: 0 12px 22px rgba(0, 64, 27, 0.2);
+  }
+  .account-mobile-password__form > button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  .account-mobile-password__form > button .account-mobile-password__icon {
+    width: 21px;
+    height: 21px;
+  }
+  .account-mobile-password__form > a {
+    justify-self: center;
+    min-height: 44px;
+    color: #003714;
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 44px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .account-mobile-password__practices {
+    display: grid;
+    gap: 22px;
+  }
+  .account-mobile-password__practices h2 {
+    margin: 0;
+    color: #252b24;
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .account-mobile-password__practices article {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .account-mobile-password__practices article > .account-mobile-password__icon {
+    color: #007a30;
+  }
+  .account-mobile-password__practices strong {
+    display: block;
+    color: #111827;
+    font-size: 1.12rem;
+    line-height: 1.25;
+  }
+  .account-mobile-password__practices p {
+    margin: 6px 0 0;
+    color: #343b35;
+    font-size: 1rem;
     line-height: 1.45;
   }
   .account-mobile-orders {
