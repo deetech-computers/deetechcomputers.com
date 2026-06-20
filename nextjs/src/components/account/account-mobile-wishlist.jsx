@@ -154,11 +154,6 @@ export default function MobileWishlist({ items }) {
                 <span>Mainboards</span>
               </Link>
             </div>
-            <small>
-              <MobileWishlistIcon name="checkBadge" />
-              <span>DEETECH</span>
-              Trusted hardware partner
-            </small>
           </section>
         )}
       </div>

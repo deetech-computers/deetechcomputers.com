@@ -198,7 +198,6 @@ export default function MobileOrders({ orders, router, onDownloadInvoice }) {
               <MobileOrdersIcon name="cart" />
               <span>Shop New Arrivals</span>
             </Link>
-            <p className="account-mobile-orders__empty-footer">Trusted hardware partner</p>
           </section>
         )}
       </div>

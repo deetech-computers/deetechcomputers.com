@@ -10503,6 +10503,27 @@ button, input, select, textarea { font: inherit; }
   margin: 0;
   color: #414940;
 }
+.account-support-side-card a {
+  min-height: 38px;
+  color: #00401b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: 800;
+}
+.account-support-side-card a::after {
+  content: ">";
+  color: #1d6a33;
+  font-weight: 900;
+}
+.account-support-side-card a:hover,
+.account-support-side-card a:focus-visible {
+  color: #1d6a33;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 .contact-support-preview__latest {
   border: 0;
   border-radius: 14px;
@@ -12815,18 +12836,6 @@ button, input, select, textarea { font: inherit; }
   color: #111c2c;
   line-height: 1.45;
 }
-.account-address-preview__edit {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  border: 0;
-  background: transparent;
-  color: #003714;
-  cursor: pointer;
-  font-weight: 800;
-}
-.account-address-preview__edit .account-dashboard__nav-icon,
 .account-address-tip .account-dashboard__nav-icon {
   width: 20px;
   height: 20px;
@@ -13969,7 +13978,7 @@ button, input, select, textarea { font: inherit; }
 }
 .account-password-security-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   margin-top: 44px;
 }
@@ -13982,9 +13991,6 @@ button, input, select, textarea { font: inherit; }
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 18px 44px rgba(27, 25, 22, 0.065);
-}
-.account-password-security-card--sessions {
-  border-left: 4px solid #c0392b;
 }
 .account-password-security-card__head {
   display: grid;
@@ -14004,10 +14010,6 @@ button, input, select, textarea { font: inherit; }
   font-weight: 900;
   overflow: hidden;
 }
-.account-password-security-card--sessions .account-password-security-card__head > span {
-  background: #ffd9d7;
-  color: #c0392b;
-}
 .account-password-security-card__head .account-dashboard__nav-icon {
   width: 28px;
   height: 28px;
@@ -14022,52 +14024,10 @@ button, input, select, textarea { font: inherit; }
   color: #7c837e;
   font-weight: 800;
 }
-.account-password-security-card--sessions small {
-  color: #c0392b;
-}
 .account-password-security-card p {
   margin: 0;
   color: #4f565f;
   line-height: 1.55;
-}
-.account-password-security-card .ghost-button {
-  width: fit-content;
-  min-width: 132px;
-  border: 1px solid #00401b;
-  border-radius: 4px;
-  color: #00401b;
-  font-weight: 900;
-}
-.account-password-security-card dl {
-  display: grid;
-  gap: 0;
-  margin: 0;
-}
-.account-password-security-card dl div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-  padding: 9px 0;
-  border-bottom: 1px solid #c8cdc3;
-}
-.account-password-security-card dt {
-  color: #2f3731;
-}
-.account-password-security-card dd {
-  margin: 0;
-  color: #7c837e;
-}
-.account-password-security-card dl div:last-child dd {
-  color: #c0392b;
-}
-.account-password-security-card--sessions > button {
-  width: fit-content;
-  border: 0;
-  background: transparent;
-  color: #14552b;
-  font: inherit;
-  font-weight: 900;
-  cursor: pointer;
 }
 .account-mini-row,
 .account-review-card {

@@ -15,7 +15,6 @@ import MobileReviews from "@/components/account/account-mobile-reviews";
 import MobileWishlist from "@/components/account/account-mobile-wishlist";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
-import EmptyState from "@/components/ui/empty-state";
 import { useToast } from "@/components/providers/toast-provider";
 import { API_BASE, API_BASE_AUTH, API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
@@ -667,7 +666,6 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
             {submitting ? "Updating..." : "Update Changes"}
           </button>
-          <button type="button" className="account-personal-discard">Discard Changes</button>
         </div>
       </form>
       <div className="account-security-strip">
@@ -831,7 +829,7 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
   );
 }
 
-function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
+function AddressSection({ form, onFieldChange, onSubmit, onClear, submitting }) {
   const displayName = [form.firstName, form.lastName].filter(Boolean).join(" ") || "Account Holder";
   const cityRegion = [form.city, form.region].filter(Boolean).join(", ") || "Add your city and region.";
   return (
@@ -852,10 +850,6 @@ function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
           <p>{cityRegion}</p>
           <p>{form.phone || "Add your phone number."}</p>
         </div>
-        <button type="button" className="account-address-preview__edit">
-          <AccountNavIcon name="edit" />
-          <span>Edit</span>
-        </button>
       </div>
 
       <form className="account-dashboard__form account-address-form" onSubmit={onSubmit}>
@@ -899,7 +893,7 @@ function AddressSection({ form, onFieldChange, onSubmit, submitting }) {
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
             {submitting ? "Saving..." : "Add Address"}
           </button>
-          <button type="button" className="account-personal-discard">
+          <button type="button" className="account-personal-discard" onClick={onClear}>
             Clear Form
           </button>
         </div>
@@ -1179,11 +1173,6 @@ function WishlistSection({ items }) {
               </Link>
             </div>
           </div>
-          <p className="account-wishlist-empty-card__footer">
-            <AccountNavIcon name="check" />
-            <span>DEETECH</span>
-            Trusted hardware partner
-          </p>
         </>
       )}
 
@@ -1262,7 +1251,6 @@ function ReviewsSection({ reviews }) {
               <span><AccountNavIcon name="gift" /> Earn Points</span>
             </div>
           </div>
-          <p className="account-reviews-empty-card__footer">Trusted hardware partner</p>
         </>
       )}
 
@@ -1334,35 +1322,13 @@ function PasswordSection({
       <div className="account-password-security-grid">
         <article className="account-password-security-card">
           <div className="account-password-security-card__head">
-            <span aria-hidden="true">AUTHENTICATOR</span>
+            <span aria-hidden="true"><AccountNavIcon name="shield" /></span>
             <div>
-              <h3>Two-Factor Authentication</h3>
-              <small>Highly recommended</small>
+              <h3>Your account is secure</h3>
+              <small>Protected by verified account controls</small>
             </div>
           </div>
-          <p>Add an extra layer of security to your DEETECH account by requiring a code from your phone as well as your password.</p>
-          <button type="button" className="ghost-button">Setup 2FA</button>
-        </article>
-
-        <article className="account-password-security-card account-password-security-card--sessions">
-          <div className="account-password-security-card__head">
-            <span aria-hidden="true"><AccountNavIcon name="device" /></span>
-            <div>
-              <h3>Active Sessions</h3>
-              <small>2 devices logged in</small>
-            </div>
-          </div>
-          <dl>
-            <div>
-              <dt>Current browser</dt>
-              <dd>Current</dd>
-            </div>
-            <div>
-              <dt>Mobile session</dt>
-              <dd>Log out</dd>
-            </div>
-          </dl>
-          <button type="button">Review all sessions</button>
+          <p>Your DEETECH account details are protected by secure password checks and verified profile updates. Keep your password private and update it here whenever you need fresh protection.</p>
         </article>
       </div>
     </section>
@@ -1453,7 +1419,6 @@ function MessagesSection({
               <span>Start New Request</span>
             </Link>
           </div>
-          <p className="account-support-empty-card__footer">Trusted hardware partner</p>
         </>
       ) : (
         <div className="account-support-chat">
@@ -1558,9 +1523,9 @@ function MessagesSection({
             </div>
             <div className="account-support-side-card">
               <h3>FAQ Quick Links</h3>
-              <p>How to track my order?</p>
-              <p>Ghana-wide delivery timelines</p>
-              <p>Return and Refund policy</p>
+              <Link href="/how-it-works">How it works</Link>
+              <Link href="/delivery-policy">Shipping and delivery</Link>
+              <Link href="/return-refund">Return and refund policy</Link>
             </div>
           </aside>
         </div>
@@ -1599,7 +1564,6 @@ function NotificationsSection({ notifications, readIds, onOpenNotification, onMa
               <AccountNavIcon name="arrowRight" />
             </Link>
           </div>
-          <p className="account-notification-empty-card__footer">Trusted hardware partner</p>
         </>
       ) : (
         <div className="account-notification-history">
@@ -1812,6 +1776,16 @@ export default function AccountPageClient({ initialTab = "" }) {
     setProfileForm((current) => ({ ...current, [field]: value }));
   }
 
+  function handleAddressClear() {
+    setProfileForm((current) => ({
+      ...current,
+      address: "",
+      city: "",
+      region: "",
+    }));
+    pushToast("Address form cleared", "info");
+  }
+
   function handlePasswordFieldChange(field, value) {
     setPasswordForm((current) => ({ ...current, [field]: value }));
   }
@@ -1949,7 +1923,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       return <OrdersSection orders={orders} router={router} onDownloadInvoice={downloadInvoiceHtml} />;
     }
     if (activeSection === "address") {
-      return <AddressSection form={profileForm} onFieldChange={handleProfileFieldChange} onSubmit={handleAddressSubmit} submitting={savingAddress} />;
+      return <AddressSection form={profileForm} onFieldChange={handleProfileFieldChange} onSubmit={handleAddressSubmit} onClear={handleAddressClear} submitting={savingAddress} />;
     }
     if (activeSection === "messages") {
       return (

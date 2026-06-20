@@ -152,7 +152,6 @@ export default function MobileNotifications({
             <span>Browse New Arrivals</span>
             <MobileNotificationsIcon name="arrowRight" />
           </Link>
-          <p className="account-mobile-notifications__empty-footer">Trusted hardware partner</p>
         </section>
       )}
     </section>

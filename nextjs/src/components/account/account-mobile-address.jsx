@@ -95,9 +95,6 @@ export default function MobileAddress({ form, onFieldChange, onSubmit, submittin
               <p>{addressLine}</p>
               <b>{form?.phone || "Add phone number"}</b>
             </div>
-            <button type="button" aria-label="Edit address">
-              <MobileAddressIcon name="edit" />
-            </button>
           </article>
         </section>
 

@@ -173,7 +173,6 @@ export default function MobileReviews({ reviews }) {
           <p>Share your feedback on your recent purchases. Your insights help the DEETECH community find the right hardware.</p>
           <Link href="/account?tab=orders">Review Past Orders</Link>
           <strong>Every review matters</strong>
-          <small>Trusted hardware partner</small>
         </section>
       )}
     </section>
