@@ -96,19 +96,24 @@ function isValidGhanaMomoNumber(value) {
   return /^(020|023|024|025|026|027|028|029|050|053|054|055|056|057|059)\d{7}$/.test(local);
 }
 
-function AffiliateIcon({ type }) {
+function AffiliateIcon({ type, className = "" }) {
   const paths = {
-    referrals: "M7 13a4 4 0 1 1 8 0M4 21a7 7 0 0 1 14 0M17 11h5M19.5 8.5v5",
+    referrals: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
     pending: "M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-    paid: "M4 7h16M6 7v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M9 11h6M10 15h4",
-    lifetime: "M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-8",
+    paid: "M3 6h18v12H3V6ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v.01M18 15v.01",
+    lifetime: "M3 17l6-6 4 4 7-8M14 7h6v6",
     cancelled: "M7 7l10 10M17 7 7 17M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
     success: "M5 13l4 4L19 7M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
     tier: "M4 17 10 5l4 8 6-3-6 9-4-8-6-1Z",
+    code: "M4 7h16M6 7v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M9 11h6M10 15h4",
+    megaphone: "M4 13h3l9 4V7l-9 4H4v2ZM7 13v5M19 9a4 4 0 0 1 0 6",
+    bank: "M3 10l9-6 9 6M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16",
+    chart: "M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-8",
+    arrowRight: "M5 12h14M13 6l6 6-6 6",
   };
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className={className}>
       <path d={paths[type] || paths.referrals} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -116,17 +121,17 @@ function AffiliateIcon({ type }) {
 
 const AFFILIATE_STEPS = [
   {
-    icon: "🎁",
+    icon: "code",
     title: "Get Your Code",
     text: "Register as an affiliate and receive your unique 6-character referral code.",
   },
   {
-    icon: "📣",
+    icon: "megaphone",
     title: "Share Your Code",
     text: "Share with friends, family, or on social media and WhatsApp.",
   },
   {
-    icon: "💸",
+    icon: "paid",
     title: "Earn & Level Up",
     text: "Earn 5% commission and unlock tier rewards as you grow.",
   },
@@ -249,7 +254,7 @@ export default function AffiliatesPage() {
           <article key={step.title} className="affiliate-learn__step">
             <span className="affiliate-learn__step-index" aria-hidden="true">{index + 1}</span>
             <span className="affiliate-learn__step-icon" aria-hidden="true">
-              {index === 0 ? "\u{1F381}" : index === 1 ? "\u{1F4E3}" : "\u{1F4B8}"}
+              <AffiliateIcon type={index === 0 ? "code" : index === 1 ? "megaphone" : "paid"} />
             </span>
             <strong>{step.title}</strong>
             <p>{step.text}</p>
@@ -277,11 +282,10 @@ export default function AffiliatesPage() {
         <h3>Tier Rewards & Benefits</h3>
         <div className="affiliate-learn__tier-grid">
           {AFFILIATE_TIERS.map((item, index) => {
-            const medal = index === 0 ? "\u{1F949}" : index === 1 ? "\u{1F948}" : "\u{1F3C6}";
             const tone = index === 0 ? "bronze" : index === 1 ? "silver" : "gold";
             return (
               <article key={item.tier} className={`affiliate-learn__tier-card is-${tone}`}>
-                <h4><span aria-hidden="true">{medal}</span>{item.tier}</h4>
+                <h4><span aria-hidden="true"><AffiliateIcon type="tier" /></span>{item.tier}</h4>
                 <p className="affiliate-learn__tier-deals">{item.deals}</p>
                 <ul>
                   {item.points.map((point) => (
@@ -319,10 +323,10 @@ export default function AffiliatesPage() {
           <h3>Your Journey to Gold Tier</h3>
           <p>Start with 5%, grow your earnings, and unlock premium rewards.</p>
           <div className="affiliate-learn__journey-grid">
-            <article><strong>{"\u{1F3AF} Starter Tier"}</strong><span>5% Commission - You start here</span></article>
-            <article><strong>{"\u{1F949} Bronze Tier"}</strong><span>8 Deals - Priority support - Marketing materials</span></article>
-            <article><strong>{"\u{1F948} Silver Tier"}</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
-            <article><strong>{"\u{1F3C6} Gold Tier"}</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
+            <article><strong>Starter Tier</strong><span>5% Commission - You start here</span></article>
+            <article><strong>Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
+            <article><strong>Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
+            <article><strong>Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
           </div>
         </div>
       </div>
@@ -442,14 +446,17 @@ export default function AffiliatesPage() {
                 </header>
 
                 <div className="affiliate-learn__steps">
-                  {AFFILIATE_STEPS.map((step, index) => (
-                    <article key={step.title} className="affiliate-learn__step">
-                      <span className="affiliate-learn__step-index" aria-hidden="true">{index + 1}</span>
-                      <span className="affiliate-learn__step-icon" aria-hidden="true">{step.icon}</span>
-                      <strong>{step.title}</strong>
-                      <p>{step.text}</p>
-                    </article>
-                  ))}
+                  {AFFILIATE_STEPS.map((step, index) => {
+                    const stepIcon = index === 0 ? "code" : index === 1 ? "megaphone" : "paid";
+                    return (
+                      <article key={step.title} className="affiliate-learn__step">
+                        <span className="affiliate-learn__step-index" aria-hidden="true">{index + 1}</span>
+                        <span className="affiliate-learn__step-icon" aria-hidden="true"><AffiliateIcon type={stepIcon} /></span>
+                        <strong>{step.title}</strong>
+                        <p>{step.text}</p>
+                      </article>
+                    );
+                  })}
                 </div>
 
                 <div className="affiliate-learn__commission">
@@ -472,11 +479,10 @@ export default function AffiliatesPage() {
                   <h3>Tier Rewards & Benefits</h3>
                   <div className="affiliate-learn__tier-grid">
                     {AFFILIATE_TIERS.map((item, index) => {
-                      const medal = index === 0 ? "🥉" : index === 1 ? "🥈" : "🏆";
                       const tone = index === 0 ? "bronze" : index === 1 ? "silver" : "gold";
                       return (
                       <article key={item.tier} className={`affiliate-learn__tier-card is-${tone}`}>
-                        <h4><span aria-hidden="true">{medal}</span>{item.tier}</h4>
+                        <h4><span aria-hidden="true"><AffiliateIcon type="tier" /></span>{item.tier}</h4>
                         <p className="affiliate-learn__tier-deals">{item.deals}</p>
                         <ul>
                           {item.points.map((point) => (
@@ -513,10 +519,10 @@ export default function AffiliatesPage() {
                   <h3>Your Journey to Gold Tier</h3>
                   <p>Start with 5%, grow your earnings, and unlock premium rewards.</p>
                   <div className="affiliate-learn__journey-grid">
-                    <article><strong>🎯 Starter Tier</strong><span>5% Commission - You start here</span></article>
-                    <article><strong>🥉 Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
-                    <article><strong>🥈 Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
-                    <article><strong>🏆 Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
+                    <article><strong>Starter Tier</strong><span>5% Commission - You start here</span></article>
+                    <article><strong>Bronze Tier</strong><span>8 Deals - Priority support - Marketing materials</span></article>
+                    <article><strong>Silver Tier</strong><span>18 Deals - Faster payouts - Advanced dashboard</span></article>
+                    <article><strong>Gold Tier</strong><span>35 Deals - Monthly gifts - Premium support - Early access</span></article>
                   </div>
                 </div>
                 </div>
@@ -654,7 +660,10 @@ export default function AffiliatesPage() {
 
               <section className="affiliate-insights-grid">
                 <article className="panel affiliate-breakdown">
-                  <h2>Referral Breakdown</h2>
+                  <div className="affiliate-panel__head">
+                    <h2>Referral Breakdown</h2>
+                    <AffiliateIcon type="chart" />
+                  </div>
                   <dl>
                     <div><dt>Total Referrals</dt><dd>{stats.totalReferrals}</dd></div>
                     <div><dt>Successful Referrals</dt><dd>{stats.deliveredReferrals}</dd></div>
@@ -665,7 +674,10 @@ export default function AffiliatesPage() {
                 </article>
 
                 <article className="panel affiliate-benefits">
-                  <h2>Your Tier Benefits</h2>
+                  <div className="affiliate-panel__head">
+                    <h2>Your Tier Benefits</h2>
+                    <AffiliateIcon type="tier" />
+                  </div>
                   <div className="affiliate-benefit-card">
                     <span className="affiliate-benefit-card__icon"><AffiliateIcon type="tier" /></span>
                     <div>
@@ -682,7 +694,10 @@ export default function AffiliatesPage() {
 
               <section className="affiliate-analytics-grid">
                 <article className="affiliate-analytics">
-                  <h2>Referral Status Analytics</h2>
+                  <div className="affiliate-panel__head">
+                    <h2>Referral Status Analytics</h2>
+                    <AffiliateIcon type="chart" />
+                  </div>
                   {statusAnalytics.map((item) => (
                     <div key={item.label} className={`affiliate-analytics__row is-${item.tone}`}>
                       <span>{item.label}</span>
@@ -693,7 +708,10 @@ export default function AffiliatesPage() {
                 </article>
 
                 <article className="affiliate-analytics">
-                  <h2>Monthly Earned Commission</h2>
+                  <div className="affiliate-panel__head">
+                    <h2>Monthly Earned Commission</h2>
+                    <AffiliateIcon type="paid" />
+                  </div>
                   {monthlyEarned.length ? monthlyEarned.map((item) => (
                     <div key={item.label} className="affiliate-analytics__row is-earned">
                       <span>{item.label}</span>
