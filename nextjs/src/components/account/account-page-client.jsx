@@ -276,6 +276,12 @@ function AccountNavIcon({ name }) {
       </>
     ),
     heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />,
+    brokenHeart: (
+      <>
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+        <path d="m13 5-3 5h4l-3 6" />
+      </>
+    ),
     review: (
       <>
         <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" />
@@ -295,6 +301,33 @@ function AccountNavIcon({ name }) {
         <path d="M3 12h18" />
         <path d="M12 8H8.5A2.5 2.5 0 1 1 11 5.5L12 8Z" />
         <path d="M12 8h3.5A2.5 2.5 0 1 0 13 5.5L12 8Z" />
+      </>
+    ),
+    chip: (
+      <>
+        <rect x="7" y="7" width="10" height="10" rx="1" />
+        <path d="M9 1v3" />
+        <path d="M15 1v3" />
+        <path d="M9 20v3" />
+        <path d="M15 20v3" />
+        <path d="M20 9h3" />
+        <path d="M20 15h3" />
+        <path d="M1 9h3" />
+        <path d="M1 15h3" />
+        <path d="M10 10h4v4h-4Z" />
+      </>
+    ),
+    board: (
+      <>
+        <rect x="4" y="5" width="16" height="14" rx="1" />
+        <path d="M8 9h4v4H8Z" />
+        <path d="M15 9h2" />
+        <path d="M15 13h2" />
+        <path d="M8 16h9" />
+        <path d="M2 9h2" />
+        <path d="M2 15h2" />
+        <path d="M20 9h2" />
+        <path d="M20 15h2" />
       </>
     ),
     lock: (
@@ -1124,19 +1157,44 @@ function WishlistSection({ items }) {
           ))}
         </div>
       ) : (
-        <EmptyState
-          icon="wishlist"
-          title="Your wishlist is empty"
-          description="Save your favorite gadgets to compare and revisit them later."
-        />
+        <>
+          <div className="account-wishlist-empty-card">
+            <div className="account-wishlist-empty-card__mark" aria-hidden="true">
+              <AccountNavIcon name="brokenHeart" />
+              <i><AccountNavIcon name="cart" /></i>
+            </div>
+            <h3>Your wishlist is empty</h3>
+            <p>Save your favorite hardware to track availability.</p>
+            <Link href="/products" className="account-wishlist-empty-card__action">
+              <span>Browse Products</span>
+            </Link>
+            <div className="account-wishlist-empty-card__categories">
+              <Link href="/products/accessories">
+                <AccountNavIcon name="chip" />
+                <span>Processors</span>
+              </Link>
+              <Link href="/products/accessories">
+                <AccountNavIcon name="board" />
+                <span>Mainboards</span>
+              </Link>
+            </div>
+          </div>
+          <p className="account-wishlist-empty-card__footer">
+            <AccountNavIcon name="check" />
+            <span>DEETECH</span>
+            Trusted hardware partner
+          </p>
+        </>
       )}
 
-      <div className="account-wishlist-actions">
-        <Link href="/wishlist" className="primary-link">
-          <span>Open Wishlist</span>
-          <AccountNavIcon name="arrowRight" />
-        </Link>
-      </div>
+      {items.length ? (
+        <div className="account-wishlist-actions">
+          <Link href="/wishlist" className="primary-link">
+            <span>Open Wishlist</span>
+            <AccountNavIcon name="arrowRight" />
+          </Link>
+        </div>
+      ) : null}
     </section>
   );
 }
