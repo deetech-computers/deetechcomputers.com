@@ -9594,6 +9594,11 @@ button, input, select, textarea { font: inherit; }
 .affiliate-layout {
   display: grid;
   gap: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   animation: affiliateRise 520ms ease both;
 }
 .affiliate-main {
