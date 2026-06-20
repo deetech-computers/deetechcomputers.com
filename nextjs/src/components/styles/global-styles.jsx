@@ -11156,7 +11156,7 @@ button, input, select, textarea { font: inherit; }
   .affiliate-mobile-dashboard__body {
     display: grid;
     gap: 24px;
-    padding: 18px 18px 126px;
+    padding: 18px 18px 24px;
   }
   .affiliate-mobile-dashboard__hero {
     position: relative;
@@ -11629,19 +11629,18 @@ button, input, select, textarea { font: inherit; }
     color: #a62c22;
   }
   .affiliate-mobile-dashboard__submit {
-    position: fixed;
-    left: 0;
-    right: 0;
+    position: sticky;
     bottom: 0;
     z-index: 20;
-    padding: 18px;
+    padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
     border-top: 1px solid #c1c9bd;
-    background: #fbfaff;
+    background: rgba(251, 250, 255, 0.96);
+    backdrop-filter: blur(12px);
   }
   .affiliate-mobile-dashboard__submit button {
     display: inline-flex;
     width: 100%;
-    min-height: 72px;
+    min-height: 64px;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -11652,7 +11651,7 @@ button, input, select, textarea { font: inherit; }
     font-size: 1rem;
     font-weight: 900;
     text-transform: uppercase;
-    box-shadow: 0 16px 30px rgba(0, 64, 27, 0.18);
+    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
   }
   .affiliate-mobile-dashboard__submit button:disabled {
     opacity: 0.62;
