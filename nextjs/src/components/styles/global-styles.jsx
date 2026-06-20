@@ -10363,31 +10363,28 @@ button, input, select, textarea { font: inherit; }
 .affiliate-stat-icon,
 .affiliate-tier-card__icon {
   display: inline-grid;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   place-items: center;
-  border-radius: 10px;
-  background: rgba(24, 79, 39, 0.1);
+  border-radius: 0;
+  background: transparent;
   color: #184f27;
   flex: 0 0 auto;
 }
 .affiliate-stat-icon svg,
 .affiliate-tier-card__icon svg,
 .affiliate-benefit-card__icon svg {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 .affiliate-stats article.is-gold .affiliate-stat-icon,
 .affiliate-stats article.is-amber .affiliate-stat-icon {
-  background: rgba(197, 131, 16, 0.14);
   color: #a46905;
 }
 .affiliate-stats article.is-emerald .affiliate-stat-icon {
-  background: rgba(23, 143, 85, 0.12);
   color: #178f55;
 }
 .affiliate-stats article.is-blue .affiliate-stat-icon {
-  background: rgba(15, 122, 184, 0.12);
   color: #0f7ab8;
 }
 .affiliate-tier-card {

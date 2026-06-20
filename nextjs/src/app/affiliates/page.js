@@ -97,25 +97,112 @@ function isValidGhanaMomoNumber(value) {
 }
 
 function AffiliateIcon({ type, className = "" }) {
-  const paths = {
-    referrals: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
-    pending: "M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-    paid: "M3 6h18v12H3V6ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v.01M18 15v.01",
-    lifetime: "M3 17l6-6 4 4 7-8M14 7h6v6",
-    cancelled: "M7 7l10 10M17 7 7 17M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-    success: "M5 13l4 4L19 7M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
-    tier: "M4 17 10 5l4 8 6-3-6 9-4-8-6-1Z",
-    code: "M4 7h16M6 7v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M9 11h6M10 15h4",
-    megaphone: "M4 13h3l9 4V7l-9 4H4v2ZM7 13v5M19 9a4 4 0 0 1 0 6",
-    bank: "M3 10l9-6 9 6M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16",
-    chart: "M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-8",
-    arrowRight: "M5 12h14M13 6l6 6-6 6",
-    copy: "M9 9h11v11H9V9ZM4 4h11v11H4V4Z",
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 2,
+  };
+  const icons = {
+    referrals: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </>
+    ),
+    pending: (
+      <>
+        <path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z" />
+        <path d="M9 7h6" />
+        <path d="M9 11h6" />
+        <path d="M9 15h4" />
+      </>
+    ),
+    paid: (
+      <>
+        <rect x="3" y="6" width="18" height="12" rx="2" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M6 9v.01" />
+        <path d="M18 15v.01" />
+      </>
+    ),
+    lifetime: (
+      <>
+        <path d="m3 17 6-6 4 4 7-8" />
+        <path d="M14 7h6v6" />
+      </>
+    ),
+    cancelled: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="m15 9-6 6" />
+        <path d="m9 9 6 6" />
+      </>
+    ),
+    success: (
+      <>
+        <path d="m20 6-11 11-5-5" />
+        <path d="M16 6h4v4" />
+      </>
+    ),
+    tier: (
+      <>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-5" />
+      </>
+    ),
+    code: (
+      <>
+        <path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z" />
+        <path d="M9 7h6" />
+        <path d="M9 11h6" />
+        <path d="M9 15h4" />
+      </>
+    ),
+    megaphone: (
+      <>
+        <path d="M4 13h3l9 4V7l-9 4H4v2Z" />
+        <path d="M7 13v5" />
+        <path d="M19 9a4 4 0 0 1 0 6" />
+      </>
+    ),
+    bank: (
+      <>
+        <path d="m3 10 9-6 9 6" />
+        <path d="M5 10h14" />
+        <path d="M6 10v8" />
+        <path d="M10 10v8" />
+        <path d="M14 10v8" />
+        <path d="M18 10v8" />
+        <path d="M4 18h16" />
+      </>
+    ),
+    chart: (
+      <>
+        <path d="m3 17 6-6 4 4 7-8" />
+        <path d="M14 7h6v6" />
+      </>
+    ),
+    arrowRight: (
+      <>
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </>
+    ),
+    copy: (
+      <>
+        <rect x="9" y="9" width="11" height="11" rx="2" />
+        <rect x="4" y="4" width="11" height="11" rx="2" />
+      </>
+    ),
   };
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className={className}>
-      <path d={paths[type] || paths.referrals} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={className} {...common}>
+      {icons[type] || icons.referrals}
     </svg>
   );
 }
