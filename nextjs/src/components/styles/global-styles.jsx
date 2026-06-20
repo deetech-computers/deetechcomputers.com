@@ -17256,9 +17256,8 @@ button, input, select, textarea { font: inherit; }
     position: sticky;
     top: 0;
     z-index: 25;
-    display: grid;
-    grid-template-columns: 94px minmax(0, 1fr) 94px;
-    gap: 0;
+    display: flex;
+    gap: 8px;
     align-items: center;
     min-height: 64px;
     padding: 0 16px;
@@ -17276,22 +17275,21 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__head a,
   .account-mobile-wishlist__head a {
     display: inline-flex;
-    width: 94px;
+    flex: 1 1 0;
     min-width: 0;
+    max-width: none;
     min-height: 44px;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 8px;
     color: #003714;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     font-weight: 500;
     letter-spacing: 0;
     line-height: 1;
     text-decoration: none;
     text-transform: none;
     overflow: hidden;
-    position: relative;
-    z-index: 2;
   }
   .account-mobile-personal__head a span,
   .account-mobile-address__head a span,
@@ -17303,12 +17301,16 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__head a span,
   .account-mobile-wishlist__head a span {
     display: inline;
+    min-width: 0;
+    overflow: hidden;
     color: inherit;
     font-size: inherit;
     font-weight: inherit;
     letter-spacing: 0;
     line-height: inherit;
+    text-overflow: ellipsis;
     text-transform: none;
+    white-space: nowrap;
   }
   .account-mobile-personal__head h1,
   .account-mobile-address__head h1,
@@ -17323,7 +17325,7 @@ button, input, select, textarea { font: inherit; }
     margin: 0;
     overflow: hidden;
     color: #111827;
-    font-size: clamp(1.05rem, 5.1vw, 1.32rem);
+    font-size: clamp(0.9rem, 4.1vw, 1.08rem);
     font-weight: 900;
     letter-spacing: 0;
     line-height: 1.1;
@@ -17338,43 +17340,18 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__title,
   .account-mobile-wishlist__title {
     display: grid;
+    flex: 1 1 0;
+    width: 100%;
     min-width: 0;
     margin: 0;
     align-content: center;
-    justify-self: center;
-    grid-column: auto;
+    justify-content: center;
   }
   .account-mobile-personal__head > h1,
   .account-mobile-messages__head > h1,
   .account-mobile-password__head > h1 {
-    justify-self: center;
-  }
-  .account-mobile-personal__head > h1,
-  .account-mobile-address__head > div,
-  .account-mobile-affiliates__head > div,
-  .account-mobile-messages__head > h1,
-  .account-mobile-notifications__title,
-  .account-mobile-orders__title,
-  .account-mobile-password__head > h1,
-  .account-mobile-reviews__head > .account-mobile-reviews__title,
-  .account-mobile-wishlist__title {
-    position: absolute;
-    top: 50%;
-    right: 110px;
-    left: 110px;
-    z-index: 1;
-    transform: translateY(-50%);
-  }
-  .account-mobile-personal__head h1,
-  .account-mobile-address__head h1,
-  .account-mobile-affiliates__head h1,
-  .account-mobile-messages__head h1,
-  .account-mobile-notifications__title h1,
-  .account-mobile-orders__title h1,
-  .account-mobile-password__head h1,
-  .account-mobile-reviews__head .account-mobile-reviews__title h1,
-  .account-mobile-wishlist__title h1 {
-    font-size: clamp(0.98rem, 4.4vw, 1.12rem);
+    flex: 1 1 0;
+    min-width: 0;
   }
   .account-mobile-personal__head .account-mobile-personal__section-icon,
   .account-mobile-address__head .account-mobile-address__section-icon,
@@ -17386,14 +17363,15 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__head .account-mobile-reviews__section-icon,
   .account-mobile-wishlist__head .account-mobile-wishlist__section-icon {
     display: grid;
-    width: 44px;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
     height: 44px;
     place-items: center;
-    justify-self: end;
+    justify-items: end;
+    justify-content: end;
     color: #003714;
     pointer-events: none;
-    position: relative;
-    z-index: 2;
   }
 }
 @media (prefers-reduced-motion: reduce) {
