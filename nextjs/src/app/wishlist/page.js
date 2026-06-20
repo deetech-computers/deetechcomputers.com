@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
-import EmptyState from "@/components/ui/empty-state";
 import { useToast } from "@/components/providers/toast-provider";
 import { SITE_URL } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
@@ -34,6 +33,52 @@ function RemoveIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-1 6h2v8H8V9Zm6 0h2v8h-2V9ZM5 7h14l-1 13H6L5 7Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function WishlistEmptyMark() {
+  return (
+    <div className="wishlist-empty-state__mark" aria-hidden="true">
+      <svg className="wishlist-empty-state__heart" viewBox="0 0 120 120">
+        <path d="M60 98 24 63c-14-14-6-39 14-39 9 0 17 5 22 13 5-8 13-13 22-13 20 0 28 25 14 39L60 98Z" fill="#dce7fb" stroke="#00401b" strokeWidth="6" strokeLinejoin="round" />
+        <path d="m44 58 11 11 23-29" fill="none" stroke="#00401b" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span>
+        <svg viewBox="0 0 24 24">
+          <path d="M6 6h2l2 10h8l2-7H9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M10 20h.01M18 20h.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          <path d="M15 4v6M12 7h6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      </span>
+    </div>
+  );
+}
+
+function WishlistEmptyIcon({ type }) {
+  if (type === "phone") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path d="M11 17h2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (type === "cart") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h16l-2 9H7L4 7Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M8 20h.01M17 20h.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M6 6h12v8H6V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M10 18h4l1-4H9l1 4Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -197,13 +242,48 @@ export default function WishlistPage() {
           </div>
         </section>
       ) : !wishlistItems.length ? (
-        <EmptyState
-          icon="wishlist"
-          title="Your wishlist is empty"
-          description="Save products you love so you can compare and add them to cart later."
-          actionHref="/products"
-          actionLabel="Browse products"
-        />
+        <section className="wishlist-empty-state" aria-labelledby="wishlist-empty-title">
+          <div className="wishlist-empty-state__card">
+            <WishlistEmptyMark />
+            <div className="wishlist-empty-state__copy">
+              <p className="wishlist-empty-state__eyebrow">Saved products</p>
+              <h2 id="wishlist-empty-title">Your wishlist is empty</h2>
+              <p>
+                Save your favorite DEETECH hardware so you can compare stock, prices, and cart them later.
+              </p>
+            </div>
+            <Link href="/products" className="wishlist-empty-state__primary">
+              Browse Products
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="wishlist-empty-state__quick-links" aria-label="Wishlist empty quick links">
+            <Link href="/products/laptops">
+              <WishlistEmptyIcon type="laptop" />
+              <span>
+                <strong>Laptops</strong>
+                <small>Save work, school, and gaming picks</small>
+              </span>
+            </Link>
+            <Link href="/products/phones">
+              <WishlistEmptyIcon type="phone" />
+              <span>
+                <strong>Phones</strong>
+                <small>Track clean smartphone options</small>
+              </span>
+            </Link>
+            <Link href="/cart">
+              <WishlistEmptyIcon type="cart" />
+              <span>
+                <strong>Shopping Cart</strong>
+                <small>Return to items ready for checkout</small>
+              </span>
+            </Link>
+          </div>
+        </section>
       ) : (
         <section className="wishlist-shell">
           <div className="wishlist-table panel">
