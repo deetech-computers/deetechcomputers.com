@@ -1419,11 +1419,21 @@ function NotificationsSection({ notifications, readIds, onOpenNotification, onMa
       </div>
 
       {!notifications.length ? (
-        <EmptyState
-          icon="orders"
-          title="No notifications yet"
-          description="Order updates and support replies will appear here as soon as they arrive."
-        />
+        <>
+          <div className="account-notification-empty-card">
+            <div className="account-notification-empty-card__mark" aria-hidden="true">
+              <AccountNavIcon name="bell" />
+              <span><AccountNavIcon name="check" /></span>
+            </div>
+            <h3>All caught up!</h3>
+            <p>We will notify you here when there are updates to your orders or account.</p>
+            <Link href="/products?promotion=just_landed#shop-results" className="account-notification-empty-card__action">
+              <span>Browse New Arrivals</span>
+              <AccountNavIcon name="arrowRight" />
+            </Link>
+          </div>
+          <p className="account-notification-empty-card__footer">Trusted hardware partner</p>
+        </>
       ) : (
         <div className="account-notification-history">
           {notifications.map((item) => {

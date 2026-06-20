@@ -26,6 +26,13 @@ function MobileNotificationsIcon({ name }) {
         <path d="m12 19-7-7 7-7" />
       </>
     ),
+    person: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="9" r="3" />
+        <path d="M6.8 18.3a6.2 6.2 0 0 1 10.4 0" />
+      </>
+    ),
     external: (
       <>
         <path d="M15 3h6v6" />
@@ -46,6 +53,23 @@ function MobileNotificationsIcon({ name }) {
         <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" />
         <path d="M8 9h8" />
         <path d="M8 13h5" />
+      </>
+    ),
+    bell: (
+      <>
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M10 21h4" />
+      </>
+    ),
+    check: (
+      <>
+        <path d="m20 6-11 11-5-5" />
+      </>
+    ),
+    arrowRight: (
+      <>
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
       </>
     ),
   };
@@ -71,10 +95,17 @@ export default function MobileNotifications({
         <Link href="/account" aria-label="Back to account">
           <MobileNotificationsIcon name="arrowLeft" />
         </Link>
-        <h1>Notifications</h1>
+        <div className="account-mobile-notifications__title">
+          {!hasNotifications ? <span>Account</span> : null}
+          <h1>Notifications</h1>
+        </div>
         {hasNotifications ? (
           <button type="button" onClick={onMarkAllRead}>Mark all read</button>
-        ) : <span />}
+        ) : (
+          <Link href="/account" className="account-mobile-notifications__profile" aria-label="Account menu">
+            <MobileNotificationsIcon name="person" />
+          </Link>
+        )}
       </header>
 
       {hasNotifications ? (
@@ -111,8 +142,17 @@ export default function MobileNotifications({
         </div>
       ) : (
         <section className="account-mobile-notifications__empty">
-          <h2>No notifications yet</h2>
-          <p>Order updates and support replies will appear here as soon as they arrive.</p>
+          <div className="account-mobile-notifications__empty-mark" aria-hidden="true">
+            <MobileNotificationsIcon name="bell" />
+            <span><MobileNotificationsIcon name="check" /></span>
+          </div>
+          <h2>All caught up!</h2>
+          <p>We will notify you here when there are updates to your orders or account.</p>
+          <Link href="/products?promotion=just_landed#shop-results" className="account-mobile-notifications__empty-action">
+            <span>Browse New Arrivals</span>
+            <MobileNotificationsIcon name="arrowRight" />
+          </Link>
+          <p className="account-mobile-notifications__empty-footer">Trusted hardware partner</p>
         </section>
       )}
     </section>
