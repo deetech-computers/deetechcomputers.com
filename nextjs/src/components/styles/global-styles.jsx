@@ -10070,6 +10070,7 @@ button, input, select, textarea { font: inherit; }
   box-shadow: 0 7px 16px rgba(17, 24, 39, 0.07);
 }
 @media (min-width: 981px) {
+  /* Desktop-only public affiliate dashboard refresh. */
   .affiliate-main {
     gap: 24px;
   }
