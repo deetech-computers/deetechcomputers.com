@@ -9969,87 +9969,6 @@ button, input, select, textarea { font: inherit; }
 .account-personal-card--summary {
   min-height: 112px;
 }
-.account-personal-divider {
-  grid-column: 1 / -1;
-  height: 1px;
-  margin: 6px 0 4px;
-  background: #c1c9bd;
-}
-.account-communication {
-  grid-column: 1 / -1;
-  display: grid;
-  gap: 16px;
-}
-.account-communication h3 {
-  margin: 0;
-  color: #003714;
-  font-size: 1.1rem;
-  line-height: 1.3;
-}
-.account-communication__row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: center;
-  padding: 18px;
-  border-radius: 8px;
-  background: #f0f3ff;
-}
-.account-communication__icon {
-  display: inline-grid;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  color: #1f6c35;
-}
-.account-communication__icon .account-dashboard__nav-icon {
-  width: 22px;
-  height: 22px;
-}
-.account-communication__row strong {
-  display: block;
-  color: #111c2c;
-}
-.account-communication__row p {
-  margin: 4px 0 0;
-  color: #414940;
-  font-size: 0.92rem;
-}
-.account-communication__toggle {
-  position: relative;
-  display: inline-flex;
-  width: 44px;
-  height: 24px;
-  cursor: pointer;
-}
-.account-communication__toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.account-communication__toggle span {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: #c1c9bd;
-}
-.account-communication__toggle span::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #ffffff;
-  transition: transform 0.18s ease;
-}
-.account-communication__toggle input:checked + span {
-  background: #1f6c35;
-}
-.account-communication__toggle input:checked + span::after {
-  transform: translateX(20px);
-}
 .account-personal-actions {
   gap: 24px;
   padding-top: 24px;
@@ -10452,6 +10371,10 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   align-content: start;
   gap: 24px;
+  position: sticky;
+  top: 96px;
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
 }
 .account-support-side-card {
   display: grid;
@@ -13042,6 +12965,31 @@ button, input, select, textarea { font: inherit; }
   padding: 0 16px;
   border: 1px solid #c2c8bf;
   background: #eef1fb;
+}
+.account-affiliate-code-card button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #14552b;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+.account-affiliate-code-card button:hover,
+.account-affiliate-code-card button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(24, 87, 42, 0.1);
+  color: #00401b;
+}
+.account-affiliate-code-card button:active {
+  transform: translateY(0);
+}
+.account-affiliate-code-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 .account-affiliate-code-card strong {
   color: #14552b;

@@ -647,21 +647,6 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
             <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
           </div>
         </label>
-        <div className="account-personal-divider" />
-        <div className="account-communication" aria-label="Communication Preferences">
-          <h3>Communication Preferences</h3>
-          <div className="account-communication__row">
-            <span className="account-communication__icon"><AccountNavIcon name="campaign" /></span>
-            <div>
-              <strong>Marketing Communications</strong>
-              <p>Receive updates on new hardware arrivals and tech deals.</p>
-            </div>
-            <label className="account-communication__toggle">
-              <input type="checkbox" defaultChecked aria-label="Marketing communications" />
-              <span />
-            </label>
-          </div>
-        </div>
         <div className="account-personal-actions">
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
             {submitting ? "Updating..." : "Update Changes"}
@@ -907,7 +892,7 @@ function AddressSection({ form, onFieldChange, onSubmit, onClear, submitting }) 
   );
 }
 
-function AffiliateSection({ summary }) {
+function AffiliateSection({ summary, onCopyCode }) {
   const totalReferrals = Number(summary.referrals || 0);
   const deliveredReferrals = Number(summary.deliveredReferrals || 0);
   const pendingReferrals = Number(summary.pendingReferrals || 0);
@@ -1014,7 +999,14 @@ function AffiliateSection({ summary }) {
           <span>Your Unique Referral Code</span>
           <div>
             <strong>{summary.code || "Not created"}</strong>
-            <AccountNavIcon name="copy" />
+            <button
+              type="button"
+              onClick={() => onCopyCode(summary.code)}
+              disabled={!summary.code}
+              aria-label="Copy referral code"
+            >
+              <AccountNavIcon name="copy" />
+            </button>
           </div>
           <p>{summary.isAffiliate ? "Share this code with your network to earn rewards." : "Open the affiliate page to create your code."}</p>
         </div>
@@ -1786,6 +1778,21 @@ export default function AccountPageClient({ initialTab = "" }) {
     pushToast("Address form cleared", "info");
   }
 
+  async function handleAffiliateCodeCopy(code) {
+    const value = String(code || "").trim();
+    if (!value) {
+      pushToast("No referral code to copy yet", "warning");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      pushToast("Referral code copied", "success");
+    } catch {
+      pushToast("Could not copy referral code", "warning");
+    }
+  }
+
   function handlePasswordFieldChange(field, value) {
     setPasswordForm((current) => ({ ...current, [field]: value }));
   }
@@ -1937,7 +1944,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       );
     }
     if (activeSection === "affiliates") {
-      return <AffiliateSection summary={affiliateSummary} />;
+      return <AffiliateSection summary={affiliateSummary} onCopyCode={handleAffiliateCodeCopy} />;
     }
     if (activeSection === "wishlist") {
       return <WishlistSection items={wishlistItems} />;
