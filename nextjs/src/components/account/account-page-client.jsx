@@ -1203,6 +1203,41 @@ function LogoutSection({ onLogout }) {
   );
 }
 
+function AccountTransientState({ mode = "loading" }) {
+  const isRedirect = mode === "redirect";
+  return (
+    <main className="shell page-section account-transient-page">
+      <nav className="account-transient-crumbs" aria-label="Breadcrumb">
+        <Link href="/">Home</Link>
+        <span>/</span>
+        <strong>My Account</strong>
+      </nav>
+      <div className="account-transient-kicker">My Account</div>
+
+      <section className={`account-transient-card ${isRedirect ? "is-redirect" : "is-loading"}`} aria-live="polite">
+        <div className="account-transient-card__orb" aria-hidden="true">
+          <span />
+        </div>
+        <span className="account-transient-card__badge">{isRedirect ? "Secure redirect" : "Secure session check"}</span>
+        <h1>{isRedirect ? "Redirecting to login" : "Account dashboard loading"}</h1>
+        <p>
+          {isRedirect
+            ? "Taking you to the login page so your account details stay protected."
+            : "Loading your profile, saved details, orders, messages, and account activity."}
+        </p>
+        <div className="account-transient-skeleton" aria-hidden="true">
+          <span />
+          <div>
+            <i />
+            <i />
+            <i />
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 function MessagesSection({
   tickets,
   replyDraft,
@@ -1763,27 +1798,11 @@ export default function AccountPageClient({ initialTab = "" }) {
   }, [isAuthenticated, router, status]);
 
   if (status === "loading" || (isAuthenticated && loadingProfile)) {
-    return (
-      <main className="shell page-section">
-        <div className="panel">
-          <h1>My Account</h1>
-          <h2>Account dashboard loading</h2>
-          <p>Loading account...</p>
-        </div>
-      </main>
-    );
+    return <AccountTransientState mode="loading" />;
   }
 
   if (!isAuthenticated) {
-    return (
-      <main className="shell page-section">
-        <div className="panel">
-          <h1>My Account</h1>
-          <h2>Redirecting to login</h2>
-          <p>Taking you to login...</p>
-        </div>
-      </main>
-    );
+    return <AccountTransientState mode="redirect" />;
   }
 
   return (

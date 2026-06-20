@@ -8403,6 +8403,208 @@ button, input, select, textarea { font: inherit; }
   padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: white; color: var(--muted);
 }
 .account-nav a:hover, .account-nav a.active { background: rgba(24, 79, 39, 0.1); color: #184f27; border-color: rgba(24, 79, 39, 0.28); }
+.account-transient-page {
+  display: grid;
+  align-content: start;
+  min-height: calc(100dvh - 96px);
+  padding-top: clamp(28px, 5vw, 54px);
+  padding-bottom: clamp(48px, 8vw, 92px);
+}
+.account-transient-crumbs {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 12px;
+  color: #4f565f;
+  font-size: 0.95rem;
+}
+.account-transient-crumbs a {
+  color: #4f565f;
+  text-decoration: none;
+}
+.account-transient-crumbs strong {
+  color: #003714;
+}
+.account-transient-kicker {
+  margin-top: 28px;
+  color: #111c2c;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.account-transient-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  width: min(720px, 100%);
+  margin: clamp(120px, 18vh, 210px) auto 0;
+  padding: clamp(34px, 5vw, 52px);
+  border: 1px solid #d8ddd3;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(27, 25, 22, 0.08);
+}
+.account-transient-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, #003714, #d9a441, #003714);
+  transform-origin: left;
+  animation: accountTransientSweep 1.8s ease-in-out infinite;
+}
+.account-transient-card__orb {
+  position: relative;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 999px;
+  background: #f1f5f2;
+}
+.account-transient-card__orb::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(20, 85, 43, 0.22);
+  background:
+    linear-gradient(135deg, rgba(20, 85, 43, 0.12), rgba(217, 164, 65, 0.08)),
+    #ffffff;
+  animation: accountTransientPulse 1.6s ease-in-out infinite;
+}
+.account-transient-card__orb span {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: #14552b;
+  box-shadow: 0 7px 0 rgba(20, 85, 43, 0.45), 0 -7px 0 rgba(217, 164, 65, 0.5);
+}
+.account-transient-card__badge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #e8f9ed;
+  color: #14552b;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.account-transient-card h1 {
+  margin: 0;
+  color: #003714;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  line-height: 1.1;
+}
+.account-transient-card p {
+  max-width: 440px;
+  margin: 0;
+  color: #4f565f;
+  line-height: 1.7;
+}
+.account-transient-skeleton {
+  display: grid;
+  gap: 18px;
+  width: min(560px, 100%);
+  margin-top: 18px;
+}
+.account-transient-skeleton span,
+.account-transient-skeleton i {
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f0f3ff;
+}
+.account-transient-skeleton span {
+  width: 180px;
+  height: 14px;
+  margin: 0 auto;
+}
+.account-transient-skeleton div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.account-transient-skeleton i {
+  height: 96px;
+}
+.account-transient-skeleton span::after,
+.account-transient-skeleton i::after {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  animation: accountTransientShimmer 1.35s ease-in-out infinite;
+}
+@keyframes accountTransientSweep {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0);
+    opacity: 0.55;
+  }
+}
+@keyframes accountTransientPulse {
+  0%, 100% {
+    transform: scale(0.94);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes accountTransientShimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+@media (max-width: 700px) {
+  .account-transient-page {
+    min-height: calc(100dvh - 74px);
+    padding: 22px 16px 42px;
+  }
+  .account-transient-crumbs,
+  .account-transient-kicker {
+    display: none;
+  }
+  .account-transient-card {
+    width: 100%;
+    margin: 42px auto 0;
+    padding: 28px 20px;
+  }
+  .account-transient-card__orb {
+    width: 58px;
+    height: 58px;
+  }
+  .account-transient-card p {
+    font-size: 0.95rem;
+  }
+  .account-transient-skeleton div {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .account-transient-skeleton i {
+    height: 56px;
+  }
+}
 /* Account dashboard - shared/base styles */
 .account-dashboard-shell {
   display: grid;
