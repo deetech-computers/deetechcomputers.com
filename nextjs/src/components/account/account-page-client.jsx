@@ -10,6 +10,7 @@ import MobileMessages from "@/components/account/account-mobile-messages";
 import MobileNotifications from "@/components/account/account-mobile-notifications";
 import MobileOrders from "@/components/account/account-mobile-orders";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
+import MobileReviews from "@/components/account/account-mobile-reviews";
 import { useAuth } from "@/hooks/use-auth";
 import StableImage from "@/components/ui/stable-image";
 import EmptyState from "@/components/ui/empty-state";
@@ -1693,6 +1694,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const shouldShowMobileMessages = hasExplicitAccountTab && activeSection === "messages";
   const shouldShowMobileNotifications = hasExplicitAccountTab && activeSection === "notifications";
   const shouldShowMobileAffiliates = hasExplicitAccountTab && activeSection === "affiliates";
+  const shouldShowMobileReviews = hasExplicitAccountTab && activeSection === "reviews";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1790,6 +1792,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       shouldShowMobileMessages ? "has-mobile-messages" : "",
       shouldShowMobileNotifications ? "has-mobile-notifications" : "",
       shouldShowMobileAffiliates ? "has-mobile-affiliates" : "",
+      shouldShowMobileReviews ? "has-mobile-reviews" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1843,6 +1846,9 @@ export default function AccountPageClient({ initialTab = "" }) {
       ) : null}
       {shouldShowMobileAffiliates ? (
         <MobileAffiliates summary={affiliateSummary} />
+      ) : null}
+      {shouldShowMobileReviews ? (
+        <MobileReviews reviews={reviews} />
       ) : null}
       <section className="account-dashboard-shell">
         <div className="account-dashboard">
