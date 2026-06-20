@@ -330,6 +330,42 @@ function AccountNavIcon({ name }) {
         <path d="M12 8h.01" />
       </>
     ),
+    helpCircle: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.1 9a3 3 0 1 1 5.8 1c-.5 1.2-1.7 1.6-2.3 2.5" />
+        <path d="M12 17h.01" />
+      </>
+    ),
+    history: (
+      <>
+        <path d="M3 12a9 9 0 1 0 3-6.7" />
+        <path d="M3 4v5h5" />
+        <path d="M12 7v5l3 2" />
+      </>
+    ),
+    compass: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="m16 8-2.2 5.8L8 16l2.2-5.8L16 8Z" />
+      </>
+    ),
+    truck: (
+      <>
+        <path d="M10 17h4V5H2v12h3" />
+        <path d="M14 8h4l4 4v5h-3" />
+        <circle cx="7.5" cy="17.5" r="2.5" />
+        <circle cx="16.5" cy="17.5" r="2.5" />
+      </>
+    ),
+    support: (
+      <>
+        <path d="M4 13a8 8 0 0 1 16 0" />
+        <path d="M4 13v3a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z" />
+        <path d="M20 13v3a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z" />
+        <path d="M16 19c-.7 1.2-2 2-4 2" />
+      </>
+    ),
     refresh: (
       <>
         <path d="M21 12a9 9 0 0 1-15.5 6.2" />
@@ -595,7 +631,7 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
     <section className="account-dashboard__section account-orders-section">
       <div className="account-dashboard__section-head account-dashboard__section-head--row">
         <div>
-          <h2>Orders ({orders.length})</h2>
+          <h2>{orders.length ? `Orders (${orders.length})` : "My Orders"}</h2>
           <p>Track active purchases, invoice downloads, and review actions from one place.</p>
         </div>
       </div>
@@ -693,13 +729,47 @@ function OrdersSection({ orders, router, onDownloadInvoice }) {
             </article>
           );
         }) : (
-          <EmptyState
-            icon="orders"
-            title="No orders yet"
-            description="Your purchases will appear here once you complete checkout."
-            actionHref="/products"
-            actionLabel="Browse products"
-          />
+          <>
+            <div className="account-orders-empty-card">
+              <div className="account-orders-empty-card__mark" aria-hidden="true">
+                <AccountNavIcon name="bag" />
+                <i><AccountNavIcon name="search" /></i>
+              </div>
+              <h3>No orders yet</h3>
+              <p>When you make your first purchase, it will appear here for tracking. Explore our catalog for the latest institutional tech hardware.</p>
+              <Link href="/products" className="account-orders-empty-card__action">
+                <AccountNavIcon name="compass" />
+                <span>Browse Products</span>
+              </Link>
+              <div className="account-orders-empty-card__links">
+                <Link href="/contact"><AccountNavIcon name="helpCircle" /> Need Help?</Link>
+                <Link href="/products"><AccountNavIcon name="history" /> View History</Link>
+              </div>
+            </div>
+            <div className="account-orders-empty-trust" aria-label="Order support benefits">
+              <article>
+                <AccountNavIcon name="truck" />
+                <div>
+                  <strong>Fast Delivery</strong>
+                  <span>Nationwide logistics</span>
+                </div>
+              </article>
+              <article>
+                <AccountNavIcon name="shield" />
+                <div>
+                  <strong>Warranty</strong>
+                  <span>Official tech support</span>
+                </div>
+              </article>
+              <article>
+                <AccountNavIcon name="support" />
+                <div>
+                  <strong>24/7 Support</strong>
+                  <span>Dedicated account team</span>
+                </div>
+              </article>
+            </div>
+          </>
         )}
       </div>
     </section>

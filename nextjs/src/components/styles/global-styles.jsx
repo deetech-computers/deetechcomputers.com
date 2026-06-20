@@ -13523,6 +13523,141 @@ button, input, select, textarea { font: inherit; }
   border-radius: 4px;
   background: #ffffff;
 }
+.account-orders-empty-card {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  width: min(800px, 100%);
+  min-height: 560px;
+  margin: clamp(70px, 10vh, 110px) auto 0;
+  padding: 76px 56px 54px;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(230, 248, 235, 0.86), rgba(255, 255, 255, 0) 32%),
+    #ffffff;
+  text-align: center;
+  box-shadow: 0 18px 55px rgba(17, 24, 39, 0.08);
+}
+.account-orders-empty-card__mark {
+  position: relative;
+  display: grid;
+  width: 114px;
+  height: 114px;
+  place-items: center;
+  color: rgba(24, 79, 39, 0.12);
+}
+.account-orders-empty-card__mark > .account-dashboard__nav-icon {
+  width: 82px;
+  height: 82px;
+  stroke-width: 1.7;
+}
+.account-orders-empty-card__mark i {
+  position: absolute;
+  right: 2px;
+  bottom: 12px;
+  display: grid;
+  width: 60px;
+  height: 60px;
+  place-items: center;
+  border: 1px solid #e3e8df;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #14552b;
+  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.13);
+}
+.account-orders-empty-card__mark i .account-dashboard__nav-icon {
+  width: 24px;
+  height: 24px;
+}
+.account-orders-empty-card h3 {
+  margin: 0;
+  color: #00401b;
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+.account-orders-empty-card p {
+  max-width: 460px;
+  margin: 0;
+  color: #4b5550;
+  font-size: 1rem;
+  line-height: 1.72;
+}
+.account-orders-empty-card__action {
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 0 30px;
+  border-radius: 6px;
+  background: #18572a;
+  color: #ffffff;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(0, 64, 27, 0.18);
+}
+.account-orders-empty-card__action .account-dashboard__nav-icon {
+  width: 19px;
+  height: 19px;
+}
+.account-orders-empty-card__links {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 18px;
+  color: #4b5550;
+}
+.account-orders-empty-card__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.account-orders-empty-card__links a + a {
+  padding-left: 28px;
+  border-left: 1px solid #d7ddd2;
+}
+.account-orders-empty-card__links .account-dashboard__nav-icon {
+  width: 17px;
+  height: 17px;
+}
+.account-orders-empty-trust {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  width: min(960px, 100%);
+  margin: 64px auto 0;
+}
+.account-orders-empty-trust article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  min-height: 72px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #60706a;
+}
+.account-orders-empty-trust .account-dashboard__nav-icon {
+  width: 30px;
+  height: 30px;
+  color: #668a78;
+}
+.account-orders-empty-trust strong {
+  display: block;
+  color: #668a78;
+  font-size: 0.95rem;
+}
+.account-orders-empty-trust span {
+  color: #6f7773;
+  font-size: 0.85rem;
+}
 .account-mobile-home {
   display: none;
 }
@@ -15717,19 +15852,19 @@ button, input, select, textarea { font: inherit; }
     top: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
     gap: 12px;
     align-items: center;
-    min-height: 56px;
-    padding: 0 16px;
+    min-height: 64px;
+    padding: 0 18px;
     border-bottom: 1px solid #d7ddd2;
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
   }
   .account-mobile-orders__head a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: grid;
+    width: 44px;
+    place-items: center;
     min-height: 44px;
     color: #003714;
     font-weight: 800;
@@ -15738,12 +15873,24 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-orders__head a:last-child {
     justify-self: end;
   }
-  .account-mobile-orders__head h1 {
+  .account-mobile-orders__title {
+    display: grid;
+    justify-self: start;
+  }
+  .account-mobile-orders__title span {
+    color: #303832;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .account-mobile-orders__title h1 {
     margin: 0;
-    color: #111827;
-    font-size: 1.35rem;
+    color: #00401b;
+    font-size: 1rem;
+    font-weight: 500;
     line-height: 1.1;
-    text-align: center;
     white-space: nowrap;
   }
   .account-mobile-orders__icon {
@@ -15756,8 +15903,11 @@ button, input, select, textarea { font: inherit; }
     gap: 16px;
     padding: 16px 16px max(24px, env(safe-area-inset-bottom));
   }
-  .account-mobile-orders__card,
-  .account-mobile-orders__empty {
+  .account-mobile-orders__body.is-empty {
+    min-height: calc(100dvh - 64px);
+    padding: 0;
+  }
+  .account-mobile-orders__card {
     display: grid;
     gap: 12px;
     padding: 24px;
@@ -15857,8 +16007,7 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
-  .account-mobile-orders__actions button,
-  .account-mobile-orders__empty a {
+  .account-mobile-orders__actions button {
     min-height: 58px;
     border: 1px solid #343b35;
     border-radius: 4px;
@@ -15873,26 +16022,93 @@ button, input, select, textarea { font: inherit; }
     opacity: 0.5;
   }
   .account-mobile-orders__empty {
-    justify-items: start;
+    display: grid;
+    min-height: calc(100dvh - 64px);
+    align-content: center;
+    justify-items: center;
+    gap: 22px;
+    overflow: hidden;
+    padding: 52px 40px max(34px, env(safe-area-inset-bottom));
+    background:
+      radial-gradient(circle at 50% 32%, rgba(225, 246, 232, 0.92), rgba(245, 246, 247, 0) 38%),
+      #f5f6f7;
+    text-align: center;
+  }
+  .account-mobile-orders__empty-mark {
+    position: relative;
+    display: grid;
+    width: 134px;
+    height: 134px;
+    place-items: center;
+    margin-top: -34px;
+    color: rgba(24, 79, 39, 0.08);
+  }
+  .account-mobile-orders__empty-mark > .account-mobile-orders__icon {
+    width: 80px;
+    height: 80px;
+    stroke-width: 1.6;
+  }
+  .account-mobile-orders__empty-mark i {
+    position: absolute;
+    right: 8px;
+    bottom: 16px;
+    display: grid;
+    width: 50px;
+    height: 50px;
+    place-items: center;
+    border: 1px solid #e3e8df;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #14552b;
+    box-shadow: 0 12px 22px rgba(17, 24, 39, 0.12);
+  }
+  .account-mobile-orders__empty-mark i .account-mobile-orders__icon {
+    width: 22px;
+    height: 22px;
   }
   .account-mobile-orders__empty h2 {
     margin: 0;
-    color: #003714;
-    font-size: 1.2rem;
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
   }
   .account-mobile-orders__empty p {
+    max-width: 290px;
     margin: 0;
     color: #4b5550;
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
-  .account-mobile-orders__empty a {
+  .account-mobile-orders__empty-action {
     display: inline-flex;
+    width: min(100%, 344px);
+    min-height: 64px;
     align-items: center;
     justify-content: center;
-    min-height: 48px;
-    padding: 0 18px;
-    border-color: #18572a;
+    gap: 10px;
+    margin-top: min(18vh, 130px);
+    border-radius: 8px;
     background: #18572a;
     color: #ffffff;
+    font-size: 1rem;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+  }
+  .account-mobile-orders__empty-action .account-mobile-orders__icon {
+    width: 19px;
+    height: 19px;
+  }
+  .account-mobile-orders__empty-footer {
+    max-width: none;
+    margin-top: 2px;
+    color: #7d867d;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    text-transform: uppercase;
   }
   .account-mobile-personal {
     display: block;
