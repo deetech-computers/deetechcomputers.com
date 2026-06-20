@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 const RECOVERY_KEY = "deetech:chunk-reload-recovered";
 const RECOVERY_WINDOW_MS = 60_000;
+const CACHE_BUST_PARAM = "__deetech_asset_refresh";
 
 function isChunkLoadFailure(value) {
   const message = String(value?.message || value || "");
@@ -14,13 +15,30 @@ function isChunkLoadFailure(value) {
   );
 }
 
-function reloadOnceForFreshAssets() {
+async function clearBrowserCaches() {
+  if (typeof window === "undefined" || !("caches" in window)) return;
+  try {
+    const keys = await window.caches.keys();
+    await Promise.all(keys.map((key) => window.caches.delete(key)));
+  } catch {
+    // Cache cleanup is best effort; the reload below is the important recovery step.
+  }
+}
+
+function buildFreshUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.set(CACHE_BUST_PARAM, String(Date.now()));
+  return url.toString();
+}
+
+async function reloadOnceForFreshAssets() {
   if (typeof window === "undefined") return;
   const lastReload = Number(window.sessionStorage.getItem(RECOVERY_KEY) || 0);
   const now = Date.now();
   if (now - lastReload < RECOVERY_WINDOW_MS) return;
   window.sessionStorage.setItem(RECOVERY_KEY, String(now));
-  window.location.reload();
+  await clearBrowserCaches();
+  window.location.replace(buildFreshUrl());
 }
 
 export default function ChunkReloadRecovery() {
