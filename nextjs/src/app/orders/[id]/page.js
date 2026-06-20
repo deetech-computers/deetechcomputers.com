@@ -140,6 +140,11 @@ export default function TrackOrderPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    document.body.classList.add("has-track-order-page");
+    return () => document.body.classList.remove("has-track-order-page");
+  }, []);
+
+  useEffect(() => {
     if (status !== "ready") return;
     if (guestToken) {
       setLoading(true);
@@ -181,35 +186,64 @@ export default function TrackOrderPage() {
   const steps = useMemo(() => buildTrackingState(order), [order]);
   const progressRatio = Math.max(0, (steps.filter((step) => step.done).length - 1) / (steps.length - 1));
   const productSavings = useMemo(() => getLinesDiscountTotal(order?.orderItems || []), [order]);
+  const backHref = guestToken ? "/" : "/account?tab=orders";
+  const backLabel = guestToken ? "Home" : "Orders";
+  const activeStep = steps.find((step) => step.active) || steps[steps.length - 1];
+  const currentStepLabel = TRACK_STEPS.find((step) => step.key === activeStep?.key)?.label || "Order Status";
 
   return (
-    <main className="shell page-section">
-      <section className="checkout-hero">
-        <h1>Track Your Order</h1>
-        <p className="checkout-hero__crumbs">
-          <Link href="/">Home</Link>
-          <span>/</span>
-          {guestToken ? <span>Guest Tracking</span> : <Link href="/account?tab=orders">My Orders</Link>}
-          <span>/</span>
-          <span>Track Your Order</span>
-        </p>
-      </section>
+    <main className="track-order-page">
+      <header className="track-order-mobile-head">
+        <Link href={backHref} aria-label={`Back to ${backLabel}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>{backLabel}</span>
+        </Link>
+        <h1>Track Order</h1>
+        <span className="track-order-mobile-head__icon" aria-hidden="true">
+          <OrderTrackIcon name="shipped" />
+        </span>
+      </header>
+
+      <div className="shell track-order-page__shell">
+        <section className="track-order-hero">
+          <p className="track-order-hero__crumbs">
+            <Link href="/">Home</Link>
+            <span>/</span>
+            {guestToken ? <span>Guest Tracking</span> : <Link href="/account?tab=orders">My Orders</Link>}
+            <span>/</span>
+            <span>Track Your Order</span>
+          </p>
+          <h1>Track Your Order</h1>
+          <p>Follow payment review, processing, dispatch, and delivery progress from one clean view.</p>
+        </section>
 
       {status === "loading" || loading ? (
-        <section className="panel wishlist-empty">
+        <section className="panel track-order-state">
+          <div className="track-order-state__mark" aria-hidden="true">
+            <OrderTrackIcon name="processing" />
+          </div>
           <h2>Loading tracking details...</h2>
+          <p>Retrieving the latest order status from your DEETECH account.</p>
         </section>
       ) : !guestToken && !isAuthenticated ? (
-        <section className="panel wishlist-empty">
+        <section className="panel track-order-state">
+          <div className="track-order-state__mark" aria-hidden="true">
+            <OrderTrackIcon name="accepted" />
+          </div>
           <h2>Login required</h2>
-          <p className="hero-copy">Sign in to track account orders. Guest orders can be tracked from the secure link sent to the checkout email.</p>
+          <p>Sign in to track account orders. Guest orders can be tracked from the secure link sent to the checkout email.</p>
           <Link href="/login" className="primary-link">Go to login</Link>
         </section>
       ) : error || !order ? (
-        <section className="panel wishlist-empty">
+        <section className="panel track-order-state">
+          <div className="track-order-state__mark" aria-hidden="true">
+            <OrderTrackIcon name="placed" />
+          </div>
           <h2>Order not available</h2>
-          <p className="hero-copy">{error || "We could not load this order right now."}</p>
-          <button type="button" className="ghost-button" onClick={() => router.push(guestToken ? "/" : "/account?tab=orders")}>
+          <p>{error || "We could not load this order right now."}</p>
+          <button type="button" className="ghost-button" onClick={() => router.push(backHref)}>
             {guestToken ? "Back to Home" : "Back to My Orders"}
           </button>
         </section>
@@ -229,9 +263,13 @@ export default function TrackOrderPage() {
                 )}
                 <h2>Order Status</h2>
                 <p>Order ID : #{order.orderNumber || order._id}</p>
+                <span className={`track-order-status-pill is-${String(order.orderStatus || "pending").toLowerCase()}`}>
+                  {currentStepLabel}
+                </span>
               </div>
               <div className="track-order-top__meta">
-                <span>{paymentLabel(order.paymentMethod)}</span>
+                <span>Payment method</span>
+                <em>{paymentLabel(order.paymentMethod)}</em>
                 <strong>{formatCurrency(Number(order.totalPrice || 0))}</strong>
                 <small>
                   {Number(order.shippingPrice || 0) > 0
@@ -256,8 +294,10 @@ export default function TrackOrderPage() {
                   <div className="track-order-step__icon">
                     <OrderTrackIcon name={step.key} />
                   </div>
-                  <strong>{TRACK_STEPS[index].label}</strong>
-                  <span>{step.caption}</span>
+                  <div className="track-order-step__copy">
+                    <strong>{TRACK_STEPS[index].label}</strong>
+                    <span>{step.caption}</span>
+                  </div>
                 </div>
               ))}
               <div className="track-order-progress__line" aria-hidden="true">
@@ -274,6 +314,7 @@ export default function TrackOrderPage() {
           <section className="panel track-order-products">
             <div className="track-order-products__head">
               <h2>Products</h2>
+              <span>{(order.orderItems || []).length} item{(order.orderItems || []).length === 1 ? "" : "s"}</span>
             </div>
 
             <div className="track-order-products__list">
@@ -314,6 +355,7 @@ export default function TrackOrderPage() {
           </section>
         </section>
       )}
+      </div>
     </main>
   );
 }
