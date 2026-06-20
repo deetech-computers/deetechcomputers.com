@@ -577,6 +577,16 @@ export default function AffiliatesPage() {
                   <p>
                     Use your code during checkout or share the link. Pending referrals update after entry, and earned commissions update when delivery is confirmed.
                   </p>
+                  <dl className="affiliate-command__metrics">
+                    <div>
+                      <dt>Tier</dt>
+                      <dd>{tier.charAt(0).toUpperCase() + tier.slice(1)}</dd>
+                    </div>
+                    <div>
+                      <dt>Commission Rate</dt>
+                      <dd>{commissionRate}%</dd>
+                    </div>
+                  </dl>
                 </div>
 
                 <div className="affiliate-code-card">
@@ -699,7 +709,7 @@ export default function AffiliatesPage() {
               <section className="affiliate-referrals panel affiliate-earning-history">
                 <div className="affiliate-referrals__head">
                   <div>
-                    <h2>Earning History</h2>
+                    <h2>Recent Conversions</h2>
                     <p>
                       Track each referred order, the customer, order amount, commission, status, and date in one clean view.
                     </p>
