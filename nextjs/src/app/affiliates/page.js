@@ -110,6 +110,7 @@ function AffiliateIcon({ type, className = "" }) {
     bank: "M3 10l9-6 9 6M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16",
     chart: "M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-8",
     arrowRight: "M5 12h14M13 6l6 6-6 6",
+    copy: "M9 9h11v11H9V9ZM4 4h11v11H4V4Z",
   };
 
   return (
@@ -408,7 +409,7 @@ export default function AffiliatesPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className={`shell page-section ${dashboard?.isAffiliate ? "has-affiliate-mobile-dashboard" : ""}`}>
       <section className="cart-hero affiliate-hero">
         <p className="affiliate-hero__eyebrow">DEETECH Partner Program</p>
         <h1>Affiliates</h1>
@@ -576,6 +577,121 @@ export default function AffiliatesPage() {
             </>
           ) : (
             <>
+              <section className="affiliate-mobile-dashboard" aria-label="Affiliate mobile dashboard">
+                <header className="affiliate-mobile-dashboard__head">
+                  <Link href="/account?tab=affiliates" aria-label="Back to account">
+                    <AffiliateIcon type="arrowRight" />
+                  </Link>
+                  <div>
+                    <span>Account</span>
+                    <h1>Affiliates</h1>
+                  </div>
+                  <AffiliateIcon type="success" />
+                </header>
+
+                <div className="affiliate-mobile-dashboard__body">
+                  <section className="affiliate-mobile-dashboard__hero">
+                    <div className="affiliate-mobile-dashboard__hero-top">
+                      <span>Active Member</span>
+                      <div>
+                        <small>Commission</small>
+                        <strong>{commissionRate}%</strong>
+                      </div>
+                    </div>
+                    <p>Referral Code</p>
+                    <div className="affiliate-mobile-dashboard__code">
+                      <strong>{code || "Not created"}</strong>
+                      <button type="button" onClick={() => copyText(code, "Affiliate code")} disabled={!code}>
+                        <AffiliateIcon type="copy" />
+                        Copy
+                      </button>
+                    </div>
+                    <div className="affiliate-mobile-dashboard__tier">
+                      <span>Current Tier</span>
+                      <strong>{tier.charAt(0).toUpperCase() + tier.slice(1)} Specialist</strong>
+                    </div>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__section">
+                    <h2>Performance Stats</h2>
+                    <div className="affiliate-mobile-dashboard__stats">
+                      <article>
+                        <AffiliateIcon type="referrals" />
+                        <span>Referrals</span>
+                        <strong>{stats.totalReferrals}</strong>
+                      </article>
+                      <article className="is-gold">
+                        <AffiliateIcon type="pending" />
+                        <span>Pending</span>
+                        <strong>{formatCurrency(stats.pendingCommission)}</strong>
+                      </article>
+                      <article>
+                        <AffiliateIcon type="paid" />
+                        <span>Paid</span>
+                        <strong>{formatCurrency(stats.earnedCommission)}</strong>
+                      </article>
+                      <article>
+                        <AffiliateIcon type="lifetime" />
+                        <span>Lifetime</span>
+                        <strong>{formatCurrency(lifetimeGenerated)}</strong>
+                      </article>
+                      <article className="is-danger">
+                        <AffiliateIcon type="cancelled" />
+                        <span>Cancelled</span>
+                        <strong>{stats.cancelledReferrals}</strong>
+                      </article>
+                      <article>
+                        <AffiliateIcon type="success" />
+                        <span>Success Rate</span>
+                        <strong>{successRate}%</strong>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__payout">
+                    <div className="affiliate-mobile-dashboard__payout-head">
+                      <h2>Payout Summary</h2>
+                      <AffiliateIcon type="paid" />
+                    </div>
+                    <div className="affiliate-mobile-dashboard__balance">
+                      <div>
+                        <span>Pending Commission</span>
+                        <strong>{formatCurrency(stats.pendingCommission)}</strong>
+                      </div>
+                      <div>
+                        <span>Next Tier</span>
+                        <strong>{nextTierGoal.label}</strong>
+                      </div>
+                    </div>
+                    <h3>Settlement Method</h3>
+                    <div className="affiliate-mobile-dashboard__method">
+                      <span><AffiliateIcon type="bank" /></span>
+                      <div>
+                        <strong>{affiliate?.momoNumber ? "Mobile Money Payout" : "Payout setup"}</strong>
+                        <p>{affiliate?.momoNumber || "Contact support to confirm payout details"}</p>
+                      </div>
+                    </div>
+                    <p>Commissions are verified after referred orders are confirmed and delivered.</p>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__invite">
+                    <AffiliateIcon type="tier" />
+                    <div>
+                      <strong>Invite & Earn More</strong>
+                      <p>Need {Math.max(0, nextTierGoal.target - stats.deliveredReferrals)} delivered deals for {nextTierGoal.label} tier.</p>
+                    </div>
+                  </section>
+                </div>
+
+                <div className="affiliate-mobile-dashboard__submit">
+                  <button type="button" onClick={() => copyText(referralLink, "Referral link")} disabled={!code}>
+                    <AffiliateIcon type="copy" />
+                    <span>Copy Referral Link</span>
+                  </button>
+                </div>
+              </section>
+
+              <div className="affiliate-desktop-dashboard">
               <section className="affiliate-command">
                 <div className="affiliate-command__intro">
                   <span className="affiliate-badge">{tier} tier</span>
@@ -776,6 +892,7 @@ export default function AffiliatesPage() {
                   </div>
                 )}
               </section>
+              </div>
             </>
           )}
         </div>
