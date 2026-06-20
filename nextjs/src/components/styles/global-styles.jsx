@@ -11993,6 +11993,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-address {
   display: none;
 }
+.account-mobile-messages {
+  display: none;
+}
 .account-mobile-orders {
   display: none;
 }
@@ -12003,12 +12006,14 @@ button, input, select, textarea { font: inherit; }
 @media (max-width: 640px) {
   .app-shell:has(.account-mobile-personal) .site-header,
   .app-shell:has(.account-mobile-orders) .site-header,
-  .app-shell:has(.account-mobile-address) .site-header {
+  .app-shell:has(.account-mobile-address) .site-header,
+  .app-shell:has(.account-mobile-messages) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
   .app-shell:has(.account-mobile-orders) .app-content,
-  .app-shell:has(.account-mobile-address) .app-content {
+  .app-shell:has(.account-mobile-address) .app-content,
+  .app-shell:has(.account-mobile-messages) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12049,6 +12054,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-address .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-messages {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-messages .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -12465,6 +12480,297 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-address__submit button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+  .account-mobile-messages {
+    display: block;
+    min-height: 100dvh;
+    padding-bottom: 86px;
+    background: #f7f7fb;
+    color: #111827;
+  }
+  .account-mobile-messages__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 18px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-messages__head a {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
+    color: #003714;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .account-mobile-messages__head h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.28rem;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .account-mobile-messages__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-messages__ticket {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: start;
+    padding: 34px 24px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #f0f3fc;
+  }
+  .account-mobile-messages__ticket div {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+  .account-mobile-messages__ticket strong,
+  .account-mobile-messages__ticket span {
+    min-width: 0;
+    color: #111827;
+    font-size: 1.08rem;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .account-mobile-messages__ticket em {
+    display: inline-flex;
+    min-height: 30px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border: 1px solid #d99b12;
+    border-radius: 999px;
+    background: #fff7db;
+    color: #6e4b00;
+    font-size: 0.76rem;
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .account-mobile-messages__ticket em::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    margin-right: 7px;
+    border-radius: 999px;
+    background: #d99b12;
+  }
+  .account-mobile-messages__thread {
+    display: grid;
+    gap: 28px;
+    padding: 34px 24px 28px;
+  }
+  .account-mobile-messages__message {
+    display: grid;
+    gap: 8px;
+  }
+  .account-mobile-messages__message.is-user {
+    justify-items: end;
+  }
+  .account-mobile-messages__meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    color: #343b35;
+    font-size: 0.78rem;
+  }
+  .account-mobile-messages__meta span + span::before {
+    content: "";
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin: 0 6px 2px 0;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .account-mobile-messages__message p {
+    width: min(100%, 445px);
+    margin: 0;
+    padding: 24px;
+    border-radius: 9px;
+    color: #111827;
+    font-size: 1.05rem;
+    line-height: 1.62;
+    box-shadow: 0 8px 20px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-messages__message.is-admin p {
+    justify-self: start;
+    background: #f8f2e6;
+  }
+  .account-mobile-messages__message.is-user p {
+    justify-self: end;
+    background: #18572a;
+    color: #a8d4ad;
+  }
+  .account-mobile-messages__attachment {
+    display: block;
+    width: min(100%, 220px);
+    overflow: hidden;
+    border-radius: 9px;
+  }
+  .account-mobile-messages__attachment img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .account-mobile-messages__read {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    color: #343b35;
+    font-size: 0.78rem;
+  }
+  .account-mobile-messages__read .account-mobile-messages__icon {
+    width: 18px;
+    height: 18px;
+    color: #003714;
+  }
+  .account-mobile-messages__whatsapp {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    margin-top: 14px;
+    padding: 28px 24px;
+    border: 1px solid #b7c2b4;
+    border-radius: 9px;
+    background: #d9e6fb;
+    color: #252b24;
+    text-decoration: none;
+  }
+  .account-mobile-messages__whatsapp > span {
+    display: grid;
+    width: 50px;
+    height: 50px;
+    place-items: center;
+    border-radius: 14px;
+    background: #29d35f;
+    color: #ffffff;
+  }
+  .account-mobile-messages__whatsapp strong {
+    display: block;
+    color: #111827;
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+  .account-mobile-messages__whatsapp p {
+    margin: 6px 0 0;
+    color: #2c342e;
+    font-size: 0.96rem;
+    line-height: 1.35;
+  }
+  .account-mobile-messages__whatsapp > .account-mobile-messages__icon {
+    color: #343b35;
+  }
+  .account-mobile-messages__composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 58px;
+    gap: 12px;
+    align-items: end;
+    padding: 12px 24px;
+    border-top: 1px solid #c1c9bd;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 -18px 35px rgba(17, 24, 39, 0.08);
+    backdrop-filter: blur(12px);
+  }
+  .account-mobile-messages__input-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    align-items: end;
+    min-height: 58px;
+    border-radius: 14px;
+    background: #f0f3fc;
+  }
+  .account-mobile-messages__input-wrap textarea {
+    width: 100%;
+    min-height: 58px;
+    max-height: 128px;
+    resize: none;
+    border: 0;
+    border-radius: 14px;
+    outline: 0;
+    background: transparent;
+    color: #111827;
+    font: inherit;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    padding: 18px 0 12px 18px;
+  }
+  .account-mobile-messages__input-wrap textarea::placeholder {
+    color: #6b7280;
+  }
+  .account-mobile-messages__input-wrap button {
+    display: grid;
+    width: 44px;
+    height: 58px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #343b35;
+  }
+  .account-mobile-messages__input-wrap button:disabled {
+    opacity: 1;
+  }
+  .account-mobile-messages__composer > button {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    place-items: center;
+    border: 0;
+    border-radius: 14px;
+    background: #18572a;
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 64, 27, 0.24);
+  }
+  .account-mobile-messages__composer > button:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+  }
+  .account-mobile-messages__empty {
+    display: grid;
+    gap: 12px;
+    margin: 24px;
+    padding: 24px;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-messages__empty h2 {
+    margin: 0;
+    color: #003714;
+    font-size: 1.2rem;
+  }
+  .account-mobile-messages__empty p {
+    margin: 0;
+    color: #4b5550;
+  }
+  .account-mobile-messages__empty a {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border-radius: 8px;
+    background: #18572a;
+    color: #ffffff;
+    font-weight: 800;
+    text-decoration: none;
   }
   .account-mobile-orders {
     display: block;

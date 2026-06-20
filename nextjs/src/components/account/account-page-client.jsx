@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import MobileAddress from "@/components/account/account-mobile-address";
 import MobileAccountHome from "@/components/account/account-mobile-home";
+import MobileMessages from "@/components/account/account-mobile-messages";
 import MobileOrders from "@/components/account/account-mobile-orders";
 import MobilePersonalInfo from "@/components/account/account-mobile-personal";
 import { useAuth } from "@/hooks/use-auth";
@@ -1687,6 +1688,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const shouldShowMobilePersonal = hasExplicitAccountTab && activeSection === "personal";
   const shouldShowMobileOrders = hasExplicitAccountTab && activeSection === "orders";
   const shouldShowMobileAddress = hasExplicitAccountTab && activeSection === "address";
+  const shouldShowMobileMessages = hasExplicitAccountTab && activeSection === "messages";
   const unreadAccountNotifications = accountNotifications.filter((item) => !notificationReadIds.includes(String(item?.id || ""))).length;
 
   const content = useMemo(() => {
@@ -1781,6 +1783,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       shouldShowMobilePersonal ? "has-mobile-personal" : "",
       shouldShowMobileOrders ? "has-mobile-orders" : "",
       shouldShowMobileAddress ? "has-mobile-address" : "",
+      shouldShowMobileMessages ? "has-mobile-messages" : "",
     ].filter(Boolean).join(" ")}>
       {!hasExplicitAccountTab ? (
         <MobileAccountHome
@@ -1813,6 +1816,15 @@ export default function AccountPageClient({ initialTab = "" }) {
           onFieldChange={handleProfileFieldChange}
           onSubmit={handleAddressSubmit}
           submitting={savingAddress}
+        />
+      ) : null}
+      {shouldShowMobileMessages ? (
+        <MobileMessages
+          tickets={supportTickets}
+          replyDraft={supportReplyDraft}
+          sendingReply={sendingSupportReply}
+          onReplyDraftChange={setSupportReplyDraft}
+          onSendReply={handleSupportReplySubmit}
         />
       ) : null}
       <section className="account-dashboard-shell">
