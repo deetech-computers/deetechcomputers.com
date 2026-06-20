@@ -12916,6 +12916,115 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 26px;
 }
+.account-reviews-empty-card {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  width: min(680px, 100%);
+  margin: clamp(92px, 14vh, 170px) auto 0;
+  padding: 40px 40px 36px;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: 0 18px 55px rgba(17, 24, 39, 0.08);
+}
+.account-reviews-empty-card__mark {
+  position: relative;
+  display: grid;
+  width: 96px;
+  height: 96px;
+  place-items: center;
+  border-radius: 9px;
+  background: #f0f3ff;
+  color: #00401b;
+}
+.account-reviews-empty-card__mark > .account-dashboard__nav-icon {
+  width: 46px;
+  height: 46px;
+  stroke-width: 2.1;
+}
+.account-reviews-empty-card__mark i {
+  position: absolute;
+  right: -8px;
+  bottom: -6px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 4px solid #ffffff;
+  border-radius: 8px;
+  background: #14552b;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(17, 24, 39, 0.12);
+}
+.account-reviews-empty-card__mark i .account-dashboard__nav-icon {
+  width: 18px;
+  height: 18px;
+}
+.account-reviews-empty-card h3 {
+  margin: 0;
+  color: #00401b;
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+.account-reviews-empty-card p {
+  max-width: 410px;
+  margin: 0;
+  color: #4b5550;
+  line-height: 1.6;
+}
+.account-reviews-empty-card__action {
+  display: inline-flex;
+  min-width: 242px;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  border-radius: 5px;
+  background: #14552b;
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.account-reviews-empty-card__action .account-dashboard__nav-icon {
+  width: 18px;
+  height: 18px;
+}
+.account-reviews-empty-card__benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 22px;
+  padding-top: 24px;
+  border-top: 1px solid #c8cdc3;
+}
+.account-reviews-empty-card__benefits span {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: #3f4540;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.account-reviews-empty-card__benefits .account-dashboard__nav-icon {
+  width: 24px;
+  height: 24px;
+  color: #1d6a33;
+}
+.account-reviews-empty-card__footer {
+  margin: clamp(150px, 22vh, 230px) 0 0;
+  color: #a0a39f;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+}
 .account-review-row {
   display: grid;
   grid-template-columns: 150px minmax(0, 1fr) 190px;
@@ -15110,88 +15219,88 @@ button, input, select, textarea { font: inherit; }
     align-content: center;
     justify-items: center;
     gap: 22px;
-    padding: 44px 24px max(36px, env(safe-area-inset-bottom));
+    padding: 52px 40px max(34px, env(safe-area-inset-bottom));
     background: #f5f6f7;
     text-align: center;
   }
   .account-mobile-notifications__empty-mark {
     position: relative;
     display: grid;
-    width: 132px;
-    height: 132px;
+    width: 110px;
+    height: 110px;
     place-items: center;
     margin-top: -34px;
-    border-radius: 16px;
+    border-radius: 14px;
     background: #dce7fb;
     color: #aab6c0;
     box-shadow: 0 14px 28px rgba(17, 24, 39, 0.035);
   }
   .account-mobile-notifications__empty-mark > .account-mobile-notifications__icon {
-    width: 66px;
-    height: 66px;
+    width: 54px;
+    height: 54px;
     stroke-width: 1.7;
   }
   .account-mobile-notifications__empty-mark span {
     position: absolute;
-    right: 12px;
-    bottom: 12px;
+    right: 9px;
+    bottom: 9px;
     display: grid;
-    width: 50px;
-    height: 50px;
+    width: 42px;
+    height: 42px;
     place-items: center;
-    border: 7px solid #f5f6f7;
-    border-radius: 14px;
+    border: 6px solid #f5f6f7;
+    border-radius: 12px;
     background: #9cf3a8;
     color: #16622e;
     box-shadow: 0 10px 20px rgba(17, 24, 39, 0.1);
   }
   .account-mobile-notifications__empty-mark span .account-mobile-notifications__icon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     stroke-width: 3;
   }
   .account-mobile-notifications__empty h2 {
     margin: 0;
     color: #00401b;
-    font-size: 1.95rem;
+    font-size: 1.35rem;
     line-height: 1.08;
   }
   .account-mobile-notifications__empty p {
-    max-width: 310px;
+    max-width: 290px;
     margin: 0;
     color: #4b5550;
-    font-size: 1rem;
-    line-height: 1.65;
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
   .account-mobile-notifications__empty-action {
     display: inline-flex;
     width: min(100%, 344px);
-    min-height: 74px;
+    min-height: 64px;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    margin-top: min(20vh, 150px);
+    gap: 10px;
+    margin-top: min(18vh, 130px);
     border-radius: 8px;
     background: #18572a;
     color: #ffffff;
-    font-size: 1.42rem;
+    font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
     box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
   }
   .account-mobile-notifications__empty-action .account-mobile-notifications__icon {
-    width: 28px;
-    height: 28px;
+    width: 19px;
+    height: 19px;
   }
   .account-mobile-notifications__empty-footer {
     position: relative;
     max-width: none;
-    margin-top: 16px;
+    margin-top: 2px;
     color: #7d867d;
-    font-size: 0.92rem;
+    font-size: 0.76rem;
     font-weight: 900;
-    letter-spacing: 0.2em;
-    line-height: 1.2;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
     text-transform: uppercase;
   }
   .account-mobile-notifications__empty-footer::after {
@@ -15216,8 +15325,8 @@ button, input, select, textarea { font: inherit; }
     grid-template-columns: 44px minmax(0, 1fr) 44px;
     gap: 12px;
     align-items: center;
-    min-height: 56px;
-    padding: 0 16px;
+    min-height: 64px;
+    padding: 0 18px;
     border-bottom: 1px solid #c1c9bd;
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
@@ -15230,10 +15339,28 @@ button, input, select, textarea { font: inherit; }
     color: #111827;
     text-decoration: none;
   }
-  .account-mobile-reviews__head h1 {
+  .account-mobile-reviews__title {
+    display: grid;
+    justify-self: start;
+    gap: 6px;
+  }
+  .account-mobile-reviews__title span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #303832;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+  .account-mobile-reviews__title span .account-mobile-reviews__icon {
+    width: 13px;
+    height: 13px;
+  }
+  .account-mobile-reviews__title h1 {
     margin: 0;
-    color: #111827;
-    font-size: 1.35rem;
+    color: #00401b;
+    font-size: 1.85rem;
     line-height: 1.1;
   }
   .account-mobile-reviews__icon {
@@ -15384,8 +15511,7 @@ button, input, select, textarea { font: inherit; }
     font-size: 0.78rem;
     font-weight: 800;
   }
-  .account-mobile-reviews__footer a,
-  .account-mobile-reviews__empty a {
+  .account-mobile-reviews__footer a {
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -15401,22 +15527,98 @@ button, input, select, textarea { font: inherit; }
   }
   .account-mobile-reviews__empty {
     display: grid;
-    gap: 12px;
-    margin: 24px 16px;
-    padding: 24px;
-    border-radius: 8px;
+    min-height: calc(100dvh - 64px);
+    align-content: center;
+    justify-items: center;
+    gap: 22px;
+    overflow: hidden;
+    padding: 52px 30px max(34px, env(safe-area-inset-bottom));
+    background:
+      radial-gradient(circle at 50% 36%, rgba(225, 246, 232, 0.92), rgba(245, 246, 247, 0) 42%),
+      #f5f6f7;
+    text-align: center;
+  }
+  .account-mobile-reviews__empty-mark {
+    position: relative;
+    display: grid;
+    width: 128px;
+    height: 128px;
+    place-items: center;
+    margin-top: -12px;
+    border-radius: 16px;
     background: #ffffff;
-    box-shadow: 0 14px 34px rgba(27, 25, 22, 0.055);
+    color: #14552b;
+    box-shadow: 0 14px 26px rgba(17, 24, 39, 0.08);
+  }
+  .account-mobile-reviews__empty-mark > .account-mobile-reviews__icon {
+    width: 58px;
+    height: 58px;
+    stroke-width: 2.2;
+  }
+  .account-mobile-reviews__empty-mark i {
+    position: absolute;
+    right: -8px;
+    bottom: -6px;
+    display: grid;
+    width: 50px;
+    height: 50px;
+    place-items: center;
+    border-radius: 14px;
+    background: #00401b;
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.24);
+  }
+  .account-mobile-reviews__empty-mark i .account-mobile-reviews__icon {
+    width: 24px;
+    height: 24px;
   }
   .account-mobile-reviews__empty h2 {
     margin: 0;
     color: #003714;
-    font-size: 1.2rem;
+    font-size: 1.55rem;
+    line-height: 1.15;
   }
   .account-mobile-reviews__empty p {
+    max-width: 330px;
     margin: 0;
     color: #4b5550;
-    line-height: 1.45;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  .account-mobile-reviews__empty a {
+    display: inline-flex;
+    width: min(100%, 344px);
+    min-height: 64px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 28px;
+    border-radius: 7px;
+    background: #18572a;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+  }
+  .account-mobile-reviews__empty strong {
+    color: #7d867d;
+    font-size: 0.84rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+  .account-mobile-reviews__empty small {
+    width: calc(100% + 60px);
+    margin: 18vh -30px 0;
+    padding: 28px 24px;
+    border-top: 1px solid #c1c9bd;
+    background: #eef2fb;
+    color: #668a78;
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
   .account-mobile-password {
     display: block;

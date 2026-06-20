@@ -37,6 +37,23 @@ function MobileReviewsIcon({ name }) {
         <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z" />
       </>
     ),
+    person: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="9" r="3" />
+        <path d="M6.8 18.3a6.2 6.2 0 0 1 10.4 0" />
+      </>
+    ),
+    chevronRight: (
+      <>
+        <path d="m9 18 6-6-6-6" />
+      </>
+    ),
+    star: (
+      <>
+        <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+      </>
+    ),
     review: (
       <>
         <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" />
@@ -82,9 +99,12 @@ export default function MobileReviews({ reviews }) {
         <Link href="/account" aria-label="Back to account">
           <MobileReviewsIcon name="arrowLeft" />
         </Link>
-        <h1>Reviews</h1>
+        <div className="account-mobile-reviews__title">
+          <span>Account <MobileReviewsIcon name="chevronRight" /> Reviews</span>
+          <h1>Reviews</h1>
+        </div>
         <Link href="/account?tab=personal" aria-label="Account settings">
-          <MobileReviewsIcon name="settings" />
+          <MobileReviewsIcon name={reviews.length ? "settings" : "person"} />
         </Link>
       </header>
 
@@ -145,9 +165,15 @@ export default function MobileReviews({ reviews }) {
         </div>
       ) : (
         <section className="account-mobile-reviews__empty">
+          <div className="account-mobile-reviews__empty-mark" aria-hidden="true">
+            <MobileReviewsIcon name="star" />
+            <i><MobileReviewsIcon name="review" /></i>
+          </div>
           <h2>No reviews yet</h2>
-          <p>Your submitted reviews will show up here after you post them from a product page.</p>
-          <Link href="/products?sort=newest">Shop New Arrivals</Link>
+          <p>Share your feedback on your recent purchases. Your insights help the DEETECH community find the right hardware.</p>
+          <Link href="/account?tab=orders">Review Past Orders</Link>
+          <strong>Every review matters</strong>
+          <small>Trusted hardware partner</small>
         </section>
       )}
     </section>

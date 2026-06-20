@@ -223,6 +223,14 @@ function AccountNavIcon({ name }) {
         <path d="M9 8a3 3 0 0 1 6 0" />
       </>
     ),
+    cart: (
+      <>
+        <path d="M6 6h15l-2 9H8L6 6Z" />
+        <path d="M6 6 5 3H2" />
+        <circle cx="9" cy="20" r="1" />
+        <circle cx="18" cy="20" r="1" />
+      </>
+    ),
     pin: (
       <>
         <path d="M12 21s7-5.1 7-11a7 7 0 0 0-14 0c0 5.9 7 11 7 11Z" />
@@ -273,6 +281,20 @@ function AccountNavIcon({ name }) {
         <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z" />
         <path d="M8 8h8" />
         <path d="M8 12h5" />
+      </>
+    ),
+    star: (
+      <>
+        <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+      </>
+    ),
+    gift: (
+      <>
+        <rect x="3" y="8" width="18" height="13" rx="2" />
+        <path d="M12 8v13" />
+        <path d="M3 12h18" />
+        <path d="M12 8H8.5A2.5 2.5 0 1 1 11 5.5L12 8Z" />
+        <path d="M12 8h3.5A2.5 2.5 0 1 0 13 5.5L12 8Z" />
       </>
     ),
     lock: (
@@ -1164,22 +1186,39 @@ function ReviewsSection({ reviews }) {
           })}
         </div>
       ) : (
-        <EmptyState
-          icon="reviews"
-          title="No reviews yet"
-          description="Your submitted reviews will show up here after you post them from a product page."
-        />
+        <>
+          <div className="account-reviews-empty-card">
+            <div className="account-reviews-empty-card__mark" aria-hidden="true">
+              <AccountNavIcon name="star" />
+              <i><AccountNavIcon name="review" /></i>
+            </div>
+            <h3>No reviews yet</h3>
+            <p>Share your feedback on your recent purchases to help other partners.</p>
+            <Link href="/account?tab=orders" className="account-reviews-empty-card__action">
+              <AccountNavIcon name="cart" />
+              <span>Review Past Orders</span>
+            </Link>
+            <div className="account-reviews-empty-card__benefits">
+              <span><AccountNavIcon name="shield" /> Verified Buys</span>
+              <span><AccountNavIcon name="review" /> Community Help</span>
+              <span><AccountNavIcon name="gift" /> Earn Points</span>
+            </div>
+          </div>
+          <p className="account-reviews-empty-card__footer">Trusted hardware partner</p>
+        </>
       )}
 
-      <div className="account-reviews-cta">
-        <div>
-          <strong>Want to share more feedback?</strong>
-          <p>Every review helps us improve the DEETECH experience for the Ghanaian tech community.</p>
+      {reviews.length ? (
+        <div className="account-reviews-cta">
+          <div>
+            <strong>Want to share more feedback?</strong>
+            <p>Every review helps us improve the DEETECH experience for the Ghanaian tech community.</p>
+          </div>
+          <Link href="/products?sort=newest">
+            Shop New Arrivals
+          </Link>
         </div>
-        <Link href="/products?sort=newest">
-          Shop New Arrivals
-        </Link>
-      </div>
+      ) : null}
     </section>
   );
 }
