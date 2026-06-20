@@ -11996,6 +11996,9 @@ button, input, select, textarea { font: inherit; }
 .account-mobile-messages {
   display: none;
 }
+.account-mobile-notifications {
+  display: none;
+}
 .account-mobile-orders {
   display: none;
 }
@@ -12007,13 +12010,15 @@ button, input, select, textarea { font: inherit; }
   .app-shell:has(.account-mobile-personal) .site-header,
   .app-shell:has(.account-mobile-orders) .site-header,
   .app-shell:has(.account-mobile-address) .site-header,
-  .app-shell:has(.account-mobile-messages) .site-header {
+  .app-shell:has(.account-mobile-messages) .site-header,
+  .app-shell:has(.account-mobile-notifications) .site-header {
     display: none;
   }
   .app-shell:has(.account-mobile-personal) .app-content,
   .app-shell:has(.account-mobile-orders) .app-content,
   .app-shell:has(.account-mobile-address) .app-content,
-  .app-shell:has(.account-mobile-messages) .app-content {
+  .app-shell:has(.account-mobile-messages) .app-content,
+  .app-shell:has(.account-mobile-notifications) .app-content {
     padding-top: 0;
   }
   .account-page-main.has-mobile-home {
@@ -12064,6 +12069,16 @@ button, input, select, textarea { font: inherit; }
     background: #f5f6f7;
   }
   .account-page-main.has-mobile-messages .account-dashboard-shell {
+    display: none;
+  }
+  .account-page-main.has-mobile-notifications {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #f5f6f7;
+  }
+  .account-page-main.has-mobile-notifications .account-dashboard-shell {
     display: none;
   }
   .account-mobile-home {
@@ -12771,6 +12786,176 @@ button, input, select, textarea { font: inherit; }
     color: #ffffff;
     font-weight: 800;
     text-decoration: none;
+  }
+  .account-mobile-notifications {
+    display: block;
+    min-height: 100dvh;
+    background: #f5f6f7;
+    color: #111827;
+  }
+  .account-mobile-notifications__head {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 22px;
+    border-bottom: 1px solid #c1c9bd;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
+  }
+  .account-mobile-notifications__head a {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #111827;
+    text-decoration: none;
+  }
+  .account-mobile-notifications__head h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.45rem;
+    line-height: 1.1;
+  }
+  .account-mobile-notifications__head button {
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: #003714;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .account-mobile-notifications__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+  }
+  .account-mobile-notifications__list {
+    display: grid;
+    gap: 18px;
+    padding: 24px 22px max(28px, env(safe-area-inset-bottom));
+  }
+  .account-mobile-notifications__card {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    overflow: hidden;
+    padding: 28px 28px 24px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-notifications__card.is-unread::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    background: #17602d;
+  }
+  .account-mobile-notifications__card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .account-mobile-notifications__card-head span {
+    color: #17602d;
+    font-size: 0.84rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .account-mobile-notifications__card-head em {
+    display: inline-flex;
+    min-height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 11px;
+    border: 1px solid #b7c2b4;
+    border-radius: 999px;
+    color: #5f675f;
+    font-size: 0.72rem;
+    font-style: normal;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .account-mobile-notifications__card.is-unread .account-mobile-notifications__card-head em {
+    border-color: #17602d;
+    background: #17602d;
+    color: #a8d4ad;
+  }
+  .account-mobile-notifications__card h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.16rem;
+    line-height: 1.22;
+  }
+  .account-mobile-notifications__card p {
+    margin: 0;
+    color: #252b24;
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+  .account-mobile-notifications__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: #697169;
+    font-size: 0.9rem;
+  }
+  .account-mobile-notifications__meta .account-mobile-notifications__icon {
+    color: #007a30;
+  }
+  .account-mobile-notifications__action {
+    display: inline-flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid #18572a;
+    border-radius: 5px;
+    background: #18572a;
+    color: #a8d4ad;
+    font-size: 1rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+  .account-mobile-notifications__action.is-outline {
+    background: #ffffff;
+    color: #003714;
+  }
+  .account-mobile-notifications__action .account-mobile-notifications__icon {
+    width: 20px;
+    height: 20px;
+  }
+  .account-mobile-notifications__empty {
+    display: grid;
+    gap: 10px;
+    margin: 24px 22px;
+    padding: 24px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(27, 25, 22, 0.055);
+  }
+  .account-mobile-notifications__empty h2 {
+    margin: 0;
+    color: #003714;
+    font-size: 1.2rem;
+  }
+  .account-mobile-notifications__empty p {
+    margin: 0;
+    color: #4b5550;
+    line-height: 1.45;
   }
   .account-mobile-orders {
     display: block;
