@@ -17257,8 +17257,8 @@ button, input, select, textarea { font: inherit; }
     top: 0;
     z-index: 25;
     display: grid;
-    grid-template-columns: minmax(82px, auto) minmax(0, 1fr) 44px;
-    gap: 12px;
+    grid-template-columns: 96px minmax(0, 1fr) 96px;
+    gap: 0;
     align-items: center;
     min-height: 64px;
     padding: 0 18px;
@@ -17324,7 +17324,7 @@ button, input, select, textarea { font: inherit; }
     font-weight: 900;
     letter-spacing: 0;
     line-height: 1.1;
-    text-align: left;
+    text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -17336,18 +17336,24 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-wishlist__title {
     display: grid;
     min-width: 0;
+    margin: 0;
     align-content: center;
-    justify-self: start;
+    justify-self: center;
   }
-  .account-mobile-personal__section-icon,
-  .account-mobile-address__section-icon,
-  .account-mobile-affiliates__section-icon,
-  .account-mobile-messages__section-icon,
-  .account-mobile-notifications__section-icon,
-  .account-mobile-orders__section-icon,
-  .account-mobile-password__section-icon,
-  .account-mobile-reviews__section-icon,
-  .account-mobile-wishlist__section-icon {
+  .account-mobile-personal__head > h1,
+  .account-mobile-messages__head > h1,
+  .account-mobile-password__head > h1 {
+    justify-self: center;
+  }
+  .account-mobile-personal__head .account-mobile-personal__section-icon,
+  .account-mobile-address__head .account-mobile-address__section-icon,
+  .account-mobile-affiliates__head .account-mobile-affiliates__section-icon,
+  .account-mobile-messages__head .account-mobile-messages__section-icon,
+  .account-mobile-notifications__head .account-mobile-notifications__section-icon,
+  .account-mobile-orders__head .account-mobile-orders__section-icon,
+  .account-mobile-password__head .account-mobile-password__section-icon,
+  .account-mobile-reviews__head .account-mobile-reviews__section-icon,
+  .account-mobile-wishlist__head .account-mobile-wishlist__section-icon {
     display: grid;
     width: 44px;
     height: 44px;
