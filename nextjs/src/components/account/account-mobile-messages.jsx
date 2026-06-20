@@ -69,6 +69,18 @@ function MobileMessagesIcon({ name }) {
         <path d="M8 13h5" />
       </>
     ),
+    mail: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 7 9 7 9-7" />
+      </>
+    ),
+    search: (
+      <>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </>
+    ),
     checks: (
       <>
         <path d="m3 12 3 3 6-6" />
@@ -108,9 +120,13 @@ export default function MobileMessages({
 
       {!activeTicket ? (
         <section className="account-mobile-messages__empty">
-          <h2>No support requests yet</h2>
-          <p>Start with the support page to open your first request.</p>
-          <Link href="/contact">Open support page</Link>
+          <div className="account-mobile-messages__empty-mark" aria-hidden="true">
+            <MobileMessagesIcon name="mail" />
+            <span>0</span>
+            <i><MobileMessagesIcon name="search" /></i>
+          </div>
+          <h2>Your inbox is clear</h2>
+          <p>Reach out to support or start a new inquiry to see your messages here.</p>
         </section>
       ) : (
         <>

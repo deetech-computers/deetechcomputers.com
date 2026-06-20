@@ -235,6 +235,18 @@ function AccountNavIcon({ name }) {
         <path d="m3 7 9 7 9-7" />
       </>
     ),
+    search: (
+      <>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </>
+    ),
+    plus: (
+      <>
+        <path d="M12 5v14" />
+        <path d="M5 12h14" />
+      </>
+    ),
     bell: (
       <>
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
@@ -1260,13 +1272,22 @@ function MessagesSection({
       </div>
 
       {!tickets.length ? (
-        <EmptyState
-          icon="reviews"
-          title="No support requests yet"
-          description="Start with the support page to open your first request."
-          actionHref="/contact"
-          actionLabel="Open support page"
-        />
+        <>
+          <div className="account-support-empty-card">
+            <div className="account-support-empty-card__mark" aria-hidden="true">
+              <AccountNavIcon name="mail" />
+              <span>0</span>
+              <i><AccountNavIcon name="search" /></i>
+            </div>
+            <h3>Your inbox is clear</h3>
+            <p>Reach out to support or start a new inquiry to see your messages here.</p>
+            <Link href="/contact" className="account-support-empty-card__action">
+              <AccountNavIcon name="plus" />
+              <span>Start New Request</span>
+            </Link>
+          </div>
+          <p className="account-support-empty-card__footer">Trusted hardware partner</p>
+        </>
       ) : (
         <div className="account-support-chat">
           <div className="account-support-chat__thread-wrap">
