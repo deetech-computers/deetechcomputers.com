@@ -11076,10 +11076,6 @@ button, input, select, textarea { font: inherit; }
   }
 }
 @media (max-width: 700px) {
-  .app-shell:has(.has-affiliate-mobile-dashboard) .site-header,
-  .app-shell:has(.has-affiliate-mobile-dashboard) .site-footer {
-    display: none;
-  }
   .has-affiliate-mobile-dashboard {
     width: 100%;
     max-width: none;
@@ -11430,6 +11426,207 @@ button, input, select, textarea { font: inherit; }
     margin: 0;
     color: #294f34;
     line-height: 1.5;
+  }
+  .affiliate-mobile-dashboard__card {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+    border: 1px solid #c1c9bd;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(27, 25, 22, 0.035);
+  }
+  .affiliate-mobile-dashboard__card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .affiliate-mobile-dashboard__card-head h2 {
+    margin: 0;
+    color: #00401b;
+    font-size: 1.24rem;
+    line-height: 1.15;
+  }
+  .affiliate-mobile-dashboard__card-head p {
+    margin: 6px 0 0;
+    color: #665d52;
+    line-height: 1.45;
+  }
+  .affiliate-mobile-dashboard__card-head > svg {
+    width: 22px;
+    height: 22px;
+    color: #3d413c;
+    flex: 0 0 auto;
+  }
+  .affiliate-mobile-dashboard__card-head a {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid #e8e0d4;
+    border-radius: 999px;
+    color: #00401b;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .affiliate-mobile-dashboard__list {
+    display: grid;
+    margin: 0;
+    border-top: 1px solid #d9ddd3;
+  }
+  .affiliate-mobile-dashboard__list div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #d9ddd3;
+  }
+  .affiliate-mobile-dashboard__list div:last-child {
+    border-bottom: 0;
+  }
+  .affiliate-mobile-dashboard__list dt {
+    color: #4f565f;
+  }
+  .affiliate-mobile-dashboard__list dd {
+    margin: 0;
+    color: #1b1916;
+    font-weight: 900;
+    text-align: right;
+  }
+  .affiliate-mobile-dashboard__benefit {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #d7dccf;
+    border-radius: 4px;
+    background: #ffffff;
+  }
+  .affiliate-mobile-dashboard__benefit > span {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 4px;
+    background: #eef1fb;
+    color: #14552b;
+  }
+  .affiliate-mobile-dashboard__benefit strong {
+    color: #14552b;
+    font-size: 1rem;
+  }
+  .affiliate-mobile-dashboard__benefit p,
+  .affiliate-mobile-dashboard__benefit small {
+    display: block;
+    margin: 5px 0 0;
+    color: #5f5547;
+    line-height: 1.45;
+  }
+  .affiliate-mobile-dashboard__note {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 4px;
+    background: #e8f9ed;
+    color: #14552b;
+    font-weight: 900;
+    line-height: 1.45;
+  }
+  .affiliate-mobile-dashboard__bars {
+    display: grid;
+    gap: 14px;
+  }
+  .affiliate-mobile-dashboard__bars > div {
+    display: grid;
+    grid-template-columns: minmax(74px, 0.42fr) minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 6px 0;
+  }
+  .affiliate-mobile-dashboard__bars span {
+    color: #1b1916;
+  }
+  .affiliate-mobile-dashboard__bars i {
+    display: block;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e8e0d4;
+  }
+  .affiliate-mobile-dashboard__bars b {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #14552b;
+  }
+  .affiliate-mobile-dashboard__bars .is-pending b {
+    background: #d9a441;
+  }
+  .affiliate-mobile-dashboard__bars .is-cancelled b {
+    background: #a62c22;
+  }
+  .affiliate-mobile-dashboard__bars strong {
+    color: #1b1916;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .affiliate-mobile-dashboard__muted {
+    margin: 0;
+    color: #665d52;
+    line-height: 1.6;
+  }
+  .affiliate-mobile-dashboard__conversion-list {
+    display: grid;
+    border-top: 1px solid #d9ddd3;
+  }
+  .affiliate-mobile-dashboard__conversion-list article {
+    display: grid;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #d9ddd3;
+  }
+  .affiliate-mobile-dashboard__conversion-list article:last-child {
+    border-bottom: 0;
+  }
+  .affiliate-mobile-dashboard__conversion-list article > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .affiliate-mobile-dashboard__conversion-list strong {
+    color: #1b1916;
+    font-weight: 900;
+  }
+  .affiliate-mobile-dashboard__conversion-list span {
+    color: #665d52;
+    font-weight: 700;
+  }
+  .affiliate-mobile-dashboard__conversion-list em {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #f8ead0;
+    color: #9a6509;
+    font-size: 0.72rem;
+    font-style: normal;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .affiliate-mobile-dashboard__conversion-list em.is-earned {
+    background: #e4efe4;
+    color: #14552b;
+  }
+  .affiliate-mobile-dashboard__conversion-list em.is-cancelled {
+    background: #f8e3e1;
+    color: #a62c22;
   }
   .affiliate-mobile-dashboard__submit {
     position: fixed;

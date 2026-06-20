@@ -665,17 +665,6 @@ export default function AffiliatesPage() {
           ) : (
             <>
               <section className="affiliate-mobile-dashboard" aria-label="Affiliate mobile dashboard">
-                <header className="affiliate-mobile-dashboard__head">
-                  <Link href="/account?tab=affiliates" aria-label="Back to account">
-                    <AffiliateIcon type="arrowRight" />
-                  </Link>
-                  <div>
-                    <span>Account</span>
-                    <h1>Affiliates</h1>
-                  </div>
-                  <AffiliateIcon type="success" />
-                </header>
-
                 <div className="affiliate-mobile-dashboard__body">
                   <section className="affiliate-mobile-dashboard__hero">
                     <div className="affiliate-mobile-dashboard__hero-top">
@@ -767,6 +756,106 @@ export default function AffiliatesPage() {
                       <strong>Invite & Earn More</strong>
                       <p>Need {Math.max(0, nextTierGoal.target - stats.deliveredReferrals)} delivered deals for {nextTierGoal.label} tier.</p>
                     </div>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__card">
+                    <div className="affiliate-mobile-dashboard__card-head">
+                      <h2>Referral Breakdown</h2>
+                      <AffiliateIcon type="chart" />
+                    </div>
+                    <dl className="affiliate-mobile-dashboard__list">
+                      <div><dt>Total Referrals</dt><dd>{stats.totalReferrals}</dd></div>
+                      <div><dt>Successful Referrals</dt><dd>{stats.deliveredReferrals}</dd></div>
+                      <div><dt>Pending Approval</dt><dd>{stats.pendingReferrals}</dd></div>
+                      <div><dt>Cancelled Referrals</dt><dd>{stats.cancelledReferrals}</dd></div>
+                      <div><dt>Last Referral</dt><dd>{formatDateTime(lastReferral?.createdAt)}</dd></div>
+                    </dl>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__card">
+                    <div className="affiliate-mobile-dashboard__card-head">
+                      <h2>Your Tier Benefits</h2>
+                      <AffiliateIcon type="tier" />
+                    </div>
+                    <div className="affiliate-mobile-dashboard__benefit">
+                      <span><AffiliateIcon type="tier" /></span>
+                      <div>
+                        <strong>{tier.charAt(0).toUpperCase() + tier.slice(1)} Tier</strong>
+                        <p>You're earning {commissionRate}% commission on every qualified sale.</p>
+                        <small>Live tracking and delivery-based earning confirmation.</small>
+                      </div>
+                    </div>
+                    <p className="affiliate-mobile-dashboard__note">
+                      Need {Math.max(0, nextTierGoal.target - stats.deliveredReferrals)} delivered deals for {nextTierGoal.label} tier.
+                    </p>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__card">
+                    <div className="affiliate-mobile-dashboard__card-head">
+                      <h2>Referral Status Analytics</h2>
+                      <AffiliateIcon type="chart" />
+                    </div>
+                    <div className="affiliate-mobile-dashboard__bars">
+                      {statusAnalytics.map((item) => (
+                        <div key={item.label} className={`is-${item.tone}`}>
+                          <span>{item.label}</span>
+                          <i><b style={{ width: `${Math.round((item.value / item.max) * 100)}%` }} /></i>
+                          <strong>{item.value}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__card">
+                    <div className="affiliate-mobile-dashboard__card-head">
+                      <h2>Monthly Earned Commission</h2>
+                      <AffiliateIcon type="paid" />
+                    </div>
+                    {monthlyEarned.length ? (
+                      <div className="affiliate-mobile-dashboard__bars">
+                        {monthlyEarned.map((item) => (
+                          <div key={item.label} className="is-earned">
+                            <span>{item.label}</span>
+                            <i><b style={{ width: "100%" }} /></i>
+                            <strong>{formatCurrency(item.amount)}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="affiliate-mobile-dashboard__muted">No earned commission yet. Delivered referrals will appear here by month.</p>
+                    )}
+                  </section>
+
+                  <section className="affiliate-mobile-dashboard__card affiliate-mobile-dashboard__conversions">
+                    <div className="affiliate-mobile-dashboard__card-head">
+                      <div>
+                        <h2>Recent Conversions</h2>
+                        <p>Track referred orders, amounts, commission, status, and date.</p>
+                      </div>
+                      <Link href="/products">Share products</Link>
+                    </div>
+                    {referrals.length ? (
+                      <div className="affiliate-mobile-dashboard__conversion-list">
+                        {referrals.slice(0, 8).map((referral) => (
+                          <article key={referral._id}>
+                            <div>
+                              <strong>{shortOrderId(referral)}</strong>
+                              <span>{referral.customerName || "Customer"}</span>
+                            </div>
+                            <div>
+                              <span>{formatCurrency(referral.orderAmount)}</span>
+                              <strong>{formatCurrency(referral.commissionAmount)}</strong>
+                            </div>
+                            <div>
+                              <em className={`is-${referral.status || "pending"}`}>{referralStatusLabel(referral.status)}</em>
+                              <span>{formatDateTime(referral.createdAt)}</span>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="affiliate-mobile-dashboard__muted">No referrals yet. Share your code or referral link to start tracking conversions.</p>
+                    )}
                   </section>
                 </div>
 
