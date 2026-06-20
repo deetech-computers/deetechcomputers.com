@@ -17257,11 +17257,11 @@ button, input, select, textarea { font: inherit; }
     top: 0;
     z-index: 25;
     display: grid;
-    grid-template-columns: 96px minmax(0, 1fr) 96px;
+    grid-template-columns: 94px minmax(0, 1fr) 94px;
     gap: 0;
     align-items: center;
     min-height: 64px;
-    padding: 0 18px;
+    padding: 0 16px;
     border-bottom: 1px solid #c1c9bd;
     background: #ffffff;
     box-shadow: 0 2px 10px rgba(27, 25, 22, 0.04);
@@ -17276,7 +17276,7 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-reviews__head a,
   .account-mobile-wishlist__head a {
     display: inline-flex;
-    width: auto;
+    width: 94px;
     min-width: 0;
     min-height: 44px;
     align-items: center;
@@ -17289,6 +17289,9 @@ button, input, select, textarea { font: inherit; }
     line-height: 1;
     text-decoration: none;
     text-transform: none;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
   }
   .account-mobile-personal__head a span,
   .account-mobile-address__head a span,
@@ -17339,11 +17342,39 @@ button, input, select, textarea { font: inherit; }
     margin: 0;
     align-content: center;
     justify-self: center;
+    grid-column: auto;
   }
   .account-mobile-personal__head > h1,
   .account-mobile-messages__head > h1,
   .account-mobile-password__head > h1 {
     justify-self: center;
+  }
+  .account-mobile-personal__head > h1,
+  .account-mobile-address__head > div,
+  .account-mobile-affiliates__head > div,
+  .account-mobile-messages__head > h1,
+  .account-mobile-notifications__title,
+  .account-mobile-orders__title,
+  .account-mobile-password__head > h1,
+  .account-mobile-reviews__head > .account-mobile-reviews__title,
+  .account-mobile-wishlist__title {
+    position: absolute;
+    top: 50%;
+    right: 110px;
+    left: 110px;
+    z-index: 1;
+    transform: translateY(-50%);
+  }
+  .account-mobile-personal__head h1,
+  .account-mobile-address__head h1,
+  .account-mobile-affiliates__head h1,
+  .account-mobile-messages__head h1,
+  .account-mobile-notifications__title h1,
+  .account-mobile-orders__title h1,
+  .account-mobile-password__head h1,
+  .account-mobile-reviews__head .account-mobile-reviews__title h1,
+  .account-mobile-wishlist__title h1 {
+    font-size: clamp(0.98rem, 4.4vw, 1.12rem);
   }
   .account-mobile-personal__head .account-mobile-personal__section-icon,
   .account-mobile-address__head .account-mobile-address__section-icon,
@@ -17361,6 +17392,8 @@ button, input, select, textarea { font: inherit; }
     justify-self: end;
     color: #003714;
     pointer-events: none;
+    position: relative;
+    z-index: 2;
   }
 }
 @media (prefers-reduced-motion: reduce) {
