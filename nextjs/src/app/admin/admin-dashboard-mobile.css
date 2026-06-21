@@ -415,8 +415,11 @@
   }
 
   .admin-dash-panel__footer {
+    width: 100%;
     min-height: 54px;
-    display: inline-flex;
+    display: flex;
+    align-self: stretch;
+    box-sizing: border-box;
     align-items: center;
     justify-content: center;
     gap: 9px;
