@@ -1,5 +1,5 @@
 /* Dedicated Operations Overview mobile screen. It does not inherit desktop geometry. */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .admin-dashboard__topbar,
   .admin-viz-grid,
   .admin-dash-panel--messages {

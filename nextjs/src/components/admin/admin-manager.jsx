@@ -1098,19 +1098,6 @@ function AdminStatusSelect({ value, options, onChange, label }) {
   );
 }
 
-function AdminOrderIcon({ name }) {
-  const props = { viewBox: "0 0 24 24", width: 24, height: 24, "aria-hidden": "true", focusable: "false" };
-  const line = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
-  if (name === "search") return <svg {...props}><circle cx="11" cy="11" r="6" {...line} /><path d="m16 16 4 4" {...line} /></svg>;
-  if (name === "refresh") return <svg {...props}><path d="M20 7v5h-5M4 17v-5h5" {...line} /><path d="M18.5 9A7 7 0 0 0 6.2 6.2M5.5 15A7 7 0 0 0 17.8 17.8" {...line} /></svg>;
-  if (name === "filter") return <svg {...props}><path d="M4 6h16M7 12h10M10 18h4" {...line} /><path d="M8 4v4M16 10v4M12 16v4" {...line} /></svg>;
-  if (name === "download") return <svg {...props}><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" {...line} /></svg>;
-  if (name === "sync") return <svg {...props}><path d="M20 7v5h-5M4 17v-5h5" {...line} /><path d="M18.5 9A7 7 0 0 0 6.2 6.2M5.5 15A7 7 0 0 0 17.8 17.8" {...line} /></svg>;
-  if (name === "bag") return <svg {...props}><path d="M6 8h12l1 12H5L6 8Z" {...line} /><path d="M9 8V6a3 3 0 0 1 6 0v2" {...line} /></svg>;
-  if (name === "payment") return <svg {...props}><path d="M4 7h16v10H4z" {...line} /><path d="M8 12h.01M16 12h.01M12 15a3 3 0 0 0 0-6 3 3 0 0 0 0 6Z" {...line} /></svg>;
-  return <svg {...props}><path d="m8 10 4 4 4-4" {...line} /></svg>;
-}
-
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
     return (
@@ -1122,18 +1109,7 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   }
 
   return (
-    <div className={`admin-record-list admin-record-list--${type}`}>
-      {type === "orders" ? (
-        <div className="admin-orders-table-head" aria-hidden="true">
-          <span>Order #</span>
-          <span>Customer</span>
-          <span>Status</span>
-          <span>Total</span>
-          <span>Payment</span>
-          <span>Date</span>
-          <span />
-        </div>
-      ) : null}
+    <div className="admin-record-list">
       {items.map((item, index) => {
         const baseId = String(item?._id || item?.id || item?.code || `${type}-row-${index}`);
         const versionedBase =
@@ -1249,7 +1225,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
     const paymentStatus = item.paymentStatus || "pending";
     const itemCount = (item.orderItems || []).reduce((total, line) => total + Number(line?.qty || 1), 0);
     return (
-      <article className="admin-record admin-record--order admin-collapsible">
+      <article className="admin-record admin-record--order panel admin-collapsible">
         <button
           type="button"
           className="admin-collapsible__header admin-order-card__toggle"
@@ -1260,9 +1236,9 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
           <div className="admin-order-row admin-order-row--summary">
             <span className="admin-order-id">{orderId}</span>
             <span className="admin-order-customer">{customer}</span>
-            <span data-status={String(orderStatus).toLowerCase()} className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
+            <span className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
             <span className="admin-order-total">{formatCurrency(Number(item.totalPrice || 0))}</span>
-            <span data-status={String(paymentStatus).toLowerCase()} className={`admin-order-payment ${statusClass(paymentStatus)}`}>{paymentStatus}</span>
+            <span className={`admin-order-payment ${statusClass(paymentStatus)}`}>{paymentStatus}</span>
             <span className="admin-order-date">{formatDate(item.createdAt)}</span>
             <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
           </div>
@@ -1275,7 +1251,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
                 <span>{customer}</span>
               </div>
               <div>
-                <span data-status={String(orderStatus).toLowerCase()} className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
+                <span className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
                 <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong>
               </div>
             </div>
@@ -1297,12 +1273,6 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
               <section className="admin-order-items">
                 <h4>Items <span>{itemCount}</span></h4>
                 <div className="admin-order-items__table">
-                  <div className="admin-order-items__head" aria-hidden="true">
-                    <span>Product description</span>
-                    <span>Quantity</span>
-                    <span>Unit price</span>
-                    <span>Total</span>
-                  </div>
                   {(item.orderItems || []).map((line) => {
                     const upgradeLabel = formatSelectedUpgrades({
                       ram: line?.selectedUpgrades?.ram?.label || "",
@@ -1342,8 +1312,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
                           {upgradeDelta > 0 ? <small>Includes {formatCurrency(upgradeDelta)} upgrade</small> : null}
                         </div>
                         <span>Qty {line.qty || 1}</span>
-                        <strong className="admin-order-line-item__unit">{formatCurrency(Number(line.price || 0))}</strong>
-                        <strong className="admin-order-line-item__total">{formatCurrency(lineTotal)}</strong>
+                        <strong>{formatCurrency(lineTotal)}</strong>
                       </div>
                     );
                   })}
@@ -2589,61 +2558,9 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type === "orders" ? (
-          <>
-            <header className="admin-orders-page-head">
-              <div className="admin-orders-page-head__title">
-                <h1>Orders</h1>
-                <span>{loading ? "..." : count}</span>
-              </div>
-              <div className="admin-orders-page-head__actions">
-                <label className="admin-orders-search">
-                  <AdminOrderIcon name="search" />
-                  <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search orders..." />
-                </label>
-                <button type="button" className="admin-orders-icon-button" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh orders">
-                  <AdminOrderIcon name="refresh" />
-                </button>
-                <details className="admin-orders-export">
-                  <summary>Export <AdminOrderIcon name="chevron" /></summary>
-                  <div>
-                    <button type="button" onClick={exportCsv}>CSV</button>
-                    <button type="button" onClick={exportJson}>JSON</button>
-                    <button type="button" onClick={exportSql}>SQL</button>
-                  </div>
-                </details>
-                <button type="button" className="admin-orders-resync" onClick={() => runAction("resyncAffiliates")}>
-                  <AdminOrderIcon name="sync" />
-                  Resync Affiliates
-                </button>
-              </div>
-            </header>
+        <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} />
 
-            <section className="admin-orders-mobile-tools">
-              <label className="admin-orders-search">
-                <AdminOrderIcon name="search" />
-                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search ID, customer..." />
-              </label>
-              <button type="button" className="admin-orders-filter-button" onClick={() => setToolbarOpen((current) => !current)} aria-expanded={toolbarOpen} aria-controls="admin-orders-mobile-filter-menu">
-                <AdminOrderIcon name="filter" />
-                <span className="sr-only">Order tools</span>
-              </button>
-              {toolbarOpen ? (
-                <div id="admin-orders-mobile-filter-menu" className="admin-orders-mobile-filter-menu">
-                  <button type="button" disabled={loading || refreshing} onClick={() => loadData({ background: true })}>{refreshing ? "Refreshing..." : "Refresh"}</button>
-                  <button type="button" onClick={exportCsv}>Export CSV</button>
-                  <button type="button" onClick={exportJson}>Export JSON</button>
-                  <button type="button" onClick={exportSql}>Export SQL</button>
-                  <button type="button" onClick={() => runAction("resyncAffiliates")}>Resync Affiliates</button>
-                </div>
-              ) : null}
-            </section>
-          </>
-        ) : (
-          <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} />
-        )}
-
-        {type !== "dashboard" && type !== "orders" && !(type === "products" && isProductDedicatedPage) ? (
+        {type !== "dashboard" && !(type === "products" && isProductDedicatedPage) ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -2880,12 +2797,12 @@ export default function AdminManager({ type, productMode = "list", productId = "
         {type === "orders" && orderStats ? (
           <section className="admin-orders-metrics">
             <article className="admin-orders-metric">
-              <header><span>Total Orders</span><AdminOrderIcon name="bag" /></header>
+              <span>Total Orders</span>
               <strong>{orderStats.total.toLocaleString("en-GB")}</strong>
               <small>Showing {orderStats.filtered.toLocaleString("en-GB")}</small>
             </article>
             <article className="admin-orders-metric">
-              <header><span>Revenue</span><AdminOrderIcon name="payment" /></header>
+              <span>Revenue</span>
               <strong>{formatCurrency(orderStats.revenue)}</strong>
               <small>Delivered orders</small>
             </article>

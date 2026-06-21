@@ -1,5 +1,5 @@
 /* Operations Overview desktop screen, matched to the Stitch desktop reference. */
-@media (min-width: 1025px) {
+@media (min-width: 901px) {
   .admin-dashboard {
     width: 100%;
     max-width: 1280px;
@@ -575,7 +575,7 @@
   }
 }
 
-@media (min-width: 1025px) and (max-width: 1180px) {
+@media (min-width: 901px) and (max-width: 1180px) {
   .admin-dash-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
