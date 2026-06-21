@@ -1125,6 +1125,7 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
           onAction={onAction}
           busyAction={busyAction}
           userInsights={userInsights}
+          defaultExpanded={type === "orders" && index === 0}
         />
         );
       })}
@@ -1132,11 +1133,11 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   );
 }
 
-function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
+function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defaultExpanded = false }) {
   const [editing, setEditing] = useState(false);
   const id = item._id || item.id;
   const busy = busyAction === id;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [threadExpanded, setThreadExpanded] = useState(false);
   const [supportStatusDraft, setSupportStatusDraft] = useState(() => item?.status || "new");
   const [supportResponseDraft, setSupportResponseDraft] = useState("");
@@ -1220,6 +1221,9 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
     const affiliateUsed = Boolean(affiliateCodeApplied);
     const affiliateAttemptedOnly = !affiliateUsed && Boolean(affiliateCodeEntered);
     const orderBodyId = `admin-order-body-${String(orderId || id || "order").replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
+    const orderStatus = item.orderStatus || "pending";
+    const paymentStatus = item.paymentStatus || "pending";
+    const itemCount = (item.orderItems || []).reduce((total, line) => total + Number(line?.qty || 1), 0);
     return (
       <article className="admin-record admin-record--order panel admin-collapsible">
         <button
@@ -1229,106 +1233,108 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights }) {
           aria-expanded={isExpanded}
           aria-controls={orderBodyId}
         >
-          <div>
-            <h3>{orderId}</h3>
-            <p>{customer} / {formatDateTime(item.createdAt)}</p>
-            <div className="admin-chip-row">
-              <span className={`admin-chip ${statusClass(item.orderStatus)}`}>{item.orderStatus || "pending"}</span>
-              <span className="admin-chip is-neutral">{formatCurrency(Number(item.totalPrice || 0))}</span>
-              <span className="admin-chip is-neutral">
-                {Number(item.shippingPrice || 0) > 0 ? `Delivery ${formatCurrency(Number(item.shippingPrice || 0))}` : "Delivery FREE"}
-              </span>
-              <span className="admin-chip is-neutral">{item.paymentStatus || "pending"}</span>
-              <span className="admin-chip is-neutral">{item.paymentMethod || "N/A"}</span>
-            </div>
+          <div className="admin-order-row admin-order-row--summary">
+            <span className="admin-order-id">{orderId}</span>
+            <span className="admin-order-customer">{customer}</span>
+            <span className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
+            <span className="admin-order-total">{formatCurrency(Number(item.totalPrice || 0))}</span>
+            <span className={`admin-order-payment ${statusClass(paymentStatus)}`}>{paymentStatus}</span>
+            <span className="admin-order-date">{formatDate(item.createdAt)}</span>
+            <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
           </div>
-          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
         </button>
         {isExpanded ? (
-          <div id={orderBodyId} className="admin-collapsible__body">
-        <div className="admin-meta-grid">
-          <span>Subtotal <strong>{formatCurrency(Number(item.itemsPrice || 0))}</strong></span>
-          <span>Product Savings <strong>{productSavings > 0 ? `-${formatCurrency(productSavings)}` : formatCurrency(0)}</strong></span>
-          <span>Delivery Fee <strong>{Number(item.shippingPrice || 0) > 0 ? formatCurrency(Number(item.shippingPrice || 0)) : "FREE"}</strong></span>
-          <span>Discount <strong>-{formatCurrency(Number(item.discountAmount || 0))}</strong></span>
-          <span>Total <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong></span>
-          <span>Payment <strong>{item.paymentMethod || "N/A"}</strong></span>
-          <span>Status <strong>{item.paymentStatus || "pending"}</strong></span>
-          <span>Region <strong>{item.deliveryRegion || "N/A"}</strong></span>
-          <span>Estimated Delivery <strong>{item.estimatedDeliveryDate ? formatDateTime(item.estimatedDeliveryDate) : "Auto (24h from paid)"}</strong></span>
-        </div>
-        <div className="admin-order-detail-grid">
-          <div className="admin-order-info panel">
-            <h4>Customer & Delivery</h4>
-            <p><strong>Email:</strong> {item.shippingEmail || item.guestEmail || item.user?.email || "No email"}</p>
-            <p><strong>Phone:</strong> {shippingPhone}</p>
-            <p><strong>Address:</strong> {shippingAddress || "No address provided"}</p>
-            <h4>Affiliate Tracking</h4>
-            <p>
-              <strong>Affiliate usage:</strong>{" "}
-              <span className={`admin-chip ${affiliateUsed ? "is-success" : affiliateAttemptedOnly ? "is-warning" : "is-neutral"}`}>
-                {affiliateUsed ? "Used" : affiliateAttemptedOnly ? "Entered (not applied)" : "Not used"}
-              </span>
-            </p>
-            <p><strong>Code entered:</strong> {affiliateCodeEntered || "None"}</p>
-            <p><strong>Code applied:</strong> {affiliateCodeApplied || "None"}</p>
-            <p><strong>Commission:</strong> {affiliateUsed ? `${affiliateCommissionRate}% (${formatCurrency(affiliateCommissionAmount)})` : "N/A"}</p>
-          </div>
-          <div className="admin-order-proof panel">
-            <h4>Payment Proof</h4>
-            {paymentProofUrl ? (
-              <>
-                <a href={paymentProofUrl} target="_blank" rel="noreferrer" className="admin-order-proof__image">
-                  <StableImage src={paymentProofUrl} alt={`Payment proof for order ${orderId}`} width={240} height={140} />
+          <div id={orderBodyId} className="admin-collapsible__body admin-order-detail">
+            <div className="admin-order-mobile-summary">
+              <div>
+                <strong>{orderId}</strong>
+                <span>{customer}</span>
+              </div>
+              <div>
+                <span className={`admin-order-status ${statusClass(orderStatus)}`}>{orderStatus}</span>
+                <strong>{formatCurrency(Number(item.totalPrice || 0))}</strong>
+              </div>
+            </div>
+
+            <div className="admin-order-detail-grid">
+              <section className="admin-order-info">
+                <h4>Customer & Delivery</h4>
+                <dl>
+                  <div><dt>Email</dt><dd>{item.shippingEmail || item.guestEmail || item.user?.email || "No email"}</dd></div>
+                  <div><dt>Phone</dt><dd>{shippingPhone}</dd></div>
+                  <div><dt>Location</dt><dd>{shippingAddress || "No address provided"}</dd></div>
+                  <div><dt>Region</dt><dd>{item.deliveryRegion || "N/A"}</dd></div>
+                </dl>
+                <a href={paymentProofUrl || "#"} target={paymentProofUrl ? "_blank" : undefined} rel="noreferrer" className={`admin-order-proof-link ${paymentProofUrl ? "" : "is-disabled"}`}>
+                  View Payment Proof
                 </a>
-                <a href={paymentProofUrl} target="_blank" rel="noreferrer" className="ghost-link">Open full proof</a>
-              </>
-            ) : (
-              <p>No payment proof uploaded yet.</p>
-            )}
-          </div>
-        </div>
-        <div className="admin-record__items admin-record__items--order">
-          {(item.orderItems || []).map((line) => {
-            const upgradeLabel = formatSelectedUpgrades({
-              ram: line?.selectedUpgrades?.ram?.label || "",
-              storage: line?.selectedUpgrades?.storage?.label || "",
-            });
-            const upgradeDelta =
-              Number(line?.selectedUpgrades?.ram?.priceDelta || 0) +
-              Number(line?.selectedUpgrades?.storage?.priceDelta || 0);
-            return (
-              <span key={line._id || line.product?._id || line.product} className="admin-order-line-item">
-                <strong>{line.product?.name || "Product"} x {line.qty || 1}</strong>
-                {upgradeLabel ? <small>Upgrade: {upgradeLabel}</small> : <small>Base option</small>}
-                <small>
-                  {upgradeDelta > 0
-                    ? `Unit ${formatCurrency(Number(line.price || 0))} including ${formatCurrency(upgradeDelta)} upgrade`
-                    : `Unit ${formatCurrency(Number(line.price || 0))}`}
-                </small>
-              </span>
-            );
-          })}
-        </div>
-        <div className="admin-actions admin-actions--wrap">
-          <AdminStatusSelect label="Order" value={item.orderStatus || "pending"} options={["pending", "processing", "shipped", "delivered", "cancelled"]} onChange={(value) => onAction("orderStatus", item, null, value)} />
-          <AdminStatusSelect label="Payment" value={item.paymentStatus || "pending"} options={["pending", "paid", "failed"]} onChange={(value) => onAction("paymentStatus", item, null, value)} />
-          <label className="admin-inline-control">
-            <span>Expected Delivery</span>
-            <input
-              type="datetime-local"
-              className="field"
-              value={etaDraft}
-              onChange={(event) => setEtaDraft(event.target.value)}
-            />
-          </label>
-          <button className="ghost-button" type="button" disabled={busy || !etaDraft} onClick={() => onAction("updateEta", item, null, etaDraft)}>
-            Save ETA
-          </button>
-          <button className="ghost-button" type="button" disabled={busy} onClick={() => onAction("markPaid", item)}>Mark Paid</button>
-          <button className="ghost-button" type="button" disabled={busy} onClick={() => onAction("markDelivered", item)}>Delivered</button>
-          <button className="danger-button" type="button" disabled={busy} onClick={() => onAction("deleteOrder", item)}>Delete</button>
-        </div>
+              </section>
+
+              <section className="admin-order-items">
+                <h4>Items <span>{itemCount}</span></h4>
+                <div className="admin-order-items__table">
+                  {(item.orderItems || []).map((line) => {
+                    const upgradeLabel = formatSelectedUpgrades({
+                      ram: line?.selectedUpgrades?.ram?.label || "",
+                      storage: line?.selectedUpgrades?.storage?.label || "",
+                    });
+                    const upgradeDelta =
+                      Number(line?.selectedUpgrades?.ram?.priceDelta || 0) +
+                      Number(line?.selectedUpgrades?.storage?.priceDelta || 0);
+                    const lineTotal = Number(line.price || 0) * Number(line.qty || 1);
+                    return (
+                      <div key={line._id || line.product?._id || line.product} className="admin-order-line-item">
+                        <span className="admin-order-line-item__icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M5 6h14v10H5zM8 20h8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                        <div>
+                          <strong>{line.product?.name || "Product"}</strong>
+                          <small>{upgradeLabel ? `Upgrade: ${upgradeLabel}` : "Base option"}</small>
+                          {upgradeDelta > 0 ? <small>Includes {formatCurrency(upgradeDelta)} upgrade</small> : null}
+                        </div>
+                        <span>Qty {line.qty || 1}</span>
+                        <strong>{formatCurrency(lineTotal)}</strong>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="admin-order-subtotal">
+                  <span>Order subtotal</span>
+                  <strong>{formatCurrency(Number(item.itemsPrice || 0))}</strong>
+                </div>
+              </section>
+            </div>
+
+            <div className="admin-order-finance-grid">
+              <span>Product savings <strong>{productSavings > 0 ? `-${formatCurrency(productSavings)}` : formatCurrency(0)}</strong></span>
+              <span>Delivery <strong>{Number(item.shippingPrice || 0) > 0 ? formatCurrency(Number(item.shippingPrice || 0)) : "FREE"}</strong></span>
+              <span>Discount <strong>-{formatCurrency(Number(item.discountAmount || 0))}</strong></span>
+              <span>Payment method <strong>{item.paymentMethod || "N/A"}</strong></span>
+              <span>Estimated delivery <strong>{item.estimatedDeliveryDate ? formatDateTime(item.estimatedDeliveryDate) : "Auto after paid"}</strong></span>
+              <span>Affiliate <strong>{affiliateUsed ? `${affiliateCodeApplied} / ${formatCurrency(affiliateCommissionAmount)} at ${affiliateCommissionRate}%` : affiliateAttemptedOnly ? `${affiliateCodeEntered} entered` : "Not used"}</strong></span>
+            </div>
+
+            <div className="admin-actions admin-actions--wrap admin-order-actions">
+              <AdminStatusSelect label="Order Status" value={orderStatus} options={["pending", "processing", "shipped", "delivered", "cancelled"]} onChange={(value) => onAction("orderStatus", item, null, value)} />
+              <AdminStatusSelect label="Payment Status" value={paymentStatus} options={["pending", "paid", "failed"]} onChange={(value) => onAction("paymentStatus", item, null, value)} />
+              <label className="admin-inline-control admin-order-eta">
+                <span>Expected Delivery ETA</span>
+                <input
+                  type="datetime-local"
+                  className="field"
+                  value={etaDraft}
+                  onChange={(event) => setEtaDraft(event.target.value)}
+                />
+              </label>
+              <button className="ghost-button admin-order-save-eta" type="button" disabled={busy || !etaDraft} onClick={() => onAction("updateEta", item, null, etaDraft)}>
+                Save ETA
+              </button>
+              <button className="primary-button admin-order-mark-paid" type="button" disabled={busy} onClick={() => onAction("markPaid", item)}>Mark Paid</button>
+              <button className="ghost-button admin-order-delivered" type="button" disabled={busy} onClick={() => onAction("markDelivered", item)}>Delivered</button>
+              <button className="danger-button admin-order-delete" type="button" disabled={busy} onClick={() => onAction("deleteOrder", item)}>Delete Order</button>
+            </div>
           </div>
         ) : null}
       </article>
@@ -2519,7 +2525,22 @@ export default function AdminManager({ type, productMode = "list", productId = "
 
   return (
     <AdminGate title={config.title} subtitle={config.subtitle}>
-      <div className="admin-manager">
+      <div className={`admin-manager admin-manager--${type}`}>
+        {type === "orders" ? (
+          <header className="admin-orders-mobile-head">
+            <Link href="/admin" aria-label="Back to admin dashboard">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            <h1>Orders</h1>
+            <button type="button" onClick={exportCsv} aria-label="Export orders CSV">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </header>
+        ) : null}
         <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} />
 
         {type !== "dashboard" && !(type === "products" && isProductDedicatedPage) ? (
