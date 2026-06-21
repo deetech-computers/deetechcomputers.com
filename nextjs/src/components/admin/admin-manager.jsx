@@ -1284,8 +1284,14 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
                     const lineTotal = Number(line.price || 0) * Number(line.qty || 1);
                     const lineImage = resolveProductImage(
                       line?.product?.images?.[0] ||
+                        line?.product?.imageUrl ||
                         line?.product?.image_url ||
+                        line?.product?.thumbnail ||
                         line?.product?.image ||
+                        line?.product?.photos?.[0] ||
+                        line?.productImage ||
+                        line?.thumbnail ||
+                        line?.imageUrl ||
                         line?.image_url ||
                         line?.image
                     );
