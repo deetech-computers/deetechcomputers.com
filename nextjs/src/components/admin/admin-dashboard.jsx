@@ -41,24 +41,25 @@ function getStatusTone(status) {
 }
 
 function AdminDashIcon({ name }) {
+  const svgProps = { viewBox: "0 0 24 24", width: 24, height: 24, className: "admin-icon", "aria-hidden": "true", focusable: "false" };
   const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
-  if (name === "dashboard") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" {...common} /></svg>;
-  if (name === "orders") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h3l2 10h9l2-7H8" {...common} /><path d="M10 20h.01M17 20h.01" {...common} /></svg>;
-  if (name === "messages") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="M8 9h8M8 13h5" {...common} /></svg>;
-  if (name === "users") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19c0-2.2-1.8-4-4-4s-4 1.8-4 4" {...common} /><path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 19c0-1.7-1-3.1-2.4-3.7" {...common} /></svg>;
-  if (name === "products") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14v13H5zM8 4h8l3 3H5zM8 11h8" {...common} /></svg>;
-  if (name === "affiliates") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 12.5 6 15a3 3 0 1 0 4.2 4.2l2.3-2.3M15.5 11.5 18 9a3 3 0 1 0-4.2-4.2l-2.3 2.3M9 15l6-6" {...common} /></svg>;
-  if (name === "revenue") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z" {...common} /><path d="M8 12h.01M16 12h.01M12 15a3 3 0 0 0 0-6 3 3 0 0 0 0 6Z" {...common} /></svg>;
-  if (name === "sync") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5" {...common} /><path d="M18.5 9A7 7 0 0 0 6.2 6.2M5.5 15A7 7 0 0 0 17.8 17.8" {...common} /></svg>;
-  if (name === "menu") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" {...common} /></svg>;
-  if (name === "account") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 18a4 4 0 0 0-8 0" {...common} /><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" {...common} /></svg>;
-  if (name === "banner") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-3-6 3z" {...common} /><path d="M9 8h6M9 12h4" {...common} /></svg>;
-  if (name === "discounts") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
-  if (name === "settings") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" {...common} /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3-.2-.1a1.7 1.7 0 0 0-2 .1 1.7 1.7 0 0 0-.8 1.7V22h-3.6v-.3a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.1l-.2.1-2-3 .1-.1A1.7 1.7 0 0 0 6.6 15a1.7 1.7 0 0 0-1.5-1H5v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-3 .2.1a1.7 1.7 0 0 0 2-.1 1.7 1.7 0 0 0 .8-1.7V2h3.6v.3a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .1l.2-.1 2 3-.1.1A1.7 1.7 0 0 0 17.4 9a1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z" {...common} /></svg>;
-  if (name === "reviews") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="m10 13 2-5 2 5M10.8 11h2.4" {...common} /></svg>;
-  if (name === "plus") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" {...common} /></svg>;
-  if (name === "bell") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 21h4" {...common} /></svg>;
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16" {...common} /></svg>;
+  if (name === "dashboard") return <svg {...svgProps}><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" {...common} /></svg>;
+  if (name === "orders") return <svg {...svgProps}><path d="M4 6h3l2 10h9l2-7H8" {...common} /><path d="M10 20h.01M17 20h.01" {...common} /></svg>;
+  if (name === "messages") return <svg {...svgProps}><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="M8 9h8M8 13h5" {...common} /></svg>;
+  if (name === "users") return <svg {...svgProps}><path d="M16 19c0-2.2-1.8-4-4-4s-4 1.8-4 4" {...common} /><path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 19c0-1.7-1-3.1-2.4-3.7" {...common} /></svg>;
+  if (name === "products") return <svg {...svgProps}><path d="M5 7h14v13H5zM8 4h8l3 3H5zM8 11h8" {...common} /></svg>;
+  if (name === "affiliates") return <svg {...svgProps}><path d="M8.5 12.5 6 15a3 3 0 1 0 4.2 4.2l2.3-2.3M15.5 11.5 18 9a3 3 0 1 0-4.2-4.2l-2.3 2.3M9 15l6-6" {...common} /></svg>;
+  if (name === "revenue") return <svg {...svgProps}><path d="M4 7h16v10H4z" {...common} /><path d="M8 12h.01M16 12h.01M12 15a3 3 0 0 0 0-6 3 3 0 0 0 0 6Z" {...common} /></svg>;
+  if (name === "sync") return <svg {...svgProps}><path d="M20 7v5h-5M4 17v-5h5" {...common} /><path d="M18.5 9A7 7 0 0 0 6.2 6.2M5.5 15A7 7 0 0 0 17.8 17.8" {...common} /></svg>;
+  if (name === "menu") return <svg {...svgProps}><path d="M4 7h16M4 12h16M4 17h16" {...common} /></svg>;
+  if (name === "account") return <svg {...svgProps}><path d="M16 18a4 4 0 0 0-8 0" {...common} /><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" {...common} /></svg>;
+  if (name === "banner") return <svg {...svgProps}><path d="M6 3h12v18l-6-3-6 3z" {...common} /><path d="M9 8h6M9 12h4" {...common} /></svg>;
+  if (name === "discounts") return <svg {...svgProps}><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
+  if (name === "settings") return <svg {...svgProps}><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" {...common} /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3-.2-.1a1.7 1.7 0 0 0-2 .1 1.7 1.7 0 0 0-.8 1.7V22h-3.6v-.3a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.1l-.2.1-2-3 .1-.1A1.7 1.7 0 0 0 6.6 15a1.7 1.7 0 0 0-1.5-1H5v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-3 .2.1a1.7 1.7 0 0 0 2-.1 1.7 1.7 0 0 0 .8-1.7V2h3.6v.3a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .1l.2-.1 2 3-.1.1A1.7 1.7 0 0 0 17.4 9a1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z" {...common} /></svg>;
+  if (name === "reviews") return <svg {...svgProps}><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="m10 13 2-5 2 5M10.8 11h2.4" {...common} /></svg>;
+  if (name === "plus") return <svg {...svgProps}><path d="M12 5v14M5 12h14" {...common} /></svg>;
+  if (name === "bell") return <svg {...svgProps}><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 21h4" {...common} /></svg>;
+  return <svg {...svgProps}><path d="M4 12h16M12 4v16" {...common} /></svg>;
 }
 
 function normalizeList(payload, key) {
@@ -481,7 +482,7 @@ export default function AdminDashboard() {
                       <div key={message?._id} className="admin-dash-row">
                         <div>
                           <strong>{message?.subject || "Support request"}</strong>
-                          <p>{message?.name || "Customer"} • {message?.email || "No email"}</p>
+                          <p>{message?.name || "Customer"} / {message?.email || "No email"}</p>
                         </div>
                         <div>
                           <span className={`admin-chip ${getStatusTone(message?.status)}`}>{message?.status || "new"}</span>

@@ -5,7 +5,7 @@ export default function AdminShell({ children }) {
     <main className="shell page-section admin-shell">
       <div className="admin-layout">
         <AdminNav />
-        <div>{children}</div>
+        <div className="admin-main">{children}</div>
       </div>
     </main>
   );
