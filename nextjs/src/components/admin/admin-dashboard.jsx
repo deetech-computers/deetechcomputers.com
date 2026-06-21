@@ -8,6 +8,17 @@ import { formatCurrency } from "@/lib/format";
 import { requestWithToken } from "@/lib/resource";
 
 const REFRESH_MS = 30_000;
+const MOBILE_ADMIN_LINKS = [
+  ["/admin", "Dashboard", "dashboard"],
+  ["/admin/orders", "Orders", "orders"],
+  ["/admin/products", "Products", "products"],
+  ["/admin/users", "Users", "users"],
+  ["/admin/affiliates", "Affiliates", "affiliates"],
+  ["/admin/reviews", "Reviews", "messages"],
+  ["/admin/banners", "Banners", "banner"],
+  ["/admin/messages", "Messages", "messages"],
+  ["/admin/discounts", "Discounts", "discounts"],
+];
 
 function formatDateTime(value) {
   const date = value ? new Date(value) : null;
@@ -37,6 +48,23 @@ function getStatusTone(status) {
   return "is-neutral";
 }
 
+function AdminDashIcon({ name }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" };
+  if (name === "dashboard") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" {...common} /></svg>;
+  if (name === "orders") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h3l2 10h9l2-7H8" {...common} /><path d="M10 20h.01M17 20h.01" {...common} /></svg>;
+  if (name === "messages") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="M8 9h8M8 13h5" {...common} /></svg>;
+  if (name === "users") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19c0-2.2-1.8-4-4-4s-4 1.8-4 4" {...common} /><path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 19c0-1.7-1-3.1-2.4-3.7" {...common} /></svg>;
+  if (name === "products") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14v13H5zM8 4h8l3 3H5zM8 11h8" {...common} /></svg>;
+  if (name === "affiliates") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 12.5 6 15a3 3 0 1 0 4.2 4.2l2.3-2.3M15.5 11.5 18 9a3 3 0 1 0-4.2-4.2l-2.3 2.3M9 15l6-6" {...common} /></svg>;
+  if (name === "revenue") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z" {...common} /><path d="M8 12h.01M16 12h.01M12 15a3 3 0 0 0 0-6 3 3 0 0 0 0 6Z" {...common} /></svg>;
+  if (name === "sync") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5" {...common} /><path d="M18.5 9A7 7 0 0 0 6.2 6.2M5.5 15A7 7 0 0 0 17.8 17.8" {...common} /></svg>;
+  if (name === "menu") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" {...common} /></svg>;
+  if (name === "account") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 18a4 4 0 0 0-8 0" {...common} /><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" {...common} /></svg>;
+  if (name === "banner") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-3-6 3z" {...common} /><path d="M9 8h6M9 12h4" {...common} /></svg>;
+  if (name === "discounts") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16" {...common} /></svg>;
+}
+
 function normalizeList(payload, key) {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.[key])) return payload[key];
@@ -64,10 +92,13 @@ function getOrderShippingPrice(order) {
   return Math.max(0, Number((total - Math.max(0, itemsPrice - discountAmount)).toFixed(2)));
 }
 
-function DashboardCard({ label, value, helper, tone = "" }) {
+function DashboardCard({ label, value, helper, icon, tone = "" }) {
   return (
     <article className={`admin-dash-card panel ${tone}`.trim()}>
-      <p>{label}</p>
+      <div className="admin-dash-card__top">
+        <p>{label}</p>
+        <span className="admin-dash-card__icon" aria-hidden="true"><AdminDashIcon name={icon} /></span>
+      </div>
       <strong>{value}</strong>
       <span>{helper}</span>
     </article>
@@ -138,6 +169,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [manualSyncNonce, setManualSyncNonce] = useState(0);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     if (!token || user?.role !== "admin") return undefined;
@@ -189,7 +222,7 @@ export default function AdminDashboard() {
       setRefreshing(false);
     }
 
-    loadDashboard();
+    loadDashboard({ background: manualSyncNonce > 0 });
     const interval = window.setInterval(() => loadDashboard({ background: true }), REFRESH_MS);
     const onFocus = () => loadDashboard({ background: true });
     window.addEventListener("focus", onFocus);
@@ -199,7 +232,7 @@ export default function AdminDashboard() {
       window.clearInterval(interval);
       window.removeEventListener("focus", onFocus);
     };
-  }, [token, user?.role]);
+  }, [manualSyncNonce, token, user?.role]);
 
   const summary = useMemo(() => {
     const dashboard = snapshot.dashboard || {};
@@ -234,7 +267,7 @@ export default function AdminDashboard() {
     () =>
       [...snapshot.orders]
         .sort((a, b) => new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime())
-        .slice(0, 1),
+        .slice(0, 3),
     [snapshot.orders]
   );
 
@@ -242,7 +275,7 @@ export default function AdminDashboard() {
     () =>
       [...snapshot.messages]
         .sort((a, b) => new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime())
-        .slice(0, 1),
+        .slice(0, 2),
     [snapshot.messages]
   );
 
@@ -250,7 +283,7 @@ export default function AdminDashboard() {
     () =>
       [...snapshot.users]
         .sort((a, b) => new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime())
-        .slice(0, 1),
+        .slice(0, 2),
     [snapshot.users]
   );
 
@@ -275,22 +308,73 @@ export default function AdminDashboard() {
     };
   }, [snapshot.orders, snapshot.users]);
 
+  const insights = useMemo(() => {
+    const totalOrders = Math.max(snapshot.orders.length, 1);
+    const delivered = snapshot.orders.filter((order) =>
+      String(order?.orderStatus || "").toLowerCase() === "delivered" || Boolean(order?.isDelivered)
+    ).length;
+    const fulfillment = Math.round((delivered / totalOrders) * 100);
+    const topRegion = dashboardViz.userRegionRows[0];
+    const topRegionTotal = dashboardViz.userRegionRows.reduce((sum, row) => sum + Number(row.value || 0), 0) || 1;
+    const regionPercent = topRegion ? Math.round((Number(topRegion.value || 0) / topRegionTotal) * 100) : 0;
+    return {
+      fulfillment,
+      topRegionLabel: topRegion?.label || "No region",
+      regionPercent,
+    };
+  }, [dashboardViz.userRegionRows, snapshot.orders]);
+
   return (
     <AdminDashboardGate>
       <div className="admin-dashboard">
-        <section className="admin-dashboard__hero panel">
+        <header className="admin-dashboard-mobile-head">
+          <button type="button" aria-label="Open admin menu" onClick={() => setMobileNavOpen(true)}>
+            <AdminDashIcon name="menu" />
+          </button>
+          <h1>Operations Overview</h1>
+          <button type="button" aria-label="Sync dashboard" onClick={() => setManualSyncNonce((value) => value + 1)} disabled={refreshing}>
+            <AdminDashIcon name="sync" />
+          </button>
+          <Link href="/account" aria-label="Open account">
+            <AdminDashIcon name="account" />
+          </Link>
+        </header>
+
+        {mobileNavOpen ? (
+          <div className="admin-dashboard-mobile-menu" role="dialog" aria-modal="true" aria-label="Admin navigation">
+            <button type="button" className="admin-dashboard-mobile-menu__backdrop" aria-label="Close admin menu" onClick={() => setMobileNavOpen(false)} />
+            <nav className="admin-dashboard-mobile-menu__panel" aria-label="Admin sections">
+              <div className="admin-dashboard-mobile-menu__head">
+                <strong>DEETECH Admin</strong>
+                <button type="button" onClick={() => setMobileNavOpen(false)}>Close</button>
+              </div>
+              {MOBILE_ADMIN_LINKS.map(([href, label, icon]) => (
+                <Link key={href} href={href} onClick={() => setMobileNavOpen(false)}>
+                  <AdminDashIcon name={icon} />
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        ) : null}
+
+        <section className="admin-dashboard__topbar">
           <div>
-            <p className="section-kicker">Admin Dashboard</p>
             <h1>Operations Overview</h1>
             <p>
-              Monitor live platform activity before diving into each admin section.
-              Sync runs every {Math.round(REFRESH_MS / 1000)} seconds and on window focus.
+              <span aria-hidden="true" />
+              Last synced: <strong>{snapshot.lastSyncAt ? formatDateTime(snapshot.lastSyncAt) : "Waiting..."}</strong>
             </p>
           </div>
-          <div className="admin-dashboard__sync">
-            <span>{refreshing ? "Syncing..." : "Live"}</span>
-            <strong>{snapshot.lastSyncAt ? formatDateTime(snapshot.lastSyncAt) : "Waiting..."}</strong>
-          </div>
+          <button
+            type="button"
+            className="admin-dashboard__sync-button"
+            onClick={() => setManualSyncNonce((value) => value + 1)}
+            disabled={refreshing}
+          >
+            <AdminDashIcon name="sync" />
+            {refreshing ? "Syncing..." : "Sync Now"}
+          </button>
         </section>
 
         {error ? <section className="panel admin-state form-error">{error}</section> : null}
@@ -299,15 +383,24 @@ export default function AdminDashboard() {
         {!loading ? (
           <>
             <section className="admin-dash-grid">
-              <DashboardCard label="Total Orders" value={summary.totalOrders} helper={`${summary.pendingOrders} pending/processing`} />
-              <DashboardCard label="Unread Messages" value={summary.unreadMessages} helper="Need support response" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
-              <DashboardCard label="Total Users" value={summary.totalUsers} helper={`${summary.inactiveUsers} inactive accounts`} />
-              <DashboardCard label="Products" value={summary.totalProducts} helper={`${summary.lowStockProducts} low stock alerts`} tone={summary.lowStockProducts > 0 ? "is-warning" : "is-success"} />
-              <DashboardCard label="Active Affiliates" value={summary.activeAffiliates} helper={`${snapshot.affiliates.length} total records`} />
-              <DashboardCard label="Revenue" value={formatCurrency(summary.revenue)} helper="Delivered orders total" tone="is-success" />
+              <DashboardCard label="Total Orders" value={summary.totalOrders.toLocaleString("en-GB")} helper={`${summary.pendingOrders} pending/processing`} icon="orders" />
+              <DashboardCard label="Unread Messages" value={summary.unreadMessages.toLocaleString("en-GB")} helper="Need support response" icon="messages" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
+              <DashboardCard label="Total Users" value={summary.totalUsers.toLocaleString("en-GB")} helper={`${summary.inactiveUsers} inactive accounts`} icon="users" />
+              <DashboardCard label="Products" value={summary.totalProducts.toLocaleString("en-GB")} helper={`${summary.lowStockProducts} low stock alerts`} icon="products" tone={summary.lowStockProducts > 0 ? "is-warning" : "is-success"} />
+              <DashboardCard label="Affiliates" value={summary.activeAffiliates.toLocaleString("en-GB")} helper={`${snapshot.affiliates.length} total records`} icon="affiliates" />
+              <DashboardCard label="Revenue" value={formatCurrency(summary.revenue)} helper="Delivered orders total" icon="revenue" tone="is-success is-revenue" />
             </section>
 
-            <section className="admin-viz-grid panel">
+            <section className="admin-dashboard__message-callout">
+              <span aria-hidden="true"><AdminDashIcon name="messages" /></span>
+              <div>
+                <strong>New Messages ({summary.unreadMessages})</strong>
+                <p>Support queries pending review</p>
+              </div>
+              <Link href="/admin/messages">Open</Link>
+            </section>
+
+            <section className="admin-viz-grid">
               <TinyBars title="Order Status Overview" rows={dashboardViz.orderStatusRows} />
               <TinyBars title="Payment Method Mix" rows={dashboardViz.paymentMethodRows} />
               <TinyBars title="Top User Regions" rows={dashboardViz.userRegionRows} />
@@ -400,32 +493,64 @@ export default function AdminDashboard() {
               </article>
             </section>
 
+            <section className="admin-dashboard__insights">
+              <h2>Quick Insights</h2>
+              <article className="panel">
+                <div>
+                  <strong>Order Fulfillment</strong>
+                  <span>{insights.fulfillment}% Target</span>
+                </div>
+                <i aria-hidden="true"><b style={{ width: `${Math.min(100, insights.fulfillment)}%` }} /></i>
+                <div>
+                  <strong>{insights.topRegionLabel} Reach</strong>
+                  <span>{insights.regionPercent}% Volume</span>
+                </div>
+                <i aria-hidden="true"><b style={{ width: `${Math.min(100, insights.regionPercent)}%` }} /></i>
+              </article>
+            </section>
+
             <section className="admin-dash-shortcuts panel">
-              <h2>Admin Sections</h2>
+              <h2>System Actions</h2>
               <div className="admin-dash-shortcuts__grid">
                 <Link href="/admin/products" className="admin-dash-shortcut">
+                  <AdminDashIcon name="products" />
                   <strong>Products</strong>
                   <span>Manage inventory, pricing, and stock levels.</span>
                 </Link>
                 <Link href="/admin/orders" className="admin-dash-shortcut">
+                  <AdminDashIcon name="orders" />
                   <strong>Orders</strong>
                   <span>Update payment and delivery workflow.</span>
                 </Link>
                 <Link href="/admin/messages" className="admin-dash-shortcut">
+                  <AdminDashIcon name="messages" />
                   <strong>Messages</strong>
                   <span>Reply to support tickets quickly.</span>
                 </Link>
                 <Link href="/admin/users" className="admin-dash-shortcut">
+                  <AdminDashIcon name="users" />
                   <strong>Users</strong>
                   <span>Review account status and role access.</span>
                 </Link>
                 <Link href="/admin/affiliates" className="admin-dash-shortcut">
+                  <AdminDashIcon name="affiliates" />
                   <strong>Affiliates</strong>
                   <span>Track referrals, tiers, and payouts.</span>
                 </Link>
                 <Link href="/admin/reviews" className="admin-dash-shortcut">
+                  <AdminDashIcon name="reviews" />
                   <strong>Reviews</strong>
                   <span>Moderate customer review quality.</span>
+                </Link>
+                <Link href="/admin/banners" className="admin-dash-shortcut admin-dash-shortcut--mobile-only">
+                  <AdminDashIcon name="banner" />
+                  <strong>Set Banner</strong>
+                  <span>Update homepage campaigns.</span>
+                </Link>
+                <Link href="/admin/discounts" className="admin-dash-shortcut admin-dash-shortcut--mobile-only">
+                  <AdminDashIcon name="discounts" />
+                  <strong>Discounts</strong>
+                  <span>Create and inspect codes.</span>
                 </Link>
               </div>
             </section>
