@@ -62,6 +62,10 @@ function AdminDashIcon({ name }) {
   if (name === "account") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 18a4 4 0 0 0-8 0" {...common} /><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" {...common} /></svg>;
   if (name === "banner") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-3-6 3z" {...common} /><path d="M9 8h6M9 12h4" {...common} /></svg>;
   if (name === "discounts") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
+  if (name === "settings") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" {...common} /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3-.2-.1a1.7 1.7 0 0 0-2 .1 1.7 1.7 0 0 0-.8 1.7V22h-3.6v-.3a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.1l-.2.1-2-3 .1-.1A1.7 1.7 0 0 0 6.6 15a1.7 1.7 0 0 0-1.5-1H5v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-3 .2.1a1.7 1.7 0 0 0 2-.1 1.7 1.7 0 0 0 .8-1.7V2h3.6v.3a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .1l.2-.1 2 3-.1.1A1.7 1.7 0 0 0 17.4 9a1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z" {...common} /></svg>;
+  if (name === "reviews") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="m10 13 2-5 2 5M10.8 11h2.4" {...common} /></svg>;
+  if (name === "plus") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" {...common} /></svg>;
+  if (name === "bell") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 21h4" {...common} /></svg>;
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16" {...common} /></svg>;
 }
 
@@ -119,6 +123,58 @@ function TinyBars({ title, rows }) {
             <strong>{Number(row.value || 0).toLocaleString("en-GB")}</strong>
           </div>
         )) : <p>No data yet.</p>}
+      </div>
+    </article>
+  );
+}
+
+function OrderStatusDonut({ rows }) {
+  const total = rows.reduce((sum, row) => sum + Number(row.value || 0), 0) || 1;
+  const delivered = rows.find((row) => String(row.label).toLowerCase().includes("delivered"))?.value || 0;
+  const processing = rows.find((row) => String(row.label).toLowerCase().includes("processing"))?.value || 0;
+  const cancelled = rows.find((row) => String(row.label).toLowerCase().includes("cancelled"))?.value || 0;
+  const deliveredPercent = Math.round((Number(delivered) / total) * 100);
+  const processingPercent = Math.round((Number(processing) / total) * 100);
+  const cancelledPercent = Math.round((Number(cancelled) / total) * 100);
+  return (
+    <article className="admin-viz-card admin-viz-card--donut">
+      <div className="admin-viz-card__head">
+        <h3>Order Status</h3>
+        <span aria-hidden="true">...</span>
+      </div>
+      <div className="admin-status-donut" style={{ "--delivered": `${Math.max(0, Math.min(100, deliveredPercent))}%` }}>
+        <strong>{deliveredPercent}%</strong>
+        <span>Delivered</span>
+      </div>
+      <div className="admin-status-donut__legend">
+        <span><strong>{deliveredPercent}%</strong>Delivered</span>
+        <span><strong>{processingPercent}%</strong>Processing</span>
+        <span><strong>{cancelledPercent}%</strong>Cancelled</span>
+      </div>
+    </article>
+  );
+}
+
+function PercentBars({ title, icon, rows }) {
+  const valid = (rows || []).filter((row) => Number(row?.value || 0) > 0).slice(0, 4);
+  const total = valid.reduce((sum, row) => sum + Number(row.value || 0), 0) || 1;
+  return (
+    <article className="admin-viz-card admin-viz-card--percent">
+      <div className="admin-viz-card__head">
+        <h3>{title}</h3>
+        <span aria-hidden="true"><AdminDashIcon name={icon} /></span>
+      </div>
+      <div className="admin-viz-bars">
+        {valid.length ? valid.map((row) => {
+          const percent = Math.round((Number(row.value || 0) / total) * 100);
+          return (
+            <div key={row.label} className="admin-viz-bar-row">
+              <span>{row.label}</span>
+              <div className="admin-viz-bar-track"><i style={{ width: `${Math.max(6, percent)}%` }} /></div>
+              <strong>{percent}%</strong>
+            </div>
+          );
+        }) : <p>No data yet.</p>}
       </div>
     </article>
   );
@@ -366,15 +422,19 @@ export default function AdminDashboard() {
               Last synced: <strong>{snapshot.lastSyncAt ? formatDateTime(snapshot.lastSyncAt) : "Waiting..."}</strong>
             </p>
           </div>
-          <button
-            type="button"
-            className="admin-dashboard__sync-button"
-            onClick={() => setManualSyncNonce((value) => value + 1)}
-            disabled={refreshing}
-          >
-            <AdminDashIcon name="sync" />
-            {refreshing ? "Syncing..." : "Sync Now"}
-          </button>
+          <div className="admin-dashboard__top-actions">
+            <button
+              type="button"
+              className="admin-dashboard__sync-button"
+              onClick={() => setManualSyncNonce((value) => value + 1)}
+              disabled={refreshing}
+            >
+              <AdminDashIcon name="sync" />
+              {refreshing ? "Syncing..." : "Sync Now"}
+            </button>
+            <span className="admin-dashboard__top-icon" aria-hidden="true"><AdminDashIcon name="bell" /></span>
+            <span className="admin-dashboard__avatar" aria-hidden="true">{String(user?.name || user?.email || "A").slice(0, 1).toUpperCase()}</span>
+          </div>
         </section>
 
         {error ? <section className="panel admin-state form-error">{error}</section> : null}
@@ -383,8 +443,8 @@ export default function AdminDashboard() {
         {!loading ? (
           <>
             <section className="admin-dash-grid">
-              <DashboardCard label="Total Orders" value={summary.totalOrders.toLocaleString("en-GB")} helper={`${summary.pendingOrders} pending/processing`} icon="orders" />
-              <DashboardCard label="Unread Messages" value={summary.unreadMessages.toLocaleString("en-GB")} helper="Need support response" icon="messages" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
+              <DashboardCard label="Total Orders" value={summary.totalOrders.toLocaleString("en-GB")} helper="+12%" icon="orders" />
+              <DashboardCard label="Messages" value={summary.unreadMessages.toLocaleString("en-GB")} helper={summary.unreadMessages > 0 ? "New" : "Clear"} icon="messages" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
               <DashboardCard label="Total Users" value={summary.totalUsers.toLocaleString("en-GB")} helper={`${summary.inactiveUsers} inactive accounts`} icon="users" />
               <DashboardCard label="Products" value={summary.totalProducts.toLocaleString("en-GB")} helper={`${summary.lowStockProducts} low stock alerts`} icon="products" tone={summary.lowStockProducts > 0 ? "is-warning" : "is-success"} />
               <DashboardCard label="Affiliates" value={summary.activeAffiliates.toLocaleString("en-GB")} helper={`${snapshot.affiliates.length} total records`} icon="affiliates" />
@@ -401,9 +461,9 @@ export default function AdminDashboard() {
             </section>
 
             <section className="admin-viz-grid">
-              <TinyBars title="Order Status Overview" rows={dashboardViz.orderStatusRows} />
-              <TinyBars title="Payment Method Mix" rows={dashboardViz.paymentMethodRows} />
-              <TinyBars title="Top User Regions" rows={dashboardViz.userRegionRows} />
+              <OrderStatusDonut rows={dashboardViz.orderStatusRows} />
+              <PercentBars title="Payment Mix" icon="revenue" rows={dashboardViz.paymentMethodRows} />
+              <PercentBars title="Top Regions" icon="banner" rows={dashboardViz.userRegionRows} />
             </section>
 
             <section className="admin-dash-panels admin-dash-panels--overview">
@@ -443,6 +503,7 @@ export default function AdminDashboard() {
               <article className="admin-dash-panel panel">
                 <div className="admin-dash-panel__head">
                   <h2>New Messages</h2>
+                  <span className="admin-dash-panel__count">{summary.unreadMessages}</span>
                   <Link href="/admin/messages" className="ghost-link">Open Messages</Link>
                 </div>
                 <div className="admin-dash-list">
@@ -467,13 +528,16 @@ export default function AdminDashboard() {
 
               <article className="admin-dash-panel admin-dash-panel--users panel">
                 <div className="admin-dash-panel__head">
-                  <h2>Recent Users</h2>
+                  <h2>Recent Signups</h2>
                   <Link href="/admin/users" className="ghost-link">Open Users</Link>
                 </div>
                 <div className="admin-dash-list admin-dash-list--users">
                   {recentUsers.length ? (
                     recentUsers.map((account) => (
                       <div key={account?._id || account?.email} className="admin-dash-row admin-dash-row--users">
+                        <span className="admin-dash-avatar" aria-hidden="true">
+                          {String(account?.name || account?.email || "U").slice(0, 1).toUpperCase()}
+                        </span>
                         <div>
                           <strong>{account?.name || "User account"}</strong>
                           <p>{account?.email || "No email"}</p>
@@ -551,6 +615,26 @@ export default function AdminDashboard() {
                   <AdminDashIcon name="discounts" />
                   <strong>Discounts</strong>
                   <span>Create and inspect codes.</span>
+                </Link>
+                <Link href="/admin/products/create" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="plus" />
+                  <strong>Add Product</strong>
+                  <span>Create a new listing.</span>
+                </Link>
+                <Link href="/admin/banners" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="banner" />
+                  <strong>Set Banner</strong>
+                  <span>Update homepage campaigns.</span>
+                </Link>
+                <Link href="/admin/discounts" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="discounts" />
+                  <strong>Discounts</strong>
+                  <span>Create codes.</span>
+                </Link>
+                <Link href="/admin" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="settings" />
+                  <strong>Settings</strong>
+                  <span>Admin controls.</span>
                 </Link>
               </div>
             </section>
