@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 
 const items = [
   ["/admin", "Dashboard", "dashboard"],
@@ -42,24 +43,49 @@ function AdminNavIcon({ name }) {
   if (name === "messages") {
     return <svg {...svgProps}><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="M8 9h8M8 13h5" {...common} /></svg>;
   }
+  if (name === "settings") {
+    return <svg {...svgProps}><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" {...common} /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3-.2-.1a1.7 1.7 0 0 0-2 .1 1.7 1.7 0 0 0-.8 1.7V22h-3.6v-.3a1.7 1.7 0 0 0-.8-1.7 1.7 1.7 0 0 0-2-.1l-.2.1-2-3 .1-.1A1.7 1.7 0 0 0 6.6 15a1.7 1.7 0 0 0-1.5-1H5v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-3 .2.1a1.7 1.7 0 0 0 2-.1 1.7 1.7 0 0 0 .8-1.7V2h3.6v.3a1.7 1.7 0 0 0 .8 1.7 1.7 1.7 0 0 0 2 .1l.2-.1 2 3-.1.1A1.7 1.7 0 0 0 17.4 9a1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z" {...common} /></svg>;
+  }
+  if (name === "logout") {
+    return <svg {...svgProps}><path d="M10 17l5-5-5-5M15 12H3" {...common} /><path d="M13 4h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-5" {...common} /></svg>;
+  }
   return <svg {...svgProps}><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
 }
 
 export default function AdminNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
   const isActive = (href) => (href === "/admin" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   return (
     <aside className="admin-nav">
       <div className="admin-nav__brand">
         <strong>DEETECH</strong>
         <span>Admin Operations</span>
       </div>
-      {items.map(([href, label, icon]) => (
-        <Link key={href} href={href} className={isActive(href) ? "active" : ""}>
-          <AdminNavIcon name={icon} />
-          {label}
+      <nav className="admin-nav__links" aria-label="Admin navigation">
+        {items.map(([href, label, icon]) => (
+          <Link key={href} href={href} className={isActive(href) ? "active" : ""}>
+            <AdminNavIcon name={icon} />
+            {label}
+          </Link>
+        ))}
+      </nav>
+      <div className="admin-nav__footer">
+        <Link href="/admin" className="admin-nav__footer-link">
+          <AdminNavIcon name="settings" />
+          Settings
         </Link>
-      ))}
+        <button type="button" className="admin-nav__footer-link admin-nav__footer-link--danger" onClick={handleLogout}>
+          <AdminNavIcon name="logout" />
+          Logout
+        </button>
+      </div>
     </aside>
   );
 }

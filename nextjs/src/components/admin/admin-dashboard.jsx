@@ -70,11 +70,14 @@ function normalizeList(payload, key) {
   return [];
 }
 
-function DashboardCard({ label, value, helper, icon, tone = "" }) {
+function DashboardCard({ label, mobileLabel, value, helper, icon, tone = "" }) {
   return (
     <article className={`admin-dash-card panel ${tone}`.trim()}>
       <div className="admin-dash-card__top">
-        <p>{label}</p>
+        <p>
+          <span className="admin-dash-card__label-desktop">{label}</span>
+          <span className="admin-dash-card__label-mobile">{mobileLabel || label}</span>
+        </p>
         <span className="admin-dash-card__icon" aria-hidden="true"><AdminDashIcon name={icon} /></span>
       </div>
       <strong>{value}</strong>
@@ -417,12 +420,12 @@ export default function AdminDashboard() {
         {!loading ? (
           <>
             <section className="admin-dash-grid">
-              <DashboardCard label="Total Orders" value={summary.totalOrders.toLocaleString("en-GB")} helper="+12%" icon="orders" />
-              <DashboardCard label="Messages" value={summary.unreadMessages.toLocaleString("en-GB")} helper={summary.unreadMessages > 0 ? "New" : "Clear"} icon="messages" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
-              <DashboardCard label="Total Users" value={summary.totalUsers.toLocaleString("en-GB")} helper={`${summary.inactiveUsers} inactive accounts`} icon="users" />
+              <DashboardCard label="Total Orders" mobileLabel="Orders" value={summary.totalOrders.toLocaleString("en-GB")} helper="+12%" icon="orders" />
+              <DashboardCard label="Unread" mobileLabel="Messages" value={summary.unreadMessages.toLocaleString("en-GB")} helper={summary.unreadMessages > 0 ? "New" : "Clear"} icon="messages" tone={summary.unreadMessages > 0 ? "is-warning" : "is-success"} />
+              <DashboardCard label="Total Users" mobileLabel="Users" value={summary.totalUsers.toLocaleString("en-GB")} helper={`${summary.inactiveUsers} inactive accounts`} icon="users" />
               <DashboardCard label="Products" value={summary.totalProducts.toLocaleString("en-GB")} helper={`${summary.lowStockProducts} low stock alerts`} icon="products" tone={summary.lowStockProducts > 0 ? "is-warning" : "is-success"} />
               <DashboardCard label="Affiliates" value={summary.activeAffiliates.toLocaleString("en-GB")} helper={`${snapshot.affiliates.length} total records`} icon="affiliates" />
-              <DashboardCard label="Revenue" value={formatCurrency(summary.revenue)} helper="Delivered orders total" icon="revenue" tone="is-success is-revenue" />
+              <DashboardCard label="Revenue" value={formatCurrency(summary.revenue)} helper="+12.4% vs Last Mo." icon="revenue" tone="is-success is-revenue" />
             </section>
 
             <section className="admin-dashboard__message-callout">
@@ -602,10 +605,10 @@ export default function AdminDashboard() {
                   <strong>Discounts</strong>
                   <span>Create codes.</span>
                 </Link>
-                <Link href="/admin/messages" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
-                  <AdminDashIcon name="messages" />
-                  <strong>Messages</strong>
-                  <span>Open support tickets.</span>
+                <Link href="/admin" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="settings" />
+                  <strong>Settings</strong>
+                  <span>Open admin preferences.</span>
                 </Link>
               </div>
             </section>

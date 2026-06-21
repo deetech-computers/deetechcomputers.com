@@ -21255,7 +21255,7 @@ body:has(.admin-shell) .app-content {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 66px;
   padding: 30px 16px 28px;
   border-right: 1px solid #d8dee3;
   background: #fbfaff;
@@ -21282,7 +21282,13 @@ body:has(.admin-shell) .app-content {
   text-transform: uppercase;
 }
 
-.admin-nav a {
+.admin-nav__links {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-nav a,
+.admin-nav button {
   width: 100%;
   min-height: 48px;
   display: grid;
@@ -21298,10 +21304,38 @@ body:has(.admin-shell) .app-content {
   text-decoration: none;
 }
 
+.admin-nav button {
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
 .admin-nav a:hover,
-.admin-nav a.active {
+.admin-nav a.active,
+.admin-nav button:hover {
   background: #a7f2b0;
   color: #176533;
+}
+
+.admin-nav__footer {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
+  border-top: 1px solid #d8dee3;
+}
+
+.admin-nav .admin-nav__footer-link {
+  background: transparent;
+}
+
+.admin-nav .admin-nav__footer-link--danger {
+  color: #c0392b;
+}
+
+.admin-nav .admin-nav__footer-link--danger:hover {
+  background: #fff0f0;
+  color: #b42318;
 }
 
 .admin-dashboard {
@@ -21447,6 +21481,10 @@ body:has(.admin-shell) .app-content {
   text-transform: uppercase;
 }
 
+.admin-dash-card__label-mobile {
+  display: none;
+}
+
 .admin-dash-card strong {
   min-width: 0;
   color: #00451c;
@@ -21551,14 +21589,14 @@ body:has(.admin-shell) .app-content {
 .admin-status-donut strong { font-size: 1rem; font-weight: 900; }
 .admin-status-donut span { margin-top: 24px; font-size: .58rem; font-weight: 700; }
 
-.admin-viz-legend {
+.admin-status-donut__legend {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   text-align: center;
 }
 
-.admin-viz-legend span,
+.admin-status-donut__legend span,
 .admin-viz-bar-row span {
   color: #2d302d;
   font-size: .8rem;
@@ -21568,14 +21606,14 @@ body:has(.admin-shell) .app-content {
   white-space: nowrap;
 }
 
-.admin-viz-legend strong {
+.admin-status-donut__legend strong {
   display: block;
   margin-top: 4px;
   color: #217b37;
   font-weight: 900;
 }
 
-.admin-viz-bar-list {
+.admin-viz-bars {
   display: grid;
   gap: 16px;
   margin-top: 22px;
@@ -21947,6 +21985,14 @@ body:has(.admin-shell) .app-content {
   .admin-dash-card p {
     font-size: .68rem;
     letter-spacing: .08em;
+  }
+
+  .admin-dash-card__label-desktop {
+    display: none;
+  }
+
+  .admin-dash-card__label-mobile {
+    display: inline;
   }
 
   .admin-dash-card strong {
