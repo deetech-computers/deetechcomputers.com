@@ -729,6 +729,18 @@ function UpgradeOptionsEditor({ title, items, onChange, addLabel }) {
   );
 }
 
+function ProductEditorSection({ title, meta = "", icon = "box", defaultOpen = false, children }) {
+  return (
+    <details className="admin-product-editor-section" defaultOpen={defaultOpen}>
+      <summary>
+        <span><AdminProductsIcon name={icon} /><strong>{title}</strong>{meta ? <small>{meta}</small> : null}</span>
+        <AdminProductsIcon name="chevron" />
+      </summary>
+      <div className="admin-product-editor-section__body">{children}</div>
+    </details>
+  );
+}
+
 function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [category, setCategory] = useState(initial?.category || "laptops");
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
@@ -774,142 +786,52 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const retainedImageUrls = normalizedImageSlots.filter(Boolean);
 
   return (
-    <form className="admin-form" onSubmit={onSubmit}>
-      <input className="field" name="name" defaultValue={initial?.name || ""} placeholder="Product name" required />
-      <input
-        className="field"
-        name="short_description"
-        defaultValue={initial?.short_description || ""}
-        placeholder="Card description (short): e.g. Lightweight 14-inch laptop, 8GB RAM, 512GB SSD"
-      />
-      <textarea
-        className="field"
-        name="description"
-        defaultValue={initial?.description || ""}
-        placeholder="Full product description: include condition, performance, key features, included accessories, warranty, and best use case."
-        rows={2}
-        required
-      />
-      <div className="admin-form__split">
-        <select className="field" name="category" value={category} onChange={(event) => setCategory(event.target.value)}>
-          {PRODUCT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-        </select>
-        <select className="field" name="subCategory" value={resolvedSubCategory} onChange={(event) => setSubCategory(event.target.value)}>
-          {subCategories.map((option) => <option key={option} value={option}>{option}</option>)}
-        </select>
-      </div>
-      <input type="hidden" name="brand" value={resolvedSubCategory} />
-      <div className="admin-form__split">
-        <input className="field" name="price" defaultValue={initial?.price || ""} placeholder="Price" type="number" min="0" step="0.01" required />
-        <input className="field" name="countInStock" defaultValue={initial?.countInStock ?? ""} placeholder="Stock" type="number" min="0" required />
-      </div>
-      <div className="admin-form__split">
-        <input
-          className="field"
-          name="discountPrice"
-          defaultValue={initial?.discountPrice ?? ""}
-          placeholder="Discount price (optional)"
-          type="number"
-          min="0"
-          step="0.01"
-        />
-        <select className="field" name="discountPreset" value={discountPreset} onChange={(event) => setDiscountPreset(event.target.value)}>
-          {PRODUCT_DISCOUNT_PRESET_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
-      </div>
-      <input type="hidden" name="imageUrls" value={galleryImageUrls.join(",")} />
-      {initial ? <input type="hidden" name="existingImages" value={retainedImageUrls.join(",")} /> : null}
-      <section className="admin-product-images">
-        <div className="admin-product-images__head">
-          <div>
-            <h3>Web Image URLs</h3>
-            <p>Main image stays first. Add up to {MAX_PRODUCT_IMAGES} product images total.</p>
+    <form id="admin-product-editor-form" className="admin-form admin-product-editor-form" onSubmit={onSubmit}>
+      <ProductEditorSection title="Product Basics" icon="box" defaultOpen>
+        <div className="admin-product-editor-fields admin-product-editor-fields--basics">
+          <label><span>Product Name <b>*</b></span><input className="field" name="name" defaultValue={initial?.name || ""} placeholder="e.g. MacBook Pro 14-inch M3" required /></label>
+          <label><span>Card Description (Short)</span><input className="field" name="short_description" defaultValue={initial?.short_description || ""} placeholder="Brief summary for catalog cards..." /></label>
+          <label className="is-wide"><span>Full Product Description <b>*</b></span><textarea className="field" name="description" defaultValue={initial?.description || ""} placeholder="Detailed technical specifications, condition, performance, included accessories and warranty..." rows={6} required /></label>
+          <label><span>Category</span><select className="field" name="category" value={category} onChange={(event) => setCategory(event.target.value)}>{PRODUCT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+          <label><span>Brand / Subcategory</span><select className="field" name="subCategory" value={resolvedSubCategory} onChange={(event) => setSubCategory(event.target.value)}>{subCategories.map((option) => <option key={option} value={option}>{option}</option>)}</select></label>
+        </div>
+        <input type="hidden" name="brand" value={resolvedSubCategory} />
+      </ProductEditorSection>
+
+      <ProductEditorSection title="Pricing & Stock" icon="payment">
+        <div className="admin-product-editor-fields admin-product-editor-fields--pricing">
+          <label><span>Base Price (GH₵) <b>*</b></span><input className="field" name="price" defaultValue={initial?.price || ""} placeholder="0.00" type="number" min="0" step="0.01" required /></label>
+          <label><span>Stock Count <b>*</b></span><input className="field" name="countInStock" defaultValue={initial?.countInStock ?? ""} placeholder="0" type="number" min="0" required /></label>
+          <label><span>Discount Price</span><input className="field" name="discountPrice" defaultValue={initial?.discountPrice ?? ""} placeholder="Optional" type="number" min="0" step="0.01" /></label>
+          <label><span>Discount Duration</span><select className="field" name="discountPreset" value={discountPreset} onChange={(event) => setDiscountPreset(event.target.value)}>{PRODUCT_DISCOUNT_PRESET_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        </div>
+      </ProductEditorSection>
+
+      <ProductEditorSection title="Product Images" meta={`${Math.min(currentProductImages.length, MAX_PRODUCT_IMAGES)} of ${MAX_PRODUCT_IMAGES}`} icon="image">
+        <input type="hidden" name="imageUrls" value={galleryImageUrls.join(",")} />
+        {initial ? <input type="hidden" name="existingImages" value={retainedImageUrls.join(",")} /> : null}
+        <section className="admin-product-images">
+          <div className="admin-product-images__head"><div><h3>Web Image URLs</h3><p>Main image stays first. Add up to {MAX_PRODUCT_IMAGES} product images total.</p></div>{imageUrlSlots.length < MAX_PRODUCT_IMAGES ? <button type="button" className="ghost-button" onClick={addImageUrlSlot}>+ Add Image URL</button> : null}</div>
+          <div className="admin-product-images__grid">
+            {imageUrlSlots.map((value, index) => <label key={`image-url-${index}`} className="admin-image-slot"><span>{index === 0 ? "Main Image URL" : `Image ${index + 1} URL`}</span><input className="field" name={index === 0 ? "image_url" : undefined} value={value} onChange={(event) => updateImageUrlSlot(index, event.target.value)} placeholder={index === 0 ? "https://..." : `Additional image ${index + 1} URL`} /></label>)}
           </div>
-          {imageUrlSlots.length < MAX_PRODUCT_IMAGES ? (
-            <button type="button" className="ghost-button" onClick={addImageUrlSlot}>+ Add image</button>
-          ) : null}
-        </div>
-        <div className="admin-product-images__grid">
-          {imageUrlSlots.map((value, index) => (
-            <div key={`image-url-${index}`} className="admin-image-slot">
-              <label className="admin-inline-control admin-inline-control--stack">
-                <span>{index === 0 ? "Main image URL" : `Image ${index + 1} URL`}</span>
-                <input
-                  className="field"
-                  name={index === 0 ? "image_url" : undefined}
-                  value={value}
-                  onChange={(event) => updateImageUrlSlot(index, event.target.value)}
-                  placeholder={index === 0 ? "Main image URL" : `Additional image ${index + 1} URL`}
-                />
-              </label>
-            </div>
-          ))}
-        </div>
-        {currentProductImages.length ? (
-          <div className="admin-product-images__current">
-            <strong>Current saved images</strong>
-            <div className="admin-product-images__preview-grid">
-              {currentProductImages.map((image, index) => (
-                <div key={`${image}-${index}`} className="admin-product-images__preview-card">
-                  <StableImage src={resolveProductImage(image)} alt={`Product image ${index + 1}`} width={120} height={120} />
-                  <small>{index === 0 ? "Current main image" : `Current image ${index + 1}`}</small>
-                  <code>{image}</code>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
-      </section>
-      <section className="admin-product-images">
-        <div className="admin-product-images__head">
-          <div>
-            <h3>Image Uploads (JPG/PNG/WEBP)</h3>
-            <p>Two upload slots are ready by default. Use + to add more up to {MAX_PRODUCT_IMAGES} files.</p>
-          </div>
-          {uploadSlotCount < MAX_PRODUCT_IMAGES ? (
-            <button type="button" className="ghost-button" onClick={addUploadSlot}>+ Add image</button>
-          ) : null}
-        </div>
-        <div className="admin-product-images__grid">
-          {Array.from({ length: uploadSlotCount }).map((_, index) => (
-            <label key={`image-upload-${index}`} className="admin-inline-control admin-inline-control--stack">
-              <span>{index === 0 ? "Main image upload" : `Image ${index + 1} upload`}</span>
-              <input
-                className="field"
-                name="images"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif"
-              />
-            </label>
-          ))}
-        </div>
-      </section>
-      <input type="hidden" name="homeSections" value={selectedSections.join(",")} />
-      <fieldset className="admin-check-group">
-        <legend>Home sections</legend>
-        <div className="admin-check-grid">
-          {HOME_SECTION_OPTIONS.map(([key, label]) => (
-            <label key={key} className="admin-check admin-check--box">
-              <input
-                type="checkbox"
-                checked={selectedSections.includes(key)}
-                onChange={() => toggleHomeSection(key)}
-              />
-              <span>{label}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <textarea
-        className="field"
-        name="specs"
-        defaultValue={initial?.specs ? Object.entries(initial.specs).map(([key, value]) => `${key}:${value}`).join(", ") : ""}
-        placeholder="Specs (comma separated), e.g. Processor:i5, RAM:8GB, Storage:512GB SSD, Display:14-inch FHD"
-        rows={4}
-      />
-      <section className="admin-collapsible admin-upgrade-panel">
+          {currentProductImages.length ? <div className="admin-product-images__current"><strong>Current Saved Images</strong><div className="admin-product-images__preview-grid">{currentProductImages.map((image, index) => <div key={`${image}-${index}`} className="admin-product-images__preview-card"><StableImage src={resolveProductImage(image)} alt={`Product image ${index + 1}`} width={120} height={120} /><small>{index === 0 ? "Current main image" : `Current image ${index + 1}`}</small><code>{image}</code></div>)}</div></div> : null}
+        </section>
+        <section className="admin-product-images admin-product-images--uploads">
+          <div className="admin-product-images__head"><div><h3>Image Uploads</h3><p>JPG, PNG, WEBP, GIF, BMP, HEIC or HEIF. Maximum {MAX_PRODUCT_IMAGES} files.</p></div>{uploadSlotCount < MAX_PRODUCT_IMAGES ? <button type="button" className="ghost-button" onClick={addUploadSlot}>+ Add More Images</button> : null}</div>
+          <div className="admin-product-images__grid">{Array.from({ length: uploadSlotCount }).map((_, index) => <label key={`image-upload-${index}`} className="admin-image-upload"><AdminProductsIcon name="image" /><span>{index === 0 ? "Main image upload" : `Image ${index + 1} upload`}</span><input className="field" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" /></label>)}</div>
+        </section>
+      </ProductEditorSection>
+
+      <ProductEditorSection title="Homepage Placement" icon="grid">
+        <input type="hidden" name="homeSections" value={selectedSections.join(",")} />
+        <fieldset className="admin-check-group"><legend>Select every homepage collection where this product should appear.</legend><div className="admin-check-grid">{HOME_SECTION_OPTIONS.map(([key, label]) => <label key={key} className="admin-check admin-check--box"><input type="checkbox" checked={selectedSections.includes(key)} onChange={() => toggleHomeSection(key)} /><span>{label}</span></label>)}</div></fieldset>
+      </ProductEditorSection>
+
+      <ProductEditorSection title="Specifications & Upgrades" icon="settings">
+        <label className="admin-product-editor-specs"><span>Technical Specifications (Comma Separated)</span><textarea className="field" name="specs" defaultValue={initial?.specs ? Object.entries(initial.specs).map(([key, value]) => `${key}:${value}`).join(", ") : ""} placeholder="Processor:i5, RAM:8GB, Storage:512GB SSD, Display:14-inch FHD" rows={5} /></label>
+        <label className="admin-check admin-product-editor-featured"><input type="checkbox" name="isFeatured" defaultChecked={Boolean(initial?.isFeatured)} /><span><strong>Feature this product</strong><small>Highlight this product in catalog and promotional surfaces.</small></span></label>
+        <section className="admin-collapsible admin-upgrade-panel">
         <button
           type="button"
           className="admin-collapsible__header"
@@ -961,12 +883,10 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
             value={serializeUpgradeSpecs(upgradeEnabled, ramOptions, storageOptions)}
           />
         )}
-      </section>
-      <label className="admin-check">
-        <input type="checkbox" name="isFeatured" defaultChecked={Boolean(initial?.isFeatured)} />
-        <span>Feature this product</span>
-      </label>
-      <button className="primary-button" disabled={busy}>{busy ? "Saving..." : submitLabel}</button>
+        </section>
+      </ProductEditorSection>
+
+      <footer className="admin-product-editor-submit"><p>Changes are saved to the live catalog.</p><button className="primary-button" disabled={busy}><AdminProductsIcon name="check" />{busy ? "Saving..." : submitLabel}</button></footer>
     </form>
   );
 }
@@ -1129,6 +1049,12 @@ function AdminProductsIcon({ name }) {
     delete: <><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></>,
     chevron: <><path d="m9 6 6 6-6 6" /></>,
     box: <><path d="m4 8 8-4 8 4v9l-8 4-8-4V8Z" /><path d="m4 8 8 4 8-4M12 12v9" /></>,
+    image: <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m5 17 4.5-4.5 3 3 2-2L19 18" /></>,
+    grid: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
+    settings: <><circle cx="12" cy="12" r="3" /><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 15 6l-.3-2.6h-4L10.5 6A7 7 0 0 0 9 7.1l-2.4-1-2 3.4L6.7 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 10.5 18l.3 2.6h4L15 18a7 7 0 0 0 1.5-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z" /></>,
+    check: <><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></>,
+    back: <><path d="m15 18-6-6 6-6" /></>,
+    sync: <><path d="M7 7h9l-2.5-2.5M17 17H8l2.5 2.5M18 7a7 7 0 0 1 1 7M6 17a7 7 0 0 1-1-7" /></>,
   };
   return (
     <svg className="admin-products-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -2633,7 +2559,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && !(type === "products" && !isProductDedicatedPage) ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
@@ -3180,18 +3106,20 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
         {type === "products" && isProductDedicatedPage ? (
-          <section className="panel admin-create-panel">
-            <div className="admin-create-panel__head">
-              <h2>{isProductCreatePage ? "Create Product" : "Edit Product"}</h2>
-              <p>
-                {isProductCreatePage
-                  ? "Use this dedicated page to create a product without distraction."
-                  : "Update this product in a dedicated editor, then return to your products list."}
-              </p>
-            </div>
-            <div className="admin-actions">
-              <Link className="ghost-button" href="/admin/products">Back to Products</Link>
-            </div>
+          <section className="admin-product-editor">
+            <header className="admin-product-editor-mobile-head">
+              <Link href="/admin/products" aria-label="Back to Products"><AdminProductsIcon name="back" /></Link>
+              <h1>{isProductCreatePage ? "Create Product" : "Edit Product"}</h1>
+              <span><AdminProductsIcon name="sync" /></span>
+            </header>
+            <header className="admin-product-editor-head">
+              <div>
+                <Link href="/admin/products"><AdminProductsIcon name="back" />Back to Products</Link>
+                <h1>{isProductCreatePage ? "Create New Product" : "Edit Product"}</h1>
+                <p>{isProductCreatePage ? "Add a complete product to the DEETECH catalog." : "Update this product while preserving its catalog history."}</p>
+              </div>
+              <button form="admin-product-editor-form" className="admin-product-editor-head__save" disabled={busyAction === (isProductCreatePage ? "createProduct" : (editingProduct?._id || editingProduct?.id))}>{isProductCreatePage ? "Create Product" : "Update Product"}</button>
+            </header>
             {isProductCreatePage ? (
               <ProductForm
                 submitLabel="Create Product"
