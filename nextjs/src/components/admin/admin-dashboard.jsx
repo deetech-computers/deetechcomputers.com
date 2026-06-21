@@ -72,7 +72,7 @@ function normalizeList(payload, key) {
 
 function DashboardCard({ label, mobileLabel, value, helper, icon, tone = "" }) {
   return (
-    <article className={`admin-dash-card panel ${tone}`.trim()}>
+    <article className={`admin-dash-card ${tone}`.trim()}>
       <div className="admin-dash-card__top">
         <p>
           <span className="admin-dash-card__label-desktop">{label}</span>
@@ -161,12 +161,12 @@ function AdminDashboardGate({ children }) {
   const { status, isAuthenticated, user } = useAuth();
 
   if (status === "loading") {
-    return <section className="panel admin-state">Loading admin dashboard...</section>;
+    return <section className="admin-state">Loading admin dashboard...</section>;
   }
 
   if (!isAuthenticated) {
     return (
-      <section className="panel admin-state">
+      <section className="admin-state">
         <p className="section-kicker">Admin Dashboard</p>
         <h1>Admin access required</h1>
         <p>Login to monitor orders, messages, users, products, and affiliates in real time.</p>
@@ -177,7 +177,7 @@ function AdminDashboardGate({ children }) {
 
   if (user?.role !== "admin") {
     return (
-      <section className="panel admin-state">
+      <section className="admin-state">
         <p className="section-kicker">Admin Dashboard</p>
         <h1>Permission denied</h1>
         <p>This view is only available to admin accounts.</p>
@@ -414,8 +414,8 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        {error ? <section className="panel admin-state form-error">{error}</section> : null}
-        {loading ? <section className="panel admin-state">Loading full dashboard snapshot...</section> : null}
+        {error ? <section className="admin-state form-error">{error}</section> : null}
+        {loading ? <section className="admin-state">Loading full dashboard snapshot...</section> : null}
 
         {!loading ? (
           <>
@@ -444,7 +444,7 @@ export default function AdminDashboard() {
             </section>
 
             <section className="admin-dash-panels admin-dash-panels--overview">
-              <article className="admin-dash-panel admin-dash-panel--orders panel">
+              <article className="admin-dash-panel admin-dash-panel--orders">
                 <div className="admin-dash-panel__head">
                   <h2>Recent Orders</h2>
                   <span aria-hidden="true">ID: 9281-9279</span>
@@ -473,7 +473,7 @@ export default function AdminDashboard() {
                 <Link href="/admin/orders" className="admin-dash-panel__footer">Open Orders <span aria-hidden="true">-&gt;</span></Link>
               </article>
 
-              <article className="admin-dash-panel panel">
+              <article className="admin-dash-panel admin-dash-panel--messages">
                 <div className="admin-dash-panel__head">
                   <h2>New Messages</h2>
                   <span className="admin-dash-panel__count">{summary.unreadMessages}</span>
@@ -482,7 +482,8 @@ export default function AdminDashboard() {
                 <div className="admin-dash-list">
                   {recentMessages.length ? (
                     recentMessages.map((message) => (
-                      <div key={message?._id} className="admin-dash-row">
+                      <div key={message?._id} className="admin-dash-row admin-dash-row--message">
+                        <span className="admin-dash-message-icon" aria-hidden="true"><AdminDashIcon name="users" /></span>
                         <div>
                           <strong>{message?.subject || "Support request"}</strong>
                           <p>{message?.name || "Customer"} / {message?.email || "No email"}</p>
@@ -499,7 +500,7 @@ export default function AdminDashboard() {
                 </div>
               </article>
 
-              <article className="admin-dash-panel admin-dash-panel--users panel">
+              <article className="admin-dash-panel admin-dash-panel--users">
                 <div className="admin-dash-panel__head">
                   <h2>Recent Signups</h2>
                   <Link href="/admin/users" className="ghost-link">Open Users</Link>
@@ -533,7 +534,7 @@ export default function AdminDashboard() {
 
             <section className="admin-dashboard__insights">
               <h2>Quick Insights</h2>
-              <article className="panel">
+              <article>
                 <div>
                   <strong>Order Fulfillment</strong>
                   <span>{insights.fulfillment}% Target</span>
@@ -547,7 +548,7 @@ export default function AdminDashboard() {
               </article>
             </section>
 
-            <section className="admin-dash-shortcuts panel">
+            <section className="admin-dash-shortcuts">
               <h2>System Actions</h2>
               <div className="admin-dash-shortcuts__grid">
                 <Link href="/admin/products" className="admin-dash-shortcut">
