@@ -96,7 +96,7 @@ body:has(.admin-route) .app-content,
   text-decoration: none;
 }
 
-@media (min-width: 761px) {
+@media (min-width: 901px) {
   .admin-layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
@@ -198,7 +198,7 @@ body:has(.admin-route) .app-content,
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .admin-nav {
     display: none !important;
   }

@@ -59,6 +59,7 @@ function AdminDashIcon({ name }) {
   if (name === "reviews") return <svg {...svgProps}><path d="M4 5h16v12H8l-4 4z" {...common} /><path d="m10 13 2-5 2 5M10.8 11h2.4" {...common} /></svg>;
   if (name === "plus") return <svg {...svgProps}><path d="M12 5v14M5 12h14" {...common} /></svg>;
   if (name === "bell") return <svg {...svgProps}><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 21h4" {...common} /></svg>;
+  if (name === "arrow") return <svg {...svgProps}><path d="M5 12h14M13 6l6 6-6 6" {...common} /></svg>;
   return <svg {...svgProps}><path d="M4 12h16M12 4v16" {...common} /></svg>;
 }
 
@@ -470,14 +471,13 @@ export default function AdminDashboard() {
                     <p>No orders available yet.</p>
                   )}
                 </div>
-                <Link href="/admin/orders" className="admin-dash-panel__footer">Open Orders <span aria-hidden="true">-&gt;</span></Link>
+                <Link href="/admin/orders" className="admin-dash-panel__footer">Open Orders <AdminDashIcon name="arrow" /></Link>
               </article>
 
               <article className="admin-dash-panel admin-dash-panel--messages">
                 <div className="admin-dash-panel__head">
                   <h2>New Messages</h2>
                   <span className="admin-dash-panel__count">{summary.unreadMessages}</span>
-                  <Link href="/admin/messages" className="ghost-link">Open Messages</Link>
                 </div>
                 <div className="admin-dash-list">
                   {recentMessages.length ? (
@@ -498,12 +498,13 @@ export default function AdminDashboard() {
                     <p>No messages available yet.</p>
                   )}
                 </div>
+                <Link href="/admin/messages" className="admin-dash-panel__footer">Open Messages <AdminDashIcon name="messages" /></Link>
               </article>
 
               <article className="admin-dash-panel admin-dash-panel--users">
                 <div className="admin-dash-panel__head">
                   <h2>Recent Signups</h2>
-                  <Link href="/admin/users" className="ghost-link">Open Users</Link>
+                  <span className="admin-dash-panel__head-icon" aria-hidden="true"><AdminDashIcon name="users" /></span>
                 </div>
                 <div className="admin-dash-list admin-dash-list--users">
                   {recentUsers.length ? (
@@ -528,7 +529,7 @@ export default function AdminDashboard() {
                     <p>No users available yet.</p>
                   )}
                 </div>
-                <Link href="/admin/users" className="admin-dash-panel__footer">Open Users <span aria-hidden="true">-&gt;</span></Link>
+                <Link href="/admin/users" className="admin-dash-panel__footer">Open Users <AdminDashIcon name="users" /></Link>
               </article>
             </section>
 

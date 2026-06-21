@@ -1,11 +1,12 @@
 /* Operations Overview desktop screen, matched to the Stitch desktop reference. */
-@media (min-width: 761px) {
+@media (min-width: 901px) {
   .admin-dashboard {
     width: 100%;
     max-width: 1280px;
     min-width: 0;
     display: grid;
     gap: 24px;
+    margin-inline: auto;
     padding: 26px 24px 24px;
   }
 
@@ -390,6 +391,17 @@
     font-size: 9px;
   }
 
+  .admin-dash-panel__head .admin-dash-panel__head-icon {
+    color: #414940;
+  }
+
+  .admin-dash-panel__head .admin-dash-panel__head-icon .admin-icon {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
   .admin-dash-panel__count {
     min-width: 24px;
     height: 24px;
@@ -402,13 +414,6 @@
     color: #fff;
     font-size: 11px;
     font-weight: 700;
-  }
-
-  .ghost-link {
-    color: #1f6c35;
-    font-size: 10px;
-    font-weight: 700;
-    text-decoration: none;
   }
 
   .admin-dash-list {
@@ -433,17 +438,27 @@
     border-bottom: 1px solid #e2e8f0;
   }
 
+  .admin-dash-row > * {
+    min-width: 0;
+  }
+
+  .admin-dash-row > div {
+    overflow: hidden;
+  }
+
   .admin-dash-panel--orders .admin-dash-row:nth-child(even) {
     background: #f8f2e6;
   }
 
   .admin-dash-row strong {
+    display: block;
     min-width: 0;
     color: #111c2c;
     font-size: 12px;
     font-weight: 700;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .admin-dash-row p {
@@ -451,6 +466,9 @@
     color: #71796f;
     font-size: 10px;
     line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .admin-dash-row--message,
@@ -492,8 +510,10 @@
 
   .admin-dash-panel__footer {
     min-height: 42px;
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
     margin: auto 16px 16px;
     border: 1px solid #1f6c35;
     border-radius: 8px;
@@ -501,6 +521,13 @@
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
+  }
+
+  .admin-dash-panel__footer .admin-icon {
+    width: 17px;
+    height: 17px;
+    min-width: 17px;
+    min-height: 17px;
   }
 
   .admin-dash-panel__footer:active,
@@ -548,14 +575,20 @@
   }
 }
 
-@media (min-width: 761px) and (max-width: 1080px) {
+@media (min-width: 901px) and (max-width: 1180px) {
   .admin-dash-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .admin-viz-grid,
   .admin-dash-panels--overview {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+
+  .admin-viz-grid > :last-child,
+  .admin-dash-panels--overview > :last-child {
+    grid-column: 1 / -1;
   }
 
   .admin-dash-shortcuts__grid {

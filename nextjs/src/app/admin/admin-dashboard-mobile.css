@@ -1,5 +1,5 @@
 /* Dedicated Operations Overview mobile screen. It does not inherit desktop geometry. */
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .admin-dashboard__topbar,
   .admin-viz-grid,
   .admin-dash-panel--messages {
@@ -8,9 +8,11 @@
 
   .admin-dashboard {
     width: 100%;
+    max-width: 480px;
     min-height: 100dvh;
     display: grid;
     gap: 24px;
+    margin-inline: auto;
     padding: 78px 16px 32px;
     overflow-x: clip;
   }
@@ -298,8 +300,7 @@
     text-transform: uppercase;
   }
 
-  .admin-dash-panel__head > span,
-  .admin-dash-panel__head .ghost-link {
+  .admin-dash-panel__head > span {
     display: none;
   }
 
@@ -323,6 +324,10 @@
     gap: 10px;
     padding: 13px 15px;
     border-bottom: 1px solid #c1c9bd;
+  }
+
+  .admin-dash-row > * {
+    min-width: 0;
   }
 
   .admin-dash-row > div:nth-child(2) {
@@ -411,14 +416,24 @@
 
   .admin-dash-panel__footer {
     min-height: 54px;
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
     border-top: 1px solid #c1c9bd;
     background: #e8f8ec;
     color: #1f6c35;
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
+  }
+
+
+  .admin-dash-panel__footer .admin-icon {
+    width: 17px;
+    height: 17px;
+    min-width: 17px;
+    min-height: 17px;
   }
 
   .admin-dashboard__insights {
