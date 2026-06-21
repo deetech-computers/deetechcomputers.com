@@ -24143,6 +24143,153 @@ button, input, select, textarea { font: inherit; }
     font-size: 1.08rem;
   }
 }
+
+/* Admin dashboard Stitch fidelity pass */
+.admin-dashboard .admin-dash-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  box-shadow: 0 12px 28px rgba(27, 25, 22, 0.035);
+}
+.admin-dashboard .admin-dash-card__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+.admin-dashboard .admin-dash-card p {
+  max-width: none;
+  margin: 0;
+  color: #4f554d;
+}
+.admin-dashboard .admin-dash-card strong {
+  margin: 0;
+}
+.admin-dashboard .admin-dash-card__helper {
+  display: none;
+}
+.admin-dashboard .admin-dash-card.is-revenue {
+  align-content: center;
+  background: #185a2b;
+}
+.admin-dashboard .admin-dash-card.is-revenue .admin-dash-card__helper {
+  position: static;
+  display: inline-flex;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.72);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.admin-dashboard .admin-dash-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.admin-dashboard .admin-dash-panel__head {
+  min-height: 58px;
+}
+.admin-dashboard .admin-dash-panel__head > span:not(.admin-dash-panel__count) {
+  color: #4b4037;
+  font: 700 0.68rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+.admin-dashboard .admin-dash-panel__footer {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  margin: 16px 16px 18px;
+  border: 1px solid #184f27;
+  border-radius: 5px;
+  color: #184f27;
+  font-weight: 900;
+  text-decoration: none;
+}
+.admin-dashboard .admin-dash-panel__footer span {
+  margin-left: 6px;
+}
+.admin-dashboard .admin-dash-panel--orders .admin-dash-row {
+  grid-template-columns: 72px minmax(0, 1fr) minmax(98px, auto);
+  gap: 14px;
+}
+.admin-dashboard .admin-dash-panel--orders .admin-dash-row > div:last-child {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+  text-align: right;
+}
+.admin-dashboard .admin-dash-panel--orders .admin-dash-row > div:last-child p {
+  display: block;
+  margin: 0;
+  color: #111827;
+  font-weight: 900;
+}
+.admin-dashboard .admin-dash-panel--orders .admin-dash-row > div:nth-child(2) strong {
+  color: #111827;
+  font-weight: 800;
+}
+.admin-dashboard .admin-dash-panel--orders .admin-chip {
+  order: 2;
+}
+.admin-dashboard .admin-dash-panel--users .ghost-link,
+.admin-dashboard .admin-dash-panel--orders .ghost-link {
+  display: none;
+}
+@media (max-width: 980px) {
+  .admin-dashboard .admin-dash-card {
+    min-height: 110px;
+    gap: 9px;
+    box-shadow: none;
+  }
+  .admin-dashboard .admin-dash-card__helper {
+    display: none;
+  }
+  .admin-dashboard .admin-dash-grid .admin-dash-card:nth-child(1) .admin-dash-card__helper,
+  .admin-dashboard .admin-dash-grid .admin-dash-card:nth-child(2) .admin-dash-card__helper {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: inline-flex;
+    min-height: 20px;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #b7f9c1;
+    color: #176533;
+    font-size: 0.6rem;
+    font-weight: 950;
+  }
+  .admin-dashboard .admin-dash-grid .admin-dash-card:nth-child(2) .admin-dash-card__helper {
+    background: #ffe4e4;
+    color: #b42318;
+  }
+  .admin-dashboard .admin-dash-card.is-revenue .admin-dash-card__helper {
+    display: none;
+  }
+  .admin-dashboard .admin-dash-panel--orders .admin-dash-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+  }
+  .admin-dashboard .admin-dash-panel--orders .admin-dash-row > div:nth-child(2) {
+    display: none;
+  }
+  .admin-dashboard .admin-dash-panel--orders .admin-dash-row > div:last-child {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  .admin-dashboard .admin-dash-panel--orders .admin-chip {
+    order: 2;
+  }
+  .admin-dashboard .admin-dash-panel__footer {
+    min-height: 54px;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid #d8ded4;
+    border-radius: 0;
+    background: #e8f8ec;
+  }
+}
 `;
 
 export default function GlobalStyles() {

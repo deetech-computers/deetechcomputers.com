@@ -32,14 +32,6 @@ function formatDateTime(value) {
   }).format(date);
 }
 
-function paymentMethodLabel(value) {
-  const key = String(value || "").toLowerCase();
-  if (key === "mtn") return "MTN";
-  if (key === "vodafone") return "Telecel";
-  if (key === "bank") return "Bank";
-  return value || "N/A";
-}
-
 function getStatusTone(status) {
   const value = String(status || "").toLowerCase();
   if (["resolved", "delivered", "paid", "approved", "active"].includes(value)) return "is-success";
@@ -77,25 +69,6 @@ function normalizeList(payload, key) {
   return [];
 }
 
-function getOrderItemsPrice(order) {
-  const persisted = Number(order?.itemsPrice || 0);
-  if (persisted > 0) return persisted;
-  const items = Array.isArray(order?.orderItems) ? order.orderItems : [];
-  return items.reduce(
-    (sum, item) => sum + Number(item?.price || 0) * Number(item?.qty || 0),
-    0
-  );
-}
-
-function getOrderShippingPrice(order) {
-  const persisted = Number(order?.shippingPrice || 0);
-  if (persisted > 0) return persisted;
-  const total = Number(order?.totalPrice || 0);
-  const itemsPrice = getOrderItemsPrice(order);
-  const discountAmount = Math.max(0, Number(order?.discountAmount || 0));
-  return Math.max(0, Number((total - Math.max(0, itemsPrice - discountAmount)).toFixed(2)));
-}
-
 function DashboardCard({ label, value, helper, icon, tone = "" }) {
   return (
     <article className={`admin-dash-card panel ${tone}`.trim()}>
@@ -104,7 +77,7 @@ function DashboardCard({ label, value, helper, icon, tone = "" }) {
         <span className="admin-dash-card__icon" aria-hidden="true"><AdminDashIcon name={icon} /></span>
       </div>
       <strong>{value}</strong>
-      <span>{helper}</span>
+      <span className="admin-dash-card__helper">{helper}</span>
     </article>
   );
 }
@@ -470,7 +443,7 @@ export default function AdminDashboard() {
               <article className="admin-dash-panel admin-dash-panel--orders panel">
                 <div className="admin-dash-panel__head">
                   <h2>Recent Orders</h2>
-                  <Link href="/admin/orders" className="ghost-link">Open Orders</Link>
+                  <span aria-hidden="true">ID: 9281-9279</span>
                 </div>
                 <div className="admin-dash-list">
                   {recentOrders.length ? (
@@ -478,19 +451,14 @@ export default function AdminDashboard() {
                       <div key={order?._id} className="admin-dash-row">
                         <div>
                           <strong>#{order?.orderNumber || order?._id}</strong>
-                          <p>{order?.shippingName || order?.guestName || order?.shippingEmail || "Customer"}</p>
+                          <p>{formatDateTime(order?.createdAt)}</p>
                         </div>
                         <div>
-                          <p>
-                            {getOrderShippingPrice(order) > 0
-                              ? `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Delivery ${formatCurrency(getOrderShippingPrice(order))}`
-                              : `Subtotal ${formatCurrency(getOrderItemsPrice(order))} + Free Delivery`}
-                          </p>
-                          {Number(order?.discountAmount || 0) > 0 ? (
-                            <p>Discount {formatCurrency(Number(order.discountAmount || 0))}</p>
-                          ) : null}
+                          <strong>{order?.shippingName || order?.guestName || order?.shippingEmail || "Customer"}</strong>
+                        </div>
+                        <div>
                           <span className={`admin-chip ${getStatusTone(order?.orderStatus)}`}>{order?.orderStatus || "pending"}</span>
-                          <p>{paymentMethodLabel(order?.paymentMethod)} • {formatCurrency(Number(order?.totalPrice || 0))}</p>
+                          <p>{formatCurrency(Number(order?.totalPrice || 0))}</p>
                         </div>
                       </div>
                     ))
@@ -498,6 +466,7 @@ export default function AdminDashboard() {
                     <p>No orders available yet.</p>
                   )}
                 </div>
+                <Link href="/admin/orders" className="admin-dash-panel__footer">Open Orders <span aria-hidden="true">-&gt;</span></Link>
               </article>
 
               <article className="admin-dash-panel panel">
@@ -554,6 +523,7 @@ export default function AdminDashboard() {
                     <p>No users available yet.</p>
                   )}
                 </div>
+                <Link href="/admin/users" className="admin-dash-panel__footer">Open Users <span aria-hidden="true">-&gt;</span></Link>
               </article>
             </section>
 
@@ -631,10 +601,10 @@ export default function AdminDashboard() {
                   <strong>Discounts</strong>
                   <span>Create codes.</span>
                 </Link>
-                <Link href="/admin" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
-                  <AdminDashIcon name="settings" />
-                  <strong>Settings</strong>
-                  <span>Admin controls.</span>
+                <Link href="/admin/messages" className="admin-dash-shortcut admin-dash-shortcut--mobile-action">
+                  <AdminDashIcon name="messages" />
+                  <strong>Messages</strong>
+                  <span>Open support tickets.</span>
                 </Link>
               </div>
             </section>
