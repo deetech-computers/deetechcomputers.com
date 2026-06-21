@@ -1282,12 +1282,23 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
                       Number(line?.selectedUpgrades?.ram?.priceDelta || 0) +
                       Number(line?.selectedUpgrades?.storage?.priceDelta || 0);
                     const lineTotal = Number(line.price || 0) * Number(line.qty || 1);
+                    const lineImage = resolveProductImage(
+                      line?.product?.images?.[0] ||
+                        line?.product?.image_url ||
+                        line?.product?.image ||
+                        line?.image_url ||
+                        line?.image
+                    );
                     return (
                       <div key={line._id || line.product?._id || line.product} className="admin-order-line-item">
                         <span className="admin-order-line-item__icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24">
-                            <path d="M5 6h14v10H5zM8 20h8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
+                          {lineImage ? (
+                            <StableImage src={lineImage} alt={line.product?.name || "Product"} width={56} height={56} />
+                          ) : (
+                            <svg viewBox="0 0 24 24">
+                              <path d="M5 6h14v10H5zM8 20h8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          )}
                         </span>
                         <div>
                           <strong>{line.product?.name || "Product"}</strong>
@@ -2778,10 +2789,46 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
         {type === "orders" && orderStats ? (
-          <section className="panel admin-toolbar admin-toolbar--stats">
-            <span className="admin-chip">Total: {orderStats.total}</span>
-            <span className="admin-chip is-neutral">Showing: {orderStats.filtered}</span>
-            <span className="admin-chip is-success">Revenue: {formatCurrency(orderStats.revenue)}</span>
+          <section className="admin-orders-metrics">
+            <article className="admin-orders-metric">
+              <span>Total Orders</span>
+              <strong>{orderStats.total.toLocaleString("en-GB")}</strong>
+              <small>Showing {orderStats.filtered.toLocaleString("en-GB")}</small>
+            </article>
+            <article className="admin-orders-metric">
+              <span>Revenue</span>
+              <strong>{formatCurrency(orderStats.revenue)}</strong>
+              <small>Delivered orders</small>
+            </article>
+            <article className="admin-orders-metric admin-orders-metric--bars">
+              <span>Order Status</span>
+              <div>
+                {orderStats.statusRows.slice(0, 4).map((row) => (
+                  <i
+                    key={row.label}
+                    title={`${row.label}: ${formatCount(row.value)}`}
+                    style={{
+                      width: `${Math.max(12, (Number(row.value || 0) / Math.max(...orderStats.statusRows.map((entry) => Number(entry.value || 0)), 1)) * 100)}%`,
+                    }}
+                  />
+                ))}
+              </div>
+            </article>
+            <article className="admin-orders-metric admin-orders-metric--flow">
+              <span>Payment Flow</span>
+              <div>
+                {orderStats.flowRows.slice(0, 3).map((row) => (
+                  <i
+                    key={row.label}
+                    title={`${row.label}: ${formatCount(row.value)}`}
+                    style={{
+                      width: `${Math.max(8, (Number(row.value || 0) / Math.max(orderStats.flowRows.reduce((sum, entry) => sum + Number(entry.value || 0), 0), 1)) * 100)}%`,
+                    }}
+                  />
+                ))}
+              </div>
+              <small>Paid / Manual / Failed</small>
+            </article>
           </section>
         ) : null}
 
@@ -2801,14 +2848,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
               ]}
               formatter={formatCount}
             />
-          </section>
-        ) : null}
-
-        {type === "orders" && orderStats ? (
-          <section className="admin-viz-grid panel">
-            <TinyBarChart title="Order status" rows={orderStats.statusRows} formatter={formatCount} />
-            <TinyBarChart title="Payment methods" rows={orderStats.paymentMethodRows} formatter={formatCount} />
-            <DonutChart title="Payment flow split" segments={orderStats.flowRows} formatter={formatCount} />
           </section>
         ) : null}
 
