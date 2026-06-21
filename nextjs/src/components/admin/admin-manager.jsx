@@ -1098,6 +1098,25 @@ function AdminStatusSelect({ value, options, onChange, label }) {
   );
 }
 
+function AdminOrdersIcon({ name }) {
+  const paths = {
+    search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
+    refresh: <><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></>,
+    download: <><path d="M12 3v12" /><path d="m8 11 4 4 4-4" /><path d="M5 20h14" /></>,
+    sync: <><path d="M7 7h9l-2.5-2.5" /><path d="M17 17H8l2.5 2.5" /><path d="M18 7a7 7 0 0 1 1 7" /><path d="M6 17a7 7 0 0 1-1-7" /></>,
+    tune: <><path d="M4 7h10" /><path d="M18 7h2" /><circle cx="16" cy="7" r="2" /><path d="M4 17h2" /><path d="M10 17h10" /><circle cx="8" cy="17" r="2" /></>,
+    bag: <><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>,
+    payment: <><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M3 10h18" /><path d="M7 15h3" /></>,
+  };
+  return (
+    <svg className="admin-orders-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {paths[name] || paths.search}
+      </g>
+    </svg>
+  );
+}
+
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
     return (
@@ -1109,7 +1128,18 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   }
 
   return (
-    <div className="admin-record-list">
+    <div className={`admin-record-list admin-record-list--${type}`}>
+      {type === "orders" ? (
+        <div className="admin-orders-table-head" aria-hidden="true">
+          <span>Order #</span>
+          <span>Customer</span>
+          <span>Status</span>
+          <span>Total</span>
+          <span>Payment</span>
+          <span>Date</span>
+          <span />
+        </div>
+      ) : null}
       {items.map((item, index) => {
         const baseId = String(item?._id || item?.id || item?.code || `${type}-row-${index}`);
         const versionedBase =
@@ -2558,9 +2588,49 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} />
+        {type !== "orders" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
-        {type !== "dashboard" && !(type === "products" && isProductDedicatedPage) ? (
+        {type === "orders" ? (
+          <section className="admin-orders-toolbar" aria-label="Order management tools">
+            <div className="admin-orders-toolbar__title">
+              <h1>Orders</h1>
+              <span>{loading ? "..." : count}</span>
+            </div>
+            <div className="admin-orders-toolbar__controls">
+              <label className="admin-orders-search">
+                <AdminOrdersIcon name="search" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search orders..." />
+              </label>
+              <button className="admin-orders-refresh" type="button" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh orders">
+                <AdminOrdersIcon name="refresh" />
+              </button>
+              <details className="admin-orders-export">
+                <summary><AdminOrdersIcon name="download" /><span>Export</span></summary>
+                <div>
+                  <button type="button" onClick={exportCsv}>Export CSV</button>
+                  <button type="button" onClick={exportJson}>Export JSON</button>
+                  <button type="button" onClick={exportSql}>Export SQL</button>
+                </div>
+              </details>
+              <button className="admin-orders-resync" type="button" onClick={() => runAction("resyncAffiliates")}>
+                <AdminOrdersIcon name="sync" />
+                <span>Resync Affiliates</span>
+              </button>
+              <details className="admin-orders-mobile-tools">
+                <summary aria-label="Order tools"><AdminOrdersIcon name="tune" /></summary>
+                <div>
+                  <button type="button" onClick={() => loadData({ background: true })}>Refresh</button>
+                  <button type="button" onClick={exportCsv}>Export CSV</button>
+                  <button type="button" onClick={exportJson}>Export JSON</button>
+                  <button type="button" onClick={exportSql}>Export SQL</button>
+                  <button type="button" onClick={() => runAction("resyncAffiliates")}>Resync Affiliates</button>
+                </div>
+              </details>
+            </div>
+          </section>
+        ) : null}
+
+        {type !== "dashboard" && type !== "orders" && !(type === "products" && isProductDedicatedPage) ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
