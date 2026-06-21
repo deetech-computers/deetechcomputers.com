@@ -1117,6 +1117,28 @@ function AdminOrdersIcon({ name }) {
   );
 }
 
+function AdminProductsIcon({ name }) {
+  const paths = {
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+    plus: <><path d="M12 5v14M5 12h14" /></>,
+    search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
+    tune: <><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>,
+    refresh: <><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></>,
+    download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" /></>,
+    edit: <><path d="M4 20h4l11-11-4-4L4 16v4Z" /><path d="m13.5 6.5 4 4" /></>,
+    delete: <><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></>,
+    chevron: <><path d="m9 6 6 6-6 6" /></>,
+    box: <><path d="m4 8 8-4 8 4v9l-8 4-8-4V8Z" /><path d="m4 8 8 4 8-4M12 12v9" /></>,
+  };
+  return (
+    <svg className="admin-products-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {paths[name] || paths.box}
+      </g>
+    </svg>
+  );
+}
+
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
     return (
@@ -1140,6 +1162,17 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
           <span />
         </div>
       ) : null}
+      {type === "products" ? (
+        <div className="admin-products-table-head" aria-hidden="true">
+          <span>Product</span>
+          <span>Category</span>
+          <span>Brand</span>
+          <span>Price</span>
+          <span>Stock</span>
+          <span>Featured</span>
+          <span>Actions</span>
+        </div>
+      ) : null}
       {items.map((item, index) => {
         const baseId = String(item?._id || item?.id || item?.code || `${type}-row-${index}`);
         const versionedBase =
@@ -1155,7 +1188,7 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
           onAction={onAction}
           busyAction={busyAction}
           userInsights={userInsights}
-          defaultExpanded={type === "orders" && index === 0}
+          defaultExpanded={(type === "orders" || type === "products") && index === 0}
         />
         );
       })}
@@ -1178,58 +1211,60 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
     const image = resolveProductImage(item.images?.[0] || item.image_url || item.image);
     const productPricing = getProductPricing(item);
     const productBodyId = `admin-product-body-${collapsibleIdBase}`;
+    const stock = Number(item.countInStock || 0);
     return (
-      <article className="admin-record panel admin-collapsible">
-        <button
-          type="button"
-          className="admin-collapsible__header admin-record-card__toggle"
-          onClick={() => setIsExpanded((current) => !current)}
-          aria-expanded={isExpanded}
-          aria-controls={productBodyId}
-        >
-          <div className="admin-record__main admin-record-card__summary">
-            <div className="admin-record__image">
-              {image ? (
-                <StableImage src={image} alt={item.name} width={96} height={96} />
-              ) : (
-                <span>No image</span>
-              )}
-            </div>
-            <div>
-              <h3>{item.name}</h3>
-              <p>
-                {item.category || "Category"} / {item.subCategory || item.brand || "Subcategory"}
-              </p>
-              <div className="admin-chip-row">
-                <span className="admin-chip">{item.brand || "Brand"}</span>
-                {productPricing.isDiscountActive ? (
-                  <span className="admin-chip is-warning">
-                    {formatCurrency(productPricing.currentPrice)} from {formatCurrency(productPricing.originalPrice)}
-                  </span>
-                ) : (
-                  <span className="admin-chip">{formatCurrency(Number(item.price || 0))}</span>
-                )}
-                <span className={`admin-chip ${Number(item.countInStock || 0) > 0 ? "is-success" : "is-danger"}`}>{Number(item.countInStock || 0)} in stock</span>
-                {item.isFeatured ? <span className="admin-chip is-warning">Featured</span> : null}
-              </div>
-            </div>
+      <article className={`admin-record admin-product-record ${stock <= 0 ? "is-out-of-stock" : ""} ${isExpanded ? "is-expanded" : ""}`}>
+        <div className="admin-product-record__row">
+          <button
+            type="button"
+            className="admin-product-record__toggle"
+            onClick={() => setIsExpanded((current) => !current)}
+            aria-expanded={isExpanded}
+            aria-controls={productBodyId}
+          >
+            <span className="admin-product-record__identity">
+              <span className="admin-product-record__image">
+                {image ? <StableImage src={image} alt={item.name} width={80} height={80} /> : <AdminProductsIcon name="box" />}
+              </span>
+              <span className="admin-product-record__name">
+                <strong>{item.name}</strong>
+                <small>{item.cardDescription || item.description || "Product inventory item"}</small>
+              </span>
+            </span>
+            <span className="admin-product-record__category">{item.category || "Uncategorised"}</span>
+            <span className="admin-product-record__brand">{item.subCategory || item.brand || "No brand"}</span>
+            <span className="admin-product-record__price">
+              <strong>{formatCurrency(productPricing.currentPrice)}</strong>
+              {productPricing.isDiscountActive ? <del>{formatCurrency(productPricing.originalPrice)}</del> : null}
+            </span>
+            <span className={`admin-product-record__stock ${stock > 0 ? "is-in" : "is-out"}`}>{stock > 0 ? `${stock} in stock` : "Out of stock"}</span>
+            <span className={`admin-product-record__featured ${item.isFeatured ? "is-featured" : ""}`}>{item.isFeatured ? "Featured" : "Regular"}</span>
+            <span className="admin-product-record__chevron"><AdminProductsIcon name="chevron" /></span>
+          </button>
+          <div className="admin-product-record__desktop-actions">
+            <Link href={`/admin/products/${id}/edit`} aria-label={`Edit ${item.name}`}><AdminProductsIcon name="edit" /></Link>
+            <button type="button" disabled={busy} onClick={() => onAction("deleteProduct", item)} aria-label={`Delete ${item.name}`}><AdminProductsIcon name="delete" /></button>
           </div>
-          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
-        </button>
+        </div>
         {isExpanded ? (
-          <div id={productBodyId} className="admin-collapsible__body">
+          <div id={productBodyId} className="admin-product-record__body">
+            <div className="admin-product-record__mobile-meta">
+              <span><small>Category</small><strong>{item.category || "Uncategorised"}</strong></span>
+              <span><small>Brand</small><strong>{item.subCategory || item.brand || "No brand"}</strong></span>
+            </div>
             {Array.isArray(item.homeSections) && item.homeSections.length ? (
-              <div className="admin-chip-row">
-                {item.homeSections.map((section) => (
-                  <span key={section} className="admin-chip is-neutral">
-                    {HOME_SECTION_LABELS.get(canonicalHomeSectionKey(section)) || String(section).replace(/_/g, " ")}
-                  </span>
-                ))}
+              <div className="admin-product-record__sections">
+                <small>Homepage placement</small>
+                <div>
+                  {item.homeSections.map((section) => (
+                    <span key={section}>{HOME_SECTION_LABELS.get(canonicalHomeSectionKey(section)) || String(section).replace(/_/g, " ")}</span>
+                  ))}
+                </div>
               </div>
             ) : null}
-            <div className="admin-actions">
-              <Link className="ghost-button" href={`/admin/products/${id}/edit`}>Edit</Link>
-              <button className="danger-button" type="button" disabled={busy} onClick={() => onAction("deleteProduct", item)}>Delete</button>
+            <div className="admin-product-record__mobile-actions">
+              <Link href={`/admin/products/${id}/edit`}><AdminProductsIcon name="edit" /><span>Edit Product</span></Link>
+              <button type="button" disabled={busy} onClick={() => onAction("deleteProduct", item)}><AdminProductsIcon name="delete" /><span>Delete</span></button>
             </div>
           </div>
         ) : null}
@@ -2123,6 +2158,16 @@ export default function AdminManager({ type, productMode = "list", productId = "
       outOfStock: all.filter((item) => Number(item?.countInStock || 0) <= 0).length,
     };
   }, [items.length, payload, type]);
+  const productTopCategory = useMemo(() => {
+    if (type !== "products") return { label: "None", count: 0 };
+    const counts = new Map();
+    for (const item of Array.isArray(payload) ? payload : []) {
+      const label = normalizeText(item?.category) || "Uncategorised";
+      counts.set(label, (counts.get(label) || 0) + 1);
+    }
+    const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+    return top ? { label: top[0], count: top[1] } : { label: "None", count: 0 };
+  }, [payload, type]);
   const userStats = useMemo(() => {
     if (type !== "users") return null;
     const all = Array.isArray(payload) ? payload : [];
@@ -2588,7 +2633,89 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && !(type === "products" && !isProductDedicatedPage) ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+
+        {type === "products" && !isProductDedicatedPage ? (
+          <>
+            <header className="admin-products-mobile-head">
+              <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+              <h1>Products</h1>
+              <Link href="/admin/products/create" aria-label="Create product"><AdminProductsIcon name="plus" /></Link>
+            </header>
+
+            <header className="admin-products-head">
+              <div>
+                <h1>Products</h1>
+                <p>Admin Desktop Workspace <span aria-hidden="true">&bull;</span> Management of {productStats?.total || 0} items</p>
+              </div>
+              <Link className="admin-products-create" href="/admin/products/create"><AdminProductsIcon name="plus" /><span>Create Product</span></Link>
+            </header>
+
+            <section className="admin-products-metrics" aria-label="Product inventory summary">
+              <article><span>Total Products</span><strong>{productStats?.total || 0}</strong><small>Complete catalog</small></article>
+              <article><span>Featured</span><strong>{productStats?.featured || 0}</strong><small>Homepage priority</small></article>
+              <article className={(productStats?.outOfStock || 0) > 0 ? "is-alert" : ""}><span>Out of Stock</span><strong>{productStats?.outOfStock || 0}</strong><small>Needs attention</small></article>
+              <article><span>Showing</span><strong>{productStats?.filtered || 0}</strong><small>Current filters</small></article>
+              <article><span>Top Category</span><strong>{productTopCategory.label}</strong><small>{productTopCategory.count} products</small></article>
+            </section>
+
+            <section className="admin-products-mobile-summary" aria-label="Product inventory summary">
+              <div><small>Total Inventory</small><strong>{productStats?.total || 0}</strong></div>
+              <div><small>Out of Stock</small><strong>{productStats?.outOfStock || 0}</strong></div>
+            </section>
+
+            <label className="admin-products-mobile-search">
+              <AdminProductsIcon name="search" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products..." />
+            </label>
+
+            <section className="admin-products-toolbar" aria-label="Product filters and exports">
+              <label className="admin-products-search">
+                <AdminProductsIcon name="search" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products..." />
+              </label>
+              <select value={productCategoryFilter} onChange={(event) => setProductCategoryFilter(event.target.value)} aria-label="Filter by category">
+                <option value="all">All Categories</option>
+                {PRODUCT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+              <select value={productStockFilter} onChange={(event) => setProductStockFilter(event.target.value)} aria-label="Filter by stock">
+                <option value="all">All Stock</option><option value="in">In Stock</option><option value="out">Out of Stock</option>
+              </select>
+              <select value={productFeaturedFilter} onChange={(event) => setProductFeaturedFilter(event.target.value)} aria-label="Filter featured products">
+                <option value="all">All Products</option><option value="yes">Featured</option><option value="no">Regular</option>
+              </select>
+              <select value={productBrandFilter} onChange={(event) => setProductBrandFilter(event.target.value)} aria-label="Filter by brand">
+                <option value="all">All Brands</option>
+                {productBrands.map((brand) => <option key={brand} value={brand.toLowerCase()}>{brand}</option>)}
+              </select>
+              <select value={productSort} onChange={(event) => setProductSort(event.target.value)} aria-label="Sort products">
+                {PRODUCT_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+              <button type="button" className="admin-products-clear" onClick={resetProductFilters}>Clear Filters</button>
+              <button type="button" className="admin-products-refresh" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh products"><AdminProductsIcon name="refresh" /></button>
+              <details className="admin-products-export">
+                <summary><AdminProductsIcon name="download" /><span>Export</span></summary>
+                <div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div>
+              </details>
+            </section>
+
+            <button className="admin-products-mobile-filter" type="button" onClick={() => setToolbarOpen(true)}><AdminProductsIcon name="tune" /><span>Filter &amp; Sort</span></button>
+            {toolbarOpen ? (
+              <div className="admin-products-filter-sheet" role="dialog" aria-modal="true" aria-label="Product filters">
+                <button className="admin-products-filter-sheet__backdrop" type="button" aria-label="Close filters" onClick={() => setToolbarOpen(false)} />
+                <section>
+                  <header><h2>Filter &amp; Sort</h2><button type="button" onClick={() => setToolbarOpen(false)} aria-label="Close">&times;</button></header>
+                  <label>Category<select value={productCategoryFilter} onChange={(event) => setProductCategoryFilter(event.target.value)}><option value="all">All Categories</option>{PRODUCT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                  <label>Stock<select value={productStockFilter} onChange={(event) => setProductStockFilter(event.target.value)}><option value="all">All Stock</option><option value="in">In Stock</option><option value="out">Out of Stock</option></select></label>
+                  <label>Featured<select value={productFeaturedFilter} onChange={(event) => setProductFeaturedFilter(event.target.value)}><option value="all">Featured + Regular</option><option value="yes">Featured Only</option><option value="no">Regular Only</option></select></label>
+                  <label>Brand<select value={productBrandFilter} onChange={(event) => setProductBrandFilter(event.target.value)}><option value="all">All Brands</option>{productBrands.map((brand) => <option key={brand} value={brand.toLowerCase()}>{brand}</option>)}</select></label>
+                  <label>Sort By<select value={productSort} onChange={(event) => setProductSort(event.target.value)}>{PRODUCT_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                  <div><button type="button" onClick={resetProductFilters}>Reset</button><button type="button" onClick={() => setToolbarOpen(false)}>Apply Filters</button></div>
+                </section>
+              </div>
+            ) : null}
+          </>
+        ) : null}
 
         {type === "orders" ? (
           <section className="admin-orders-toolbar" aria-label="Order management tools">
@@ -2630,7 +2757,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && !(type === "products" && isProductDedicatedPage) ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -2800,16 +2927,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "products" && productStats && !isProductDedicatedPage ? (
-          <section className="panel admin-toolbar admin-toolbar--stats">
-            <span className="admin-chip">Total: {productStats.total}</span>
-            <span className="admin-chip is-success">Featured: {productStats.featured}</span>
-            <span className={`admin-chip ${productStats.outOfStock > 0 ? "is-danger" : "is-success"}`}>
-              Out of stock: {productStats.outOfStock}
-            </span>
-            <span className="admin-chip is-neutral">Showing: {productStats.filtered}</span>
-          </section>
-        ) : null}
         {type === "users" && userStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {userStats.total}</span>
@@ -2908,24 +3025,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "products" && productStats ? (
-          <section className="admin-viz-grid panel">
-            <TinyBarChart
-              title="Category distribution"
-              rows={summarizeCounts((Array.isArray(payload) ? payload : []).map((item) => item?.category || "unknown"), 8)}
-              formatter={formatCount}
-            />
-            <DonutChart
-              title="Stock health"
-              segments={[
-                { label: "In stock", value: (Array.isArray(payload) ? payload : []).filter((item) => Number(item?.countInStock || 0) > 0).length },
-                { label: "Out of stock", value: productStats.outOfStock },
-                { label: "Featured", value: productStats.featured },
-              ]}
-              formatter={formatCount}
-            />
-          </section>
-        ) : null}
 
         {type === "users" && userStats ? (
           <section className="admin-viz-grid panel">
@@ -3110,28 +3209,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
                 busy={busyAction === (editingProduct?._id || editingProduct?.id)}
                 onSubmit={(event) => runAction("updateProduct", editingProduct, event)}
               />
-            ) : null}
-          </section>
-        ) : null}
-        {type === "products" && !isProductDedicatedPage ? (
-          <section className="panel admin-create-panel admin-collapsible">
-            <button
-              type="button"
-              className="admin-collapsible__header"
-              onClick={() => setFormOpen((current) => !current)}
-              aria-expanded={formOpen}
-              aria-controls="product-create-body"
-            >
-              <h2>Create Product</h2>
-              <span className="admin-collapsible__icon" aria-hidden="true">{formOpen ? "-" : "+"}</span>
-            </button>
-            {formOpen ? (
-              <div id="product-create-body" className="admin-collapsible__body">
-                <p>Open the dedicated create page for a focused product workflow.</p>
-                <div className="admin-actions">
-                  <Link className="primary-button" href="/admin/products/create">Open Product Creator</Link>
-                </div>
-              </div>
             ) : null}
           </section>
         ) : null}
