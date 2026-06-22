@@ -1,0 +1,508 @@
+@media (max-width: 900px) {
+  .admin-messages-route {
+    --messages-ink: #101c2d;
+    --messages-muted: #667063;
+    --messages-green: #0d5c2f;
+    --messages-green-strong: #003714;
+    --messages-canvas: #f5f6f7;
+    --messages-surface: #ffffff;
+    --messages-soft: #f4f7ff;
+    --messages-line: #d7dfd3;
+    --messages-danger: #ba1a1a;
+    --messages-warn: #8b5c00;
+    width: 100%;
+    min-width: 0;
+    min-height: 100dvh;
+    background: var(--messages-canvas);
+  }
+
+  .admin-messages-route .admin-main {
+    width: 100%;
+    min-width: 0;
+    background: var(--messages-canvas);
+  }
+
+  .admin-messages-route .admin-manager--messages {
+    width: min(100%, 480px);
+    min-width: 0;
+    display: grid;
+    gap: 14px;
+    margin: 0 auto;
+    padding: 0 14px 34px;
+    color: var(--messages-ink);
+  }
+
+  .admin-messages-route .admin-hero {
+    display: grid;
+    gap: 14px;
+    padding: 20px 18px;
+    border: 1px solid var(--messages-line);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at top right, rgba(217, 164, 65, 0.12), transparent 42%),
+      linear-gradient(180deg, #ffffff, #fbfcff);
+    box-shadow: 0 10px 28px rgba(17, 28, 44, 0.05);
+  }
+
+  .admin-messages-route .admin-hero .section-kicker {
+    margin: 0;
+    color: var(--messages-green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .admin-messages-route .admin-hero h1 {
+    margin: 0;
+    color: var(--messages-green-strong);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .admin-messages-route .admin-hero p:last-child {
+    margin: 0;
+    color: var(--messages-muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .admin-messages-route .admin-hero__badge {
+    min-height: 88px;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #124c24, #0b5a2b);
+    color: #ffffff;
+  }
+
+  .admin-messages-route .admin-hero__badge strong {
+    font-family: var(--admin-font-mono), monospace;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .admin-messages-route .admin-hero__badge span {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .admin-messages-route .admin-manager--messages > .admin-collapsible,
+  .admin-messages-route .admin-toolbar--stats,
+  .admin-messages-route .admin-record-list,
+  .admin-messages-route .admin-state {
+    overflow: hidden;
+    border: 1px solid var(--messages-line);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(17, 28, 44, 0.04);
+  }
+
+  .admin-messages-route .admin-manager--messages > .admin-collapsible > .admin-collapsible__header {
+    width: 100%;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 16px;
+    border: 0;
+    background: #f6f8ff;
+    color: var(--messages-green-strong);
+  }
+
+  .admin-messages-route .admin-manager--messages > .admin-collapsible > .admin-collapsible__header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .admin-messages-route .admin-manager--messages > .admin-collapsible > .admin-collapsible__header .admin-collapsible__icon {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #ecf2ec;
+    color: var(--messages-green);
+    font-size: 18px;
+  }
+
+  .admin-messages-route #admin-filters-toolbar-body {
+    padding: 16px;
+    border-top: 1px solid var(--messages-line);
+  }
+
+  .admin-messages-route .admin-toolbar {
+    display: grid;
+    gap: 10px;
+  }
+
+  .admin-messages-route .field,
+  .admin-messages-route .ghost-button,
+  .admin-messages-route .primary-button,
+  .admin-messages-route .danger-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .admin-messages-route .field {
+    padding: 0 14px;
+    border: 1px solid var(--messages-line);
+    background: #f9fbff;
+    color: var(--messages-ink);
+  }
+
+  .admin-messages-route .field:focus,
+  .admin-messages-route select:focus,
+  .admin-messages-route textarea:focus {
+    outline: none;
+    border-color: var(--messages-green);
+    box-shadow: 0 0 0 3px rgba(31, 108, 53, 0.14);
+  }
+
+  .admin-messages-route .ghost-button,
+  .admin-messages-route .primary-button,
+  .admin-messages-route .danger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    font-weight: 800;
+  }
+
+  .admin-messages-route .ghost-button {
+    border: 1px solid var(--messages-line);
+    background: #ffffff;
+    color: var(--messages-green);
+  }
+
+  .admin-messages-route .primary-button {
+    border: 1px solid var(--messages-green);
+    background: linear-gradient(180deg, #1a6c34, #0d5c2f);
+    color: #ffffff;
+  }
+
+  .admin-messages-route .danger-button {
+    border: 1px solid #efc4bf;
+    background: #fff7f6;
+    color: var(--messages-danger);
+  }
+
+  .admin-messages-route .admin-toolbar--stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .admin-messages-route .admin-chip {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #edf8ef;
+    color: #27723a;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .admin-messages-route .admin-chip.is-neutral {
+    background: #eef2ff;
+    color: #536170;
+  }
+
+  .admin-messages-route .admin-chip.is-warning {
+    background: #fff4dd;
+    color: var(--messages-warn);
+  }
+
+  .admin-messages-route .admin-record-list {
+    display: grid;
+    gap: 14px;
+    padding: 14px;
+    background: linear-gradient(180deg, #ffffff, #fbfcff);
+  }
+
+  .admin-messages-route .admin-support-ticket {
+    overflow: hidden;
+    border: 1px solid var(--messages-line);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(17, 28, 44, 0.04);
+  }
+
+  .admin-messages-route .admin-support-ticket__summary {
+    width: 100%;
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 0;
+    background: #ffffff;
+    text-align: left;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-copy {
+    display: grid;
+    gap: 6px;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-copy strong {
+    color: var(--messages-green-strong);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-copy p {
+    margin: 0;
+    color: var(--messages-muted);
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: break-word;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-meta small {
+    color: #6b756c;
+    font-family: var(--admin-font-mono), monospace;
+    font-size: 11px;
+  }
+
+  .admin-messages-route .admin-support-ticket__summary-meta .admin-collapsible__icon {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #edf3ed;
+    color: var(--messages-green);
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .admin-messages-route .admin-support-ticket__body {
+    display: grid;
+    gap: 14px;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--messages-line);
+    background: linear-gradient(180deg, #ffffff, #fbfcff);
+  }
+
+  .admin-messages-route .admin-record__head {
+    display: grid;
+    gap: 12px;
+    padding-top: 16px;
+  }
+
+  .admin-messages-route .admin-record__head h3 {
+    margin: 0 0 4px;
+    color: var(--messages-green-strong);
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  .admin-messages-route .admin-record__head p {
+    margin: 0;
+    color: var(--messages-muted);
+    font-size: 13px;
+  }
+
+  .admin-messages-route .admin-support-ticket__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-messages-route .admin-support-ticket__message {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--messages-line);
+    border-radius: 16px;
+    background:
+      radial-gradient(circle at top right, rgba(217, 164, 65, 0.08), transparent 36%),
+      linear-gradient(180deg, #ffffff, #fafcff);
+    box-shadow: none;
+  }
+
+  .admin-messages-route .admin-support-ticket__message h4 {
+    margin: 0;
+    color: var(--messages-green);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .admin-messages-route .admin-support-ticket__message p {
+    margin: 0;
+    color: var(--messages-ink);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .admin-messages-route .admin-support-ticket__image,
+  .admin-messages-route .admin-support-ticket__thread-image {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--messages-line);
+    border-radius: 14px;
+    background: #eef3ff;
+  }
+
+  .admin-messages-route .admin-support-ticket__image img,
+  .admin-messages-route .admin-support-ticket__thread-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread {
+    overflow: hidden;
+    border: 1px solid var(--messages-line);
+    border-radius: 16px;
+    background: #ffffff;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-toggle {
+    width: 100%;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+    border: 0;
+    background: #f6f8ff;
+    color: var(--messages-green-strong);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: left;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-toggle-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--messages-muted);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-list {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-item {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid var(--messages-line);
+    background: #fffaf2;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-item.is-admin {
+    background: linear-gradient(180deg, #155a2d, #0d5c2f);
+    color: #ffffff;
+    border-color: #155a2d;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-head strong {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-head span {
+    color: inherit;
+    opacity: 0.72;
+    font-family: var(--admin-font-mono), monospace;
+    font-size: 10px;
+  }
+
+  .admin-messages-route .admin-support-ticket__thread-item p {
+    margin: 0;
+    color: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .admin-messages-route .admin-support-ticket__form {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--messages-line);
+    border-radius: 16px;
+    background: #ffffff;
+  }
+
+  .admin-messages-route .admin-inline-control {
+    display: grid;
+    gap: 8px;
+  }
+
+  .admin-messages-route .admin-inline-control span {
+    color: var(--messages-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admin-messages-route .admin-support-ticket__composer-input {
+    min-height: 130px;
+    padding: 14px;
+    resize: vertical;
+  }
+
+  .admin-messages-route .admin-support-ticket__hint {
+    margin: -2px 0 0;
+    color: var(--messages-muted);
+    font-family: var(--admin-font-mono), monospace;
+    font-size: 10px;
+  }
+
+  .admin-messages-route .admin-state {
+    width: 100%;
+    margin: 0;
+    padding: 24px 20px;
+    background:
+      radial-gradient(circle at top right, rgba(217, 164, 65, 0.1), transparent 40%),
+      linear-gradient(180deg, #ffffff, #fbfcff);
+    text-align: left;
+  }
+}
