@@ -1,0 +1,10 @@
+@media (min-width: 901px) {
+  .admin-discounts-route .admin-main {
+    background: #f5f6f7;
+  }
+
+  .admin-discounts-route .admin-manager {
+    width: min(100%, 1460px);
+    margin: 0 auto;
+  }
+}

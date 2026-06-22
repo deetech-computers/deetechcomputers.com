@@ -1138,6 +1138,398 @@ function ReviewsWorkspace({
   );
 }
 
+function ReviewsWorkspaceStitch({
+  items,
+  stats,
+  query,
+  setQuery,
+  reviewStatusFilter,
+  setReviewStatusFilter,
+  reviewRatingFilter,
+  setReviewRatingFilter,
+  reviewSort,
+  setReviewSort,
+  toolbarOpen,
+  setToolbarOpen,
+  selectedReviewIds,
+  setSelectedReviewIds,
+  refreshing,
+  busyAction,
+  loadData,
+  resetReviewFilters,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  const totalReviews = Number(stats?.total || 0);
+  const approvedReviews = Number(stats?.approved || 0);
+  const rejectedReviews = Number(stats?.rejected || 0);
+  const averageRating = Number(stats?.avgRating || 0);
+  const pendingCount = Math.max(0, totalReviews - approvedReviews);
+  const visibleSelectedIds = items
+    .map((item) => String(item?._id || item?.id || ""))
+    .filter((reviewId) => selectedReviewIds.includes(reviewId));
+  const allSelected = items.length > 0 && visibleSelectedIds.length === items.length;
+
+  const toggleSelected = (reviewId) => {
+    setSelectedReviewIds((current) => {
+      if (current.includes(reviewId)) {
+        return current.filter((entry) => entry !== reviewId);
+      }
+      return [...current, reviewId];
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedReviewIds(allSelected ? [] : items.map((item) => String(item?._id || item?.id || "")));
+  };
+
+  const handleBatchApprove = async () => {
+    const targets = items.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && !item?.approved);
+    for (const target of targets) {
+      await runAction("moderateReview", target, null, true);
+    }
+    setSelectedReviewIds([]);
+  };
+
+  const renderStars = (rating, className = "") => {
+    const rounded = Math.max(0, Math.min(5, Math.round(Number(rating || 0))));
+    return (
+      <div className={className} aria-hidden="true">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star} className={star <= rounded ? "is-filled" : ""}>★</span>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <section className="admin-reviews-workspace">
+      <section className="admin-reviews-desktop-shell">
+        <header className="admin-reviews-desktop-toolbar">
+          <div className="admin-reviews-desktop-toolbar__search">
+            <input
+              className="field"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search reviews..."
+              aria-label="Search reviews"
+            />
+          </div>
+          <div className="admin-reviews-desktop-toolbar__filters">
+            <select className="field" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value)}>
+              <option value="all">All moderation</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select className="field" value={reviewRatingFilter} onChange={(event) => setReviewRatingFilter(event.target.value)}>
+              <option value="all">All ratings</option>
+              <option value="5">5 stars</option>
+              <option value="4">4+ stars</option>
+              <option value="3">3+ stars</option>
+              <option value="2">2+ stars</option>
+            </select>
+            <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="rating-desc">Rating high-low</option>
+              <option value="rating-asc">Rating low-high</option>
+            </select>
+          </div>
+          <div className="admin-reviews-desktop-toolbar__actions">
+            <button type="button" className="ghost-button" onClick={() => loadData({ background: true })}>
+              {refreshing ? "Refreshing..." : "Refresh"}
+            </button>
+            <button type="button" className="ghost-button" onClick={exportCsv}>Export CSV</button>
+            <button type="button" className="ghost-button" onClick={exportJson}>Export JSON</button>
+            <button type="button" className="ghost-button" onClick={exportSql}>Export SQL</button>
+          </div>
+        </header>
+
+        <section className="admin-reviews-desktop-stats">
+          <article className="admin-reviews-desktop-stat">
+            <span>Total Reviews</span>
+            <strong>{formatCount(totalReviews)}</strong>
+            <small>{items.length ? `${formatCount(items.length)} visible` : "No filtered records"}</small>
+          </article>
+          <article className="admin-reviews-desktop-stat">
+            <span>Approved</span>
+            <strong>{formatCount(approvedReviews)}</strong>
+            <div className="admin-reviews-progress"><i style={{ width: `${totalReviews ? (approvedReviews / totalReviews) * 100 : 0}%` }} /></div>
+          </article>
+          <article className="admin-reviews-desktop-stat">
+            <span>Rejected</span>
+            <strong>{formatCount(rejectedReviews)}</strong>
+            <div className="admin-reviews-progress is-danger"><i style={{ width: `${totalReviews ? (rejectedReviews / totalReviews) * 100 : 0}%` }} /></div>
+          </article>
+          <article className="admin-reviews-desktop-stat">
+            <span>Average Rating</span>
+            <strong>{averageRating.toFixed(1)}</strong>
+            {renderStars(averageRating, "admin-reviews-stars")}
+          </article>
+        </section>
+
+        <section className="admin-reviews-desktop-queue">
+          <header className="admin-reviews-desktop-queue__head">
+            <h2>Moderation Queue</h2>
+            <div className="admin-reviews-desktop-queue__tools">
+              <button type="button" className="ghost-button" onClick={toggleSelectAll}>
+                {allSelected ? "Clear Selection" : "Select All"}
+              </button>
+              <button type="button" className="primary-button" disabled={!visibleSelectedIds.length || !!busyAction} onClick={handleBatchApprove}>
+                Batch Approve
+              </button>
+              <button type="button" className="ghost-button" onClick={resetReviewFilters}>
+                Reset Filters
+              </button>
+            </div>
+          </header>
+
+          {!items.length ? (
+            <div className="admin-reviews-empty-state">
+              <h3>No records yet</h3>
+              <p>When data is available, it will appear here for admin management.</p>
+            </div>
+          ) : (
+            <>
+              <div className="admin-reviews-desktop-list">
+                {items.map((item) => {
+                  const reviewId = String(item?._id || item?.id || "");
+                  const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+                  const reviewerName = item?.user?.name || item?.user?.email || "Customer";
+                  const productName = item?.product?.name || "Product";
+                  const isApproved = Boolean(item?.approved);
+                  const isBusy = busyAction === reviewId;
+
+                  return (
+                    <article key={reviewId} className="admin-reviews-desktop-row">
+                      <div className="admin-reviews-desktop-row__toggle">
+                        <input
+                          type="checkbox"
+                          checked={selectedReviewIds.includes(reviewId)}
+                          onChange={() => toggleSelected(reviewId)}
+                          aria-label={`Select review by ${reviewerName}`}
+                        />
+                      </div>
+                      <div className="admin-reviews-desktop-row__content">
+                        <div className="admin-reviews-desktop-row__meta">
+                          {renderStars(item?.rating, "admin-reviews-stars")}
+                          <span className={`admin-reviews-status-pill ${isApproved ? "is-approved" : "is-rejected"}`}>
+                            {isApproved ? "Approved" : "Pending"}
+                          </span>
+                          <time>{formatDateTime(item?.createdAt)}</time>
+                        </div>
+                        <div className="admin-reviews-desktop-row__body">
+                          <h3>{reviewerName}</h3>
+                          <p>
+                            <span>on </span>
+                            {productId ? <Link href={`/products/${productId}`}>{productName}</Link> : <strong>{productName}</strong>}
+                          </p>
+                          <blockquote>{item?.comment || "No review text."}</blockquote>
+                        </div>
+                      </div>
+                      <div className="admin-reviews-desktop-row__actions">
+                        <div className="admin-reviews-desktop-row__buttons">
+                          <button
+                            type="button"
+                            className="admin-reviews-row-button is-reject"
+                            disabled={isBusy}
+                            onClick={() => runAction("moderateReview", item, null, false)}
+                          >
+                            Reject
+                          </button>
+                          {!isApproved ? (
+                            <button
+                              type="button"
+                              className="admin-reviews-row-button is-approve"
+                              disabled={isBusy}
+                              onClick={() => runAction("moderateReview", item, null, true)}
+                            >
+                              Approve
+                            </button>
+                          ) : null}
+                        </div>
+                        <div className="admin-reviews-desktop-row__links">
+                          {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Open Product</Link> : null}
+                          <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+              <footer className="admin-reviews-desktop-pagination">
+                <p>Showing {items.length ? `1-${items.length}` : 0} of {formatCount(totalReviews)} reviews</p>
+                <span className="admin-reviews-page-chip">1</span>
+              </footer>
+            </>
+          )}
+        </section>
+      </section>
+
+      <section className="admin-reviews-mobile-shell">
+        <header className="admin-reviews-mobile-topbar">
+          <div>
+            <h1>Reviews</h1>
+            <p>Moderation queue</p>
+          </div>
+          <button type="button" className="admin-reviews-mobile-topbar__filter" onClick={() => setToolbarOpen(true)} aria-label="Open review filters">
+            Filter
+          </button>
+        </header>
+
+        <section className="admin-reviews-mobile-stats">
+          <article className="admin-reviews-mobile-stat">
+            <span>Total Reviews</span>
+            <strong>{formatCount(totalReviews)}</strong>
+          </article>
+          <article className="admin-reviews-mobile-stat">
+            <span>Pending Mod</span>
+            <strong>{formatCount(pendingCount)}</strong>
+          </article>
+        </section>
+
+        <div className="admin-reviews-mobile-search">
+          <input
+            className="field"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search reviews..."
+            aria-label="Search reviews"
+          />
+        </div>
+
+        {!items.length ? (
+          <div className="admin-reviews-empty-state is-mobile">
+            <h3>No records yet</h3>
+            <p>When data is available, it will appear here for admin management.</p>
+          </div>
+        ) : (
+          <div className="admin-reviews-mobile-list">
+            {items.map((item) => {
+              const reviewId = String(item?._id || item?.id || "");
+              const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+              const reviewerName = item?.user?.name || item?.user?.email || "Customer";
+              const productName = item?.product?.name || "Product";
+              const isApproved = Boolean(item?.approved);
+              const isBusy = busyAction === reviewId;
+
+              return (
+                <article key={reviewId} className="admin-reviews-mobile-card">
+                  <div className="admin-reviews-mobile-card__head">
+                    <div>
+                      <h3>{productName}</h3>
+                      <p>{reviewerName}</p>
+                    </div>
+                    <span className={`admin-reviews-status-pill ${isApproved ? "is-approved" : "is-rejected"}`}>
+                      {isApproved ? "Approved" : "Pending"}
+                    </span>
+                  </div>
+                  <div className="admin-reviews-mobile-card__rating">
+                    {renderStars(item?.rating, "admin-reviews-stars")}
+                    <time>{formatDate(item?.createdAt)}</time>
+                  </div>
+                  <blockquote>{item?.comment || "No review text."}</blockquote>
+                  <div className="admin-reviews-mobile-card__actions">
+                    <div className="admin-reviews-mobile-card__buttons">
+                      <button
+                        type="button"
+                        className="admin-reviews-row-button is-reject"
+                        disabled={isBusy}
+                        onClick={() => runAction("moderateReview", item, null, false)}
+                      >
+                        Reject
+                      </button>
+                      {!isApproved ? (
+                        <button
+                          type="button"
+                          className="admin-reviews-row-button is-approve"
+                          disabled={isBusy}
+                          onClick={() => runAction("moderateReview", item, null, true)}
+                        >
+                          Approve
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="admin-reviews-mobile-card__links">
+                      {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Product Details</Link> : null}
+                      <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <div className={`admin-reviews-mobile-sheet ${toolbarOpen ? "is-open" : ""}`} aria-hidden={!toolbarOpen}>
+        <button type="button" className={`admin-reviews-mobile-sheet__overlay ${toolbarOpen ? "is-open" : ""}`} onClick={() => setToolbarOpen(false)} aria-label="Close review filters" />
+        <section className="admin-reviews-mobile-sheet__panel">
+          <div className="admin-reviews-mobile-sheet__handle" />
+          <div className="admin-reviews-mobile-sheet__head">
+            <h2>Filter Reviews</h2>
+            <button type="button" onClick={() => setToolbarOpen(false)}>Done</button>
+          </div>
+          <div className="admin-reviews-mobile-sheet__content">
+            <label>
+              <span>Search</span>
+              <input className="field" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by product or user..." />
+            </label>
+            <label>
+              <span>Moderation Status</span>
+              <select className="field" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value)}>
+                <option value="all">All</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </label>
+            <label>
+              <span>Minimum Rating</span>
+              <div className="admin-reviews-mobile-sheet__ratings">
+                {[
+                  ["all", "All"],
+                  ["5", "5★"],
+                  ["4", "4+"],
+                  ["3", "3+"],
+                  ["2", "2+"],
+                ].map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={reviewRatingFilter === value ? "is-active" : ""}
+                    onClick={() => setReviewRatingFilter(value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </label>
+            <label>
+              <span>Sort Order</span>
+              <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="rating-desc">Highest Rated</option>
+                <option value="rating-asc">Lowest Rated</option>
+              </select>
+            </label>
+            <div className="admin-reviews-mobile-sheet__actions">
+              <button type="button" className="ghost-button" onClick={resetReviewFilters}>Reset</button>
+              <button type="button" className="ghost-button" onClick={() => loadData({ background: true })}>{refreshing ? "Refreshing..." : "Refresh"}</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
 function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [category, setCategory] = useState(initial?.category || "laptops");
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
@@ -2269,6 +2661,34 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
     <article className="admin-record panel">
       <pre>{JSON.stringify(item, null, 2)}</pre>
     </article>
+  );
+}
+
+function MessagesWorkspaceShell({ items, onAction, busyAction, userInsights }) {
+  return (
+    <section className="admin-messages-workspace">
+      <AdminCards
+        type="messages"
+        items={items}
+        onAction={onAction}
+        busyAction={busyAction}
+        userInsights={userInsights}
+      />
+    </section>
+  );
+}
+
+function DiscountsWorkspaceShell({ items, onAction, busyAction, userInsights }) {
+  return (
+    <section className="admin-discounts-workspace">
+      <AdminCards
+        type="discounts"
+        items={items}
+        onAction={onAction}
+        busyAction={busyAction}
+        userInsights={userInsights}
+      />
+    </section>
   );
 }
 
@@ -3711,7 +4131,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           />
         ) : null}
         {!loading && !error && type === "reviews" ? (
-          <ReviewsWorkspace
+          <ReviewsWorkspaceStitch
             items={items}
             stats={reviewStats}
             query={query}
@@ -3757,7 +4177,23 @@ export default function AdminManager({ type, productMode = "list", productId = "
           />
         ) : null}
         {!loading && !error && type === "dashboard" ? <DashboardView payload={payload} /> : null}
-        {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && type !== "banners" && !(type === "products" && isProductDedicatedPage) ? (
+        {!loading && !error && type === "messages" ? (
+          <MessagesWorkspaceShell
+            items={items}
+            onAction={runAction}
+            busyAction={busyAction}
+            userInsights={userInsights}
+          />
+        ) : null}
+        {!loading && !error && type === "discounts" ? (
+          <DiscountsWorkspaceShell
+            items={items}
+            onAction={runAction}
+            busyAction={busyAction}
+            userInsights={userInsights}
+          />
+        ) : null}
+        {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && type !== "banners" && type !== "messages" && type !== "discounts" && !(type === "products" && isProductDedicatedPage) ? (
           <AdminCards type={type} items={items} onAction={runAction} busyAction={busyAction} userInsights={userInsights} />
         ) : null}
         {type === "users" && selectedUser360 ? (
