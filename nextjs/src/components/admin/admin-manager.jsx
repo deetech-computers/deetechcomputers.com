@@ -299,10 +299,12 @@ function DonutChart({ title, segments = [], formatter = (value) => value }) {
   );
 }
 
-function User360Modal({ user, insight, activity, onClose }) {
+function User360Modal({ user, insight, activity, onClose, onAction, busy = false }) {
   const wishlistCount = Number(activity?.wishlistCount || 0);
   const searchTerms = Array.isArray(activity?.searchTerms) ? activity.searchTerms : [];
   const interests = Array.isArray(activity?.interests) ? activity.interests : [];
+  const active = user?.isActive !== false;
+  const isAdminUser = String(user?.role || "").toLowerCase() === "admin";
 
   const timeline = useMemo(() => {
     const orders = Array.isArray(activity?.orders) ? activity.orders : [];
@@ -396,6 +398,10 @@ function User360Modal({ user, insight, activity, onClose }) {
             )) : <p>No timeline events yet.</p>}
           </div>
         </article>
+        <footer className="admin-user360-actions">
+          <button type="button" disabled={busy} onClick={() => onAction("userStatus", user, null, !active)}>{active ? "Deactivate Account" : "Activate Account"}</button>
+          {isAdminUser ? <span>Protected admin account</span> : <button type="button" disabled={busy} onClick={() => onAction("deleteUser", user)}>Delete User Profile</button>}
+        </footer>
       </section>
     </div>
   );
@@ -1065,6 +1071,25 @@ function AdminProductsIcon({ name }) {
   );
 }
 
+function AdminUsersIcon({ name }) {
+  const paths = {
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
+    search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
+    filter: <><path d="M4 6h16l-6 7v5l-4 2v-7L4 6Z" /></>,
+    refresh: <><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></>,
+    download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" /></>,
+    eye: <><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></>,
+    status: <><path d="M8 5h8M8 19h8M12 5v14" /><circle cx="12" cy="12" r="3" /></>,
+    delete: <><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></>,
+    chevron: <><path d="m9 6 6 6-6 6" /></>,
+  };
+  return (
+    <svg className="admin-users-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name] || paths.eye}</g>
+    </svg>
+  );
+}
+
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
     return (
@@ -1097,6 +1122,11 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
           <span>Stock</span>
           <span>Featured</span>
           <span>Actions</span>
+        </div>
+      ) : null}
+      {type === "users" ? (
+        <div className="admin-users-table-head" aria-hidden="true">
+          <span>Identity</span><span>Role</span><span>Status</span><span>Orders</span><span>Total Spent</span><span>Engagement</span><span>Actions</span>
         </div>
       ) : null}
       {items.map((item, index) => {
@@ -1485,63 +1515,32 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
     const email = normalizeEmail(item?.email);
     const insight = email ? userInsights?.[email] : null;
     const wishlistCount = Array.isArray(item?.wishlist) ? item.wishlist.length : 0;
-    const searchTerms = Array.isArray(item?.behavior?.searchTerms) ? item.behavior.searchTerms : [];
-    const topSearch = [...searchTerms]
-      .sort((a, b) => Number(b?.count || 0) - Number(a?.count || 0))
-      .find((entry) => normalizeText(entry?.term));
-    const interests = Array.isArray(item?.behavior?.categoryInterests) ? item.behavior.categoryInterests : [];
-    const topInterest = [...interests]
-      .sort((a, b) => Number(b?.count || 0) - Number(a?.count || 0))
-      .find((entry) => normalizeText(entry?.category));
-    const userBodyId = `admin-user-body-${collapsibleIdBase}`;
+    const initials = normalizeText(item?.name || item?.email || "U").split(/\s+/).map((part) => part[0] || "").join("").slice(0, 2).toUpperCase();
+    const orders = Number(insight?.totalOrders || 0);
+    const spent = Number(insight?.totalSpent || 0);
+    const engagement = Math.min(100, Math.max(4, orders * 6 + Number(insight?.reviewCount || 0) * 8 + Number(insight?.supportTickets || 0) * 4 + wishlistCount * 3));
 
     return (
-      <article className="admin-record panel admin-collapsible">
-        <button
-          type="button"
-          className="admin-collapsible__header admin-record-card__toggle"
-          onClick={() => setIsExpanded((current) => !current)}
-          aria-expanded={isExpanded}
-          aria-controls={userBodyId}
-        >
-          <div className="admin-record-card__summary">
-            <h3>{item.name || item.email}</h3>
-            <p>{item.email} / {item.phone || "No phone"}</p>
-            <div className="admin-chip-row">
-              <span className={`admin-chip ${item.role === "admin" ? "is-success" : "is-neutral"}`}>{item.role || "user"}</span>
-              <span className={`admin-chip ${active ? "is-success" : "is-danger"}`}>{active ? "Active" : "Inactive"}</span>
-              <span className="admin-chip is-neutral">{item.region || "No region"}</span>
-              <span className="admin-chip is-neutral">Joined {formatDate(item.createdAt)}</span>
-            </div>
-          </div>
-          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
-        </button>
-        {isExpanded ? (
-          <div id={userBodyId} className="admin-collapsible__body">
-            <div className="admin-meta-grid">
-              <span>Region <strong>{item.region || "N/A"}</strong></span>
-              <span>Status <strong>{active ? "Active" : "Inactive"}</strong></span>
-              <span>Joined <strong>{formatDate(item.createdAt)}</strong></span>
-              <span>Wishlist <strong>{wishlistCount}</strong></span>
-              <span>Orders <strong>{insight?.totalOrders || 0}</strong></span>
-              <span>Spent <strong>{formatCurrency(Number(insight?.totalSpent || 0))}</strong></span>
-              <span>Reviews <strong>{insight?.reviewCount || 0}</strong></span>
-              <span>Support Tickets <strong>{insight?.supportTickets || 0}</strong></span>
-              <span>Avg Rating <strong>{Number(insight?.avgRating || 0).toFixed(1)}</strong></span>
-              <span>Top Search <strong>{topSearch?.term || "None yet"}</strong></span>
-              <span>Top Interest <strong>{topInterest?.category || "None yet"}</strong></span>
-            </div>
-            <div className="admin-actions">
-              <button className="ghost-button" type="button" onClick={() => onAction("openUser360", item)}>View User 360</button>
-              <button className="ghost-button" disabled={busy} onClick={() => onAction("userStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
-              {isAdminUser ? (
-                <span className="admin-chip is-success">Protected admin account</span>
-              ) : (
-                <button className="danger-button" disabled={busy} onClick={() => onAction("deleteUser", item)}>Delete</button>
-              )}
-            </div>
-          </div>
-        ) : null}
+      <article className={`admin-record admin-user-record ${active ? "is-active" : "is-inactive"}`}>
+        <div className="admin-user-record__identity">
+          <span className="admin-user-record__avatar">{initials}</span>
+          <span><strong>{item.name || item.email}</strong><small>{item.email}</small><em>{item.region || "No region"} &bull; Joined {formatDate(item.createdAt)}</em></span>
+        </div>
+        <span className={`admin-user-record__role ${isAdminUser ? "is-admin" : ""}`}>{item.role || "user"}</span>
+        <span className={`admin-user-record__status ${active ? "is-active" : "is-inactive"}`}><i />{active ? "Active" : "Inactive"}</span>
+        <strong className="admin-user-record__orders">{orders}</strong>
+        <strong className="admin-user-record__spent">{formatCurrency(spent)}</strong>
+        <span className="admin-user-record__engagement"><i><b style={{ width: `${engagement}%` }} /></i><small>{engagement}%</small></span>
+        <div className="admin-user-record__actions">
+          <button type="button" onClick={() => onAction("openUser360", item)} aria-label={`View ${item.name || item.email} profile`}><AdminUsersIcon name="eye" /></button>
+          <button type="button" disabled={busy} onClick={() => onAction("userStatus", item, null, !active)} aria-label={active ? "Deactivate user" : "Activate user"}><AdminUsersIcon name="status" /></button>
+          {isAdminUser ? <span title="Protected admin account">P</span> : <button type="button" disabled={busy} onClick={() => onAction("deleteUser", item)} aria-label="Delete user"><AdminUsersIcon name="delete" /></button>}
+        </div>
+        <div className="admin-user-record__mobile-summary">
+          <span className={`admin-user-record__status ${active ? "is-active" : "is-inactive"}`}>{active ? "Active" : "Inactive"}</span>
+          <strong>{formatCurrency(spent)}</strong>
+          <button type="button" onClick={() => onAction("openUser360", item)}>View User 360 <AdminUsersIcon name="chevron" /></button>
+        </div>
       </article>
     );
   }
@@ -2559,7 +2558,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && type !== "products" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" && type !== "users" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
@@ -2643,6 +2642,37 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </>
         ) : null}
 
+        {type === "users" ? (
+          <>
+            <header className="admin-users-mobile-head">
+              <Link href="/admin" aria-label="Back to admin dashboard"><AdminUsersIcon name="menu" /></Link>
+              <h1>Users</h1>
+              <button type="button" onClick={() => setToolbarOpen(true)} aria-label="Filter users"><AdminUsersIcon name="filter" /></button>
+            </header>
+            <header className="admin-users-head">
+              <div><span>DEETECH</span><i>/</i><strong>User Management</strong></div>
+              <details className="admin-users-export"><summary><AdminUsersIcon name="download" />Export Reports</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
+            </header>
+            <section className="admin-users-toolbar" aria-label="User search and filters">
+              <label className="admin-users-search"><AdminUsersIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search users by name or email..." /></label>
+              <select value={userRoleFilter} onChange={(event) => setUserRoleFilter(event.target.value)} aria-label="Filter user role"><option value="all">All Roles</option><option value="user">Users</option><option value="admin">Admins</option></select>
+              <select value={userStatusFilter} onChange={(event) => setUserStatusFilter(event.target.value)} aria-label="Filter account status"><option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+              <select value={userSort} onChange={(event) => setUserSort(event.target.value)} aria-label="Sort users">{USER_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>
+              <button type="button" className="admin-users-refresh" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh users"><AdminUsersIcon name="refresh" /></button>
+              <details className="admin-users-toolbar-export"><summary><AdminUsersIcon name="download" />Export</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
+              <button type="button" className="admin-users-clear" onClick={resetUserFilters}>Clear Filters</button>
+            </section>
+            <label className="admin-users-mobile-search"><AdminUsersIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search customers..." /></label>
+            <div className="admin-users-result-count"><strong>{userStats?.filtered || 0}</strong><span>of {userStats?.total || 0} users</span></div>
+            {toolbarOpen ? (
+              <div className="admin-users-filter-sheet" role="dialog" aria-modal="true" aria-label="User filters">
+                <button type="button" className="admin-users-filter-sheet__backdrop" onClick={() => setToolbarOpen(false)} aria-label="Close filters" />
+                <section><header><h2>Filter Users</h2><button type="button" onClick={() => setToolbarOpen(false)} aria-label="Close">&times;</button></header><label>Role<select value={userRoleFilter} onChange={(event) => setUserRoleFilter(event.target.value)}><option value="all">All Roles</option><option value="user">Users</option><option value="admin">Admins</option></select></label><label>Status<select value={userStatusFilter} onChange={(event) => setUserStatusFilter(event.target.value)}><option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select></label><label>Sort By<select value={userSort} onChange={(event) => setUserSort(event.target.value)}>{USER_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><div><button type="button" onClick={resetUserFilters}>Reset</button><button type="button" onClick={() => setToolbarOpen(false)}>Apply Filters</button></div></section>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+
         {type === "orders" ? (
           <section className="admin-orders-toolbar" aria-label="Order management tools">
             <div className="admin-orders-toolbar__title">
@@ -2683,7 +2713,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && type !== "products" ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -2853,17 +2883,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "users" && userStats ? (
-          <section className="panel admin-toolbar admin-toolbar--stats">
-            <span className="admin-chip">Total: {userStats.total}</span>
-            <span className="admin-chip is-neutral">Showing: {userStats.filtered}</span>
-            <span className="admin-chip is-success">Admins: {userStats.admins}</span>
-            <span className="admin-chip is-success">Active: {userStats.active}</span>
-            <span className={`admin-chip ${userStats.inactive > 0 ? "is-warning" : "is-success"}`}>
-              Inactive: {userStats.inactive}
-            </span>
-          </section>
-        ) : null}
         {type === "affiliates" && affiliateStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {affiliateStats.total}</span>
@@ -2952,41 +2971,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
         ) : null}
 
 
-        {type === "users" && userStats ? (
-          <section className="admin-viz-grid panel">
-            <DonutChart
-              title="Role & status"
-              segments={[
-                { label: "Admins", value: userStats.admins },
-                { label: "Active", value: userStats.active },
-                { label: "Inactive", value: userStats.inactive },
-              ]}
-              formatter={formatCount}
-            />
-            <TinyBarChart
-              title="Top searched terms"
-              rows={summarizeWeighted(
-                (Array.isArray(payload) ? payload : []).flatMap((user) => {
-                  const terms = Array.isArray(user?.behavior?.searchTerms) ? user.behavior.searchTerms : [];
-                  return terms.map((entry) => ({ label: entry?.term || "", weight: Number(entry?.count || 0) }));
-                }),
-                7
-              )}
-              formatter={formatCount}
-            />
-            <TinyBarChart
-              title="Top interests"
-              rows={summarizeWeighted(
-                (Array.isArray(payload) ? payload : []).flatMap((user) => {
-                  const interests = Array.isArray(user?.behavior?.categoryInterests) ? user.behavior.categoryInterests : [];
-                  return interests.map((entry) => ({ label: entry?.category || "", weight: Number(entry?.count || 0) }));
-                }),
-                7
-              )}
-              formatter={formatCount}
-            />
-          </section>
-        ) : null}
 
         {type === "affiliates" && affiliateStats ? (
           <section className="admin-viz-grid panel">
@@ -3210,6 +3194,8 @@ export default function AdminManager({ type, productMode = "list", productId = "
             insight={userInsights?.[normalizeEmail(selectedUser360?.email)] || null}
             activity={userActivityMap?.[normalizeEmail(selectedUser360?.email)] || null}
             onClose={() => setSelectedUser360(null)}
+            onAction={runAction}
+            busy={busyAction === (selectedUser360?._id || selectedUser360?.id)}
           />
         ) : null}
       </div>
