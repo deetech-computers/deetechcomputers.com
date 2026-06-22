@@ -1,0 +1,109 @@
+/* Affiliate admin mobile workspace. This is a dedicated card UI, not compressed desktop. */
+@media (max-width: 900px) {
+  .admin-affiliates-route {
+    --affiliate-ink: #111c2c;
+    --affiliate-muted: #657065;
+    --affiliate-green: #004b1b;
+    --affiliate-action: #167638;
+    --affiliate-canvas: #f5f6f7;
+    --affiliate-panel: #fff;
+    --affiliate-soft: #eef2ff;
+    --affiliate-line: #cbd3c8;
+    --affiliate-danger: #ba1a1a;
+    width: 100%; min-width: 0; min-height: 100dvh; background: var(--affiliate-canvas);
+  }
+  .admin-affiliates-route .admin-main { width: 100%; min-width: 0; background: var(--affiliate-canvas); }
+  .admin-affiliates-route .admin-manager--affiliates { width: 100%; min-width: 0; margin: 0; padding: 0; color: var(--affiliate-ink); }
+  .admin-affiliates-route .admin-affiliates-workspace { width: min(100%, 480px); min-width: 0; display: grid; gap: 12px; margin: 0 auto; padding: 0 12px 34px; }
+  .admin-affiliates-route .admin-affiliates-topbar,
+  .admin-affiliates-route .admin-affiliates-filters,
+  .admin-affiliates-route .admin-affiliates-stats,
+  .admin-affiliates-route .admin-affiliates-content > aside,
+  .admin-affiliates-route .admin-affiliates-list-head,
+  .admin-affiliates-route .admin-affiliate-record__code,
+  .admin-affiliates-route .admin-affiliate-record > .admin-affiliate-tier,
+  .admin-affiliates-route .admin-affiliate-record__metric,
+  .admin-affiliates-route .admin-affiliate-record__momo,
+  .admin-affiliates-route .admin-affiliate-active-state { display: none !important; }
+  .admin-affiliates-route .admin-affiliates-icon { width: 20px; height: 20px; display: block; }
+  .admin-affiliates-route button,
+  .admin-affiliates-route input,
+  .admin-affiliates-route select { font: inherit; letter-spacing: 0; }
+
+  .admin-affiliates-route .admin-affiliates-mobile-head { position: sticky; top: 0; z-index: 35; width: calc(100% + 24px); min-height: 60px; display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px; align-items: center; margin: 0 -12px; padding: 0 12px; border-bottom: 1px solid var(--affiliate-line); background: #fff; }
+  .admin-affiliates-route .admin-affiliates-mobile-head h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  .admin-affiliates-route .admin-affiliates-mobile-head a,
+  .admin-affiliates-route .admin-affiliates-mobile-head button { width: 42px; height: 42px; display: grid; place-items: center; border: 0; background: transparent; color: var(--affiliate-green); text-decoration: none; }
+
+  .admin-affiliates-route .admin-affiliates-mobile-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+  .admin-affiliates-route .admin-affiliates-mobile-stats article { min-width: 0; min-height: 68px; display: grid; align-content: center; gap: 7px; padding: 10px; border: 1px solid var(--affiliate-line); border-radius: 4px; background: #fff; }
+  .admin-affiliates-route .admin-affiliates-mobile-stats span { color: var(--affiliate-muted); font-size: 9px; text-transform: uppercase; }
+  .admin-affiliates-route .admin-affiliates-mobile-stats strong { overflow: hidden; color: var(--affiliate-green); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+
+  .admin-affiliates-route .admin-affiliates-mobile-panels { display: grid; gap: 8px; }
+  .admin-affiliates-route .admin-affiliates-mobile-panels > button { min-height: 48px; display: grid; grid-template-columns: 24px 1fr 20px; align-items: center; gap: 8px; padding: 0 13px; border: 1px solid var(--affiliate-line); border-radius: 4px; background: var(--affiliate-soft); color: var(--affiliate-green); font-size: 11px; font-weight: 650; text-align: left; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking { display: grid; border: 1px solid var(--affiliate-line); background: #fff; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking a { min-width: 0; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid #e5e9e3; color: inherit; text-decoration: none; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking a:last-child { border-bottom: 0; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking b { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: #e8efe9; color: var(--affiliate-green); font-size: 10px; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking span { min-width: 0; display: grid; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking small { color: var(--affiliate-muted); font-size: 9px; }
+  .admin-affiliates-route .admin-affiliates-mobile-ranking em { color: var(--affiliate-green); font-size: 10px; font-style: normal; font-weight: 700; }
+
+  .admin-affiliates-route .admin-affiliate-settings-form { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--affiliate-line); background: #fff; }
+  .admin-affiliates-route .admin-affiliate-settings-form > label,
+  .admin-affiliates-route .admin-affiliate-thresholds { display: grid; gap: 5px; color: var(--affiliate-muted); font-size: 9px; text-transform: uppercase; }
+  .admin-affiliates-route .admin-affiliate-settings-form .field { width: 100%; height: 40px; padding: 0 10px; border: 1px solid var(--affiliate-line); background: var(--affiliate-soft); }
+  .admin-affiliates-route .admin-affiliate-thresholds { grid-template-columns: repeat(3, 1fr); }
+  .admin-affiliates-route .admin-affiliate-thresholds > span { grid-column: 1 / -1; }
+  .admin-affiliates-route .admin-affiliate-thresholds label { display: grid; gap: 4px; }
+  .admin-affiliates-route .admin-affiliate-settings-form .primary-button { min-height: 42px; border: 0; border-radius: 4px; background: var(--affiliate-green); color: #fff; font-weight: 700; }
+
+  .admin-affiliates-route .admin-affiliates-content { min-width: 0; display: block; }
+  .admin-affiliates-route .admin-affiliates-content > main { min-width: 0; }
+  .admin-affiliates-route .admin-affiliates-mobile-section-title { display: flex; align-items: center; justify-content: space-between; padding: 5px 2px 0; color: var(--affiliate-muted); font-size: 10px; text-transform: uppercase; }
+  .admin-affiliates-route .admin-record-list--affiliates { min-width: 0; display: grid; gap: 10px; margin-top: 7px; }
+  .admin-affiliates-route .admin-affiliate-record { position: relative; min-width: 0; display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 13px; border: 1px solid var(--affiliate-line); border-radius: 6px; background: #fff; box-shadow: 0 3px 10px rgba(20, 32, 24, .05); }
+  .admin-affiliates-route .admin-affiliate-record__identity { min-width: 0; display: flex; align-items: center; gap: 9px; }
+  .admin-affiliates-route .admin-affiliate-record__avatar { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 5px; background: var(--affiliate-soft); color: var(--affiliate-green); }
+  .admin-affiliates-route .admin-affiliate-record__identity > div { min-width: 0; display: grid; gap: 2px; }
+  .admin-affiliates-route .admin-affiliate-record__identity strong,
+  .admin-affiliates-route .admin-affiliate-record__identity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-affiliates-route .admin-affiliate-record__identity strong { font-size: 12px; }
+  .admin-affiliates-route .admin-affiliate-record__identity small { color: var(--affiliate-muted); font-size: 9px; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-status { min-width: 96px; display: grid; justify-items: end; align-content: start; gap: 6px; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-status span { padding: 4px 7px; border-radius: 999px; font-size: 7px; font-weight: 750; text-transform: uppercase; white-space: nowrap; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-status .admin-affiliate-tier { background: #a6f5af; color: #1d6533; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-status .is-verified { background: #e5fae8; color: #167638; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-status .is-unverified { background: #fff0c7; color: #8b5c00; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-code { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 10px; border: 1px solid #e2e6df; border-radius: 4px; background: #fff; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-code span { min-width: 0; display: grid; gap: 5px; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-code span:last-child { text-align: right; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-code small { color: var(--affiliate-muted); font-size: 7px; text-transform: uppercase; }
+  .admin-affiliates-route .admin-affiliate-record__mobile-code strong { overflow: hidden; color: var(--affiliate-green); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-affiliates-route .admin-affiliate-record__actions { grid-column: 1 / -1; grid-row: 3; display: grid; grid-template-columns: minmax(0, 1fr) 42px; gap: 8px; }
+  .admin-affiliates-route .admin-affiliate-record__actions > button { min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 4px; background: var(--affiliate-green); color: #fff; font-size: 11px; font-weight: 700; }
+  .admin-affiliates-route .admin-affiliate-record__actions > button.admin-affiliate-verify { display: none; }
+  .admin-affiliates-route .admin-affiliate-record:not(:has(.is-verified)) .admin-affiliate-copy { display: none; }
+  .admin-affiliates-route .admin-affiliate-record:not(:has(.is-verified)) .admin-affiliate-verify { display: flex; }
+  .admin-affiliates-route .admin-affiliate-more { position: relative; }
+  .admin-affiliates-route .admin-affiliate-more summary { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #c8d2c6; border-radius: 4px; background: var(--affiliate-soft); color: var(--affiliate-green); list-style: none; }
+  .admin-affiliates-route .admin-affiliate-more summary::-webkit-details-marker { display: none; }
+  .admin-affiliates-route .admin-affiliate-more > div { position: absolute; right: 0; bottom: calc(100% + 5px); z-index: 20; width: 150px; display: grid; padding: 6px; border: 1px solid var(--affiliate-line); background: #fff; box-shadow: 0 10px 24px rgba(17, 28, 44, .15); }
+  .admin-affiliates-route .admin-affiliate-more button { min-height: 38px; display: flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--affiliate-ink); text-align: left; }
+  .admin-affiliates-route .admin-affiliate-more button.is-danger { color: var(--affiliate-danger); }
+
+  .admin-affiliates-route .admin-affiliates-filter-sheet { position: fixed; inset: 0; z-index: 80; display: grid; align-items: end; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet__backdrop { position: absolute; inset: 0; border: 0; background: rgba(10, 18, 12, .48); }
+  .admin-affiliates-route .admin-affiliates-filter-sheet > section { position: relative; z-index: 1; display: grid; gap: 13px; padding: 18px 16px 24px; border-radius: 10px 10px 0 0; background: #fff; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet header { display: flex; align-items: center; justify-content: space-between; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet h2 { margin: 0; font-size: 18px; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet header button { width: 38px; height: 38px; border: 0; background: transparent; font-size: 24px; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet label { display: grid; gap: 6px; color: var(--affiliate-muted); font-size: 11px; font-weight: 650; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet input,
+  .admin-affiliates-route .admin-affiliates-filter-sheet select { width: 100%; height: 46px; padding: 0 12px; border: 1px solid var(--affiliate-line); border-radius: 4px; background: var(--affiliate-soft); }
+  .admin-affiliates-route .admin-affiliates-filter-sheet > section > div { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet > section > div button { min-height: 44px; border: 1px solid var(--affiliate-green); border-radius: 4px; background: #fff; color: var(--affiliate-green); font-weight: 700; }
+  .admin-affiliates-route .admin-affiliates-filter-sheet > section > div button:last-child { background: var(--affiliate-green); color: #fff; }
+}

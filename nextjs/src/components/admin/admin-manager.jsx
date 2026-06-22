@@ -983,11 +983,14 @@ function DiscountForm({ onSubmit, busy }) {
 function AffiliateSettingsForm({ settings, onSubmit, busy }) {
   const thresholds = settings?.tierThresholds || {};
   return (
-    <form className="admin-form admin-form--inline" onSubmit={onSubmit}>
-      <input className="field" name="defaultCommissionRate" type="number" min="0" max="100" step="0.1" defaultValue={settings?.defaultCommissionRate ?? 5} placeholder="Commission %" />
-      <input className="field" name="bronze" type="number" min="1" defaultValue={thresholds.bronze ?? 5} placeholder="Bronze" />
-      <input className="field" name="silver" type="number" min="2" defaultValue={thresholds.silver ?? 15} placeholder="Silver" />
-      <input className="field" name="gold" type="number" min="3" defaultValue={thresholds.gold ?? 30} placeholder="Gold" />
+    <form className="admin-form admin-form--inline admin-affiliate-settings-form" onSubmit={onSubmit}>
+      <label><span>Default Commission Rate</span><input className="field" name="defaultCommissionRate" type="number" min="0" max="100" step="0.1" defaultValue={settings?.defaultCommissionRate ?? 5} /></label>
+      <div className="admin-affiliate-thresholds">
+        <span>Tier Thresholds (deals)</span>
+        <label><small>Bronze</small><input className="field" name="bronze" type="number" min="1" defaultValue={thresholds.bronze ?? 5} /></label>
+        <label><small>Silver</small><input className="field" name="silver" type="number" min="2" defaultValue={thresholds.silver ?? 15} /></label>
+        <label><small>Gold</small><input className="field" name="gold" type="number" min="3" defaultValue={thresholds.gold ?? 30} /></label>
+      </div>
       <button className="primary-button" disabled={busy}>{busy ? "Saving..." : "Update Affiliate Settings"}</button>
     </form>
   );
@@ -1090,6 +1093,28 @@ function AdminUsersIcon({ name }) {
   );
 }
 
+function AdminAffiliatesIcon({ name }) {
+  const paths = {
+    back: <path d="m15 18-6-6 6-6" />,
+    search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
+    filter: <><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>,
+    download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" /></>,
+    copy: <><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></>,
+    shield: <><path d="M12 3 4.5 6v5.5c0 4.5 3 7.7 7.5 9.5 4.5-1.8 7.5-5 7.5-9.5V6L12 3Z" /><path d="m8.5 12 2.2 2.2 4.8-4.8" /></>,
+    user: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3-6 7-6s6.3 2 7 6" /></>,
+    trophy: <><path d="M8 4h8v4c0 3-1.5 5-4 6-2.5-1-4-3-4-6V4Z" /><path d="M8 6H4v2c0 2 1.3 3.3 4 3.8M16 6h4v2c0 2-1.3 3.3-4 3.8M12 14v4M8 21h8M9 18h6" /></>,
+    settings: <><circle cx="12" cy="12" r="3" /><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 15 6l-.3-2.6h-4L10.5 6A7 7 0 0 0 9 7.1l-2.4-1-2 3.4L6.7 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 10.5 18l.3 2.6h4L15 18a7 7 0 0 0 1.5-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z" /></>,
+    more: <><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" /></>,
+    chevron: <path d="m8 10 4 4 4-4" />,
+    trash: <><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></>,
+  };
+  return (
+    <svg className="admin-affiliates-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name] || paths.user}</g>
+    </svg>
+  );
+}
+
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
     return (
@@ -1148,6 +1173,100 @@ function AdminCards({ type, items, onAction, busyAction, userInsights }) {
         />
         );
       })}
+    </div>
+  );
+}
+
+function AffiliateWorkspace({
+  stats,
+  items,
+  leaderboard,
+  settings,
+  query,
+  setQuery,
+  tierFilter,
+  setTierFilter,
+  statusFilter,
+  setStatusFilter,
+  sort,
+  setSort,
+  toolbarOpen,
+  setToolbarOpen,
+  leaderboardOpen,
+  setLeaderboardOpen,
+  settingsOpen,
+  setSettingsOpen,
+  loading,
+  refreshing,
+  busyAction,
+  loadData,
+  resetFilters,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  const settingsBusy = busyAction === "updateAffiliateSettings";
+  return (
+    <div className="admin-affiliates-workspace">
+      <header className="admin-affiliates-mobile-head">
+        <Link href="/admin" aria-label="Back to admin dashboard"><AdminAffiliatesIcon name="back" /></Link>
+        <h1>Affiliates</h1>
+        <button type="button" onClick={() => setToolbarOpen(true)} aria-label="Search and filter affiliates"><AdminAffiliatesIcon name="search" /></button>
+      </header>
+
+      <section className="admin-affiliates-topbar" aria-label="Affiliate search and export">
+        <label><AdminAffiliatesIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search affiliates by name, code or number..." /></label>
+        <button type="button" className="admin-affiliates-refresh" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh affiliates">Refresh</button>
+        <details className="admin-affiliates-export"><summary><AdminAffiliatesIcon name="download" />Export</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
+      </section>
+
+      <section className="admin-affiliates-filters" aria-label="Affiliate filters">
+        <select value={tierFilter} onChange={(event) => setTierFilter(event.target.value)} aria-label="Affiliate tier"><option value="all">Tier: All</option><option value="starter">Starter</option><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option></select>
+        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Affiliate status"><option value="all">Status: All</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        <select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Sort affiliates">{AFFILIATE_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>Sort: {label}</option>)}</select>
+        <button type="button" onClick={resetFilters}>Clear Filters</button>
+      </section>
+
+      <section className="admin-affiliates-stats" aria-label="Affiliate summary">
+        <article><span>Total</span><strong>{stats?.total || 0}</strong></article>
+        <article><span>Showing</span><strong>{stats?.filtered || 0}</strong></article>
+        <article><span>Active</span><strong>{stats?.active || 0}</strong></article>
+        <article className="is-inactive"><span>Inactive</span><strong>{stats?.inactive || 0}</strong></article>
+        <article><span>Referrals</span><strong>{formatCount(stats?.totalReferrals || 0)}</strong></article>
+        <article><span>Pending</span><strong>{formatCurrency(stats?.totalPending || 0)}</strong></article>
+        <article><span>Earned</span><strong>{formatCurrency(stats?.totalEarned || 0)}</strong></article>
+      </section>
+
+      <section className="admin-affiliates-mobile-stats" aria-label="Affiliate summary">
+        <article><span>Referrals</span><strong>{formatCount(stats?.totalReferrals || 0)}</strong></article>
+        <article><span>Pending</span><strong>{formatCurrency(stats?.totalPending || 0)}</strong></article>
+        <article><span>Earned</span><strong>{formatCurrency(stats?.totalEarned || 0)}</strong></article>
+      </section>
+
+      <section className="admin-affiliates-mobile-panels">
+        <button type="button" onClick={() => setLeaderboardOpen((current) => !current)}><AdminAffiliatesIcon name="trophy" /><span>Top Performers</span><AdminAffiliatesIcon name="chevron" /></button>
+        {leaderboardOpen ? <div className="admin-affiliates-mobile-ranking">{leaderboard.slice(0, 5).map((affiliate, index) => <a key={affiliate._id || affiliate.code} href={`#admin-affiliate-${affiliate._id}`}><b>{index + 1}</b><span><strong>{affiliate.user?.name || affiliate.code}</strong><small>{affiliate.code}</small></span><em>{formatCurrency(Number(affiliate.stats?.earnedCommission || 0))}</em></a>)}</div> : null}
+        <button type="button" onClick={() => setSettingsOpen((current) => !current)}><AdminAffiliatesIcon name="settings" /><span>Program Tiers</span><AdminAffiliatesIcon name="chevron" /></button>
+        {settingsOpen && settings ? <AffiliateSettingsForm settings={settings} busy={settingsBusy} onSubmit={(event) => runAction("updateAffiliateSettings", { _id: "updateAffiliateSettings" }, event)} /> : null}
+      </section>
+
+      <div className="admin-affiliates-content">
+        <aside>
+          <section className="admin-affiliates-leaderboard">
+            <button type="button" onClick={() => setLeaderboardOpen((current) => !current)}><span><AdminAffiliatesIcon name="trophy" />Top 5 Affiliates</span><AdminAffiliatesIcon name="chevron" /></button>
+            {leaderboardOpen ? <div>{leaderboard.slice(0, 5).map((affiliate, index) => <a key={affiliate._id || affiliate.code} href={`#admin-affiliate-${affiliate._id}`}><b>{index + 1}</b><span><strong>{affiliate.user?.name || affiliate.code}</strong><small>{affiliate.code}</small></span><em>{formatCurrency(Number(affiliate.stats?.earnedCommission || 0))}<small>{affiliate.stats?.totalReferrals || 0} referrals</small></em></a>)}</div> : null}
+          </section>
+          {settings ? <section className="admin-affiliates-settings"><header><h2>Program Settings</h2><AdminAffiliatesIcon name="settings" /></header><AffiliateSettingsForm settings={settings} busy={settingsBusy} onSubmit={(event) => runAction("updateAffiliateSettings", { _id: "updateAffiliateSettings" }, event)} /></section> : null}
+        </aside>
+        <main>
+          <div className="admin-affiliates-list-head" aria-hidden="true"><span>Code</span><span>User</span><span>Tier</span><span>Referrals</span><span>Pending</span><span>Earned</span><span>MoMo Details</span><span>Actions</span></div>
+          <div className="admin-affiliates-mobile-section-title"><span>Manage Affiliates</span><small>{stats?.active || 0} Active</small></div>
+          <AdminCards type="affiliates" items={items} onAction={runAction} busyAction={busyAction} />
+        </main>
+      </div>
+
+      {toolbarOpen ? <div className="admin-affiliates-filter-sheet" role="dialog" aria-modal="true" aria-label="Affiliate filters"><button className="admin-affiliates-filter-sheet__backdrop" type="button" onClick={() => setToolbarOpen(false)} aria-label="Close filters" /><section><header><h2>Search &amp; Filter</h2><button type="button" onClick={() => setToolbarOpen(false)}>&times;</button></header><label>Search<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Name, code or number" /></label><label>Tier<select value={tierFilter} onChange={(event) => setTierFilter(event.target.value)}><option value="all">All tiers</option><option value="starter">Starter</option><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option></select></label><label>Status<select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option></select></label><label>Sort<select value={sort} onChange={(event) => setSort(event.target.value)}>{AFFILIATE_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><div><button type="button" onClick={resetFilters}>Reset</button><button type="button" onClick={() => setToolbarOpen(false)}>Apply</button></div></section></div> : null}
     </div>
   );
 }
@@ -1305,11 +1424,15 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
                     const lineTotal = Number(line.price || 0) * Number(line.qty || 1);
                     const lineImage = resolveProductImage(
                       line?.product?.images?.[0] ||
+                        line?.productSnapshot?.images?.[0] ||
                         line?.product?.imageUrl ||
                         line?.product?.image_url ||
+                        line?.productSnapshot?.image_url ||
+                        line?.productSnapshot?.imageUrl ||
                         line?.product?.thumbnail ||
                         line?.product?.image ||
                         line?.product?.photos?.[0] ||
+                        line?.images?.[0] ||
                         line?.productImage ||
                         line?.thumbnail ||
                         line?.imageUrl ||
@@ -1607,53 +1730,45 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
 
   if (type === "affiliates") {
     const active = item.isActive !== false;
-    const affiliateBodyId = `admin-affiliate-body-${collapsibleIdBase}`;
     return (
-      <article id={`admin-affiliate-${item._id}`} className="admin-record panel admin-collapsible">
-        <button
-          type="button"
-          className="admin-collapsible__header admin-record-card__toggle"
-          onClick={() => setIsExpanded((current) => !current)}
-          aria-expanded={isExpanded}
-          aria-controls={affiliateBodyId}
-        >
-          <div className="admin-record-card__summary">
-            <h3>{item.code || "Affiliate"}</h3>
-            <p>{item.user?.name || item.user?.email || "Affiliate user"} / {item.tier || "starter"}</p>
-            <div className="admin-chip-row">
-              <span className={`admin-chip ${active ? "is-success" : "is-danger"}`}>{active ? "Active" : "Inactive"}</span>
-              <span className="admin-chip is-neutral">{item.stats?.totalReferrals || 0} referrals</span>
-              <span className="admin-chip is-neutral">{formatCurrency(Number(item.stats?.earnedCommission || 0))} earned</span>
-            </div>
+      <article id={`admin-affiliate-${item._id}`} className={`admin-affiliate-record ${active ? "is-active" : "is-inactive"}`}>
+        <div className="admin-affiliate-record__identity">
+          <span className="admin-affiliate-record__avatar"><AdminAffiliatesIcon name="user" /></span>
+          <div>
+            <strong>{item.user?.name || "Affiliate user"}</strong>
+            <small>{item.user?.email || "No email provided"}</small>
           </div>
-          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
-        </button>
-        {isExpanded ? (
-          <div id={affiliateBodyId} className="admin-collapsible__body">
-            <div className="admin-meta-grid">
-              <span>Referrals <strong>{item.stats?.totalReferrals || 0}</strong></span>
-              <span>Pending <strong>{formatCurrency(Number(item.stats?.pendingCommission || 0))}</strong></span>
-              <span>Earned <strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></span>
-              <span>Rate <strong>{Number(item.commissionRate || 0)}%</strong></span>
-              <span>MoMo payout number <strong>{item.momoNumber || "Not provided"}</strong></span>
-              <span>MoMo status <strong>{item.momoNumberVerified ? "Verified" : "Needs confirmation"}</strong></span>
-              <span>User phone <strong>{item.user?.phone || "Not provided"}</strong></span>
-              <span>Email <strong>{item.user?.email || "Not provided"}</strong></span>
+        </div>
+        <div className="admin-affiliate-record__code"><small>Code</small><strong>{item.code || "Not assigned"}</strong></div>
+        <span className={`admin-affiliate-tier is-${String(item.tier || "starter").toLowerCase()}`}>{item.tier || "Starter"}</span>
+        <div className="admin-affiliate-record__metric"><small>Referrals</small><strong>{item.stats?.totalReferrals || 0}</strong></div>
+        <div className="admin-affiliate-record__metric"><small>Pending</small><strong>{formatCurrency(Number(item.stats?.pendingCommission || 0))}</strong></div>
+        <div className="admin-affiliate-record__metric is-earned"><small>Total Payout</small><strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></div>
+        <div className="admin-affiliate-record__momo">
+          <small>MoMo Details</small>
+          <strong>{item.momoNumber || item.user?.phone || "Not provided"}</strong>
+          <span className={item.momoNumberVerified ? "is-verified" : "is-unverified"}>{item.momoNumberVerified ? "Verified" : "Unverified"}</span>
+        </div>
+        <div className="admin-affiliate-record__actions">
+          <button type="button" className="admin-affiliate-copy" disabled={busy || !item.code} onClick={() => onAction("copyAffiliateCode", item)}><AdminAffiliatesIcon name="copy" /><span>Copy Code</span></button>
+          <button type="button" className="admin-affiliate-verify" disabled={busy || !item.momoNumber} onClick={() => onAction("affiliateMomoVerification", item, null, !item.momoNumberVerified)}><AdminAffiliatesIcon name="shield" /><span>{item.momoNumberVerified ? "Unverify MoMo" : "Verify MoMo"}</span></button>
+          <details className="admin-affiliate-more">
+            <summary aria-label="More affiliate actions"><AdminAffiliatesIcon name="more" /></summary>
+            <div>
+              <button type="button" disabled={busy} onClick={() => onAction("affiliateStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
+              <button type="button" className="is-danger" disabled={busy} onClick={() => onAction("deleteAffiliate", item)}><AdminAffiliatesIcon name="trash" />Delete</button>
             </div>
-            <div className="admin-actions">
-              <button className="ghost-button" disabled={busy} onClick={() => onAction("copyAffiliateCode", item)}>Copy Code</button>
-              <button
-                className="ghost-button"
-                disabled={busy || !item.momoNumber}
-                onClick={() => onAction("affiliateMomoVerification", item, null, !item.momoNumberVerified)}
-              >
-                {item.momoNumberVerified ? "Mark MoMo Unverified" : "Verify MoMo"}
-              </button>
-              <button className="ghost-button" disabled={busy} onClick={() => onAction("affiliateStatus", item, null, !active)}>{active ? "Deactivate" : "Activate"}</button>
-              <button className="danger-button" disabled={busy} onClick={() => onAction("deleteAffiliate", item)}>Delete</button>
-            </div>
-          </div>
-        ) : null}
+          </details>
+          <span className={`admin-affiliate-active-state ${active ? "is-active" : "is-inactive"}`}>{active ? "Active" : "Inactive"}</span>
+        </div>
+        <div className="admin-affiliate-record__mobile-code">
+          <span><small>Code</small><strong>{item.code || "Not assigned"}</strong></span>
+          <span><small>Total Payout</small><strong>{formatCurrency(Number(item.stats?.earnedCommission || 0))}</strong></span>
+        </div>
+        <div className="admin-affiliate-record__mobile-status">
+          <span className={`admin-affiliate-tier is-${String(item.tier || "starter").toLowerCase()}`}>{item.tier || "Starter"} tier</span>
+          <span className={item.momoNumberVerified ? "is-verified" : "is-unverified"}>{item.momoNumberVerified ? "MoMo verified" : "Unverified MoMo"}</span>
+        </div>
       </article>
     );
   }
@@ -2558,7 +2673,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && type !== "products" && type !== "users" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
@@ -2713,7 +2828,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -2883,7 +2998,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "affiliates" && affiliateStats ? (
+        {false && type === "affiliates" && affiliateStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {affiliateStats.total}</span>
             <span className="admin-chip is-neutral">Showing: {affiliateStats.filtered}</span>
@@ -2972,7 +3087,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
 
 
 
-        {type === "affiliates" && affiliateStats ? (
+        {false && type === "affiliates" && affiliateStats ? (
           <section className="admin-viz-grid panel">
             <TinyBarChart
               title="Tier distribution"
@@ -3000,7 +3115,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "affiliates" && affiliateLeaderboard.length ? (
+        {false && type === "affiliates" && affiliateLeaderboard.length ? (
           <section className="panel admin-affiliate-leaderboard admin-collapsible">
             <button
               type="button"
@@ -3162,7 +3277,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             ) : null}
           </section>
         ) : null}
-        {type === "affiliates" && settings ? (
+        {false && type === "affiliates" && settings ? (
           <section className="panel admin-create-panel admin-collapsible">
             <button
               type="button"
@@ -3184,8 +3299,39 @@ export default function AdminManager({ type, productMode = "list", productId = "
 
         {error ? <section className="panel admin-state form-error">{error}</section> : null}
         {loading ? <section className="panel admin-state">Loading {config.title.toLowerCase()}...</section> : null}
+        {!loading && !error && type === "affiliates" ? (
+          <AffiliateWorkspace
+            stats={affiliateStats}
+            items={items}
+            leaderboard={affiliateLeaderboard}
+            settings={settings}
+            query={query}
+            setQuery={setQuery}
+            tierFilter={affiliateTierFilter}
+            setTierFilter={setAffiliateTierFilter}
+            statusFilter={affiliateStatusFilter}
+            setStatusFilter={setAffiliateStatusFilter}
+            sort={affiliateSort}
+            setSort={setAffiliateSort}
+            toolbarOpen={toolbarOpen}
+            setToolbarOpen={setToolbarOpen}
+            leaderboardOpen={affiliateLeaderboardOpen}
+            setLeaderboardOpen={setAffiliateLeaderboardOpen}
+            settingsOpen={affiliateSettingsOpen}
+            setSettingsOpen={setAffiliateSettingsOpen}
+            loading={loading}
+            refreshing={refreshing}
+            busyAction={busyAction}
+            loadData={loadData}
+            resetFilters={resetAffiliateFilters}
+            exportCsv={exportCsv}
+            exportJson={exportJson}
+            exportSql={exportSql}
+            runAction={runAction}
+          />
+        ) : null}
         {!loading && !error && type === "dashboard" ? <DashboardView payload={payload} /> : null}
-        {!loading && !error && type !== "dashboard" && !(type === "products" && isProductDedicatedPage) ? (
+        {!loading && !error && type !== "dashboard" && type !== "affiliates" && !(type === "products" && isProductDedicatedPage) ? (
           <AdminCards type={type} items={items} onAction={runAction} busyAction={busyAction} userInsights={userInsights} />
         ) : null}
         {type === "users" && selectedUser360 ? (

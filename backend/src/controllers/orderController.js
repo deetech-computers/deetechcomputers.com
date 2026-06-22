@@ -2369,7 +2369,7 @@ export async function getAllOrders(req, res) {
   const orders = await Order.find(visibleOrderQuery())
     .sort({ createdAt: -1 })
     .populate("user", "name email")
-    .populate("orderItems.product", "name price brand");
+    .populate("orderItems.product", "name price brand category image_url images");
   res.json(orders);
 }
 
