@@ -1,10 +1,278 @@
 @media (min-width: 901px) {
-  .admin-discounts-route .admin-main {
-    background: #f5f6f7;
+  .admin-discounts-route {
+    --discounts-bg: #f5f6f7;
+    --discounts-panel: #ffffff;
+    --discounts-panel-soft: #f8f2e6;
+    --discounts-line: #e5ddd0;
+    --discounts-text: #10151f;
+    --discounts-muted: #5e6470;
+    --discounts-green: #135c2a;
+    --discounts-green-strong: #0b431d;
+    --discounts-green-soft: #def6e6;
+    --discounts-gold: #cf9b2f;
+    --discounts-gold-soft: #fff1cf;
+    --discounts-red: #bf3c34;
+    --discounts-shadow: 0 18px 44px rgba(16, 24, 40, 0.06);
+    min-width: 0;
   }
 
-  .admin-discounts-route .admin-manager {
+  .admin-discounts-route .admin-main {
+    min-width: 0;
+    background: var(--discounts-bg);
+  }
+
+  .admin-discounts-route .admin-manager--discounts {
     width: min(100%, 1460px);
+    min-width: 0;
     margin: 0 auto;
+    padding: 28px 28px 56px;
+    display: grid;
+    gap: 20px;
+    color: var(--discounts-text);
+  }
+
+  .admin-discounts-route .admin-manager--discounts > .admin-collapsible,
+  .admin-discounts-route .admin-toolbar--stats,
+  .admin-discounts-route .admin-record-list,
+  .admin-discounts-route .admin-state {
+    overflow: hidden;
+    border: 1px solid var(--discounts-line);
+    border-radius: 22px;
+    background: var(--discounts-panel);
+    box-shadow: var(--discounts-shadow);
+  }
+
+  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header {
+    width: 100%;
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 0 26px;
+    border: 0;
+    background:
+      linear-gradient(180deg, rgba(248, 242, 230, 0.88), rgba(255, 255, 255, 0.98));
+    color: var(--discounts-green-strong);
+    cursor: pointer;
+  }
+
+  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header .admin-collapsible__icon {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #edf6ef;
+    color: var(--discounts-green);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .admin-discounts-route #admin-filters-toolbar-body {
+    padding: 24px;
+    border-top: 1px solid var(--discounts-line);
+  }
+
+  .admin-discounts-route .admin-toolbar {
+    display: grid;
+    grid-template-columns: minmax(300px, 1.1fr) repeat(3, minmax(0, 180px)) auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .admin-discounts-route .field {
+    width: 100%;
+    min-width: 0;
+    min-height: 50px;
+    padding: 0 15px;
+    border: 1px solid var(--discounts-line);
+    border-radius: 14px;
+    background: #f8fbff;
+    color: var(--discounts-text);
+    font-size: 15px;
+  }
+
+  .admin-discounts-route .field:focus,
+  .admin-discounts-route select:focus,
+  .admin-discounts-route textarea:focus {
+    outline: none;
+    border-color: var(--discounts-green);
+    box-shadow: 0 0 0 3px rgba(19, 92, 42, 0.12);
+  }
+
+  .admin-discounts-route .ghost-button,
+  .admin-discounts-route .primary-button,
+  .admin-discounts-route .danger-button {
+    min-height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  }
+
+  .admin-discounts-route .ghost-button {
+    border: 1px solid var(--discounts-line);
+    background: #ffffff;
+    color: var(--discounts-green);
+  }
+
+  .admin-discounts-route .primary-button {
+    border: 1px solid var(--discounts-green);
+    background: linear-gradient(180deg, #1a6c34, #0d5c2f);
+    color: #ffffff;
+    box-shadow: 0 14px 24px rgba(13, 92, 47, 0.14);
+  }
+
+  .admin-discounts-route .danger-button {
+    border: 1px solid #efc4bf;
+    background: #fff7f6;
+    color: var(--discounts-red);
+  }
+
+  .admin-discounts-route .admin-toolbar--stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 18px 20px;
+  }
+
+  .admin-discounts-route .admin-chip {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #edf8ef;
+    color: #25703c;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .admin-discounts-route .admin-chip.is-neutral {
+    background: #eef2ff;
+    color: #55616e;
+  }
+
+  .admin-discounts-route .admin-chip.is-success {
+    background: #e4f6e8;
+    color: #25703c;
+  }
+
+  .admin-discounts-route .admin-chip.is-warning {
+    background: #fff1cf;
+    color: var(--discounts-gold);
+  }
+
+  .admin-discounts-route .admin-chip.is-danger {
+    background: #fde4e2;
+    color: var(--discounts-red);
+  }
+
+  .admin-discounts-route .admin-record-list {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    background: linear-gradient(180deg, #ffffff, #fbfcff);
+  }
+
+  .admin-discounts-route .admin-record.panel,
+  .admin-discounts-route .admin-record-card,
+  .admin-discounts-route .admin-collapsible {
+    border: 1px solid var(--discounts-line);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.04);
+  }
+
+  .admin-discounts-route .admin-record-card__toggle,
+  .admin-discounts-route .admin-collapsible__header {
+    padding: 24px 26px;
+  }
+
+  .admin-discounts-route .admin-record-card__summary {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .admin-discounts-route .admin-record-card__summary h3 {
+    margin: 0;
+    color: var(--discounts-green-strong);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .admin-discounts-route .admin-record-card__summary p {
+    margin: 0;
+    color: var(--discounts-muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .admin-discounts-route .admin-chip-row,
+  .admin-discounts-route .admin-meta-grid,
+  .admin-discounts-route .admin-actions {
+    gap: 10px;
+  }
+
+  .admin-discounts-route .admin-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-discounts-route .admin-meta-grid span {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--discounts-line);
+    border-radius: 16px;
+    background: #fafcff;
+    color: var(--discounts-muted);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .admin-discounts-route .admin-meta-grid strong {
+    color: var(--discounts-text);
+    font-size: 15px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .admin-discounts-route .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding: 4px 0 0;
+  }
+
+  .admin-discounts-route .admin-actions .ghost-button,
+  .admin-discounts-route .admin-actions .danger-button {
+    min-width: 144px;
+  }
+
+  .admin-discounts-route .admin-state {
+    padding: 28px;
+    color: var(--discounts-muted);
+    font-size: 15px;
   }
 }

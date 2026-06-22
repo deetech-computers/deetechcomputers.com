@@ -3492,7 +3492,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" && type !== "messages" && type !== "discounts" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
