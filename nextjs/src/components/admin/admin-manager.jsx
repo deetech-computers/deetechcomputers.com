@@ -747,6 +747,108 @@ function ProductEditorSection({ title, meta = "", icon = "box", defaultOpen = fa
   );
 }
 
+function BannersWorkspace({
+  items,
+  query,
+  setQuery,
+  toolbarOpen,
+  setToolbarOpen,
+  formOpen,
+  setFormOpen,
+  count,
+  loading,
+  refreshing,
+  busyAction,
+  loadData,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  return (
+    <>
+      <section className="admin-hero panel">
+        <div>
+          <p className="section-kicker">Admin Portal</p>
+          <h1>Banners</h1>
+          <p>Create, update, and organize homepage campaign banners with category or custom links.</p>
+        </div>
+        <div className="admin-hero__badge">
+          <strong>{loading ? "..." : count}</strong>
+          <span>records</span>
+        </div>
+      </section>
+
+      <section className="panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header"
+          onClick={() => setToolbarOpen((current) => !current)}
+          aria-expanded={toolbarOpen}
+          aria-controls="admin-filters-toolbar-body"
+        >
+          <h2>Search, Filters & Exports</h2>
+          <span className="admin-collapsible__icon" aria-hidden="true">{toolbarOpen ? "-" : "+"}</span>
+        </button>
+        {toolbarOpen ? (
+          <div id="admin-filters-toolbar-body" className="admin-collapsible__body">
+            <section className="admin-toolbar">
+              <input
+                className="field"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search banners..."
+              />
+              <button
+                type="button"
+                className="ghost-button"
+                disabled={loading || refreshing}
+                onClick={() => loadData({ background: true })}
+              >
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </button>
+              <button type="button" className="ghost-button" onClick={exportCsv}>Export CSV</button>
+              <button type="button" className="ghost-button" onClick={exportJson}>Export JSON</button>
+              <button type="button" className="ghost-button" onClick={exportSql}>Export SQL</button>
+            </section>
+          </div>
+        ) : null}
+      </section>
+
+      <section className="panel admin-create-panel admin-collapsible">
+        <button
+          type="button"
+          className="admin-collapsible__header"
+          onClick={() => setFormOpen((current) => !current)}
+          aria-expanded={formOpen}
+          aria-controls="banner-create-body"
+        >
+          <h2>Create Banner</h2>
+          <span className="admin-collapsible__icon" aria-hidden="true">{formOpen ? "-" : "+"}</span>
+        </button>
+        {formOpen ? (
+          <div id="banner-create-body" className="admin-collapsible__body">
+            <BannerForm
+              busy={busyAction === "createBanner"}
+              onSubmit={(event) => runAction("createBanner", { _id: "createBanner" }, event)}
+              submitLabel="Create Banner"
+            />
+          </div>
+        ) : null}
+      </section>
+
+      {!items.length ? (
+        <section className="admin-state panel">
+          <h2>No banners yet</h2>
+          <p>Your homepage campaigns will appear here once a banner is created.</p>
+        </section>
+      ) : (
+        <AdminCards type="banners" items={items} onAction={runAction} busyAction={busyAction} />
+      )}
+    </>
+  );
+}
+
 function ReviewsWorkspace({
   items,
   stats,
@@ -2970,7 +3072,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
@@ -3125,7 +3227,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -3555,25 +3657,6 @@ export default function AdminManager({ type, productMode = "list", productId = "
             ) : null}
           </section>
         ) : null}
-        {type === "banners" ? (
-          <section className="panel admin-create-panel admin-collapsible">
-            <button
-              type="button"
-              className="admin-collapsible__header"
-              onClick={() => setFormOpen((current) => !current)}
-              aria-expanded={formOpen}
-              aria-controls="banner-create-body"
-            >
-              <h2>Create Banner</h2>
-              <span className="admin-collapsible__icon" aria-hidden="true">{formOpen ? "-" : "+"}</span>
-            </button>
-            {formOpen ? (
-              <div id="banner-create-body" className="admin-collapsible__body">
-                <BannerForm busy={busyAction === "createBanner"} onSubmit={(event) => runAction("createBanner", { _id: "createBanner" }, event)} submitLabel="Create Banner" />
-              </div>
-            ) : null}
-          </section>
-        ) : null}
         {false && type === "affiliates" && settings ? (
           <section className="panel admin-create-panel admin-collapsible">
             <button
@@ -3653,8 +3736,28 @@ export default function AdminManager({ type, productMode = "list", productId = "
             runAction={runAction}
           />
         ) : null}
+        {!loading && !error && type === "banners" ? (
+          <BannersWorkspace
+            items={items}
+            query={query}
+            setQuery={setQuery}
+            toolbarOpen={toolbarOpen}
+            setToolbarOpen={setToolbarOpen}
+            formOpen={formOpen}
+            setFormOpen={setFormOpen}
+            count={count}
+            loading={loading}
+            refreshing={refreshing}
+            busyAction={busyAction}
+            loadData={loadData}
+            exportCsv={exportCsv}
+            exportJson={exportJson}
+            exportSql={exportSql}
+            runAction={runAction}
+          />
+        ) : null}
         {!loading && !error && type === "dashboard" ? <DashboardView payload={payload} /> : null}
-        {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && !(type === "products" && isProductDedicatedPage) ? (
+        {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && type !== "banners" && !(type === "products" && isProductDedicatedPage) ? (
           <AdminCards type={type} items={items} onAction={runAction} busyAction={busyAction} userInsights={userInsights} />
         ) : null}
         {type === "users" && selectedUser360 ? (
