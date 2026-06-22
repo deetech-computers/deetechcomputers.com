@@ -106,7 +106,7 @@
     text-transform: uppercase;
   }
 
-  .admin-reviews-route .admin-collapsible:first-of-type {
+  .admin-reviews-route .admin-manager--reviews > .admin-collapsible {
     overflow: hidden;
     border: 1px solid var(--reviews-line);
     border-radius: 18px;
@@ -114,7 +114,8 @@
     box-shadow: 0 12px 28px rgba(17, 28, 44, 0.04);
   }
 
-  .admin-reviews-route .admin-collapsible:first-of-type > .admin-collapsible__header {
+  .admin-reviews-route .admin-manager--reviews > .admin-collapsible > .admin-collapsible__header {
+    width: 100%;
     min-height: 74px;
     display: flex;
     align-items: center;
@@ -127,14 +128,14 @@
     cursor: pointer;
   }
 
-  .admin-reviews-route .admin-collapsible:first-of-type > .admin-collapsible__header h2 {
+  .admin-reviews-route .admin-manager--reviews > .admin-collapsible > .admin-collapsible__header h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.02em;
   }
 
-  .admin-reviews-route .admin-collapsible:first-of-type > .admin-collapsible__header .admin-collapsible__icon {
+  .admin-reviews-route .admin-manager--reviews > .admin-collapsible > .admin-collapsible__header .admin-collapsible__icon {
     width: 34px;
     height: 34px;
     display: grid;
@@ -303,35 +304,81 @@
     background: linear-gradient(90deg, #0b5a2b, #2b7a3e);
   }
 
-  .admin-reviews-route .admin-donut {
-    display: grid;
-    gap: 22px;
-  }
-
-  .admin-reviews-route .admin-donut__chart {
+  .admin-reviews-route .admin-viz-donut-wrap {
+    position: relative;
     width: min(220px, 100%);
     aspect-ratio: 1;
-    margin: 0 auto;
+    margin: 0 auto 18px;
   }
 
-  .admin-reviews-route .admin-donut__chart svg {
+  .admin-reviews-route .admin-viz-donut {
     width: 100%;
     height: 100%;
     display: block;
+    transform: rotate(-90deg);
   }
 
-  .admin-reviews-route .admin-donut__total {
+  .admin-reviews-route .admin-viz-donut__base,
+  .admin-reviews-route .admin-viz-donut__slice {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+  }
+
+  .admin-reviews-route .admin-viz-donut__base {
+    stroke: #e7edf7;
+  }
+
+  .admin-reviews-route .admin-viz-donut__slice.is-0 {
+    stroke: #0b5a2b;
+  }
+
+  .admin-reviews-route .admin-viz-donut__slice.is-1 {
+    stroke: #d9a441;
+  }
+
+  .admin-reviews-route .admin-viz-donut__slice.is-2 {
+    stroke: #ba1a1a;
+  }
+
+  .admin-reviews-route .admin-viz-donut__slice.is-3 {
+    stroke: #8aa3d6;
+  }
+
+  .admin-reviews-route .admin-viz-donut__slice.is-4 {
+    stroke: #6f7d92;
+  }
+
+  .admin-reviews-route .admin-viz-donut__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    gap: 4px;
+  }
+
+  .admin-reviews-route .admin-viz-donut__center strong {
     font-family: var(--admin-font-mono), monospace;
     font-size: 28px;
     font-weight: 800;
+    color: var(--reviews-green-strong);
   }
 
-  .admin-reviews-route .admin-donut__legend {
+  .admin-reviews-route .admin-viz-donut__center span {
+    color: var(--reviews-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .admin-reviews-route .admin-viz-legend {
     display: grid;
     gap: 10px;
   }
 
-  .admin-reviews-route .admin-donut__legend li {
+  .admin-reviews-route .admin-viz-legend__row {
     display: grid;
     grid-template-columns: 12px minmax(0, 1fr) auto;
     gap: 10px;
@@ -339,6 +386,58 @@
     color: var(--reviews-muted);
     font-size: 14px;
     font-weight: 600;
+  }
+
+  .admin-reviews-route .admin-viz-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    display: block;
+    background: #d8e0ea;
+  }
+
+  .admin-reviews-route .admin-viz-dot.is-0 {
+    background: #0b5a2b;
+  }
+
+  .admin-reviews-route .admin-viz-dot.is-1 {
+    background: #d9a441;
+  }
+
+  .admin-reviews-route .admin-viz-dot.is-2 {
+    background: #ba1a1a;
+  }
+
+  .admin-reviews-route .admin-viz-dot.is-3 {
+    background: #8aa3d6;
+  }
+
+  .admin-reviews-route .admin-viz-dot.is-4 {
+    background: #6f7d92;
+  }
+
+  .admin-reviews-route .admin-state {
+    padding: 44px 40px;
+    border: 1px solid var(--reviews-line);
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff, #fbfcff);
+    box-shadow: 0 16px 32px rgba(17, 28, 44, 0.05);
+    color: var(--reviews-ink);
+  }
+
+  .admin-reviews-route .admin-state h2 {
+    margin: 0 0 12px;
+    color: var(--reviews-green-strong);
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .admin-reviews-route .admin-state p {
+    margin: 0;
+    color: var(--reviews-muted);
+    font-size: 17px;
+    line-height: 1.7;
   }
 
   .admin-reviews-route .admin-record-list--reviews {
