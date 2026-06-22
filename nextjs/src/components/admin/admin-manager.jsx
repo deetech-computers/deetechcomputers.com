@@ -747,6 +747,295 @@ function ProductEditorSection({ title, meta = "", icon = "box", defaultOpen = fa
   );
 }
 
+function ReviewsWorkspace({
+  items,
+  stats,
+  query,
+  setQuery,
+  reviewStatusFilter,
+  setReviewStatusFilter,
+  reviewRatingFilter,
+  setReviewRatingFilter,
+  reviewSort,
+  setReviewSort,
+  toolbarOpen,
+  setToolbarOpen,
+  selectedReviewIds,
+  setSelectedReviewIds,
+  refreshing,
+  busyAction,
+  loadData,
+  resetReviewFilters,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  const pendingCount = Math.max(0, Number(stats?.total || 0) - Number(stats?.approved || 0));
+  const visibleSelectedIds = items
+    .map((item) => String(item?._id || item?.id || ""))
+    .filter((reviewId) => selectedReviewIds.includes(reviewId));
+  const allSelected = items.length > 0 && visibleSelectedIds.length === items.length;
+
+  const toggleSelected = (reviewId) => {
+    setSelectedReviewIds((current) => {
+      if (current.includes(reviewId)) {
+        return current.filter((entry) => entry !== reviewId);
+      }
+      return [...current, reviewId];
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedReviewIds(allSelected ? [] : items.map((item) => String(item?._id || item?.id || "")));
+  };
+
+  const handleBatchApprove = async () => {
+    const targets = items.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && !item?.approved);
+    for (const target of targets) {
+      await runAction("moderateReview", target, null, true);
+    }
+    setSelectedReviewIds([]);
+  };
+
+  return (
+    <section className="admin-reviews-workspace">
+      <header className="admin-reviews-mobile-topbar">
+        <div className="admin-reviews-mobile-topbar__title">
+          <h1>Reviews</h1>
+        </div>
+        <button type="button" className="admin-reviews-mobile-topbar__filter" onClick={() => setToolbarOpen(true)} aria-label="Open review filters">
+          Filter
+        </button>
+      </header>
+
+      <section className="admin-reviews-desktop-toolbar">
+        <div className="admin-reviews-search">
+          <input
+            className="field"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search reviews, products or users..."
+            aria-label="Search reviews"
+          />
+        </div>
+        <div className="admin-reviews-filters">
+          <select className="field" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value)}>
+            <option value="all">All Status</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select className="field" value={reviewRatingFilter} onChange={(event) => setReviewRatingFilter(event.target.value)}>
+            <option value="all">Rating: All</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4+ Stars</option>
+            <option value="3">3+ Stars</option>
+            <option value="2">2+ Stars</option>
+          </select>
+          <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="rating-desc">Highest Rated</option>
+            <option value="rating-asc">Lowest Rated</option>
+          </select>
+        </div>
+        <div className="admin-reviews-desktop-toolbar__actions">
+          <button type="button" className="ghost-button" onClick={() => loadData({ background: true })}>
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </button>
+          <button type="button" className="ghost-button" onClick={exportCsv}>Export CSV</button>
+          <button type="button" className="ghost-button" onClick={exportJson}>Export JSON</button>
+          <button type="button" className="ghost-button" onClick={exportSql}>Export SQL</button>
+        </div>
+      </section>
+
+      <section className="admin-reviews-stats admin-reviews-stats--desktop">
+        <article className="admin-reviews-stat-card">
+          <span>TOTAL REVIEWS</span>
+          <strong>{formatCount(stats?.total || 0)}</strong>
+          <small>{items.length ? `${formatCount(items.length)} visible` : "No filtered results"}</small>
+        </article>
+        <article className="admin-reviews-stat-card">
+          <span>APPROVED</span>
+          <strong>{formatCount(stats?.approved || 0)}</strong>
+          <div className="admin-reviews-stat-bar"><i style={{ width: `${Math.min(100, stats?.total ? (stats.approved / stats.total) * 100 : 0)}%` }} /></div>
+        </article>
+        <article className="admin-reviews-stat-card">
+          <span>REJECTED</span>
+          <strong>{formatCount(stats?.rejected || 0)}</strong>
+          <div className="admin-reviews-stat-bar is-danger"><i style={{ width: `${Math.min(100, stats?.total ? (stats.rejected / stats.total) * 100 : 0)}%` }} /></div>
+        </article>
+        <article className="admin-reviews-stat-card">
+          <span>AVERAGE RATING</span>
+          <div className="admin-reviews-stat-rating">
+            <strong>{Number(stats?.avgRating || 0).toFixed(1)}</strong>
+            <div aria-hidden="true">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star} className={star <= Math.round(Number(stats?.avgRating || 0)) ? "is-filled" : ""}>★</span>
+              ))}
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section className="admin-reviews-stats admin-reviews-stats--mobile">
+        <article className="admin-reviews-stat-card">
+          <span>TOTAL REVIEWS</span>
+          <strong>{formatCount(stats?.total || 0)}</strong>
+        </article>
+        <article className="admin-reviews-stat-card">
+          <span>PENDING MOD</span>
+          <strong>{formatCount(pendingCount)}</strong>
+        </article>
+      </section>
+
+      <section className="admin-reviews-queue">
+        <header className="admin-reviews-queue__head">
+          <h2>Moderation Queue</h2>
+          <div className="admin-reviews-queue__batch">
+            <button type="button" className="ghost-button" onClick={toggleSelectAll}>
+              {allSelected ? "Clear Selection" : "Select All"}
+            </button>
+            <button type="button" className="primary-button" disabled={!visibleSelectedIds.length || !!busyAction} onClick={handleBatchApprove}>
+              Batch Approve
+            </button>
+          </div>
+        </header>
+
+        {!items.length ? (
+          <div className="admin-reviews-empty">
+            <div className="admin-reviews-empty__icon" aria-hidden="true">★</div>
+            <h3>No reviews to moderate</h3>
+            <p>New customer feedback will appear here for approval, rejection, or removal.</p>
+          </div>
+        ) : (
+          <>
+            <div className="admin-reviews-list">
+              {items.map((item) => {
+                const reviewId = String(item?._id || item?.id || "");
+                const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+                const reviewerName = item?.user?.name || item?.user?.email || "Customer";
+                const productName = item?.product?.name || "Product";
+                const isApproved = Boolean(item?.approved);
+                const isBusy = busyAction === reviewId;
+                const roundedRating = Math.max(0, Math.min(5, Math.round(Number(item?.rating || 0))));
+
+                return (
+                  <article key={reviewId} className={`admin-reviews-row ${selectedReviewIds.includes(reviewId) ? "is-selected" : ""}`}>
+                    <div className="admin-reviews-row__check">
+                      <input
+                        type="checkbox"
+                        checked={selectedReviewIds.includes(reviewId)}
+                        onChange={() => toggleSelected(reviewId)}
+                        aria-label={`Select review by ${reviewerName}`}
+                      />
+                    </div>
+                    <div className="admin-reviews-row__meta">
+                      <div className="admin-reviews-row__stars" aria-hidden="true">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} className={star <= roundedRating ? "is-filled" : ""}>★</span>
+                        ))}
+                      </div>
+                      <span className={`admin-reviews-row__status ${isApproved ? "is-approved" : "is-pending"}`}>
+                        {isApproved ? "Approved" : "Pending"}
+                      </span>
+                      <p>{formatDateTime(item?.createdAt)}</p>
+                    </div>
+                    <div className="admin-reviews-row__body">
+                      <h3>
+                        <span>{reviewerName}</span>
+                        <i>on</i>
+                        {productId ? <Link href={`/products/${productId}`}>{productName}</Link> : <strong>{productName}</strong>}
+                      </h3>
+                      <p>{item?.comment || "No review text."}</p>
+                    </div>
+                    <div className="admin-reviews-row__actions">
+                      <div className="admin-reviews-row__action-buttons">
+                        {!isApproved ? (
+                          <button type="button" className="primary-button" disabled={isBusy} onClick={() => runAction("moderateReview", item, null, true)}>
+                            Approve
+                          </button>
+                        ) : null}
+                        <button type="button" className="ghost-button is-review-reject" disabled={isBusy} onClick={() => runAction("moderateReview", item, null, false)}>
+                          {isApproved ? "Reject" : "Reject"}
+                        </button>
+                      </div>
+                      <div className="admin-reviews-row__links">
+                        {productId ? (
+                          <Link className="admin-reviews-row__link" href={`/products/${productId}`}>
+                            Open Product
+                          </Link>
+                        ) : null}
+                        <button type="button" className="admin-reviews-row__delete" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <footer className="admin-reviews-pagination">
+              <p>Showing {items.length ? `1-${items.length}` : 0} of {formatCount(stats?.total || 0)} reviews</p>
+              <div>
+                <button type="button" className="ghost-button" disabled>1</button>
+              </div>
+            </footer>
+          </>
+        )}
+      </section>
+
+      <div className={`admin-reviews-mobile-sheet ${toolbarOpen ? "is-open" : ""}`} aria-hidden={!toolbarOpen}>
+        <button type="button" className={`admin-reviews-mobile-sheet__overlay ${toolbarOpen ? "is-open" : ""}`} onClick={() => setToolbarOpen(false)} aria-label="Close review filters" />
+        <section className="admin-reviews-mobile-sheet__panel">
+          <div className="admin-reviews-mobile-sheet__handle" />
+          <div className="admin-reviews-mobile-sheet__head">
+            <h2>Filter Reviews</h2>
+            <button type="button" onClick={() => setToolbarOpen(false)}>Done</button>
+          </div>
+          <div className="admin-reviews-mobile-sheet__content">
+            <label>
+              <span>Search</span>
+              <input className="field" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by product or user..." />
+            </label>
+            <label>
+              <span>Moderation Status</span>
+              <select className="field" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value)}>
+                <option value="all">All</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </label>
+            <label>
+              <span>Minimum Rating</span>
+              <select className="field" value={reviewRatingFilter} onChange={(event) => setReviewRatingFilter(event.target.value)}>
+                <option value="all">All Ratings</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4+ Stars</option>
+                <option value="3">3+ Stars</option>
+                <option value="2">2+ Stars</option>
+              </select>
+            </label>
+            <label>
+              <span>Sort Order</span>
+              <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="rating-desc">Highest Rated</option>
+                <option value="rating-asc">Lowest Rated</option>
+              </select>
+            </label>
+            <div className="admin-reviews-mobile-sheet__actions">
+              <button type="button" className="ghost-button" onClick={resetReviewFilters}>Reset</button>
+              <button type="button" className="ghost-button" onClick={() => loadData({ background: true })}>{refreshing ? "Refreshing..." : "Refresh"}</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
 function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [category, setCategory] = useState(initial?.category || "laptops");
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
@@ -1117,6 +1406,17 @@ function AdminAffiliatesIcon({ name }) {
 
 function AdminCards({ type, items, onAction, busyAction, userInsights }) {
   if (!items.length) {
+    if (type === "reviews") {
+      return (
+        <div className="admin-reviews-empty">
+          <div className="admin-reviews-empty__icon" aria-hidden="true">
+            <span>*</span>
+          </div>
+          <h2>No reviews to moderate</h2>
+          <p>New customer feedback will appear here for approval, rejection, or removal.</p>
+        </div>
+      );
+    }
     return (
       <div className="panel admin-state">
         <h2>No records yet</h2>
@@ -1668,89 +1968,58 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
     );
   }
 
-  if (type === "reviews") {
-    const productId = item?.product?._id || item?.product?.id || item?.productId || "";
-    const reviewerName = item.user?.name || item.user?.email || "Customer";
-    const productName = item.product?.name || "Product";
-    const productImage =
-      item?.product?.images?.[0] ||
-      item?.product?.image ||
-      item?.product?.mainImage ||
-      item?.product?.thumbnail ||
-      "";
-    const rating = Math.max(0, Math.min(5, Number(item.rating || 0)));
-    const roundedRating = Math.round(rating);
-    const reviewBodyId = `admin-review-body-${collapsibleIdBase}`;
+    if (type === "reviews") {
+      const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+      const reviewerName = item.user?.name || item.user?.email || "Customer";
+      const productName = item.product?.name || "Product";
+      const rating = Math.max(0, Math.min(5, Number(item.rating || 0)));
+      const roundedRating = Math.round(rating);
+      const createdAtLabel = formatDateTime(item.createdAt);
 
-    return (
-      <article className="admin-record panel admin-collapsible admin-review-record">
-        <button
-          type="button"
-          className="admin-collapsible__header admin-record-card__toggle admin-review-record__toggle"
-          onClick={() => setIsExpanded((current) => !current)}
-          aria-expanded={isExpanded}
-          aria-controls={reviewBodyId}
-        >
-          <div className="admin-record-card__summary admin-review-record__summary">
-            <span className="admin-review-record__media" aria-hidden="true">
-              {productImage ? (
-                <StableImage src={productImage} alt={productName} width={88} height={88} />
-              ) : (
-                <span>{productName.slice(0, 1).toUpperCase()}</span>
-              )}
-            </span>
-            <div className="admin-review-record__content">
-              <p className="admin-review-record__eyebrow">Customer Review</p>
-              <h3>{item.title || "Product Review"}</h3>
-              <p className="admin-review-record__product">{productName}</p>
-              <p className="admin-review-record__reviewer">{reviewerName}</p>
-            </div>
-            <div className="admin-review-record__snapshot">
-              <div className="admin-chip-row admin-review-record__chips">
-                <span className={`admin-chip ${item.approved ? "is-success" : "is-danger"}`}>{item.approved ? "Approved" : "Rejected"}</span>
-                <span className="admin-chip is-neutral">{rating.toFixed(1)} / 5</span>
-                <span className="admin-chip is-neutral">Created {formatDate(item.createdAt)}</span>
-              </div>
+      return (
+        <article className="admin-record panel admin-review-record">
+          <div className="admin-review-record__summary">
+            <div className="admin-review-record__aside">
               <div className="admin-review-record__stars" aria-hidden="true">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span key={star} className={star <= roundedRating ? "is-filled" : ""}>*</span>
                 ))}
               </div>
+              <span className={`admin-review-record__status admin-chip ${item.approved ? "is-success" : "is-warning"}`}>
+                {item.approved ? "Approved" : "Pending"}
+              </span>
+              <p className="admin-review-record__date">{createdAtLabel}</p>
             </div>
-          </div>
-          <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
-        </button>
-        {isExpanded ? (
-          <div id={reviewBodyId} className="admin-collapsible__body admin-review-record__body">
-            <div className="admin-review-rating admin-review-record__rating" aria-label={`Rating ${rating.toFixed(1)} out of 5`}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span key={star} className={star <= roundedRating ? "is-filled" : ""} aria-hidden="true">*</span>
-              ))}
-              <strong>{rating.toFixed(1)} / 5</strong>
+            <div className="admin-review-record__content">
+              <h3>
+                <span>{reviewerName}</span>
+                <i>on</i>
+                {productId ? (
+                  <Link href={`/products/${productId}`}>{productName}</Link>
+                ) : (
+                  <strong>{productName}</strong>
+                )}
+              </h3>
+              <p className="admin-review-record__comment">{item.comment || "No review text."}</p>
             </div>
-            <p className="admin-review-record__comment">{item.comment || "No review text"}</p>
-            <div className="admin-review-meta admin-review-record__meta">
-              <span className="admin-chip is-neutral">Created {formatDateTime(item.createdAt)}</span>
-              {productId ? (
-                <Link className="ghost-button admin-review-record__link" href={`/products/${productId}`}>
-                  Open product
-                </Link>
-              ) : null}
-            </div>
-            <div className="admin-actions admin-review-record__actions">
+            <div className="admin-review-record__actions">
               {!item.approved ? (
                 <button className="ghost-button admin-review-record__approve" disabled={busy} onClick={() => onAction("moderateReview", item, null, true)}>Approve</button>
               ) : null}
-              {item.approved ? (
-                <button className="ghost-button admin-review-record__reject" disabled={busy} onClick={() => onAction("moderateReview", item, null, false)}>Reject</button>
+              <button className="ghost-button admin-review-record__reject" disabled={busy} onClick={() => onAction("moderateReview", item, null, false)}>
+                {item.approved ? "Reject" : "Reject"}
+              </button>
+              {productId ? (
+                <Link className="ghost-button admin-review-record__link" href={`/products/${productId}`}>
+                  Open Product
+                </Link>
               ) : null}
               <button className="danger-button admin-review-record__delete" disabled={busy} onClick={() => onAction("deleteReview", item)}>Delete</button>
             </div>
           </div>
-        ) : null}
-      </article>
-    );
-  }
+        </article>
+      );
+    }
 
   if (type === "affiliates") {
     const active = item.isActive !== false;
@@ -1931,6 +2200,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const [reviewStatusFilter, setReviewStatusFilter] = useState("all");
   const [reviewRatingFilter, setReviewRatingFilter] = useState("all");
   const [reviewSort, setReviewSort] = useState("newest");
+  const [selectedReviewIds, setSelectedReviewIds] = useState([]);
   const [discountStatusFilter, setDiscountStatusFilter] = useState("all");
   const [discountPercentFilter, setDiscountPercentFilter] = useState("all");
   const [discountSort, setDiscountSort] = useState("newest");
@@ -2458,6 +2728,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
     setReviewStatusFilter("all");
     setReviewRatingFilter("all");
     setReviewSort("newest");
+    setSelectedReviewIds([]);
     setQuery("");
   }
   function resetDiscountFilters() {
@@ -2699,7 +2970,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             </button>
           </header>
         ) : null}
-        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
+        {type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" ? <AdminHero title={config.title} subtitle={config.subtitle} count={count} busy={loading} /> : null}
 
         {type === "products" && !isProductDedicatedPage ? (
           <>
@@ -2854,7 +3125,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -3037,7 +3308,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             <span className="admin-chip is-success">Earned: {formatCurrency(affiliateStats.totalEarned)}</span>
           </section>
         ) : null}
-        {type === "reviews" && reviewStats ? (
+        {false && type === "reviews" && reviewStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {reviewStats.total}</span>
             <span className="admin-chip is-neutral">Showing: {reviewStats.filtered}</span>
@@ -3189,7 +3460,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "reviews" && reviewStats ? (
+        {false && type === "reviews" && reviewStats ? (
           <section className="admin-viz-grid panel">
             <TinyBarChart
               title="Rating distribution"
@@ -3356,8 +3627,34 @@ export default function AdminManager({ type, productMode = "list", productId = "
             runAction={runAction}
           />
         ) : null}
+        {!loading && !error && type === "reviews" ? (
+          <ReviewsWorkspace
+            items={items}
+            stats={reviewStats}
+            query={query}
+            setQuery={setQuery}
+            reviewStatusFilter={reviewStatusFilter}
+            setReviewStatusFilter={setReviewStatusFilter}
+            reviewRatingFilter={reviewRatingFilter}
+            setReviewRatingFilter={setReviewRatingFilter}
+            reviewSort={reviewSort}
+            setReviewSort={setReviewSort}
+            toolbarOpen={toolbarOpen}
+            setToolbarOpen={setToolbarOpen}
+            selectedReviewIds={selectedReviewIds}
+            setSelectedReviewIds={setSelectedReviewIds}
+            refreshing={refreshing}
+            busyAction={busyAction}
+            loadData={loadData}
+            resetReviewFilters={resetReviewFilters}
+            exportCsv={exportCsv}
+            exportJson={exportJson}
+            exportSql={exportSql}
+            runAction={runAction}
+          />
+        ) : null}
         {!loading && !error && type === "dashboard" ? <DashboardView payload={payload} /> : null}
-        {!loading && !error && type !== "dashboard" && type !== "affiliates" && !(type === "products" && isProductDedicatedPage) ? (
+        {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && !(type === "products" && isProductDedicatedPage) ? (
           <AdminCards type={type} items={items} onAction={runAction} busyAction={busyAction} userInsights={userInsights} />
         ) : null}
         {type === "users" && selectedUser360 ? (
