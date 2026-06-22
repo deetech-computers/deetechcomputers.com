@@ -924,7 +924,7 @@ function BannerForm({ initial, onSubmit, busy, submitLabel = "Create Banner" }) 
     : "all";
 
   return (
-    <form className="admin-form" onSubmit={onSubmit}>
+    <form className="admin-form admin-banner-form" onSubmit={onSubmit}>
       <input className="field" name="imageUrl" defaultValue={initial?.imageUrl || ""} placeholder="Banner image URL (optional when uploading file)" />
       <label className="admin-inline-control">
         <span>Or upload banner image (JPG/PNG/WEBP)</span>
@@ -1844,41 +1844,43 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
 
   if (type === "banners") {
     const bannerBodyId = `admin-banner-body-${collapsibleIdBase}`;
+    const bannerLinkLabel = item.linkCategory
+      ? `Category link: ${item.linkCategory}${item.linkSubCategory ? ` / ${item.linkSubCategory}` : " / all"}`
+      : item.link
+        ? `Custom link: ${item.link}`
+        : "No click link (plain banner)";
     return (
-      <article className="admin-record panel admin-collapsible">
+      <article className="admin-record admin-banner-record panel admin-collapsible">
         <button
           type="button"
-          className="admin-collapsible__header admin-record-card__toggle"
+          className="admin-collapsible__header admin-record-card__toggle admin-banner-record__toggle"
           onClick={() => setIsExpanded((current) => !current)}
           aria-expanded={isExpanded}
           aria-controls={bannerBodyId}
         >
-          <div className="admin-record__main admin-record-card__summary">
-            <div className="admin-record__image">
+          <div className="admin-record__main admin-record-card__summary admin-banner-record__summary">
+            <div className="admin-record__image admin-banner-record__image">
               {item.imageUrl ? (
                 <StableImage src={item.imageUrl} alt={item.title} width={96} height={96} />
               ) : (
                 <span>No image</span>
               )}
             </div>
-            <div>
-              <h3>Homepage Banner</h3>
-              <p>
-                {item.linkCategory
-                  ? `Category link: ${item.linkCategory}${item.linkSubCategory ? ` / ${item.linkSubCategory}` : " / all"}`
-                  : item.link
-                    ? `Custom link: ${item.link}`
-                    : "No click link (plain banner)"}
-              </p>
-              <div className="admin-chip-row"><span className="admin-chip">Order {item.order || 0}</span></div>
+            <div className="admin-banner-record__content">
+              <p className="admin-banner-record__eyebrow">Homepage Campaign</p>
+              <h3>{item.title || "DEETECH Banner"}</h3>
+              <p className="admin-banner-record__link">{bannerLinkLabel}</p>
+              <div className="admin-chip-row admin-banner-record__chips">
+                <span className="admin-chip">Display Order {item.order || 0}</span>
+              </div>
             </div>
           </div>
           <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
         </button>
         {isExpanded ? (
-          <div id={bannerBodyId} className="admin-collapsible__body">
+          <div id={bannerBodyId} className="admin-collapsible__body admin-banner-record__body">
             {editing ? <BannerForm initial={item} submitLabel="Update Banner" busy={busy} onSubmit={(event) => onAction("updateBanner", item, event)} /> : null}
-            <div className="admin-actions">
+            <div className="admin-actions admin-banner-record__actions">
               <button className="ghost-button" type="button" onClick={() => setEditing((current) => !current)}>{editing ? "Close Edit" : "Edit"}</button>
               <button className="danger-button" disabled={busy} onClick={() => onAction("deleteBanner", item)}>Delete</button>
             </div>
