@@ -2,6 +2,7 @@ import Affiliate from "../models/Affiliate.js";
 import Referral from "../models/Referral.js";
 import User from "../models/User.js";
 import AffiliateProgramSettings from "../models/AffiliateProgramSettings.js";
+import { logActivity } from "../utils/activityLog.js";
 
 function normalizeCode(raw) {
   return String(raw || "").trim().toUpperCase();
@@ -168,6 +169,17 @@ export async function registerAffiliate(req, res) {
     momoNumberVerified: false,
     isActive: true,
     tier: "starter",
+  });
+
+  await logActivity({
+    req,
+    actorType: "user",
+    actor: user,
+    action: "affiliate.registered",
+    targetType: "affiliate",
+    targetId: String(affiliate._id),
+    targetLabel: affiliate.code,
+    description: `Joined the affiliate program (code ${affiliate.code})`,
   });
 
   return res.status(201).json(affiliate);

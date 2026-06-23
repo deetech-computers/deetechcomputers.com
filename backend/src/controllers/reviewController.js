@@ -2,6 +2,7 @@
 import asyncHandler from "express-async-handler";
 import Review from "../models/Review.js";
 import Product from "../models/Product.js";
+import { logActivity } from "../utils/activityLog.js";
 
 const reviewPopulate = [
   { path: "user", select: "name email role" },
@@ -43,6 +44,17 @@ export const addReview = asyncHandler(async (req, res) => {
 
   product.reviews.push(review._id);
   await product.save();
+
+  await logActivity({
+    req,
+    actorType: "user",
+    actor: req.user,
+    action: "review.submitted",
+    targetType: "product",
+    targetId: String(product._id),
+    targetLabel: product.name,
+    description: `Reviewed "${product.name}" (${review.rating}/5)`,
+  });
 
   const created = await Review.findById(review._id).populate(reviewPopulate);
   res.status(201).json(created);

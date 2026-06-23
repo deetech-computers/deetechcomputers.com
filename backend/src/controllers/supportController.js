@@ -2,6 +2,7 @@
 import Support from "../models/Support.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import { createSupportSchema, updateSupportSchema, replySupportSchema } from "../validators/supportSchemas.js";
+import { logActivity } from "../utils/activityLog.js";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -156,6 +157,20 @@ export const createSupport = asyncHandler(async (req, res) => {
     ],
   };
   const support = await Support.create(payload);
+
+  await logActivity({
+    req,
+    actorType: req.user ? "user" : "guest",
+    actor: req.user || null,
+    actorName: support.name,
+    actorEmail: email,
+    action: "support.ticket_created",
+    targetType: "support",
+    targetId: String(support._id),
+    targetLabel: support.subject || email,
+    description: `Opened a support ticket: "${support.subject || "No subject"}"`,
+  });
+
   res.status(201).json(support);
 });
 

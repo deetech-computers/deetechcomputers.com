@@ -14,6 +14,7 @@ const items = [
   ["/admin/banners", "Banners", "banners"],
   ["/admin/messages", "Messages", "messages"],
   ["/admin/discounts", "Discounts", "discounts"],
+  ["/admin/logs", "Logs", "logs"],
 ];
 
 function AdminNavIcon({ name }) {
@@ -51,6 +52,9 @@ function AdminNavIcon({ name }) {
   }
   if (name === "storefront") {
     return <svg {...svgProps}><path d="M4 10v9h16v-9M2 10l2-6h16l2 6M2 10h20M9 19v-5h6v5" {...common} /></svg>;
+  }
+  if (name === "logs") {
+    return <svg {...svgProps}><path d="M4 5h16v14H4zM4 9h16M9 5v4" {...common} /></svg>;
   }
   return <svg {...svgProps}><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
 }

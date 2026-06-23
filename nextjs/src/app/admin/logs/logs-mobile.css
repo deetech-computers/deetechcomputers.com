@@ -1,0 +1,213 @@
+/* Admin Logs mobile workspace. Dedicated card list. */
+@media (max-width: 900px) {
+  .admin-logs-route {
+    --logs-ink: #111c2c;
+    --logs-muted: #667066;
+    --logs-green: #003714;
+    --logs-canvas: #f5f6f7;
+    --logs-surface: #f9f9ff;
+    --logs-field: #edf2f7;
+    --logs-line: #c8d0c6;
+    width: 100%;
+    min-width: 0;
+    min-height: 100dvh;
+    background: var(--logs-canvas);
+  }
+
+  .admin-logs-route .admin-main { width: 100%; min-width: 0; background: var(--logs-canvas); }
+  .admin-logs-route .admin-logs-workspace { width: min(100%, 480px); min-width: 0; display: grid; gap: 12px; margin: 0 auto; padding: 0 12px 34px; color: var(--logs-ink); }
+  .admin-logs-route .admin-logs-head,
+  .admin-logs-route .admin-logs-table-head { display: none !important; }
+
+  .admin-logs-route .admin-logs-mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 35;
+    width: calc(100% + 24px);
+    min-height: 62px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    align-items: center;
+    margin: 0 -12px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--logs-line);
+    background: var(--logs-surface);
+  }
+
+  .admin-logs-route .admin-logs-mobile-topbar h1 { margin: 0; font-size: var(--admin-text-title-mobile); font-weight: 700; color: var(--logs-green); }
+  .admin-logs-route .admin-logs-mobile-topbar > a,
+  .admin-logs-route .admin-logs-mobile-topbar > button { width: 42px; height: 42px; display: grid; place-items: center; border: 0; background: transparent; color: var(--logs-green); }
+
+  .admin-logs-route .admin-logs-toolbar {
+    display: grid;
+    gap: 8px;
+  }
+
+  .admin-logs-route .admin-logs-search {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 13px;
+    border-radius: 4px;
+    background: var(--logs-field);
+    color: var(--logs-muted);
+  }
+
+  .admin-logs-route .admin-logs-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--logs-ink);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .admin-logs-route .admin-logs-toolbar select {
+    min-height: 46px;
+    padding: 0 12px;
+    border: 1px solid var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--logs-ink);
+    font-size: 13px;
+  }
+
+  .admin-logs-route .admin-logs-refresh {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    border: 1px solid var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--logs-green);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .admin-logs-route .admin-logs-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .admin-logs-route .admin-logs-stats article {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 1px solid var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .admin-logs-route .admin-logs-stats span { color: var(--logs-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .admin-logs-route .admin-logs-stats strong { color: var(--logs-green); font-family: var(--admin-font-mono), monospace; font-size: var(--admin-text-stat-value-mobile); }
+
+  .admin-logs-route .admin-logs-empty {
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    padding: 24px;
+    border: 1px dashed var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--logs-muted);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .admin-logs-route .admin-logs-empty.is-error { color: #ba1a1a; border-color: rgba(186, 26, 26, 0.3); }
+
+  .admin-record-list--logs { display: grid; gap: 10px; }
+
+  .admin-logs-route .admin-log-record {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(17, 28, 44, .045);
+  }
+
+  .admin-logs-route .admin-log-record__actor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .admin-logs-route .admin-log-record__actor > div { min-width: 0; display: grid; gap: 2px; }
+  .admin-logs-route .admin-log-record__actor strong,
+  .admin-logs-route .admin-log-record__actor small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-logs-route .admin-log-record__actor strong { font-size: 13px; }
+  .admin-logs-route .admin-log-record__actor small { color: var(--logs-muted); font-size: 11px; }
+
+  .admin-logs-route .admin-log-record__badge {
+    flex: 0 0 auto;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .admin-logs-route .admin-log-record__badge.is-user { background: #e2f7e6; color: #1f6c35; }
+  .admin-logs-route .admin-log-record__badge.is-guest { background: #eef2ff; color: #3147a3; }
+  .admin-logs-route .admin-log-record__badge.is-admin { background: #fdecea; color: #ba1a1a; }
+  .admin-logs-route .admin-log-record__badge.is-system { background: #f0f3ff; color: #5f6762; }
+
+  .admin-logs-route .admin-log-record__action { display: grid; gap: 4px; }
+  .admin-logs-route .admin-log-record__action strong { color: var(--logs-green); font-size: 13px; }
+  .admin-logs-route .admin-log-record__action p { margin: 0; color: var(--logs-muted); font-size: 12px; overflow-wrap: anywhere; }
+
+  .admin-logs-route .admin-log-record__target {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eef1ec;
+  }
+
+  .admin-logs-route .admin-log-record__target span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--logs-ink); font-size: 12px; }
+  .admin-logs-route .admin-log-record__target span.is-muted { color: var(--logs-muted); }
+  .admin-logs-route .admin-log-record__target small { flex: 0 0 auto; color: var(--logs-muted); font-size: 11px; text-transform: capitalize; }
+
+  .admin-logs-route .admin-log-record__time {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--logs-muted);
+    font-size: 11px;
+  }
+
+  .admin-logs-route .admin-log-record__time small { font-family: var(--admin-font-mono), monospace; }
+
+  .admin-logs-route .admin-logs-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--logs-muted);
+    font-size: 12px;
+  }
+
+  .admin-logs-route .admin-logs-pagination button {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--logs-line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--logs-green);
+    font-weight: 700;
+  }
+
+  .admin-logs-route .admin-logs-pagination button:disabled {
+    opacity: 0.4;
+  }
+}

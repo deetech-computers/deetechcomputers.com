@@ -17,6 +17,7 @@ import {
 import { sendOrderNotification, sendOrderConfirmation } from "../utils/emailService.js";
 import { getHubtelCheckoutUrl, initiateHubtelCheckout } from "../utils/hubtelService.js";
 import { deleteStoredMedia } from "../utils/mediaStorage.js";
+import { logActivity } from "../utils/activityLog.js";
 import { buildOrderPricing, getCommissionableAmount } from "../utils/orderPricing.js";
 import { getProductPricing } from "../utils/productPricing.js";
 import {
@@ -1326,6 +1327,18 @@ export async function createOrder(req, res) {
       mobileNumber: order.mobileNumber,
     });
 
+    await logActivity({
+      req,
+      actorType: "user",
+      actor: req.user,
+      action: "order.placed",
+      targetType: "order",
+      targetId: String(order._id),
+      targetLabel: order.clientOrderRef || String(order._id),
+      description: `Placed an order (GH₵${Number(order.totalPrice || 0).toFixed(2)})`,
+      metadata: { paymentMethod, totalPrice: Number(order.totalPrice || 0) },
+    });
+
     if (normalizedPaymentFlow === "auto") {
       if (Number(pricing.totalPrice || 0) <= 0) {
         throw new Error("Order total must be greater than zero for Hubtel automatic checkout.");
@@ -1741,6 +1754,19 @@ export async function createGuestOrder(req, res) {
       shippingEmail: order.shippingEmail,
       guestEmail: order.guestEmail,
       mobileNumber: order.mobileNumber,
+    });
+
+    await logActivity({
+      req,
+      actorType: "guest",
+      actorName: guestName,
+      actorEmail: normalizedGuestEmail,
+      action: "order.placed",
+      targetType: "order",
+      targetId: String(order._id),
+      targetLabel: order.clientOrderRef || String(order._id),
+      description: `Guest placed an order (GH₵${Number(order.totalPrice || 0).toFixed(2)})`,
+      metadata: { paymentMethod, totalPrice: Number(order.totalPrice || 0) },
     });
 
     if (normalizedPaymentFlow === "auto") {

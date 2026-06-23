@@ -11,6 +11,7 @@ backend/src/.env
 logs/
 backend/logs/
 backend/src/logs/
+!nextjs/src/app/admin/logs/
 
 uploads/
 backend/uploads/

@@ -11,6 +11,7 @@ import {
   GOOGLE_CLIENT_ID,
 } from "../config/env.js";
 import { sendPasswordResetEmail } from "../utils/emailService.js";
+import { logActivity } from "../utils/activityLog.js";
 
 function generateToken(user) {
   return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
@@ -65,6 +66,17 @@ export async function registerUser(req, res) {
   // 🚀 Let the User model pre-save hook handle hashing
   const user = await User.create({ name, email, password });
 
+  await logActivity({
+    req,
+    actorType: "user",
+    actor: user,
+    action: "user.registered",
+    targetType: "user",
+    targetId: String(user._id),
+    targetLabel: user.email,
+    description: "New account registered",
+  });
+
   res.status(201).json(buildAuthResponse(user));
 }
 
@@ -90,6 +102,17 @@ export async function loginUser(req, res) {
     res.status(401);
     throw new Error("Invalid credentials");
   }
+
+  await logActivity({
+    req,
+    actorType: user.role === "admin" ? "admin" : "user",
+    actor: user,
+    action: "user.login",
+    targetType: "user",
+    targetId: String(user._id),
+    targetLabel: user.email,
+    description: "Logged in",
+  });
 
   res.json(buildAuthResponse(user));
 }
@@ -241,6 +264,18 @@ export async function googleAuth(req, res) {
     if (changed) {
       await user.save();
     }
+
+    await logActivity({
+      req,
+      actorType: user.role === "admin" ? "admin" : "user",
+      actor: user,
+      action: "user.login",
+      targetType: "user",
+      targetId: String(user._id),
+      targetLabel: user.email,
+      description: "Logged in with Google",
+    });
+
     return res.json(buildAuthResponse(user));
   }
 
@@ -253,6 +288,17 @@ export async function googleAuth(req, res) {
     googleId,
     authProvider: "google",
     avatarUrl,
+  });
+
+  await logActivity({
+    req,
+    actorType: "user",
+    actor: user,
+    action: "user.registered",
+    targetType: "user",
+    targetId: String(user._id),
+    targetLabel: user.email,
+    description: "New account registered with Google",
   });
 
   return res.status(201).json(buildAuthResponse(user));

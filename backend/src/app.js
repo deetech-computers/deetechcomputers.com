@@ -30,6 +30,7 @@ import bannerRoutes from "./routes/bannerRoutes.js";
 import discountRoutes from "./routes/discountRoutes.js";
 import adminDiscountRoutes from "./routes/adminDiscountRoutes.js";
 import affiliateRoutes from "./routes/affiliateRoutes.js";
+import activityLogRoutes from "./routes/activityLogRoutes.js";
 import { ensureProductSnapshotExists, rebuildProductSnapshot } from "./utils/productSnapshot.js";
 
 export default async function createApp() {
@@ -151,6 +152,7 @@ export default async function createApp() {
   app.use("/api/orders", orderRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/admin", adminRoutes);
+  app.use("/api/admin/activity-logs", activityLogRoutes);
   app.use("/api/reviews", reviewRoutes);
   app.use("/api/wishlist", wishlistRoutes);
   app.use("/api/admin/wishlist", adminWishlistRoutes);
