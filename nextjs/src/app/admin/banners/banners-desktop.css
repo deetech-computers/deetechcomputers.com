@@ -412,16 +412,22 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
   }
 
   .admin-banners-route .admin-banners-desktop-row__body h3 {
     margin: 0;
+    min-width: 0;
     color: var(--banners-green);
     font-size: 18px;
     font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .admin-banners-route .admin-banners-id-chip {
+    flex-shrink: 0;
     padding: 2px 8px;
     border-radius: 6px;
     background: var(--banners-soft);
