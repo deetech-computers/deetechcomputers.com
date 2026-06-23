@@ -150,6 +150,14 @@ const SOCIAL_LINKS = [
   { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
 ];
 
+function BackArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function ProductActionIcon({ name }) {
   if (name === "copy") {
     return (
@@ -253,6 +261,7 @@ export default function ProductDetailPage() {
   const previewThumbnailRailRef = useRef(null);
   const relatedRailRef = useRef(null);
   const tabsSectionRef = useRef(null);
+  const galleryTouchStartXRef = useRef(null);
   const [relatedRailNav, setRelatedRailNav] = useState({ left: false, right: false });
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
@@ -774,6 +783,26 @@ export default function ProductDetailPage() {
     setQty((current) => Math.min(Math.max(stock, 1), current + 1));
   }
 
+  function handleGalleryTouchStart(event) {
+    galleryTouchStartXRef.current = event.touches?.[0]?.clientX ?? null;
+  }
+
+  function handleGalleryTouchEnd(event) {
+    const startX = galleryTouchStartXRef.current;
+    galleryTouchStartXRef.current = null;
+    if (startX === null || images.length < 2) return;
+
+    const endX = event.changedTouches?.[0]?.clientX ?? startX;
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 40) return;
+
+    if (deltaX > 0) {
+      setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1));
+    } else {
+      setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1));
+    }
+  }
+
   function buildShareUrl() {
     const baseUrl = `${window.location.origin}/products/${productId}`;
     const code = normalizeAffiliateCode(affiliateShareCode);
@@ -869,6 +898,16 @@ export default function ProductDetailPage() {
 
   return (
     <main className="shell page-section product-detail-page">
+      <div className="product-detail-mobile-topbar">
+        <button type="button" onClick={() => router.back()} aria-label="Go back">
+          <BackArrowIcon />
+        </button>
+        <span className="product-detail-mobile-topbar__title">{categoryLabel}</span>
+        <button type="button" onClick={handleShare} aria-label="Share product">
+          <ProductActionIcon name="share" />
+        </button>
+      </div>
+
       <section className="product-breadcrumbs" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
@@ -886,6 +925,8 @@ export default function ProductDetailPage() {
               type="button"
               className="product-gallery__main product-gallery__main--interactive"
               onClick={() => setPreviewOpen(true)}
+              onTouchStart={handleGalleryTouchStart}
+              onTouchEnd={handleGalleryTouchEnd}
               aria-label="Tap to preview product image"
             >
               {visibleMainImage.src ? (
@@ -928,6 +969,20 @@ export default function ProductDetailPage() {
               </>
             ) : null}
           </div>
+
+          {images.length > 1 ? (
+            <div className="product-gallery__dots" role="tablist" aria-label="Image pagination">
+              {images.map((_, index) => (
+                <button
+                  key={`dot-${index}`}
+                  type="button"
+                  className={activeImageIndex === index ? "product-gallery__dot is-active" : "product-gallery__dot"}
+                  onClick={() => setActiveImage(index)}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
+          ) : null}
 
           {images.length ? (
             <div
