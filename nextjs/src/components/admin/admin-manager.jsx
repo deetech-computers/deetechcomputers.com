@@ -736,15 +736,14 @@ function UpgradeOptionsEditor({ title, items, onChange, addLabel }) {
   );
 }
 
-function ProductEditorSection({ title, meta = "", icon = "box", defaultOpen = false, children }) {
+function ProductEditorSection({ title, meta = "", icon = "box", children }) {
   return (
-    <details className="admin-product-editor-section" defaultOpen={defaultOpen}>
-      <summary>
+    <section className="admin-product-editor-section">
+      <div className="admin-product-editor-section__head">
         <span><AdminProductsIcon name={icon} /><strong>{title}</strong>{meta ? <small>{meta}</small> : null}</span>
-        <AdminProductsIcon name="chevron" />
-      </summary>
+      </div>
       <div className="admin-product-editor-section__body">{children}</div>
-    </details>
+    </section>
   );
 }
 
@@ -1773,7 +1772,7 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
 
   return (
     <form id="admin-product-editor-form" className="admin-form admin-product-editor-form" onSubmit={onSubmit}>
-      <ProductEditorSection title="Product Basics" icon="box" defaultOpen>
+      <ProductEditorSection title="Product Basics" icon="box">
         <div className="admin-product-editor-fields admin-product-editor-fields--basics">
           <label><span>Product Name <b>*</b></span><input className="field" name="name" defaultValue={initial?.name || ""} placeholder="e.g. MacBook Pro 14-inch M3" required /></label>
           <label><span>Card Description (Short)</span><input className="field" name="short_description" defaultValue={initial?.short_description || ""} placeholder="Brief summary for catalog cards..." /></label>

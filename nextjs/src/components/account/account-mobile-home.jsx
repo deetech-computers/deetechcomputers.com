@@ -32,11 +32,6 @@ function getInitials(profile) {
   return initials.toUpperCase() || "DC";
 }
 
-function getCompletion(profile) {
-  const fields = [profile?.firstName, profile?.lastName, profile?.email, profile?.phone];
-  const complete = fields.filter((value) => String(value || "").trim()).length;
-  return Math.round((complete / fields.length) * 100);
-}
 
 function MobileAccountIcon({ name }) {
   const common = {
@@ -130,7 +125,6 @@ export default function MobileAccountHome({
   supportTicketsCount,
   onLogout,
 }) {
-  const completion = getCompletion(profile);
   const displayName = getDisplayName(profile);
   const menuItems = MOBILE_ACCOUNT_ITEMS.filter((item) => {
     if (item.supportOnly && !hasSupportTickets) return false;
@@ -148,18 +142,11 @@ export default function MobileAccountHome({
 
         <article className="account-mobile-home__profile">
           <div className="account-mobile-home__avatar" aria-hidden="true">
-            {getInitials(profile)}
+            {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : getInitials(profile)}
           </div>
           <div className="account-mobile-home__identity">
             <strong>{displayName}</strong>
             <span>{profile?.email || "Customer account"}</span>
-          </div>
-          <div className="account-mobile-home__progress">
-            <div>
-              <span>Profile Completion</span>
-              <strong>{completion}%</strong>
-            </div>
-            <i><b style={{ width: `${completion}%` }} /></i>
           </div>
         </article>
 

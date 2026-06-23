@@ -95,29 +95,21 @@
     background: var(--editor-surface);
   }
 
-  .admin-product-editor-route .admin-product-editor-section > summary {
+  .admin-product-editor-route .admin-product-editor-section__head {
     min-height: 58px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
     padding: 0 14px;
-    color: var(--editor-green);
-    list-style: none;
-    cursor: pointer;
-  }
-
-  .admin-product-editor-route .admin-product-editor-section > summary::-webkit-details-marker { display: none; }
-  .admin-product-editor-route .admin-product-editor-section > summary > span { min-width: 0; display: flex; align-items: center; gap: 9px; }
-  .admin-product-editor-route .admin-product-editor-section > summary svg { width: 17px; height: 17px; flex: 0 0 17px; }
-  .admin-product-editor-route .admin-product-editor-section > summary > svg { transition: transform .18s ease; }
-  .admin-product-editor-route .admin-product-editor-section[open] > summary > svg { transform: rotate(90deg); }
-  .admin-product-editor-route .admin-product-editor-section > summary strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-  .admin-product-editor-route .admin-product-editor-section > summary small { color: var(--editor-muted); font-size: 10px; white-space: nowrap; }
-
-  .admin-product-editor-route .admin-product-editor-section[open] > summary {
     border-bottom: 1px solid var(--editor-line);
+    color: var(--editor-green);
   }
+
+  .admin-product-editor-route .admin-product-editor-section__head > span { min-width: 0; display: flex; align-items: center; gap: 9px; }
+  .admin-product-editor-route .admin-product-editor-section__head svg { width: 17px; height: 17px; flex: 0 0 17px; }
+  .admin-product-editor-route .admin-product-editor-section__head strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-product-editor-route .admin-product-editor-section__head small { color: var(--editor-muted); font-size: 10px; white-space: nowrap; }
 
   .admin-product-editor-route .admin-product-editor-section__body {
     min-width: 0;

@@ -195,12 +195,6 @@ function getAccountInitials(profile) {
     .toUpperCase() || "DC";
 }
 
-function getProfileCompletion(profile) {
-  const fields = [profile?.firstName, profile?.lastName, profile?.email, profile?.phone];
-  const complete = fields.filter((value) => String(value || "").trim()).length;
-  return Math.round((complete / fields.length) * 100);
-}
-
 function AccountNavIcon({ name }) {
   const common = {
     fill: "none",
@@ -534,7 +528,6 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
   });
   const logoutItem = ACCOUNT_SECTIONS.find((item) => item.id === "logout");
   const displayName = getAccountDisplayName(profile);
-  const completion = getProfileCompletion(profile);
   return (
     <aside className="account-dashboard__sidebar" aria-label="Account sections">
       <div className="account-dashboard__sidebar-scroll">
@@ -549,13 +542,6 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
           <div className="account-sidebar-profile__copy">
             <strong>{displayName}</strong>
             <span>{profile?.email || "Customer account"}</span>
-          </div>
-          <div className="account-sidebar-profile__progress" aria-label={`Profile ${completion}% complete`}>
-            <div>
-              <span>Profile</span>
-              <strong>{completion}%</strong>
-            </div>
-            <i style={{ width: `${completion}%` }} />
           </div>
         </div>
         {sections.map((item) => {
@@ -1368,32 +1354,9 @@ function AccountTransientState({ mode = "loading" }) {
   const isRedirect = mode === "redirect";
   return (
     <main className="shell page-section account-transient-page">
-      <nav className="account-transient-crumbs" aria-label="Breadcrumb">
-        <Link href="/">Home</Link>
-        <span>/</span>
-        <strong>My Account</strong>
-      </nav>
-      <div className="account-transient-kicker">My Account</div>
-
-      <section className={`account-transient-card ${isRedirect ? "is-redirect" : "is-loading"}`} aria-live="polite">
-        <div className="account-transient-card__orb" aria-hidden="true">
-          <span />
-        </div>
-        <span className="account-transient-card__badge">{isRedirect ? "Secure redirect" : "Secure session check"}</span>
-        <h1>{isRedirect ? "Redirecting to login" : "Account dashboard loading"}</h1>
-        <p>
-          {isRedirect
-            ? "Taking you to the login page so your account details stay protected."
-            : "Loading your profile, saved details, orders, messages, and account activity."}
-        </p>
-        <div className="account-transient-skeleton" aria-hidden="true">
-          <span />
-          <div>
-            <i />
-            <i />
-            <i />
-          </div>
-        </div>
+      <section className="account-transient-card" aria-live="polite">
+        <span className="account-transient-spinner" aria-hidden="true" />
+        <p>{isRedirect ? "Redirecting to login..." : "Loading your account..."}</p>
       </section>
     </main>
   );
