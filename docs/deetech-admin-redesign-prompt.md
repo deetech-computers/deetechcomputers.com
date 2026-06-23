@@ -1,8 +1,5 @@
 # DEETECH Admin Redesign Map and Stitch/Claude Brief
 
-Use this document to brief Google Stitch and Claude on a complete redesign of the DEETECH Computers admin area. The redesign must change presentation, layout, hierarchy, and admin experience only. Do not change the existing routes, API calls, permissions, form field names, product logic, order logic, export behavior, or mutation behavior.
-
-The admin is an operations workspace for a Ghana-based ecommerce store selling laptops, phones, monitors, accessories, printers, storage devices, and other tech products.
 
 ## Non-Negotiables
 

@@ -897,588 +897,554 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <main className="shell page-section product-detail-page">
-      <div className="product-detail-mobile-topbar">
-        <button type="button" onClick={() => router.back()} aria-label="Go back">
-          <BackArrowIcon />
-        </button>
-        <span className="product-detail-mobile-topbar__title">{categoryLabel}</span>
-        <button type="button" onClick={handleShare} aria-label="Share product">
-          <ProductActionIcon name="share" />
-        </button>
-      </div>
-
-      <section className="product-breadcrumbs" aria-label="Breadcrumb">
-        <Link href="/">Home</Link>
-        <span>/</span>
-        <Link href="/products">Shop</Link>
-        <span>/</span>
-        <span>{categoryLabel}</span>
-        <span>/</span>
-        <span>{product.name}</span>
-      </section>
-
-      <section className="product-detail-view">
-        <div className="product-gallery panel">
-          <div className="product-gallery__stage">
-            <button
-              type="button"
-              className="product-gallery__main product-gallery__main--interactive"
-              onClick={() => setPreviewOpen(true)}
-              onTouchStart={handleGalleryTouchStart}
-              onTouchEnd={handleGalleryTouchEnd}
-              aria-label="Tap to preview product image"
-            >
-              {visibleMainImage.src ? (
-                <>
-                  <StableImage
-                    src={visibleMainImage.src}
-                    srcSet={visibleMainImage.srcSet}
-                    sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
-                    alt={product.name}
-                    width={560}
-                    height={560}
-                    loading="eager"
-                    fetchPriority="high"
-                    className="product-gallery__main-image"
-                  />
-                  {mainImageLoading ? <span className="product-gallery__main-loading" aria-hidden="true" /> : null}
-                </>
-              ) : (
-                <div className="product-card__placeholder">No image</div>
-              )}
-            </button>
-            {images.length > 1 ? (
-              <>
-                <button
-                  type="button"
-                  className="product-gallery__stage-arrow product-gallery__stage-arrow--left"
-                  onClick={() => setActiveImage(activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1)}
-                  aria-label="Previous product image"
-                >
-                  &lsaquo;
-                </button>
-                <button
-                  type="button"
-                  className="product-gallery__stage-arrow product-gallery__stage-arrow--right"
-                  onClick={() => setActiveImage(activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1)}
-                  aria-label="Next product image"
-                >
-                  &rsaquo;
-                </button>
-              </>
-            ) : null}
-          </div>
-
-          {images.length > 1 ? (
-            <div className="product-gallery__dots" role="tablist" aria-label="Image pagination">
-              {images.map((_, index) => (
-                <button
-                  key={`dot-${index}`}
-                  type="button"
-                  className={activeImageIndex === index ? "product-gallery__dot is-active" : "product-gallery__dot"}
-                  onClick={() => setActiveImage(index)}
-                  aria-label={`Go to image ${index + 1}`}
-                />
-              ))}
+    <>
+      {/* DESKTOP HEADER */}
+      <header className="hidden md:flex bg-white sticky top-0 z-50 shadow-sm">
+        <nav className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto w-full">
+          <div className="flex items-center gap-10">
+            <span className="font-headline-lg text-headline-lg font-bold text-primary">DEETECH Computers</span>
+            <div className="flex gap-6 items-center">
+              <a className="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md" href="/products/laptops">Laptops</a>
+              <a className="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md" href="/products/desktops">Desktops</a>
+              <a className="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md" href="/products/accessories">Accessories</a>
+              <a className="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md" href="/products">Workstations</a>
+              <a className="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md text-label-md" href="/contact">Support</a>
             </div>
-          ) : null}
+          </div>
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.push("/cart")} className="p-2 hover:bg-surface-container rounded-full transition-all">
+              <span className="material-symbols-outlined text-primary">shopping_cart</span>
+            </button>
+            <button onClick={() => router.push("/account")} className="p-2 hover:bg-surface-container rounded-full transition-all">
+              <span className="material-symbols-outlined text-primary">account_circle</span>
+            </button>
+          </div>
+        </nav>
+      </header>
 
-          {images.length ? (
-            <div
-              className="product-gallery__selector"
-              aria-label="Product images"
-            >
-              <button
-                type="button"
-                className="product-gallery__arrow"
-                onClick={() => scrollThumbnailRail(-1)}
-                aria-label="Scroll product images left"
-              >
-                &lsaquo;
-              </button>
-              <div
-                ref={thumbnailRailRef}
-                className="product-gallery__thumbs"
-              >
+      {/* MOBILE TOP BAR */}
+      <header className="md:hidden fixed top-0 w-full bg-white z-50 flex items-center justify-between px-4 h-16 shadow-sm">
+        <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-primary">arrow_back</span>
+        </button>
+        <nav className="flex-1 px-4">
+          <span className="font-label-md text-label-md text-on-surface-variant">Home / </span>
+          <span className="font-label-md text-label-md text-primary font-bold">{categoryLabel}</span>
+        </nav>
+        <button onClick={handleShare} className="w-10 h-10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-primary">share</span>
+        </button>
+      </header>
+
+      <main className="md:pt-20 pt-0">
+        {/* BREADCRUMBS - DESKTOP ONLY */}
+        <nav className="hidden md:flex items-center gap-1 text-on-surface-variant font-label-md text-label-md mb-6 max-w-7xl mx-auto px-6 pt-6">
+          <Link href="/">Home</Link>
+          <span className="material-symbols-outlined text-sm">chevron_right</span>
+          <Link href="/products">Shop</Link>
+          <span className="material-symbols-outlined text-sm">chevron_right</span>
+          <Link href={`/products/${canonicalCategory(product?.category)}`}>{categoryLabel}</Link>
+          <span className="material-symbols-outlined text-sm">chevron_right</span>
+          <span className="text-primary font-bold">{product.name}</span>
+        </nav>
+
+        {/* DESKTOP LAYOUT: 2-column grid */}
+        <div className="hidden md:grid max-w-7xl mx-auto px-6 gap-6 mb-12">
+          <div className="col-span-7">
+            {/* IMAGE GALLERY */}
+            <div className="bg-white p-6 rounded-xl shadow-sm flex items-center justify-center min-h-96 overflow-hidden">
+              {visibleMainImage.src ? (
+                <StableImage
+                  src={visibleMainImage.src}
+                  srcSet={visibleMainImage.srcSet}
+                  alt={product.name}
+                  width={560}
+                  height={560}
+                  loading="eager"
+                  fetchPriority="high"
+                  className="w-full h-auto object-contain hover:scale-105 transition-transform duration-500 cursor-pointer"
+                  onClick={() => setPreviewOpen(true)}
+                />
+              ) : (
+                <div className="text-on-surface-variant">No image</div>
+              )}
+            </div>
+
+            {/* THUMBNAIL RAIL */}
+            {images.length > 1 && (
+              <div className="flex gap-4 mt-4">
                 {images.map((image, index) => (
                   <button
-                    key={`${image}-${index}`}
-                    type="button"
-                    className={activeImageIndex === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
+                    key={`thumb-${index}`}
                     onClick={() => setActiveImage(index)}
-                    aria-label={`View image ${index + 1}`}
+                    className={`relative w-24 h-24 rounded-lg overflow-hidden border-2 transition-all ${
+                      activeImageIndex === index ? "border-primary-container" : "border-transparent"
+                    }`}
                   >
                     <StableImage
                       src={optimizedThumbnailImages[index] || image}
-                      alt={`${product.name} ${index + 1}`}
+                      alt={`${product.name} view ${index + 1}`}
                       width={140}
                       height={140}
+                      className="w-full h-full object-contain"
                     />
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                className="product-gallery__arrow"
-                onClick={() => scrollThumbnailRail(1)}
-                aria-label="Scroll product images right"
-              >
-                &rsaquo;
-              </button>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="product-summary panel">
-          <div className="product-summary__card">
-            <p className="product-summary__eyebrow">{displayBrand}</p>
-            <h1>{displayName}</h1>
-            {reviewCount > 0 ? (
-              <div className="product-summary__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
-                <span>
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <span key={index}>{index < rating ? "★" : "☆"}</span>
-                  ))}
-                </span>
-                <strong>{ratingValue.toFixed(1)}</strong>
-                <small>{`(${reviewCount} reviews)`}</small>
-              </div>
-            ) : (
-              <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
             )}
-            <div className="product-summary__price-group">
-              {hasDiscount && discountPercent > 0 ? (
-                <span className="product-summary__discount-badge">Save {discountPercent}%</span>
-              ) : null}
-              {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
-              <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
-              {pricing.isTimedDiscount && pricing.discountEndsAt ? (
-                <p className="product-summary__discount-note">
-                  Offer ends {formatDateTime(pricing.discountEndsAt)}
-                </p>
-              ) : null}
-            </div>
           </div>
-          {hasUpgradeableSpecs ? (
-            <div className="product-summary__upgrades">
-              <button
-                type="button"
-                className={upgradePanelOpen ? "product-summary__upgrade-toggle is-open" : "product-summary__upgrade-toggle"}
-                onClick={() => setUpgradePanelOpen((current) => !current)}
-                aria-expanded={upgradePanelOpen}
-              >
-                <div className="product-summary__upgrade-head">
-                  <strong>Upgrade specs</strong>
-                  <small>Select only if you want a higher configuration.</small>
-                </div>
-                <span className="product-summary__upgrade-toggle-icon">{upgradePanelOpen ? "-" : "+"}</span>
-              </button>
-              {upgradePanelOpen ? (
-                <div className="product-summary__upgrade-body">
-                  {upgradeSpecs.ramOptions.length ? (
-                    <div className="product-summary__upgrade-group">
-                      <span>RAM</span>
-                      <div className="product-summary__upgrade-options">
-                        <button
-                          type="button"
-                          className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                          onClick={() =>
-                            setSelectedUpgrades((current) => {
-                              const next = { ...current };
-                              delete next.ram;
-                              return next;
-                            })
-                          }
-                        >
-                          <span>Original</span>
-                        </button>
-                        {upgradeSpecs.ramOptions.map((option) => (
-                          <button
-                            key={`ram-${option.label}`}
-                            type="button"
-                            className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                            onClick={() =>
-                              setSelectedUpgrades((current) => ({
-                                ...current,
-                                ram: option.label,
-                              }))
-                            }
-                          >
-                            <span>{option.label}</span>
-                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                          </button>
-                        ))}
-                      </div>
+
+          <div className="col-span-5">
+            {/* SUMMARY PANEL - DESKTOP */}
+            <div className="bg-accent-panel p-6 rounded-xl shadow-sm flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <span className="font-label-md text-label-md text-primary-container uppercase tracking-widest">{displayBrand}</span>
+                <h1 className="font-headline-lg text-headline-lg text-primary">{displayName}</h1>
+                {reviewCount > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex text-on-secondary-container">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className="material-symbols-outlined fill text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          {i < rating ? "star" : "star_half"}
+                        </span>
+                      ))}
                     </div>
-                  ) : null}
-                  {upgradeSpecs.storageOptions.length ? (
-                    <div className="product-summary__upgrade-group">
-                      <span>Storage</span>
-                      <div className="product-summary__upgrade-options">
-                        <button
-                          type="button"
-                          className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                          onClick={() =>
-                            setSelectedUpgrades((current) => {
-                              const next = { ...current };
-                              delete next.storage;
-                              return next;
-                            })
-                          }
-                        >
-                          <span>Original</span>
-                        </button>
-                        {upgradeSpecs.storageOptions.map((option) => (
-                          <button
-                            key={`storage-${option.label}`}
-                            type="button"
-                            className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                            onClick={() =>
-                              setSelectedUpgrades((current) => ({
-                                ...current,
-                                storage: option.label,
-                              }))
-                            }
-                          >
-                            <span>{option.label}</span>
-                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-          <p className="product-summary__copy">{summary}</p>
-
-          <div className="product-summary__buy">
-            <div className="product-summary__qty-control" aria-label="Product quantity">
-              <label htmlFor="qty" className="sr-only">Quantity</label>
-              <button type="button" className="product-summary__qty-button" onClick={decrementQty} aria-label="Reduce quantity">
-                -
-              </button>
-              <input
-                id="qty"
-                className="field product-summary__qty"
-                type="number"
-                min="1"
-                max={Math.max(stock, 1)}
-                value={qty}
-                onChange={(event) => setQty(Math.min(Math.max(Number(event.target.value || 1), 1), Math.max(stock, 1)))}
-              />
-              <button type="button" className="product-summary__qty-button" onClick={incrementQty} aria-label="Increase quantity">
-                +
-              </button>
-            </div>
-            <button
-              type="button"
-              className="primary-button product-summary__cart"
-              disabled={stock < 1}
-              onClick={() =>
-                handleAddToCart(product, qty, {
-                  selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades),
-                })
-              }
-            >
-              {stock < 1 ? "Out of stock" : "Add to cart"}
-            </button>
-          </div>
-
-          <div className="product-summary__inline-actions" aria-label="Product actions">
-            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
-              <ProductActionIcon name="copy" />
-              <span>Copy</span>
-            </button>
-            <button type="button" className={`product-summary__icon-action${wishlisted ? " is-active" : ""}`} onClick={handleWishlist}>
-              <ProductActionIcon name="wishlist" />
-              <span>Wishlist</span>
-            </button>
-            <button type="button" className="product-summary__icon-action" onClick={handleShare}>
-              <ProductActionIcon name="share" />
-              <span>Share</span>
-            </button>
-          </div>
-
-          <div className="product-summary__meta">
-            <p><strong>Category:</strong> {categoryLabel}</p>
-            <p>
-              <strong>Stock:</strong>
-              <span className={stock > 0 ? "product-summary__stock-badge is-in-stock" : "product-summary__stock-badge is-out-of-stock"}>
-                {stock > 0 ? "In Stock" : "Out of Stock"}
-              </span>
-            </p>
-          </div>
-
-          <div className="product-summary__social">
-            <p>Follow and reach us</p>
-            <div className="product-summary__social-links">
-              {SOCIAL_LINKS.map((item) => (
-                <a key={item.label} href={item.href} target="_blank" rel="noreferrer" aria-label={item.label}>
-                  <SocialAppIcon name={item.icon} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="product-summary__actions">
-            <button type="button" className="ghost-button" onClick={() => router.push("/wishlist")}>Browse wishlist</button>
-            <button type="button" className="ghost-button" onClick={() => router.push("/cart")}>Go to cart</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="reviews" ref={tabsSectionRef} className="product-tabs panel">
-        <div className="product-tabs__nav" role="tablist" aria-label="Product details">
-          <button
-            type="button"
-            role="tab"
-            className={activeTab === "description" ? "product-tabs__tab is-active" : "product-tabs__tab"}
-            aria-selected={activeTab === "description"}
-            onClick={() => setActiveTab("description")}
-          >
-            Description
-          </button>
-          <button
-            type="button"
-            role="tab"
-            className={activeTab === "specs" ? "product-tabs__tab is-active" : "product-tabs__tab"}
-            aria-selected={activeTab === "specs"}
-            onClick={() => setActiveTab("specs")}
-          >
-            Specs
-          </button>
-          <button
-            type="button"
-            role="tab"
-            className={activeTab === "reviews" ? "product-tabs__tab is-active" : "product-tabs__tab"}
-            aria-selected={activeTab === "reviews"}
-            onClick={() => setActiveTab("reviews")}
-          >
-            Review
-          </button>
-        </div>
-
-        <div className="product-tabs__body">
-          {activeTab === "description" ? (
-            <div className="product-tabs__panel">
-              <p>{description}</p>
-            </div>
-          ) : null}
-
-          {activeTab === "specs" ? (
-            <div className="product-tabs__panel product-tabs__panel--specs">
-              {productSpecs.length ? (
-                productSpecs.map(([key, value]) => (
-                  <div key={key} className="product-spec-row">
-                    <span>{String(key).replace(/[_-]+/g, " ")}</span>
-                    <strong>{String(value)}</strong>
+                    <span className="font-body-sm text-body-sm text-on-surface-variant">({reviewCount} Reviews)</span>
                   </div>
-                ))
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-headline-xl text-headline-xl text-primary">{formatCurrency(currentPrice)}</span>
+                  {hasDiscount && (
+                    <>
+                      <span className="font-body-lg text-body-lg text-on-surface-variant line-through">{formatCurrency(originalPrice)}</span>
+                      <span className="bg-error-container text-on-error-container px-2 py-1 rounded font-label-md text-label-md">{discountPercent}% OFF</span>
+                    </>
+                  )}
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Available in stock for immediate pickup or delivery across Ghana.</p>
+              </div>
+
+              {/* CONFIG OPTIONS */}
+              {hasUpgradeableSpecs && (
+                <div className="flex flex-col gap-4 border-t border-outline-variant pt-6">
+                  {upgradeSpecs.ramOptions.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <label className="font-label-md text-label-md text-on-surface font-bold">Memory (RAM)</label>
+                      <div className="flex gap-2 flex-wrap">
+                        <button
+                          onClick={() => setSelectedUpgrades(prev => { const next = { ...prev }; delete next.ram; return next; })}
+                          className={`px-4 py-2 rounded font-label-md border-2 transition-all ${!selectedUpgrades.ram ? 'bg-primary text-on-primary border-primary' : 'bg-white text-on-surface border-outline-variant hover:border-primary'}`}
+                        >
+                          Original
+                        </button>
+                        {upgradeSpecs.ramOptions.map(opt => (
+                          <button
+                            key={`ram-${opt.label}`}
+                            onClick={() => setSelectedUpgrades(prev => ({ ...prev, ram: opt.label }))}
+                            className={`px-4 py-2 rounded font-label-md border-2 transition-all ${selectedUpgrades.ram === opt.label ? 'bg-primary text-on-primary border-primary' : 'bg-white text-on-surface border-outline-variant hover:border-primary'}`}
+                          >
+                            {opt.label} {Number(opt.priceDelta || 0) > 0 && <span className="text-on-secondary-container">+{formatCurrency(opt.priceDelta)}</span>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {upgradeSpecs.storageOptions.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <label className="font-label-md text-label-md text-on-surface font-bold">Storage</label>
+                      <div className="flex gap-2 flex-wrap">
+                        <button
+                          onClick={() => setSelectedUpgrades(prev => { const next = { ...prev }; delete next.storage; return next; })}
+                          className={`px-4 py-2 rounded font-label-md border-2 transition-all ${!selectedUpgrades.storage ? 'bg-primary text-on-primary border-primary' : 'bg-white text-on-surface border-outline-variant hover:border-primary'}`}
+                        >
+                          Original
+                        </button>
+                        {upgradeSpecs.storageOptions.map(opt => (
+                          <button
+                            key={`storage-${opt.label}`}
+                            onClick={() => setSelectedUpgrades(prev => ({ ...prev, storage: opt.label }))}
+                            className={`px-4 py-2 rounded font-label-md border-2 transition-all ${selectedUpgrades.storage === opt.label ? 'bg-primary text-on-primary border-primary' : 'bg-white text-on-surface border-outline-variant hover:border-primary'}`}
+                          >
+                            {opt.label} {Number(opt.priceDelta || 0) > 0 && <span className="text-on-secondary-container">+{formatCurrency(opt.priceDelta)}</span>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ACTIONS */}
+              <div className="flex flex-col gap-4 pt-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border border-outline-variant rounded-lg bg-white">
+                    <button onClick={decrementQty} className="p-4 hover:text-primary">
+                      <span className="material-symbols-outlined">remove</span>
+                    </button>
+                    <input
+                      type="number"
+                      value={qty}
+                      onChange={(e) => setQty(Math.max(1, Math.min(stock, Number(e.target.value) || 1)))}
+                      className="w-12 text-center border-none bg-transparent font-bold focus:ring-0"
+                      min="1"
+                      max={Math.max(stock, 1)}
+                    />
+                    <button onClick={incrementQty} className="p-4 hover:text-primary">
+                      <span className="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => handleAddToCart(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) })}
+                    disabled={stock < 1}
+                    className="flex-1 bg-primary-container text-on-primary-container py-4 rounded-lg font-headline-md hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined">shopping_cart</span>
+                    Add to Cart
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-outline-variant pt-4">
+                  <button onClick={handleCopy} className="flex items-center gap-2 text-on-surface-variant hover:text-primary font-label-md transition-all">
+                    <span className="material-symbols-outlined">content_copy</span> Copy Link
+                  </button>
+                  <button onClick={handleWishlist} className={`flex items-center gap-2 font-label-md transition-all ${wishlisted ? 'text-primary' : 'text-on-surface-variant hover:text-primary'}`}>
+                    <span className="material-symbols-outlined">favorite</span> Wishlist
+                  </button>
+                  <button onClick={handleShare} className="flex items-center gap-2 text-on-surface-variant hover:text-primary font-label-md transition-all">
+                    <span className="material-symbols-outlined">share</span> Share
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* MOBILE LAYOUT */}
+        <div className="md:hidden mt-16 pb-32">
+          {/* IMAGE GALLERY - MOBILE */}
+          <section className="relative bg-white">
+            <div className="relative w-full aspect-square overflow-hidden">
+              {visibleMainImage.src ? (
+                <StableImage
+                  src={visibleMainImage.src}
+                  srcSet={visibleMainImage.srcSet}
+                  alt={product.name}
+                  width={400}
+                  height={400}
+                  className="w-full h-full object-cover"
+                  onClick={() => setPreviewOpen(true)}
+                />
               ) : (
-                <p>Detailed specs will appear here as more product data is added.</p>
+                <div className="w-full h-full bg-surface-container flex items-center justify-center">No image</div>
               )}
             </div>
-          ) : null}
 
-          {activeTab === "reviews" ? (
-            <div className="product-tabs__panel">
-              {reviewCount > 0 ? (
-                <div className="product-review-overview">
-                  <div className="product-review-overview__score">
-                    <strong>{ratingValue.toFixed(1)}</strong>
-                    <span>Out of 5</span>
-                    <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
-                      {Array.from({ length: 5 }, (_, index) => (
-                        <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
-                      ))}
-                    </p>
-                    <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
-                  </div>
-
-                  <div className="product-review-overview__bars">
-                    {reviewBreakdown.map((item) => (
-                      <div key={item.stars} className="product-review-bar">
-                        <span>{item.stars} Star</span>
-                        <div className="product-review-bar__track">
-                          <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
-                        </div>
-                        <strong>{item.count}</strong>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="product-review-actions">
-                <div className="product-review-actions__copy">
-                  <h3>Review List</h3>
-                  <p>{reviewCount ? `Showing 1-${sortedReviews.length} of ${reviewCount} results` : "No reviews yet. Be the first to share your experience with this product."}</p>
-                </div>
-                <label className="product-review-actions__sort">
-                  <span>Sort by</span>
-                  <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="highest">Highest rating</option>
-                    <option value="lowest">Lowest rating</option>
-                  </select>
-                </label>
+            {/* PAGINATION DOTS */}
+            {images.length > 1 && (
+              <div className="flex justify-center gap-1.5 py-4">
+                {images.map((_, index) => (
+                  <button
+                    key={`dot-${index}`}
+                    onClick={() => setActiveImage(index)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${activeImageIndex === index ? 'bg-primary' : 'bg-outline-variant'}`}
+                  />
+                ))}
               </div>
+            )}
 
-              <div className="product-review-shell">
-                <div className="product-review-list">
-                  {sortedReviews.length ? (
-                    sortedReviews.map((review, index) => {
-                      const reviewerName = review?.user?.name || review?.name || "Customer";
-                      return (
-                        <article key={review?._id || index} className="product-review">
-                          <div className="product-review__header">
-                            <div className="product-review__identity">
-                              <div className="product-review__avatar" aria-hidden="true">
-                                {getReviewerInitials(reviewerName)}
-                              </div>
-                              <div>
-                                <strong>{reviewerName}</strong>
-                                <span className="product-review__verified">(Verified)</span>
-                              </div>
-                            </div>
-                            <time>{getReviewTimeLabel(review?.createdAt)}</time>
-                          </div>
-                          <h4>{review?.title || "Customer review"}</h4>
-                          <p>{review?.comment || review?.message || "No review text provided."}</p>
-                          <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
-                            {Array.from({ length: 5 }, (_, index) => (
-                              <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
-                            ))}
-                            <strong>{Number(review?.rating || 0).toFixed(1)}</strong>
-                          </p>
-                          {review?.image_url ? (
-                            <div className="product-review__media">
-                              <StableImage
-                                src={resolveProductImage(review.image_url)}
-                                alt={review?.title || "Review upload"}
-                                width={280}
-                                height={280}
-                              />
-                            </div>
-                          ) : null}
-                        </article>
-                      );
-                    })
-                  ) : (
-                    <p>No reviews yet. Be the first to share your experience with this product.</p>
+            {/* THUMBNAILS */}
+            {images.length > 1 && (
+              <div className="flex gap-3 px-4 pb-6 overflow-x-auto no-scrollbar">
+                {images.map((image, index) => (
+                  <button
+                    key={`thumb-mobile-${index}`}
+                    onClick={() => setActiveImage(index)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-md border-2 overflow-hidden transition-all ${activeImageIndex === index ? 'border-primary' : 'border-outline-variant'}`}
+                  >
+                    <StableImage
+                      src={optimizedThumbnailImages[index] || image}
+                      alt={`View ${index + 1}`}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* SUMMARY CARD - MOBILE */}
+          <section className="px-4 -mt-4">
+            <div className="bg-white rounded-lg shadow-sm p-4 relative z-20">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-label-md text-label-md text-primary bg-secondary-container px-2 py-0.5 rounded">{displayBrand}</span>
+                {reviewCount > 0 && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex text-amber-400">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      ))}
+                    </div>
+                    <span className="font-body-sm text-body-sm text-on-surface-variant">({reviewCount})</span>
+                  </div>
+                )}
+              </div>
+              <h1 className="font-headline-md text-headline-md text-on-surface mb-4">{displayName}</h1>
+              <div className="flex flex-col gap-1 mb-4">
+                {hasDiscount && (
+                  <div className="flex items-center gap-2">
+                    <span className="bg-error text-white text-xs font-bold px-2 py-0.5 rounded">Save {discountPercent}%</span>
+                    <span className="font-mono-data text-body-sm text-on-surface-variant line-through">{formatCurrency(originalPrice)}</span>
+                  </div>
+                )}
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono-data text-headline-md font-bold text-primary">{formatCurrency(currentPrice)}</span>
+                  {pricing.isTimedDiscount && pricing.discountEndsAt && (
+                    <span className="font-body-sm text-body-sm text-error">Offer ends {formatDateTime(pricing.discountEndsAt)}</span>
                   )}
                 </div>
               </div>
+            </div>
+          </section>
 
-              {isAuthenticated ? (
-                <aside className="product-review-form product-review-form--full">
-                  <button
-                    type="button"
-                    className="product-review-form__toggle"
-                    onClick={() => setReviewFormOpen((current) => !current)}
-                    aria-expanded={reviewFormOpen}
-                    aria-controls="product-review-form-body"
-                  >
-                    <span>{myReview ? "Update your review" : "Write a review"}</span>
-                    <span className="product-review-form__toggle-icon" aria-hidden="true">{reviewFormOpen ? "−" : "+"}</span>
-                  </button>
+          {/* CONFIG - MOBILE */}
+          {hasUpgradeableSpecs && (
+            <section className="px-4 mt-6">
+              <h3 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4">Configure Hardware</h3>
+              {upgradeSpecs.ramOptions.length > 0 && (
+                <div className="mb-6">
+                  <label className="font-body-sm font-semibold block mb-2">System RAM</label>
+                  <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <button
+                      onClick={() => setSelectedUpgrades(prev => { const next = { ...prev }; delete next.ram; return next; })}
+                      className={`flex-shrink-0 px-4 py-2 rounded border-2 text-body-sm font-semibold transition-all ${!selectedUpgrades.ram ? 'border-primary bg-primary-fixed-dim text-primary' : 'border-outline-variant bg-white text-on-surface-variant'}`}
+                    >
+                      Original
+                    </button>
+                    {upgradeSpecs.ramOptions.map(opt => (
+                      <button
+                        key={`ram-mobile-${opt.label}`}
+                        onClick={() => setSelectedUpgrades(prev => ({ ...prev, ram: opt.label }))}
+                        className={`flex-shrink-0 px-4 py-2 rounded border-2 text-body-sm transition-all ${selectedUpgrades.ram === opt.label ? 'border-primary bg-primary-fixed-dim text-primary' : 'border-outline-variant bg-white text-on-surface-variant'}`}
+                      >
+                        {opt.label} {Number(opt.priceDelta || 0) > 0 && <span className="text-primary font-bold">+{formatCurrency(opt.priceDelta)}</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-                  {reviewFormOpen ? (
-                    <div id="product-review-form-body" className="product-review-form__body">
-                      <p>Share your real experience to help other customers buy with confidence.</p>
-                      <form className="auth-form" onSubmit={handleReviewSubmit}>
-                        <label>
-                          <span>Rating</span>
-                          <div className="product-review-form__rating" role="radiogroup" aria-label="Rate this product">
-                            {[1, 2, 3, 4, 5].map((value) => (
-                              <button
-                                key={value}
-                                type="button"
-                                role="radio"
-                                aria-checked={reviewForm.rating === value}
-                                aria-label={`${value} star${value === 1 ? "" : "s"}`}
-                                className={`product-review-form__star${reviewForm.rating >= value ? " is-active" : ""}`}
-                                onClick={() => setReviewForm((current) => ({ ...current, rating: value }))}
-                              >
-                                ★
-                              </button>
+              {upgradeSpecs.storageOptions.length > 0 && (
+                <div className="mb-6">
+                  <label className="font-body-sm font-semibold block mb-2">Storage Capacity</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSelectedUpgrades(prev => { const next = { ...prev }; delete next.storage; return next; })}
+                      className={`flex-1 py-2 rounded border-2 text-body-sm font-semibold transition-all ${!selectedUpgrades.storage ? 'border-primary bg-primary-fixed-dim text-primary' : 'border-outline-variant bg-white text-on-surface-variant'}`}
+                    >
+                      Original
+                    </button>
+                    {upgradeSpecs.storageOptions.map(opt => (
+                      <button
+                        key={`storage-mobile-${opt.label}`}
+                        onClick={() => setSelectedUpgrades(prev => ({ ...prev, storage: opt.label }))}
+                        className={`flex-1 py-2 rounded border-2 text-body-sm transition-all ${selectedUpgrades.storage === opt.label ? 'border-primary bg-primary-fixed-dim text-primary' : 'border-outline-variant bg-white text-on-surface-variant'}`}
+                      >
+                        {opt.label} {Number(opt.priceDelta || 0) > 0 && <span className="block text-primary font-bold text-xs">+{formatCurrency(opt.priceDelta)}</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ACTION BUTTONS - MOBILE */}
+          <section className="px-4 flex gap-3 mb-8 mt-6">
+            <button onClick={handleCopy} className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-outline-variant shadow-sm active:bg-surface-container-high">
+              <span className="material-symbols-outlined text-primary">content_copy</span>
+            </button>
+            <button onClick={handleWishlist} className={`w-12 h-12 flex items-center justify-center rounded-full border shadow-sm active:bg-surface-container-high transition-all ${wishlisted ? 'bg-primary' : 'bg-white border-outline-variant'}`}>
+              <span className={`material-symbols-outlined ${wishlisted ? 'text-white' : 'text-primary'}`}>favorite</span>
+            </button>
+            <button onClick={handleShare} className="w-12 h-12 flex items-center justify-center rounded-full bg-white border border-outline-variant shadow-sm active:bg-surface-container-high">
+              <span className="material-symbols-outlined text-primary">share</span>
+            </button>
+          </section>
+
+          {/* TABS - MOBILE */}
+          <section className="mb-8">
+            <div className="flex border-b border-outline-variant px-4 bg-white sticky top-16 z-40">
+              <button
+                onClick={() => setActiveTab("description")}
+                className={`flex-1 py-4 text-body-sm font-semibold border-b-2 transition-all ${activeTab === "description" ? 'text-primary border-primary' : 'text-on-surface-variant border-transparent'}`}
+              >
+                Description
+              </button>
+              <button
+                onClick={() => setActiveTab("specs")}
+                className={`flex-1 py-4 text-body-sm font-medium border-b-2 transition-all ${activeTab === "specs" ? 'text-primary border-primary' : 'text-on-surface-variant border-transparent'}`}
+              >
+                Specs
+              </button>
+              <button
+                onClick={() => setActiveTab("reviews")}
+                className={`flex-1 py-4 text-body-sm font-medium border-b-2 transition-all ${activeTab === "reviews" ? 'text-primary border-primary' : 'text-on-surface-variant border-transparent'}`}
+              >
+                Reviews
+              </button>
+            </div>
+
+            <div className="p-4 bg-white space-y-4">
+              {activeTab === "description" && (
+                <p className="font-body-md text-on-surface-variant leading-relaxed">{description}</p>
+              )}
+
+              {activeTab === "specs" && (
+                <div className="space-y-2">
+                  {productSpecs.length ? productSpecs.map(([key, value]) => (
+                    <div key={key} className="flex justify-between py-2 border-b border-outline-variant">
+                      <span className="text-body-sm text-on-surface-variant">{String(key).replace(/[_-]+/g, " ")}</span>
+                      <span className="text-body-sm font-semibold">{String(value)}</span>
+                    </div>
+                  )) : (
+                    <p className="text-on-surface-variant">Detailed specs coming soon.</p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "reviews" && (
+                <div className="mt-8 pt-6 border-t border-outline-variant">
+                  {reviewCount > 0 ? (
+                    <>
+                      <div className="bg-accent-panel p-4 rounded-lg mb-6">
+                        <div className="text-center mb-4">
+                          <div className="text-4xl font-bold text-primary">{ratingValue.toFixed(1)}</div>
+                          <div className="flex justify-center text-amber-400 mt-1">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <span key={i} className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                             ))}
                           </div>
-                        </label>
-                        <label>
-                          <span>Review title</span>
-                          <input
-                            className="field"
-                            value={reviewForm.title}
-                            onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
-                            placeholder="Summarize your experience"
-                          />
-                        </label>
-                        <label>
-                          <span>Your review</span>
-                          <textarea
-                            className="field"
-                            rows="5"
-                            value={reviewForm.comment}
-                            onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-                            placeholder="Tell other customers what stood out to you"
-                          />
-                        </label>
-                        <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
-                          {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
-                        </button>
-                      </form>
-                    </div>
-                  ) : null}
-                </aside>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-      </section>
+                          <p className="text-xs text-on-surface-variant mt-1">Based on {reviewCount} verified ratings</p>
+                        </div>
+                        {isAuthenticated && (
+                          <button
+                            onClick={() => setReviewFormOpen(!reviewFormOpen)}
+                            className="w-full py-3 bg-white border border-primary text-primary font-bold rounded-lg active:bg-primary active:text-white transition-colors"
+                          >
+                            Write a review
+                          </button>
+                        )}
+                      </div>
 
-      {relatedProducts.length ? (
-        <section className="related-products">
-          <div className="related-products__header">
-            <h2>Related products</h2>
-            <div className="related-products__controls" aria-label="Related products navigation">
-              <button
-                type="button"
-                className="related-products__arrow related-products__arrow--left"
-                onClick={() => scrollRelatedRail(-1)}
-                aria-label="Scroll related products left"
-                disabled={!relatedRailNav.left}
-              >
-                &lsaquo;
-              </button>
-              <button
-                type="button"
-                className="related-products__arrow related-products__arrow--right"
-                onClick={() => scrollRelatedRail(1)}
-                aria-label="Scroll related products right"
-                disabled={!relatedRailNav.right}
-              >
-                &rsaquo;
-              </button>
-            </div>
-          </div>
-          <div className="related-products__rail-wrap">
-            <div ref={relatedRailRef} className="related-products__grid related-products__rail">
-              {relatedProducts.map((item) => (
-                <div key={item._id} className="related-products__item">
-                  <ProductCard product={item} onAddToCart={handleAddToCart} variant="related" />
+                      {sortedReviews.map((review, idx) => (
+                        <div key={review?._id || idx} className="border-b border-outline-variant py-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-xs">
+                                {getReviewerInitials(review?.user?.name || review?.name || "Customer")}
+                              </div>
+                              <div>
+                                <div className="font-body-sm font-semibold">{review?.user?.name || review?.name || "Customer"}</div>
+                                <div className="text-xs text-on-surface-variant">{getReviewTimeLabel(review?.createdAt)}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-0.5 mb-2">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <span key={i} className="material-symbols-outlined text-sm text-amber-400" style={{ fontVariationSettings: i < Number(review?.rating || 0) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+                            ))}
+                          </div>
+                          <h4 className="font-body-sm font-semibold mb-1">{review?.title || "Customer review"}</h4>
+                          <p className="text-body-sm text-on-surface-variant">{review?.comment || review?.message || "No text"}</p>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <p className="text-on-surface-variant text-center py-6">No reviews yet. Be the first!</p>
+                  )}
                 </div>
+              )}
+            </div>
+          </section>
+
+          {/* RELATED PRODUCTS - MOBILE */}
+          {relatedProducts.length > 0 && (
+            <section className="px-4 mb-12">
+              <h3 className="font-headline-md mb-4">Customers Also Viewed</h3>
+              <div className="flex gap-4 overflow-x-auto no-scrollbar">
+                {relatedProducts.slice(0, 6).map((item) => (
+                  <div key={item._id} className="flex-shrink-0 w-44 bg-white rounded-lg p-3 shadow-sm border border-outline-variant">
+                    <div className="w-full aspect-square bg-surface-container-low rounded mb-3 overflow-hidden">
+                      {getProductImages(item)[0] && (
+                        <StableImage
+                          src={getProductImages(item)[0]}
+                          alt={item.name}
+                          width={180}
+                          height={180}
+                          className="w-full h-full object-contain"
+                        />
+                      )}
+                    </div>
+                    <p className="font-label-md text-on-surface-variant mb-1 truncate">{item.name}</p>
+                    <p className="font-mono-data text-primary font-bold">{formatCurrency(getProductPrice(item))}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* SOCIAL LINKS - MOBILE */}
+          <section className="px-4 space-y-6 mb-12">
+            <div className="flex justify-center gap-6">
+              {SOCIAL_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white hover:opacity-80 transition-opacity"
+                  aria-label={link.label}
+                >
+                  <SocialAppIcon name={link.icon} />
+                </a>
               ))}
             </div>
+            <div className="space-y-3">
+              <button onClick={() => router.push("/wishlist")} className="w-full py-3 bg-transparent border border-primary text-primary font-bold rounded-lg active:bg-primary-fixed-dim">
+                Browse Wishlist
+              </button>
+              <button onClick={() => router.push("/cart")} className="w-full py-3 bg-transparent border border-primary text-primary font-bold rounded-lg active:bg-primary-fixed-dim">
+                Go to Cart
+              </button>
+            </div>
+          </section>
+        </div>
+
+        {/* STICKY BOTTOM BAR - MOBILE ONLY */}
+        <footer className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-outline-variant px-4 py-4 flex items-center gap-4 z-40">
+          <div className="flex items-center bg-background rounded-lg border border-outline-variant h-12 px-1">
+            <button onClick={decrementQty} className="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-lg">−</button>
+            <span className="w-8 text-center font-bold text-on-surface">{qty}</span>
+            <button onClick={incrementQty} className="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-lg">+</button>
           </div>
-        </section>
-      ) : null}
+          <button
+            onClick={() => handleAddToCart(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) })}
+            disabled={stock < 1}
+            className="flex-1 bg-primary text-white h-12 rounded-lg font-bold shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined">shopping_cart</span>
+            Add to Cart
+          </button>
+        </footer>
+      </main>
 
       {portalReady ? previewModal : null}
-    </main>
+    </>
   );
 }

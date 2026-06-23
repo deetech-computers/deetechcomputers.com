@@ -1,22 +1,274 @@
-@media (max-width: 900px) {
-  .product-detail-route .product-detail-page {
-    padding-bottom: 88px;
+/* Product Detail Mobile Styles */
+
+@media (max-width: 1024px) {
+  /* Add bottom padding for sticky footer on mobile */
+  main {
+    padding-bottom: 80px;
   }
 
-  .product-detail-route .product-detail-mobile-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    display: grid;
-    grid-template-columns: 36px minmax(0, 1fr) 36px;
-    align-items: center;
-    gap: 8px;
-    min-height: 52px;
-    margin: 0 -16px 0;
-    padding: 0 12px;
-    background: #ffffff;
-    box-shadow: 0 1px 0 var(--pd-line);
+  /* Mobile header spacing */
+  header {
+    height: 64px;
   }
+
+  /* Gallery adjustments */
+  .product-gallery {
+    gap: 8px;
+  }
+
+  .product-gallery__stage {
+    aspect-ratio: 1;
+  }
+
+  .product-gallery__thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+  }
+
+  /* Summary card on mobile floats */
+  .product-summary {
+    margin-top: -16px;
+    position: relative;
+    z-index: 20;
+  }
+
+  /* Sticky bottom bar */
+  .sticky-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    z-index: 50;
+  }
+
+  /* Quantity control */
+  .qty-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #c1c9bd;
+    border-radius: 6px;
+    background: #f5f6f7;
+    height: 44px;
+    padding: 0 4px;
+    gap: 0;
+  }
+
+  .qty-button {
+    width: 32px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: bold;
+    color: #414940;
+    padding: 0;
+  }
+
+  .qty-button:hover {
+    color: #003714;
+  }
+
+  .qty-input {
+    width: 100%;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+  }
+
+  /* Add to cart button */
+  .add-to-cart-btn {
+    flex: 1;
+    height: 44px;
+    background: #003714 !important;
+    color: white !important;
+    font-weight: bold;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* Tabs sticky on scroll */
+  [role="tablist"] {
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  [role="tab"] {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 14px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: #414940;
+    cursor: pointer;
+  }
+
+  [role="tab"][aria-selected="true"] {
+    color: #003714;
+    border-bottom: 2px solid #003714;
+    font-weight: 700;
+  }
+
+  /* Image pagination dots */
+  .gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 0;
+  }
+
+  .gallery-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: #c1c9bd;
+    transition: background 200ms ease;
+  }
+
+  .gallery-dot.active {
+    background: #003714;
+  }
+
+  /* Mobile configuration */
+  .config-section {
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .config-label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .config-options {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .config-option {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #c1c9bd;
+    background: white;
+    white-space: nowrap;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .config-option.active {
+    background: #184f27;
+    color: white;
+    border-color: #184f27;
+  }
+
+  /* Action buttons row */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+    justify-content: center;
+  }
+
+  .action-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #c1c9bd;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .action-btn:active {
+    background: #f0f3ff;
+  }
+
+  .action-btn.active {
+    background: #003714;
+    color: white;
+    border-color: #003714;
+  }
+
+  /* Related products horizontal scroll */
+  .related-products-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+  }
+
+  .related-product-card {
+    flex: 0 0 140px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .related-product-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    margin-bottom: 4px;
+  }
+
+  .related-product-price {
+    font-weight: bold;
+    color: #003714;
+    font-size: 13px;
+  }
+
+  /* Social links */
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #003714;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .social-link:hover {
+    opacity: 0.8;
+  }
+}
 
   .product-detail-route .product-detail-mobile-topbar button {
     width: 36px;

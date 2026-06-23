@@ -1,15 +1,136 @@
-@media (min-width: 901px) {
-  .product-detail-route .product-detail-mobile-topbar,
-  .product-detail-route .product-gallery__dots {
-    display: none;
+/* Product Detail Desktop Enhancements */
+
+@media (min-width: 1024px) {
+  /* Sticky sidebar on desktop */
+  .product-summary {
+    position: sticky !important;
+    top: 100px;
   }
 
-  .product-detail-route .product-detail-view {
+  /* Larger typography on desktop */
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+
+  /* Grid layout for hero section */
+  .product-detail-view {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(380px, 1fr);
-    gap: 40px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
     align-items: start;
   }
+
+  /* Image gallery improvements */
+  .product-gallery {
+    display: grid;
+    gap: 16px;
+  }
+
+  .product-gallery__stage {
+    position: relative;
+    aspect-ratio: 1;
+  }
+
+  .product-gallery__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-gallery__arrow--left {
+    left: 12px;
+  }
+
+  .product-gallery__arrow--right {
+    right: 12px;
+  }
+
+  /* Thumbnail rail */
+  .product-gallery__thumbs {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+  }
+
+  .product-gallery__thumb {
+    flex: 0 0 96px;
+    width: 96px;
+    height: 96px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 200ms ease;
+  }
+
+  .product-gallery__thumb.is-active {
+    border-color: #184f27;
+  }
+
+  /* Configuration options layout */
+  .upgrade-section {
+    display: grid;
+    gap: 12px;
+  }
+
+  .upgrade-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .upgrade-chip {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 2px solid #c1c9bd;
+    background: white;
+    transition: all 200ms ease;
+  }
+
+  .upgrade-chip:hover {
+    border-color: #003714;
+  }
+
+  .upgrade-chip.active {
+    border-color: #003714;
+    background: #003714;
+    color: white;
+  }
+
+  /* Desktop tabs styling */
+  [role="tab"] {
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  /* Related products carousel */
+  .related-products__rail {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 8px 0;
+  }
+
+  .related-products__item {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+}
 
   .product-detail-route .product-detail-loading__top {
     grid-template-columns: minmax(0, 1.4fr) minmax(380px, 1fr);
