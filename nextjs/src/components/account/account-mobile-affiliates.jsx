@@ -204,16 +204,16 @@ export default function MobileAffiliates({ summary }) {
               <strong>Pending</strong>
             </div>
           </div>
-          <h3>Settlement Bank</h3>
+          <h3>Payout & Security</h3>
           <div className="account-mobile-affiliates__bank">
             <span><MobileAffiliateIcon name="bank" /></span>
             <div>
-              <strong>Managed on Affiliate Page</strong>
-              <p>Review payout settings</p>
+              <strong>Securely verified payouts</strong>
+              <p>Full settings on your Affiliate page</p>
             </div>
-            <Link href="/affiliates">Edit</Link>
+            <Link href="/affiliates">View</Link>
           </div>
-          <p>Payout details and deeper referral history are managed on the full affiliate page.</p>
+          <p>Payouts are reviewed and confirmed before each cycle. Visit the affiliate page for detailed settings and referral activity.</p>
         </section>
 
         <section className="account-mobile-affiliates__invite">

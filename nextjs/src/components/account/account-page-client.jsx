@@ -1062,18 +1062,18 @@ function AffiliateSection({ summary, onCopyCode }) {
 
         <article className="account-affiliate-panel">
           <div className="account-affiliate-panel__head">
-            <h3>Payout Method</h3>
+            <h3>Payout & Security</h3>
             <AccountNavIcon name="bank" />
           </div>
           <div className="account-affiliate-method">
             <AccountNavIcon name="bank" />
             <div>
-              <strong>Managed on Affiliate Page</strong>
-              <span>Review payout settings and deeper referral history.</span>
+              <strong>Securely verified payouts</strong>
+              <span>Full payout settings and referral history live on your Affiliate page.</span>
             </div>
           </div>
-          <p>Use the full affiliate page to manage account-level payout details and referral activity.</p>
-          <Link href="/affiliates">Edit Method <AccountNavIcon name="edit" /></Link>
+          <p>Payouts are reviewed and confirmed before each cycle. Visit the affiliate page for detailed settings and referral activity.</p>
+          <Link href="/affiliates">View Affiliate Page <AccountNavIcon name="edit" /></Link>
         </article>
 
         <article className="account-affiliate-panel account-affiliate-panel--summary">

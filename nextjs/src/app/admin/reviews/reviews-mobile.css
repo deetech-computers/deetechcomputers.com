@@ -35,19 +35,23 @@
   .admin-reviews-route .admin-reviews-mobile-topbar {
     min-height: 64px;
     display: grid;
-    grid-template-columns: 28px 1fr 40px;
+    grid-template-columns: 40px 1fr 40px;
     align-items: center;
     gap: 12px;
     padding: 8px 2px;
   }
 
-  .admin-reviews-route .admin-reviews-mobile-topbar > a {
+  .admin-reviews-route .admin-reviews-mobile-topbar > button:first-child {
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
+    border: none;
+    background: transparent;
     color: var(--reviews-green);
   }
 
-  .admin-reviews-route .admin-reviews-mobile-topbar > a svg {
+  .admin-reviews-route .admin-reviews-mobile-topbar > button:first-child svg {
     width: 24px;
     height: 24px;
   }
@@ -59,6 +63,7 @@
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
+    text-align: center;
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar__filter {

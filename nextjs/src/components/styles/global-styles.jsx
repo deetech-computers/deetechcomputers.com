@@ -11939,6 +11939,26 @@ button, input, select, textarea { font: inherit; }
   margin-top: auto;
   border-radius: 4px;
 }
+@media (max-width: 1180px) {
+  .account-affiliate-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .account-affiliate-panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .account-affiliate-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 28px;
+  }
+}
+@media (max-width: 620px) {
+  .account-affiliate-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .account-affiliate-conversions {
   overflow: hidden;
   border: 1px solid #d8ddd3;
@@ -12661,6 +12681,28 @@ button, input, select, textarea { font: inherit; }
 .account-password-actions > span .account-dashboard__nav-icon {
   width: 17px;
   height: 17px;
+}
+@media (max-width: 860px) {
+  .account-password-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px 20px;
+  }
+  .account-password-field--full {
+    grid-column: auto;
+  }
+  .account-password-input {
+    min-height: 52px;
+    padding: 0 14px 0 16px;
+  }
+  .account-password-actions {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+  .account-password-actions .primary-button {
+    width: 100%;
+    min-width: 0;
+  }
 }
 .account-password-security-grid {
   display: grid;
@@ -16295,9 +16337,6 @@ button, input, select, textarea { font: inherit; }
   .account-dashboard__form,
   .account-mini-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .account-affiliate-stats {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
   .account-order-card__summary {
     grid-template-columns: repeat(4, minmax(0, 1fr));

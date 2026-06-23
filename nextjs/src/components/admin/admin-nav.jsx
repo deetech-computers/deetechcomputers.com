@@ -49,6 +49,9 @@ function AdminNavIcon({ name }) {
   if (name === "logout") {
     return <svg {...svgProps}><path d="M10 17l5-5-5-5M15 12H3" {...common} /><path d="M13 4h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-5" {...common} /></svg>;
   }
+  if (name === "storefront") {
+    return <svg {...svgProps}><path d="M4 10v9h16v-9M2 10l2-6h16l2 6M2 10h20M9 19v-5h6v5" {...common} /></svg>;
+  }
   return <svg {...svgProps}><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
 }
 
@@ -80,6 +83,10 @@ export function MobileNavDrawer({ open, onClose }) {
           </Link>
         ))}
         <div className="admin-mobile-menu__footer">
+          <Link href="/" onClick={onClose}>
+            <AdminNavIcon name="storefront" />
+            Back to Store
+          </Link>
           <Link href="/admin" onClick={onClose}>
             <AdminNavIcon name="settings" />
             Settings
@@ -119,6 +126,10 @@ export default function AdminNav() {
         ))}
       </nav>
       <div className="admin-nav__footer">
+        <Link href="/" className="admin-nav__footer-link">
+          <AdminNavIcon name="storefront" />
+          Back to Store
+        </Link>
         <Link href="/admin" className="admin-nav__footer-link">
           <AdminNavIcon name="settings" />
           Settings
