@@ -1270,6 +1270,20 @@ function ReviewsWorkspace({
   );
 }
 
+function buildPageChips(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const keep = new Set([1, 2, total - 1, total, current - 1, current, current + 1]);
+  const sorted = [...keep].filter((page) => page >= 1 && page <= total).sort((a, b) => a - b);
+  const chips = [];
+  let previous = 0;
+  for (const page of sorted) {
+    if (previous && page - previous > 1) chips.push("...");
+    chips.push(page);
+    previous = page;
+  }
+  return chips;
+}
+
 function ReviewsWorkspaceStitch({
   items,
   stats,
@@ -1299,10 +1313,18 @@ function ReviewsWorkspaceStitch({
   const rejectedReviews = Number(stats?.rejected || 0);
   const averageRating = Number(stats?.avgRating || 0);
   const pendingCount = Math.max(0, totalReviews - approvedReviews);
-  const visibleSelectedIds = items
+
+  const pageSize = 15;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedItems = items.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const pageChips = buildPageChips(safePage, totalPages);
+
+  const visibleSelectedIds = pagedItems
     .map((item) => String(item?._id || item?.id || ""))
     .filter((reviewId) => selectedReviewIds.includes(reviewId));
-  const allSelected = items.length > 0 && visibleSelectedIds.length === items.length;
+  const allSelected = pagedItems.length > 0 && visibleSelectedIds.length === pagedItems.length;
 
   const toggleSelected = (reviewId) => {
     setSelectedReviewIds((current) => {
@@ -1314,11 +1336,11 @@ function ReviewsWorkspaceStitch({
   };
 
   const toggleSelectAll = () => {
-    setSelectedReviewIds(allSelected ? [] : items.map((item) => String(item?._id || item?.id || "")));
+    setSelectedReviewIds(allSelected ? [] : pagedItems.map((item) => String(item?._id || item?.id || "")));
   };
 
   const handleBatchApprove = async () => {
-    const targets = items.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && !item?.approved);
+    const targets = pagedItems.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && !item?.approved);
     for (const target of targets) {
       await runAction("moderateReview", target, null, true);
     }
@@ -1370,12 +1392,14 @@ function ReviewsWorkspaceStitch({
             </select>
           </div>
           <div className="admin-reviews-desktop-toolbar__actions">
-            <button type="button" className="ghost-button" onClick={() => loadData({ background: true })}>
-              {refreshing ? "Refreshing..." : "Refresh"}
+            <button type="button" className="admin-reviews-icon-button" disabled={refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh reviews">
+              <AdminProductsIcon name="refresh" />
             </button>
-            <button type="button" className="ghost-button" onClick={exportCsv}>Export CSV</button>
-            <button type="button" className="ghost-button" onClick={exportJson}>Export JSON</button>
-            <button type="button" className="ghost-button" onClick={exportSql}>Export SQL</button>
+            <div className="admin-reviews-export-group">
+              <button type="button" onClick={exportCsv}>CSV</button>
+              <button type="button" onClick={exportJson}>JSON</button>
+              <button type="button" onClick={exportSql}>SQL</button>
+            </div>
           </div>
         </header>
 
@@ -1404,16 +1428,13 @@ function ReviewsWorkspaceStitch({
 
         <section className="admin-reviews-desktop-queue">
           <header className="admin-reviews-desktop-queue__head">
-            <h2>Moderation Queue</h2>
+            <h2><AdminProductsIcon name="tune" />Moderation Queue</h2>
             <div className="admin-reviews-desktop-queue__tools">
               <button type="button" className="ghost-button" onClick={toggleSelectAll}>
                 {allSelected ? "Clear Selection" : "Select All"}
               </button>
               <button type="button" className="primary-button" disabled={!visibleSelectedIds.length || !!busyAction} onClick={handleBatchApprove}>
                 Batch Approve
-              </button>
-              <button type="button" className="ghost-button" onClick={resetReviewFilters}>
-                Reset Filters
               </button>
             </div>
           </header>
@@ -1426,7 +1447,7 @@ function ReviewsWorkspaceStitch({
           ) : (
             <>
               <div className="admin-reviews-desktop-list">
-                {items.map((item) => {
+                {pagedItems.map((item) => {
                   const reviewId = String(item?._id || item?.id || "");
                   const productId = item?.product?._id || item?.product?.id || item?.productId || "";
                   const reviewerName = item?.user?.name || item?.user?.email || "Customer";
@@ -1453,11 +1474,11 @@ function ReviewsWorkspaceStitch({
                           <time>{formatDateTime(item?.createdAt)}</time>
                         </div>
                         <div className="admin-reviews-desktop-row__body">
-                          <h3>{reviewerName}</h3>
-                          <p>
-                            <span>on </span>
+                          <h3>
+                            {reviewerName}
+                            <i> on </i>
                             {productId ? <Link href={`/products/${productId}`}>{productName}</Link> : <strong>{productName}</strong>}
-                          </p>
+                          </h3>
                           <blockquote>{item?.comment || "No review text."}</blockquote>
                         </div>
                       </div>
@@ -1483,9 +1504,9 @@ function ReviewsWorkspaceStitch({
                           ) : null}
                         </div>
                         <div className="admin-reviews-desktop-row__links">
-                          {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Open Product</Link> : null}
+                          {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}><AdminProductsIcon name="external" />Open Product</Link> : null}
                           <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                            Delete
+                            <AdminProductsIcon name="delete" />Delete
                           </button>
                         </div>
                       </div>
@@ -1494,8 +1515,31 @@ function ReviewsWorkspaceStitch({
                 })}
               </div>
               <footer className="admin-reviews-desktop-pagination">
-                <p>Showing {items.length ? `1-${items.length}` : 0} of {formatCount(totalReviews)} reviews</p>
-                <span className="admin-reviews-page-chip">1</span>
+                <p>
+                  Showing {items.length ? `${(safePage - 1) * pageSize + 1}-${Math.min(safePage * pageSize, items.length)}` : 0} of {formatCount(items.length)} reviews
+                </p>
+                <div className="admin-reviews-pagination-nav">
+                  <button type="button" className="admin-reviews-page-chip is-nav" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} aria-label="Previous page">
+                    <AdminProductsIcon name="back" />
+                  </button>
+                  {pageChips.map((chip, index) => (
+                    chip === "..." ? (
+                      <span key={`ellipsis-${index}`} className="admin-reviews-page-ellipsis">...</span>
+                    ) : (
+                      <button
+                        key={chip}
+                        type="button"
+                        className={`admin-reviews-page-chip ${chip === safePage ? "is-active" : ""}`}
+                        onClick={() => setPage(chip)}
+                      >
+                        {chip}
+                      </button>
+                    )
+                  ))}
+                  <button type="button" className="admin-reviews-page-chip is-nav" disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)} aria-label="Next page">
+                    <AdminProductsIcon name="chevron" />
+                  </button>
+                </div>
               </footer>
             </>
           )}
@@ -1504,12 +1548,10 @@ function ReviewsWorkspaceStitch({
 
       <section className="admin-reviews-mobile-shell">
         <header className="admin-reviews-mobile-topbar">
-          <div>
-            <h1>Reviews</h1>
-            <p>Moderation queue</p>
-          </div>
+          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="back" /></Link>
+          <h1>Reviews</h1>
           <button type="button" className="admin-reviews-mobile-topbar__filter" onClick={() => setToolbarOpen(true)} aria-label="Open review filters">
-            Filter
+            <AdminProductsIcon name="tune" />
           </button>
         </header>
 
@@ -1566,32 +1608,40 @@ function ReviewsWorkspaceStitch({
                   </div>
                   <blockquote>{item?.comment || "No review text."}</blockquote>
                   <div className="admin-reviews-mobile-card__actions">
-                    <div className="admin-reviews-mobile-card__buttons">
-                      <button
-                        type="button"
-                        className="admin-reviews-row-button is-reject"
-                        disabled={isBusy}
-                        onClick={() => runAction("moderateReview", item, null, false)}
-                      >
-                        Reject
-                      </button>
-                      {!isApproved ? (
-                        <button
-                          type="button"
-                          className="admin-reviews-row-button is-approve"
-                          disabled={isBusy}
-                          onClick={() => runAction("moderateReview", item, null, true)}
-                        >
-                          Approve
+                    {!isApproved ? (
+                      <>
+                        <div className="admin-reviews-mobile-card__buttons">
+                          <button
+                            type="button"
+                            className="admin-reviews-row-button is-approve"
+                            disabled={isBusy}
+                            onClick={() => runAction("moderateReview", item, null, true)}
+                          >
+                            <AdminProductsIcon name="check" />Approve
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-reviews-row-button is-reject"
+                            disabled={isBusy}
+                            onClick={() => runAction("moderateReview", item, null, false)}
+                          >
+                            <AdminProductsIcon name="delete" />Reject
+                          </button>
+                        </div>
+                        {productId ? (
+                          <Link className="admin-reviews-mobile-card__open" href={`/products/${productId}`}>
+                            <AdminProductsIcon name="external" />Open Product
+                          </Link>
+                        ) : null}
+                      </>
+                    ) : (
+                      <div className="admin-reviews-mobile-card__links">
+                        {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Product Details</Link> : null}
+                        <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+                          Delete
                         </button>
-                      ) : null}
-                    </div>
-                    <div className="admin-reviews-mobile-card__links">
-                      {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Product Details</Link> : null}
-                      <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                        Delete
-                      </button>
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </article>
               );
@@ -1990,6 +2040,7 @@ function AdminProductsIcon({ name }) {
     check: <><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></>,
     copy: <><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></>,
     person: <><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
+    external: <><path d="M9 6H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" /><path d="M13 4h7v7M20 4 11 13" /></>,
     back: <><path d="m15 18-6-6 6-6" /></>,
     sync: <><path d="M7 7h9l-2.5-2.5M17 17H8l2.5 2.5M18 7a7 7 0 0 1 1 7M6 17a7 7 0 0 1-1-7" /></>,
   };
@@ -3414,7 +3465,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const [busyAction, setBusyAction] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
-  const [toolbarOpen, setToolbarOpen] = useState(type === "reviews");
+  const [toolbarOpen, setToolbarOpen] = useState(false);
   const [productCategoryFilter, setProductCategoryFilter] = useState("all");
   const [productBrandFilter, setProductBrandFilter] = useState("all");
   const [productStockFilter, setProductStockFilter] = useState("all");

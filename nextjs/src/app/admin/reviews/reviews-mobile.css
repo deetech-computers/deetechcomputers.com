@@ -33,38 +33,48 @@
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar {
-    min-height: 76px;
+    min-height: 64px;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 28px 1fr 40px;
     align-items: center;
     gap: 12px;
-    padding: 8px 2px 4px;
+    padding: 8px 2px;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-topbar > a {
+    display: grid;
+    place-items: center;
+    color: var(--reviews-green);
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-topbar > a svg {
+    width: 24px;
+    height: 24px;
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar h1 {
     margin: 0;
-    color: var(--reviews-text);
-    font-size: 34px;
+    color: var(--reviews-green);
+    font-size: 24px;
     font-weight: 800;
     line-height: 1;
-    letter-spacing: -0.04em;
-  }
-
-  .admin-reviews-route .admin-reviews-mobile-topbar p {
-    margin: 6px 0 0;
-    color: var(--reviews-muted);
-    font-size: 14px;
+    letter-spacing: -0.02em;
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar__filter {
-    min-height: 42px;
-    padding: 0 16px;
-    border: 1px solid var(--reviews-line);
-    border-radius: 14px;
-    background: #ffffff;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 999px;
+    background: var(--reviews-panel-soft);
     color: var(--reviews-green);
-    font-size: 13px;
-    font-weight: 800;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-topbar__filter svg {
+    width: 20px;
+    height: 20px;
   }
 
   .admin-reviews-route .admin-reviews-mobile-stats {
@@ -242,15 +252,30 @@
     line-height: 1.75;
   }
 
-  .admin-reviews-route .admin-reviews-mobile-card__actions,
-  .admin-reviews-route .admin-reviews-mobile-card__buttons,
-  .admin-reviews-route .admin-reviews-mobile-card__links {
+  .admin-reviews-route .admin-reviews-mobile-card__actions {
     display: grid;
+    gap: 10px;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-card__buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-card__buttons > * {
+    flex: 1;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-card__links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
   }
 
   .admin-reviews-route .admin-reviews-row-button,
   .admin-reviews-route .admin-reviews-inline-link,
+  .admin-reviews-route .admin-reviews-mobile-card__open,
   .admin-reviews-route .ghost-button,
   .admin-reviews-route .primary-button {
     min-height: 44px;
@@ -258,6 +283,18 @@
     padding: 0 14px;
     font-size: 14px;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .admin-reviews-route .admin-reviews-row-button svg,
+  .admin-reviews-route .admin-reviews-inline-link svg,
+  .admin-reviews-route .admin-reviews-mobile-card__open svg {
+    width: 16px;
+    height: 16px;
   }
 
   .admin-reviews-route .admin-reviews-row-button.is-approve,
@@ -273,15 +310,18 @@
     color: var(--reviews-red);
   }
 
+  .admin-reviews-route .admin-reviews-mobile-card__open {
+    width: 100%;
+    border: 1px solid var(--reviews-line);
+    background: var(--reviews-panel-soft);
+    color: var(--reviews-green);
+  }
+
   .admin-reviews-route .ghost-button,
   .admin-reviews-route .admin-reviews-inline-link {
     border: 1px solid var(--reviews-line);
     background: #ffffff;
     color: var(--reviews-green);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
   }
 
   .admin-reviews-route .admin-reviews-inline-link.is-danger {
