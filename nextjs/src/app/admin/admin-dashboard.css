@@ -216,6 +216,11 @@
     display: none;
   }
 
+  .admin-dash-card.is-revenue strong {
+    font-size: 21px;
+    white-space: nowrap;
+  }
+
   .admin-viz-grid,
   .admin-dash-panels--overview {
     display: grid;
