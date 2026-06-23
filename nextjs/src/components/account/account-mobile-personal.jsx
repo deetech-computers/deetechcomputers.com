@@ -108,13 +108,15 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
       <div className="account-mobile-personal__body">
         <section className="account-mobile-personal__identity">
           <div className="account-mobile-personal__avatar">
-            <StableImage
-              src={form.avatarUrl || ""}
-              alt=""
-              width={108}
-              height={108}
-              fallback={getInitials(form)}
-            />
+            <span className="account-mobile-personal__avatar-image">
+              <StableImage
+                src={form.avatarUrl || ""}
+                alt=""
+                width={108}
+                height={108}
+                fallback={getInitials(form)}
+              />
+            </span>
             <button
               type="button"
               onClick={() => avatarInputRef.current?.click()}

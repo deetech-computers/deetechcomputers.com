@@ -8334,18 +8334,24 @@ button, input, select, textarea { font: inherit; }
   border: 2px solid #9ad4a0;
   font-weight: 900;
   letter-spacing: 0.03em;
+}
+.account-sidebar-profile__avatar {
   overflow: hidden;
 }
 .account-sidebar-profile__avatar img,
 .account-personal-profile__avatar img {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: cover;
   border-radius: inherit;
 }
 .account-sidebar-profile__avatar {
-  width: 58px;
-  height: 58px;
+  width: 58px !important;
+  height: 58px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
 }
 .account-sidebar-profile__copy {
   display: grid;
@@ -8424,10 +8430,20 @@ button, input, select, textarea { font: inherit; }
 }
 .account-personal-profile__avatar {
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 70px !important;
+  height: 70px !important;
+  max-width: 70px !important;
+  max-height: 70px !important;
   flex: 0 0 auto;
   font-size: 1.2rem;
+}
+.account-personal-profile__avatar-image {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
 }
 .account-personal-profile__avatar-edit {
   position: absolute;
@@ -13300,8 +13316,10 @@ button, input, select, textarea { font: inherit; }
   .account-mobile-home__avatar {
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
+    width: 64px !important;
+    height: 64px !important;
+    max-width: 64px !important;
+    max-height: 64px !important;
     overflow: hidden;
     border-radius: 12px;
     background: #a6f5af;
@@ -13310,8 +13328,10 @@ button, input, select, textarea { font: inherit; }
     font-weight: 900;
   }
   .account-mobile-home__avatar img {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     object-fit: cover;
   }
   .account-mobile-home__identity {
@@ -15806,8 +15826,10 @@ button, input, select, textarea { font: inherit; }
     position: relative;
     display: grid;
     place-items: center;
-    width: 108px;
-    height: 108px;
+    width: 108px !important;
+    height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
     border: 5px solid #ffffff;
     border-radius: 14px;
     background: #18572a;
@@ -15816,9 +15838,19 @@ button, input, select, textarea { font: inherit; }
     font-weight: 900;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.18);
   }
-  .account-mobile-personal__avatar img {
+  .account-mobile-personal__avatar-image {
+    display: grid;
+    place-items: center;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    border-radius: 9px;
+  }
+  .account-mobile-personal__avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     object-fit: cover;
     border-radius: 9px;
   }

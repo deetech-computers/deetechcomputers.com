@@ -609,13 +609,15 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
       <div className="account-personal-card account-personal-card--summary">
         <div className="account-personal-profile">
           <div className="account-personal-profile__avatar">
-            <StableImage
-              src={form.avatarUrl || ""}
-              alt=""
-              width={70}
-              height={70}
-              fallback={getAccountInitials(form)}
-            />
+            <span className="account-personal-profile__avatar-image">
+              <StableImage
+                src={form.avatarUrl || ""}
+                alt=""
+                width={70}
+                height={70}
+                fallback={getAccountInitials(form)}
+              />
+            </span>
             <button
               type="button"
               className="account-personal-profile__avatar-edit"
