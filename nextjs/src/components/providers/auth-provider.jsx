@@ -7,6 +7,7 @@ import {
   loginUser,
   registerUser,
   updateProfile,
+  uploadAvatar as uploadAvatarRequest,
 } from "@/lib/auth";
 import {
   clearSession,
@@ -104,6 +105,19 @@ export function AuthProvider({ children }) {
     return nextUser;
   };
 
+  const uploadAvatar = async (file) => {
+    if (!token) throw new Error("Login required");
+    const profile = await uploadAvatarRequest(token, file);
+    const nextToken = profile?.token || token;
+    const nextUser = {
+      ...(user || {}),
+      ...(profile || {}),
+    };
+    writeSession({ token: nextToken, user: nextUser });
+    pushToast("Profile photo updated", "success");
+    return nextUser;
+  };
+
   const logout = () => {
     clearAllCheckoutDrafts();
     clearSession();
@@ -120,6 +134,7 @@ export function AuthProvider({ children }) {
     register,
     refreshProfile,
     saveProfile,
+    uploadAvatar,
     logout,
   };
 

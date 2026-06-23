@@ -43,3 +43,15 @@ export async function updateProfile(token, payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export async function uploadAvatar(token, file) {
+  const form = new FormData();
+  form.append("avatar", file);
+  return requestJson(`${API_BASE_USERS}/profile/avatar`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: form,
+  });
+}

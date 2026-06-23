@@ -9,6 +9,7 @@ export const updateProfileSchema = Joi.object({
   region: Joi.string().max(100),
   city: Joi.string().max(100),
   password: Joi.string().min(6),
+  avatarUrl: Joi.string().max(500).allow(""),
 }).min(1); // must include at least one field
 
 export const updateUserRoleSchema = Joi.object({

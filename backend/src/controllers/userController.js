@@ -1,5 +1,6 @@
 // backend/src/controllers/userController.js
 import User from "../models/User.js";
+import { storeImageFile, deleteStoredMedia } from "../utils/mediaStorage.js";
 
 function normalizeSearchTerm(value) {
   return String(value || "")
@@ -42,6 +43,7 @@ export async function updateUserProfile(req, res) {
   if (req.body.address !== undefined) user.address = req.body.address;
   if (req.body.region !== undefined) user.region = req.body.region;
   if (req.body.city !== undefined) user.city = req.body.city;
+  if (req.body.avatarUrl !== undefined) user.avatarUrl = req.body.avatarUrl;
 
   if (req.body.name) {
     user.name = req.body.name;
@@ -75,7 +77,48 @@ export async function updateUserProfile(req, res) {
     region: updatedUser.region,
     city: updatedUser.city,
     role: updatedUser.role,
+    avatarUrl: updatedUser.avatarUrl || "",
     token: req.token || null, // preserve token in case frontend expects it
+  });
+}
+
+// @desc    Upload/replace the logged-in user's profile photo
+// @route   POST /api/users/profile/avatar
+// @access  Private
+export async function uploadUserAvatar(req, res) {
+  if (!req.file) {
+    res.status(400);
+    throw new Error("Image file is required");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const previousAvatarUrl = user.avatarUrl;
+  const stored = await storeImageFile(req.file, "deetech/avatars");
+  user.avatarUrl = stored.url;
+  const updatedUser = await user.save();
+
+  if (previousAvatarUrl && previousAvatarUrl !== stored.url) {
+    await deleteStoredMedia(previousAvatarUrl);
+  }
+
+  res.status(201).json({
+    _id: updatedUser._id,
+    name: updatedUser.name,
+    firstName: updatedUser.firstName,
+    lastName: updatedUser.lastName,
+    email: updatedUser.email,
+    phone: updatedUser.phone,
+    address: updatedUser.address,
+    region: updatedUser.region,
+    city: updatedUser.city,
+    role: updatedUser.role,
+    avatarUrl: updatedUser.avatarUrl || "",
+    token: req.token || null,
   });
 }
 

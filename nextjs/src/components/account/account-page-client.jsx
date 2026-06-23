@@ -538,13 +538,13 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
   return (
     <aside className="account-dashboard__sidebar" aria-label="Account sections">
       <div className="account-dashboard__sidebar-scroll">
-        <div className="account-sidebar-brand">
-          <strong>DEETECH Computers</strong>
-          <span>Premium Hardware Solutions</span>
-        </div>
         <div className="account-sidebar-profile">
           <div className="account-sidebar-profile__avatar" aria-hidden="true">
-            {getAccountInitials(profile)}
+            {profile?.avatarUrl ? (
+              <img src={profile.avatarUrl} alt="" />
+            ) : (
+              getAccountInitials(profile)
+            )}
           </div>
           <div className="account-sidebar-profile__copy">
             <strong>{displayName}</strong>
@@ -602,8 +602,16 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
   );
 }
 
-function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
+function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar }) {
   const displayName = getAccountDisplayName(form);
+  const avatarInputRef = useRef(null);
+
+  function handleAvatarInputChange(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file && onAvatarUpload) onAvatarUpload(file);
+  }
+
   return (
     <section className="account-dashboard__section account-personal-section">
       <div className="account-dashboard__section-head">
@@ -612,8 +620,24 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting }) {
       </div>
       <div className="account-personal-card account-personal-card--summary">
         <div className="account-personal-profile">
-          <div className="account-personal-profile__avatar" aria-hidden="true">
-            {getAccountInitials(form)}
+          <div className="account-personal-profile__avatar">
+            {form.avatarUrl ? <img src={form.avatarUrl} alt="" /> : getAccountInitials(form)}
+            <button
+              type="button"
+              className="account-personal-profile__avatar-edit"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              aria-label="Upload profile photo"
+            >
+              {uploadingAvatar ? <AccountNavIcon name="history" /> : <AccountNavIcon name="edit" />}
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={handleAvatarInputChange}
+            />
           </div>
           <div>
             <span>Account owner</span>
@@ -1600,11 +1624,12 @@ function NotificationsSection({ notifications, readIds, onOpenNotification, onMa
 export default function AccountPageClient({ initialTab = "" }) {
   const router = useRouter();
   const { pushToast } = useToast();
-  const { isAuthenticated, logout, refreshProfile, saveProfile, status, token, user } = useAuth();
+  const { isAuthenticated, logout, refreshProfile, saveProfile, uploadAvatar, status, token, user } = useAuth();
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [profileForm, setProfileForm] = useState({
     firstName: "",
     lastName: "",
@@ -1613,6 +1638,7 @@ export default function AccountPageClient({ initialTab = "" }) {
     city: "",
     region: "",
     address: "",
+    avatarUrl: "",
   });
   const [orders, setOrders] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -1679,6 +1705,7 @@ export default function AccountPageClient({ initialTab = "" }) {
       city: nextProfile?.city || "",
       region: nextProfile?.region || "",
       address: nextProfile?.address || "",
+      avatarUrl: nextProfile?.avatarUrl || "",
     });
   }
 
@@ -1808,6 +1835,29 @@ export default function AccountPageClient({ initialTab = "" }) {
       });
     } finally {
       setSavingProfile(false);
+    }
+  }
+
+  async function handleAvatarUpload(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      pushToast("Please choose an image file (JPG, PNG, WEBP, GIF, BMP, or HEIC)", "warning");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      pushToast("Photo is too large. Please choose an image under 8MB", "warning");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const updatedProfile = await uploadAvatar(file);
+      fillProfileForm(updatedProfile);
+    } catch (error) {
+      pushToast(error?.message || "Could not upload your photo. Please try again", "warning");
+    } finally {
+      setUploadingAvatar(false);
     }
   }
 
@@ -1967,8 +2017,17 @@ export default function AccountPageClient({ initialTab = "" }) {
     if (activeSection === "logout") {
       return <LogoutSection onLogout={handleLogout} />;
     }
-    return <PersonalSection form={profileForm} onFieldChange={handleProfileFieldChange} onSubmit={handleProfileSubmit} submitting={savingProfile} />;
-  }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, wishlistItems]);
+    return (
+      <PersonalSection
+        form={profileForm}
+        onFieldChange={handleProfileFieldChange}
+        onSubmit={handleProfileSubmit}
+        submitting={savingProfile}
+        onAvatarUpload={handleAvatarUpload}
+        uploadingAvatar={uploadingAvatar}
+      />
+    );
+  }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleAvatarUpload, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, uploadingAvatar, wishlistItems]);
 
   useEffect(() => {
     if (status !== "loading" && !isAuthenticated) {
@@ -2014,6 +2073,8 @@ export default function AccountPageClient({ initialTab = "" }) {
           onFieldChange={handleProfileFieldChange}
           onSubmit={handleProfileSubmit}
           submitting={savingProfile}
+          onAvatarUpload={handleAvatarUpload}
+          uploadingAvatar={uploadingAvatar}
         />
       ) : null}
       {shouldShowMobileOrders ? (

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 
 function getDisplayName(profile) {
   const first = String(profile?.firstName || "").trim();
@@ -81,7 +82,15 @@ function MobilePersonalIcon({ name }) {
   );
 }
 
-export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, submitting }) {
+export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar }) {
+  const avatarInputRef = useRef(null);
+
+  function handleAvatarInputChange(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file && onAvatarUpload) onAvatarUpload(file);
+  }
+
   return (
     <section className="account-mobile-personal" aria-label="Personal Information">
       <header className="account-mobile-personal__head">
@@ -97,9 +106,23 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
 
       <div className="account-mobile-personal__body">
         <section className="account-mobile-personal__identity">
-          <div className="account-mobile-personal__avatar" aria-hidden="true">
-            {getInitials(form)}
-            <span><MobilePersonalIcon name="camera" /></span>
+          <div className="account-mobile-personal__avatar">
+            {form.avatarUrl ? <img src={form.avatarUrl} alt="" /> : getInitials(form)}
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              aria-label="Upload profile photo"
+            >
+              <MobilePersonalIcon name="camera" />
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={handleAvatarInputChange}
+            />
           </div>
           <strong>{getDisplayName(form)}</strong>
           <p>{form.email || "Email not available"}</p>

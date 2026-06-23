@@ -67,7 +67,8 @@
   .admin-users-route .admin-record-list--users { min-width: 0; display: grid; gap: 10px; }
   .admin-users-route .admin-user-record { min-width: 0; display: grid; gap: 11px; padding: 14px; border: 1px solid var(--users-line); border-radius: 4px; background: #fff; box-shadow: 0 3px 8px rgba(17, 28, 44, .045); }
   .admin-users-route .admin-user-record__identity { min-width: 0; display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 11px; }
-  .admin-users-route .admin-user-record__avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #e7eeff; color: var(--users-green); font-size: 11px; font-weight: 800; }
+  .admin-users-route .admin-user-record__avatar { width: 42px; height: 42px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #e7eeff; color: var(--users-green); font-size: 11px; font-weight: 800; }
+  .admin-users-route .admin-user-record__avatar img { width: 100%; height: 100%; object-fit: cover; }
   .admin-users-route .admin-user-record__identity > span:last-child { min-width: 0; display: grid; gap: 3px; }
   .admin-users-route .admin-user-record__identity strong,
   .admin-users-route .admin-user-record__identity small,

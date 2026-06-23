@@ -8506,6 +8506,14 @@ button, input, select, textarea { font: inherit; }
   border: 2px solid #9ad4a0;
   font-weight: 900;
   letter-spacing: 0.03em;
+  overflow: hidden;
+}
+.account-sidebar-profile__avatar img,
+.account-personal-profile__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 .account-sidebar-profile__avatar {
   width: 58px;
@@ -8587,10 +8595,33 @@ button, input, select, textarea { font: inherit; }
   flex: 1 1 auto;
 }
 .account-personal-profile__avatar {
+  position: relative;
   width: 70px;
   height: 70px;
   flex: 0 0 auto;
   font-size: 1.2rem;
+}
+.account-personal-profile__avatar-edit {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: #184f27;
+  color: #ffffff;
+  cursor: pointer;
+}
+.account-personal-profile__avatar-edit svg {
+  width: 14px;
+  height: 14px;
+}
+.account-personal-profile__avatar-edit:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 .account-personal-profile strong {
   display: block;
@@ -15951,7 +15982,13 @@ button, input, select, textarea { font: inherit; }
     font-weight: 900;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.18);
   }
-  .account-mobile-personal__avatar span {
+  .account-mobile-personal__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+  }
+  .account-mobile-personal__avatar button {
     position: absolute;
     right: -8px;
     bottom: -8px;
@@ -15959,12 +15996,18 @@ button, input, select, textarea { font: inherit; }
     place-items: center;
     width: 42px;
     height: 42px;
+    border: 0;
     border-radius: 14px;
     background: #00401b;
     color: #ffffff;
+    cursor: pointer;
     box-shadow: 0 8px 18px rgba(0, 64, 27, 0.26);
   }
-  .account-mobile-personal__avatar span .account-mobile-personal__icon {
+  .account-mobile-personal__avatar button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+  .account-mobile-personal__avatar button .account-mobile-personal__icon {
     width: 21px;
     height: 21px;
   }
