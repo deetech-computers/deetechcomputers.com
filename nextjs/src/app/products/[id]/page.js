@@ -1,10 +1,10 @@
 "use client";
 
+// COMPLETELY REWRITTEN TO MATCH STITCH DESIGN EXACTLY
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import ProductCard from "@/components/products/product-card";
 import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,13 +21,10 @@ import {
   fetchProductById,
   fetchProducts,
   formatCategoryLabel,
-  getProductDiscountPercent,
-  getProductOriginalPrice,
   getProductPrice,
   getProductRating,
   getProductReviewCount,
   getProductStock,
-  isProductDiscountActive,
   optimizeCloudinaryImage,
   resolveProductImage,
 } from "@/lib/products";
@@ -40,108 +37,54 @@ import {
   normalizeUpgradeSelection,
 } from "@/lib/product-upgrades";
 
-function getProductImages(product) {
+const getProductImages = (product) => {
   const images = Array.isArray(product?.images) ? product.images : [];
-  const normalized = images.map((image) => resolveProductImage(image)).filter(Boolean);
+  const normalized = images.map((img) => resolveProductImage(img)).filter(Boolean);
   const fallback = resolveProductImage(product?.image);
-
-  if (fallback && !normalized.includes(fallback)) {
-    normalized.unshift(fallback);
-  }
-
+  if (fallback && !normalized.includes(fallback)) normalized.unshift(fallback);
   return normalized;
-}
+};
 
-function getProductSpecs(product) {
+const getProductSpecs = (product) => {
   const specs = product?.specs;
   if (!specs) return [];
   if (typeof specs.entries === "function") return Array.from(specs.entries());
   if (typeof specs === "object") return Object.entries(specs);
   return [];
-}
+};
 
-function getProductDescription(product) {
-  return (
-    product?.description ||
-    product?.shortDescription ||
-    product?.short_description ||
-    "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
-  );
-}
+const getProductDescription = (product) =>
+  product?.description || product?.shortDescription || product?.short_description ||
+  "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home.";
 
-function getProductSummary(product) {
-  return (
-    product?.shortDescription ||
-    product?.short_description ||
-    product?.description ||
-    "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
-  );
-}
-
-function normalizeDisplayTitle(value) {
+const normalizeDisplayTitle = (value) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
   if (/[a-z]/.test(raw)) return raw;
-  return raw
-    .toLowerCase()
-    .replace(/\b([a-z])/g, (match) => match.toUpperCase());
-}
+  return raw.toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
+};
 
-function getReviewAverage(reviews) {
-  const ratings = (reviews || [])
-    .map((review) => Number(review?.rating))
-    .filter((value) => Number.isFinite(value) && value > 0);
+const getReviewAverage = (reviews) => {
+  const ratings = (reviews || []).map((r) => Number(r?.rating)).filter((v) => Number.isFinite(v) && v > 0);
+  return ratings.length ? ratings.reduce((s, v) => s + v, 0) / ratings.length : 0;
+};
 
-  if (!ratings.length) return 0;
-  return ratings.reduce((sum, value) => sum + value, 0) / ratings.length;
-}
-
-function getReviewBreakdown(reviews) {
-  return [5, 4, 3, 2, 1].map((stars) => {
-    const count = (reviews || []).filter((review) => Number(review?.rating) === stars).length;
-    const total = reviews?.length || 0;
-    return {
-      stars,
-      count,
-      percentage: total ? (count / total) * 100 : 0,
-    };
-  });
-}
-
-function getReviewTimeLabel(value) {
+const getReviewTimeLabel = (value) => {
   const timestamp = new Date(value || Date.now()).getTime();
   const diff = Date.now() - timestamp;
   const day = 24 * 60 * 60 * 1000;
   const month = 30 * day;
-
   if (diff < day) return "Today";
   if (diff < 2 * day) return "1 day ago";
-  if (diff < month) return `${Math.max(1, Math.floor(diff / day))} days ago`;
+  if (diff < month) return `${Math.floor(diff / day)} days ago`;
   if (diff < 2 * month) return "1 month ago";
-  return `${Math.max(2, Math.floor(diff / month))} months ago`;
-}
+  return `${Math.floor(diff / month)} months ago`;
+};
 
-function formatDateTime(value) {
-  const date = value ? new Date(value) : null;
-  if (!date || Number.isNaN(date.getTime())) return "N/A";
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
-function getReviewerInitials(name) {
-  const parts = String(name || "Customer")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2);
-
-  return (parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CU").slice(0, 2);
-}
+const getReviewerInitials = (name) => {
+  const parts = String(name || "C").trim().split(/\s+/).slice(0, 2);
+  return parts.map((p) => p[0]?.toUpperCase()).join("").slice(0, 2);
+};
 
 const SOCIAL_LINKS = [
   { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
@@ -150,56 +93,115 @@ const SOCIAL_LINKS = [
   { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
 ];
 
-function BackArrowIcon() {
+export default function ProductDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { addItem } = useCart();
+  const { token, isAuthenticated } = useAuth();
+  const { pushToast } = useToast();
+  const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [qty, setQty] = useState(1);
+  const [selectedUpgrades, setSelectedUpgrades] = useState({});
+  const [status, setStatus] = useState("loading");
+  const [activeImage, setActiveImage] = useState(0);
+  const [loadedMainImage, setLoadedMainImage] = useState({ src: "", srcSet: undefined });
+  const [activeTab, setActiveTab] = useState("description");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
+
+  useEffect(() => setPortalReady(true), []);
+
+  useEffect(() => {
+    if (!productId) return;
+    setStatus("loading");
+    fetchProductById(productId)
+      .then((item) => {
+        setProduct(item);
+        setStatus("ready");
+        setTimeout(() => fetchProducts().then(setAllProducts).catch(() => {}), 500);
+      })
+      .catch(() => setStatus("error"));
+  }, [productId]);
+
+  useEffect(() => {
+    if (!productId) return;
+    requestJson(`${API_BASE}/reviews/product/${productId}`)
+      .then((items) => setReviews(Array.isArray(items) ? items : []))
+      .catch(() => {});
+  }, [productId]);
+
+  const images = useMemo(() => getProductImages(product), [product]);
+  const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
+  const currentImage = images[activeImageIndex] || "";
+  const optimizedImage = useMemo(() => optimizeCloudinaryImage(currentImage, { width: 560, height: 560, force: true }), [currentImage]);
+  const optimizedSrcSet = useMemo(() => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { force: true }), [currentImage]);
+  const optimizedThumbs = useMemo(() => images.map((img) => optimizeCloudinaryImage(img, { width: 140, height: 140 })), [images]);
+
+  useEffect(() => {
+    if (!optimizedImage) return;
+    if (loadedMainImage.src === optimizedImage) return;
+    setLoadedMainImage({ src: optimizedImage, srcSet: optimizedSrcSet });
+  }, [optimizedImage, optimizedSrcSet]);
+
+  useEffect(() => {
+    setActiveImage(0);
+    setLoadedMainImage({ src: "", srcSet: undefined });
+    setActiveTab("description");
+    setQty(1);
+    setSelectedUpgrades({});
+    setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
+  }, [product?._id]);
+
+  if (status === "loading") return <main className="shell page-section" />;
+  if (status === "error" || !product) return <main className="shell page-section"><div className="p-6">Error loading product</div></main>;
+
+  const stock = getProductStock(product);
+  const upgradeSpecs = normalizeProductUpgradeSpecs(product?.upgradeSpecs);
+  const hasUpgrades = hasProductUpgradeSpecs(product);
+  const displayPricing = getProductDisplayPricing(product, selectedUpgrades);
+  const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
+  const specs = applyUpgradeSelectionToSpecs(getProductSpecs(product).filter(([, v]) => String(v || "").trim()), selectedUpgrades);
+  const description = getProductDescription(product);
+  const displayBrand = normalizeDisplayTitle(product?.brand || categoryLabel);
+  const displayName = normalizeDisplayTitle(product?.name);
+  const ratingValue = reviews.length ? getReviewAverage(reviews) : getProductRating(product);
+  const rating = Math.round(ratingValue);
+  const reviewCount = reviews.length || getProductReviewCount(product);
+  const relatedProducts = allProducts.filter((item) => String(item?._id) !== String(product?._id)).filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category)).slice(0, 12);
+
+  const previewModal = previewOpen && currentImage ? createPortal(<div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center" role="dialog" onClick={() => setPreviewOpen(false)}><StableImage src={currentImage} alt={product.name} width={1200} height={1200} className="max-w-3xl max-h-screen object-contain" /></div>, document.body) : null;
+
+  const handleAddToCart = () => { addItem(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) }); pushToast("Added to cart", "success"); };
+  const handleCopy = async () => { try { await navigator.clipboard.writeText(`${typeof window !== "undefined" ? window.location.origin : ""}/products/${productId}`); pushToast("Link copied", "success"); } catch { pushToast("Failed to copy", "warning"); } };
+  const handleShare = async () => { const url = `${typeof window !== "undefined" ? window.location.origin : ""}/products/${productId}`; if (navigator.share) { await navigator.share({ title: product.name, url }); } else { await navigator.clipboard.writeText(url); pushToast("Link copied", "success"); } };
+  const handleWishlist = () => { if (!isAuthenticated) { pushToast("Login required", "info"); return; } const id = String(product?._id); const next = wishlisted ? removeWishlistEntry(id) : addWishlistEntry(id); setWishlisted(next.some((item) => item.id === id)); };
+
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <>
+      <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50"><div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"><Link href="/" className="font-bold text-lg text-primary">DEETECH Computers</Link><nav className="flex gap-8 flex-1 px-12 text-sm"><Link href="/products" className="text-on-surface-variant hover:text-primary transition">Products</Link><Link href="/contact" className="text-on-surface-variant hover:text-primary transition">Support</Link></nav><div className="flex gap-3"><button onClick={() => router.push("/cart")} className="p-2 hover:bg-gray-100 rounded-lg"><span className="material-symbols-outlined">shopping_cart</span></button><button onClick={() => router.push("/account")} className="p-2 hover:bg-gray-100 rounded-lg"><span className="material-symbols-outlined">account_circle</span></button></div></div></header>
+
+      <header className="md:hidden fixed top-0 w-full bg-white z-50 h-14 flex items-center px-4 gap-4 border-b border-gray-200"><button onClick={() => router.back()}><span className="material-symbols-outlined">arrow_back</span></button><div className="flex-1 text-xs"><div className="text-on-surface-variant">Home</div><div className="text-primary font-bold">{categoryLabel}</div></div><button onClick={handleShare}><span className="material-symbols-outlined">share</span></button></header>
+
+      <main className="md:pt-0 pt-14">
+        <nav className="hidden md:flex gap-2 text-xs text-on-surface-variant max-w-7xl mx-auto px-6 py-4 border-b"><Link href="/">Home</Link><span>/</span><span className="text-primary font-bold">{categoryLabel}</span></nav>
+
+        <div className="hidden md:grid grid-cols-12 gap-8 max-w-7xl mx-auto px-6 py-12">
+          <div className="col-span-7"><div className="bg-white rounded-lg border border-gray-200 aspect-square flex items-center justify-center overflow-hidden mb-6 shadow-sm">{loadedMainImage.src ? <StableImage src={loadedMainImage.src} srcSet={loadedMainImage.srcSet} alt={product.name} width={560} height={560} className="w-full h-full object-contain cursor-pointer hover:scale-110 transition-transform duration-500" onClick={() => setPreviewOpen(true)} /> : <div className="text-gray-400">Loading...</div>}</div>{images.length > 1 && <div className="flex gap-4 flex-wrap">{images.map((img, i) => <button key={i} onClick={() => setActiveImage(i)} className={`w-24 h-24 rounded-lg border-2 overflow-hidden flex-shrink-0 transition-all ${activeImageIndex === i ? "border-primary" : "border-gray-200"}`}><StableImage src={optimizedThumbs[i]} alt={`Thumb ${i + 1}`} width={96} height={96} className="w-full h-full object-contain" /></button>)}</div>}</div>
+
+          <div className="col-span-5"><div className="bg-accent-panel rounded-xl p-8 sticky top-20 space-y-6 shadow-sm"><div><span className="text-xs font-bold text-primary-container uppercase tracking-widest block mb-2">{displayBrand}</span><h1 className="text-3xl font-bold text-primary-dark mb-4">{displayName}</h1>{reviewCount > 0 && <div className="flex items-center gap-3"><div className="flex gap-0">{Array.from({ length: 5 }, (_, i) => <span key={i} className="text-lg" style={{ color: i < rating ? "#ffa500" : "#ddd" }}>★</span>)}</div><span className="text-xs text-on-surface-variant">({reviewCount})</span></div>}</div><div><div className="flex items-baseline gap-4 mb-2"><span className="text-5xl font-bold text-primary">{formatCurrency(displayPricing.currentPrice)}</span>{displayPricing.hasDiscount && <><span className="text-lg text-on-surface-variant line-through">{formatCurrency(displayPricing.originalPrice)}</span><span className="text-xs font-bold text-error bg-error-container px-2 py-1 rounded">{displayPricing.discountPercent}% OFF</span></>}</div><p className="text-xs text-on-surface-variant">Available in stock for immediate pickup or delivery across Ghana</p></div>{hasUpgrades && <div className="border-t border-outline-variant pt-6 space-y-4">{upgradeSpecs.ramOptions.length > 0 && <div><label className="text-xs font-bold uppercase tracking-wider block mb-3 text-on-surface">Memory (RAM)</label><div className="flex gap-3 flex-wrap"><button onClick={() => setSelectedUpgrades(p => { const n = { ...p }; delete n.ram; return n; })} className={`px-4 py-2 text-xs font-bold rounded border-2 transition-all ${!selectedUpgrades.ram ? "bg-primary text-white border-primary" : "bg-white text-on-surface border-outline-variant"}`}>Original</button>{upgradeSpecs.ramOptions.map((opt) => <button key={opt.label} onClick={() => setSelectedUpgrades(p => ({ ...p, ram: opt.label }))} className={`px-4 py-2 text-xs font-bold rounded border-2 transition-all ${selectedUpgrades.ram === opt.label ? "bg-primary text-white border-primary" : "bg-white text-on-surface border-outline-variant"}`}>{opt.label} {opt.priceDelta > 0 && `+${formatCurrency(opt.priceDelta)}`}</button>)}</div></div>}{upgradeSpecs.storageOptions.length > 0 && <div><label className="text-xs font-bold uppercase tracking-wider block mb-3 text-on-surface">Storage</label><div className="flex gap-3 flex-wrap"><button onClick={() => setSelectedUpgrades(p => { const n = { ...p }; delete n.storage; return n; })} className={`px-4 py-2 text-xs font-bold rounded border-2 transition-all ${!selectedUpgrades.storage ? "bg-primary text-white border-primary" : "bg-white text-on-surface border-outline-variant"}`}>Original</button>{upgradeSpecs.storageOptions.map((opt) => <button key={opt.label} onClick={() => setSelectedUpgrades(p => ({ ...p, storage: opt.label }))} className={`px-4 py-2 text-xs font-bold rounded border-2 transition-all ${selectedUpgrades.storage === opt.label ? "bg-primary text-white border-primary" : "bg-white text-on-surface border-outline-variant"}`}>{opt.label} {opt.priceDelta > 0 && `+${formatCurrency(opt.priceDelta)}`}</button>)}</div></div>}</div>}<div className="flex items-center gap-4 pt-6 border-t border-outline-variant"><div className="flex items-center border border-outline-variant rounded-lg bg-white"><button onClick={() => setQty(Math.max(1, qty - 1))} className="px-4 py-3 text-on-surface-variant">−</button><input type="number" value={qty} onChange={(e) => setQty(Math.max(1, Math.min(stock, Number(e.target.value) || 1)))} className="w-12 text-center border-0 bg-transparent font-bold" min="1" max={stock} /><button onClick={() => setQty(Math.min(stock, qty + 1))} className="px-4 py-3 text-on-surface-variant">+</button></div><button onClick={handleAddToCart} disabled={stock < 1} className="flex-1 bg-primary text-white py-3 rounded-lg font-bold hover:opacity-90 disabled:opacity-50 transition-all">Add to Cart</button></div><div className="flex items-center justify-between pt-6 border-t border-outline-variant text-xs font-bold"><button onClick={handleCopy} className="text-on-surface-variant hover:text-primary transition">Copy Link</button><button onClick={handleWishlist} className={`transition ${wishlisted ? "text-primary" : "text-on-surface-variant hover:text-primary"}`}>Wishlist</button><button onClick={handleShare} className="text-on-surface-variant hover:text-primary transition">Share</button></div></div></div>
+        </div>
+
+        <div className="md:hidden pb-32"><div className="aspect-square w-full bg-white overflow-hidden">{loadedMainImage.src ? <StableImage src={loadedMainImage.src} srcSet={loadedMainImage.srcSet} alt={product.name} width={400} height={400} className="w-full h-full object-contain cursor-pointer" onClick={() => setPreviewOpen(true)} /> : <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">Loading...</div>}</div>{images.length > 1 && <><div className="flex justify-center gap-1.5 py-3 bg-white">{images.map((_, i) => <button key={i} onClick={() => setActiveImage(i)} className={`w-2 h-2 rounded-full transition-all ${activeImageIndex === i ? "bg-primary w-3 h-3" : "bg-gray-300"}`} />)}</div><div className="flex gap-3 px-4 pb-4 overflow-x-auto">{images.map((img, i) => <button key={i} onClick={() => setActiveImage(i)} className={`w-20 h-20 flex-shrink-0 rounded-lg border-2 overflow-hidden transition-all ${activeImageIndex === i ? "border-primary" : "border-gray-200"}`}><StableImage src={optimizedThumbs[i]} alt={`Thumb ${i + 1}`} width={80} height={80} className="w-full h-full object-contain" /></button>)}</div></> }<section className="px-4 -mt-6 relative z-20"><div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200"><div className="flex justify-between items-start mb-3"><span className="text-xs font-bold bg-primary text-white px-3 py-1 rounded">{displayBrand}</span>{reviewCount > 0 && <div className="flex items-center gap-1"><div className="flex gap-0 text-xs">{Array.from({ length: 5 }, (_, i) => <span key={i} style={{ color: i < rating ? "#ffa500" : "#ddd" }}>★</span>)}</div><span className="text-xs text-on-surface-variant">({reviewCount})</span></div>}</div><h1 className="text-xl font-bold mb-2">{displayName}</h1>{displayPricing.hasDiscount && <div className="flex items-center gap-2 mb-1"><span className="text-xs font-bold bg-error text-white px-2 py-0.5 rounded">Save {displayPricing.discountPercent}%</span><span className="text-xs text-on-surface-variant line-through">{formatCurrency(displayPricing.originalPrice)}</span></div>}<div className="text-3xl font-bold text-primary">{formatCurrency(displayPricing.currentPrice)}</div></div></section>{hasUpgrades && <section className="px-4 mt-6 space-y-4"><label className="text-xs font-bold text-on-surface-variant uppercase block">Configure Hardware</label>{upgradeSpecs.ramOptions.length > 0 && <div><label className="text-xs font-bold block mb-2">System RAM</label><div className="flex gap-2 overflow-x-auto pb-2"><button onClick={() => setSelectedUpgrades(p => { const n = { ...p }; delete n.ram; return n; })} className={`flex-shrink-0 px-3 py-2 text-xs font-bold rounded border transition-all ${!selectedUpgrades.ram ? "bg-primary text-white border-primary" : "bg-gray-100 text-on-surface border-gray-300"}`}>Original</button>{upgradeSpecs.ramOptions.map((opt) => <button key={opt.label} onClick={() => setSelectedUpgrades(p => ({ ...p, ram: opt.label }))} className={`flex-shrink-0 px-3 py-2 text-xs font-bold rounded border transition-all ${selectedUpgrades.ram === opt.label ? "bg-primary text-white border-primary" : "bg-gray-100 text-on-surface border-gray-300"}`}>{opt.label} {opt.priceDelta > 0 && `+${formatCurrency(opt.priceDelta)}`}</button>)}</div></div>}{upgradeSpecs.storageOptions.length > 0 && <div><label className="text-xs font-bold block mb-2">Storage</label><div className="flex gap-2"><button onClick={() => setSelectedUpgrades(p => { const n = { ...p }; delete n.storage; return n; })} className={`flex-1 px-3 py-2 text-xs font-bold rounded border transition-all ${!selectedUpgrades.storage ? "bg-primary text-white border-primary" : "bg-gray-100 text-on-surface border-gray-300"}`}>Original</button>{upgradeSpecs.storageOptions.map((opt) => <button key={opt.label} onClick={() => setSelectedUpgrades(p => ({ ...p, storage: opt.label }))} className={`flex-1 px-3 py-2 text-xs font-bold rounded border transition-all ${selectedUpgrades.storage === opt.label ? "bg-primary text-white border-primary" : "bg-gray-100 text-on-surface border-gray-300"}`}>{opt.label} {opt.priceDelta > 0 && `+${formatCurrency(opt.priceDelta)}`}</button>)}</div></div>}</section>}<section className="flex gap-3 px-4 mt-6 mb-6"><button onClick={handleCopy} className="w-12 h-12 flex-shrink-0 rounded-full border border-gray-300 flex items-center justify-center bg-white"><span className="material-symbols-outlined text-sm">content_copy</span></button><button onClick={handleWishlist} className={`w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center transition-all ${wishlisted ? "bg-primary text-white" : "border border-gray-300 bg-white"}`}><span className="material-symbols-outlined text-sm">favorite</span></button><button onClick={handleShare} className="w-12 h-12 flex-shrink-0 rounded-full border border-gray-300 flex items-center justify-center bg-white"><span className="material-symbols-outlined text-sm">share</span></button></section><section className="sticky top-14 z-40 bg-white border-b border-gray-200 mb-6"><div className="flex px-4"><button onClick={() => setActiveTab("description")} className={`flex-1 py-4 text-xs font-bold border-b-2 transition-all ${activeTab === "description" ? "text-primary border-primary" : "text-on-surface-variant border-transparent"}`}>Description</button><button onClick={() => setActiveTab("specs")} className={`flex-1 py-4 text-xs font-bold border-b-2 transition-all ${activeTab === "specs" ? "text-primary border-primary" : "text-on-surface-variant border-transparent"}`}>Specs</button><button onClick={() => setActiveTab("reviews")} className={`flex-1 py-4 text-xs font-bold border-b-2 transition-all ${activeTab === "reviews" ? "text-primary border-primary" : "text-on-surface-variant border-transparent"}`}>Reviews ({reviewCount})</button></div></section><div className="px-4">{activeTab === "description" && <p className="text-xs text-on-surface-variant leading-relaxed mb-12">{description}</p>}{activeTab === "specs" && <div className="space-y-2 mb-12">{specs.length > 0 ? specs.map(([k, v]) => <div key={k} className="flex justify-between py-2 border-b border-gray-200"><span className="text-xs text-on-surface-variant">{String(k).replace(/[_-]/g, " ")}</span><span className="text-xs font-bold">{String(v)}</span></div>) : <p className="text-xs text-on-surface-variant py-6 text-center">Specs coming soon</p>}</div>}{activeTab === "reviews" && <div className="mb-12">{reviewCount > 0 ? <><div className="bg-accent-panel p-6 rounded-lg mb-6 text-center"><div className="text-4xl font-bold text-primary mb-1">{ratingValue.toFixed(1)}</div><div className="flex justify-center gap-0.5 text-sm">{Array.from({ length: 5 }, (_, i) => <span key={i} style={{ color: i < Math.round(ratingValue) ? "#ffa500" : "#ddd" }}>★</span>)}</div><p className="text-xs text-on-surface-variant mt-2">Based on {reviewCount} verified ratings</p></div><div className="space-y-3">{reviews.map((review, idx) => <div key={review?._id || idx} className="pb-3 border-b border-gray-200"><div className="flex gap-2 mb-2"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">{getReviewerInitials(review?.user?.name || review?.name)}</div><div className="flex-1 text-xs"><div className="font-bold">{review?.user?.name || review?.name || "Customer"}</div><div className="text-on-surface-variant">{getReviewTimeLabel(review?.createdAt)}</div></div></div><div className="flex gap-0 text-xs mb-1">{Array.from({ length: 5 }, (_, i) => <span key={i} style={{ color: i < (review?.rating || 0) ? "#ffa500" : "#ddd" }}>★</span>)}</div><p className="text-xs font-bold mb-0.5">{review?.title}</p><p className="text-xs text-on-surface-variant">{review?.comment}</p></div>)}</div></> : <p className="text-xs text-on-surface-variant text-center py-12">No reviews yet. Be the first!</p>}</div>}</div>{relatedProducts.length > 0 && <section className="px-4 mb-12"><h3 className="text-sm font-bold mb-3">Customers Also Viewed</h3><div className="flex gap-3 overflow-x-auto">{relatedProducts.slice(0, 6).map((item) => <div key={item._id} className="flex-shrink-0 w-40 border border-gray-200 rounded-lg p-3 bg-white"><div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">{getProductImages(item)[0] && <StableImage src={getProductImages(item)[0]} alt={item.name} width={160} height={160} className="w-full h-full object-contain" />}</div><p className="text-xs text-on-surface-variant truncate mb-1">{item.name}</p><p className="text-sm font-bold text-primary">{formatCurrency(getProductPrice(item))}</p></div>)}</div></section>}<section className="px-4 mb-12"><div className="flex justify-center gap-6 mb-6">{SOCIAL_LINKS.map((link) => <a key={link.label} href={link.href} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold" aria-label={link.label}>{link.label.charAt(0)}</a>)}</div><div className="space-y-3"><button onClick={() => router.push("/wishlist")} className="w-full py-3 text-xs font-bold border border-primary text-primary rounded bg-white">Browse Wishlist</button><button onClick={() => router.push("/cart")} className="w-full py-3 text-xs font-bold border border-primary text-primary rounded bg-white">Go to Cart</button></div></section></div><footer className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 py-3 z-40 flex gap-3"><div className="flex items-center border border-gray-300 rounded-lg bg-white h-12 px-1 flex-shrink-0"><button onClick={() => setQty(Math.max(1, qty - 1))} className="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-sm">−</button><span className="w-6 text-center font-bold text-sm">{qty}</span><button onClick={() => setQty(Math.min(stock, qty + 1))} className="w-8 h-8 flex items-center justify-center text-on-surface-variant font-bold text-sm">+</button></div><button onClick={handleAddToCart} disabled={stock < 1} className="flex-1 bg-primary text-white h-12 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all"><span className="material-symbols-outlined text-lg">shopping_cart</span>Add to Cart</button></footer></div>
+      </main>
+
+      {portalReady ? previewModal : null}
+    </>
   );
 }
-
-function ProductActionIcon({ name }) {
-  if (name === "copy") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M9 9h10v12H9zM5 3h10v3H8v9H5z" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (name === "wishlist") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 21 4.7 13.9A4.9 4.9 0 0 1 12 7a4.9 4.9 0 0 1 7.3 6.9Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  if (name === "share") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M15 8a3 3 0 1 0-2.8-4H12a3 3 0 0 0 .2 1L8 7.2a3 3 0 1 0 0 9.6l4.2 2.2A3 3 0 1 0 13 17a3 3 0 0 0-.2 1l-4.2-2.2a3 3 0 0 0 0-7.6L12.8 6A3 3 0 0 0 15 8Z" fill="currentColor" />
-      </svg>
-    );
-  }
-  const icons = {
-    facebook: "f",
-    tiktok: "♪",
-    instagram: "◎",
-    whatsapp: "◔",
-  };
-  return <span aria-hidden="true">{icons[name] || "•"}</span>;
-}
-
-function SocialAppIcon({ name }) {
-  if (name === "facebook") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M13.4 21v-7.3h2.4l.4-2.9h-2.8V9c0-.8.2-1.4 1.4-1.4H16V5.1c-.2 0-.9-.1-1.8-.1-2.5 0-4.2 1.5-4.2 4.4v1.4H7.5v2.9H10V21h3.4Z" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (name === "instagram") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
         <circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
         <circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" />
