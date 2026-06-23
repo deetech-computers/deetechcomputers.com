@@ -63,33 +63,33 @@ export function MobileNavDrawer({ open, onClose }) {
     router.push("/");
   };
 
+  if (!open) return null;
+
   return (
-    <div className={`admin-mobile-drawer ${open ? "is-open" : ""}`} aria-hidden={!open}>
-      <button type="button" className="admin-mobile-drawer__overlay" onClick={onClose} aria-label="Close navigation menu" />
-      <aside className="admin-mobile-drawer__panel">
-        <div className="admin-nav__brand">
-          <strong>DEETECH</strong>
-          <span>Admin Operations</span>
+    <div className="admin-mobile-menu" role="dialog" aria-modal="true" aria-label="Admin navigation">
+      <button type="button" className="admin-mobile-menu__backdrop" aria-label="Close admin menu" onClick={onClose} />
+      <nav className="admin-mobile-menu__panel" aria-label="Admin sections">
+        <div className="admin-mobile-menu__head">
+          <strong>DEETECH Admin</strong>
+          <button type="button" onClick={onClose}>Close</button>
         </div>
-        <nav className="admin-nav__links" aria-label="Admin navigation">
-          {items.map(([href, label, icon]) => (
-            <Link key={href} href={href} className={isActive(href) ? "active" : ""} onClick={onClose}>
-              <AdminNavIcon name={icon} />
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="admin-nav__footer">
-          <Link href="/admin" className="admin-nav__footer-link" onClick={onClose}>
+        {items.map(([href, label, icon]) => (
+          <Link key={href} href={href} className={isActive(href) ? "active" : ""} onClick={onClose}>
+            <AdminNavIcon name={icon} />
+            {label}
+          </Link>
+        ))}
+        <div className="admin-mobile-menu__footer">
+          <Link href="/admin" onClick={onClose}>
             <AdminNavIcon name="settings" />
             Settings
           </Link>
-          <button type="button" className="admin-nav__footer-link admin-nav__footer-link--danger" onClick={handleLogout}>
+          <button type="button" onClick={handleLogout}>
             <AdminNavIcon name="logout" />
             Logout
           </button>
         </div>
-      </aside>
+      </nav>
     </div>
   );
 }

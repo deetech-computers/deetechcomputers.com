@@ -2016,6 +2016,7 @@ function AdminStatusSelect({ value, options, onChange, label }) {
 
 function AdminOrdersIcon({ name }) {
   const paths = {
+    menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
     search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
     refresh: <><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></>,
     download: <><path d="M12 3v12" /><path d="m8 11 4 4 4-4" /><path d="M5 20h14" /></>,
@@ -2086,6 +2087,7 @@ function AdminUsersIcon({ name }) {
 
 function AdminAffiliatesIcon({ name }) {
   const paths = {
+    menu: <path d="M4 7h16M4 12h16M4 17h16" />,
     back: <path d="m15 18-6-6 6-6" />,
     search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
     filter: <><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>,
@@ -2209,13 +2211,15 @@ function AffiliateWorkspace({
   runAction,
 }) {
   const settingsBusy = busyAction === "updateAffiliateSettings";
+  const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div className="admin-affiliates-workspace">
       <header className="admin-affiliates-mobile-head">
-        <Link href="/admin" aria-label="Back to admin dashboard"><AdminAffiliatesIcon name="back" /></Link>
+        <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminAffiliatesIcon name="menu" /></button>
         <h1>Affiliates</h1>
         <button type="button" onClick={() => setToolbarOpen(true)} aria-label="Search and filter affiliates"><AdminAffiliatesIcon name="search" /></button>
       </header>
+      <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <section className="admin-affiliates-topbar" aria-label="Affiliate search and export">
         <label><AdminAffiliatesIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search affiliates by name, code or number..." /></label>
@@ -3484,6 +3488,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const [refreshing, setRefreshing] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [toolbarOpen, setToolbarOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [productCategoryFilter, setProductCategoryFilter] = useState("all");
   const [productBrandFilter, setProductBrandFilter] = useState("all");
   const [productStockFilter, setProductStockFilter] = useState("all");
@@ -4257,11 +4262,9 @@ export default function AdminManager({ type, productMode = "list", productId = "
       <div className={`admin-manager admin-manager--${type}`}>
         {type === "orders" ? (
           <header className="admin-orders-mobile-head">
-            <Link href="/admin" aria-label="Back to admin dashboard">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
+            <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu">
+              <AdminOrdersIcon name="menu" />
+            </button>
             <h1>Orders</h1>
             <button type="button" onClick={exportCsv} aria-label="Export orders CSV">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -4275,7 +4278,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
         {type === "products" && !isProductDedicatedPage ? (
           <>
             <header className="admin-products-mobile-head">
-              <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+              <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminProductsIcon name="menu" /></button>
               <h1>Products</h1>
               <Link href="/admin/products/create" aria-label="Create product"><AdminProductsIcon name="plus" /></Link>
             </header>
@@ -4357,7 +4360,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
         {type === "users" ? (
           <>
             <header className="admin-users-mobile-head">
-              <Link href="/admin" aria-label="Back to admin dashboard"><AdminUsersIcon name="menu" /></Link>
+              <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminUsersIcon name="menu" /></button>
               <h1>Users</h1>
               <button type="button" onClick={() => setToolbarOpen(true)} aria-label="Filter users"><AdminUsersIcon name="filter" /></button>
             </header>
@@ -5007,6 +5010,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             busy={busyAction === (selectedUser360?._id || selectedUser360?.id)}
           />
         ) : null}
+        <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </div>
     </AdminGate>
   );

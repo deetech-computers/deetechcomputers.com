@@ -245,6 +245,12 @@
     gap: 8px;
   }
 
+  .admin-discounts-route .admin-discounts-generator-form button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
   .admin-discounts-route .admin-discounts-generator-form button:disabled {
     opacity: 0.6;
   }
