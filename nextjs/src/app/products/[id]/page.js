@@ -1031,32 +1031,34 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="product-summary panel">
-          <p className="product-summary__eyebrow">{displayBrand}</p>
-          <h1>{displayName}</h1>
-          {reviewCount > 0 ? (
-            <div className="product-summary__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
-              <span>
-                {Array.from({ length: 5 }, (_, index) => (
-                  <span key={index}>{index < rating ? "★" : "☆"}</span>
-                ))}
-              </span>
-              <strong>{ratingValue.toFixed(1)}</strong>
-              <small>{`(${reviewCount} reviews)`}</small>
+          <div className="product-summary__card">
+            <p className="product-summary__eyebrow">{displayBrand}</p>
+            <h1>{displayName}</h1>
+            {reviewCount > 0 ? (
+              <div className="product-summary__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                <span>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <span key={index}>{index < rating ? "★" : "☆"}</span>
+                  ))}
+                </span>
+                <strong>{ratingValue.toFixed(1)}</strong>
+                <small>{`(${reviewCount} reviews)`}</small>
+              </div>
+            ) : (
+              <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
+            )}
+            <div className="product-summary__price-group">
+              {hasDiscount && discountPercent > 0 ? (
+                <span className="product-summary__discount-badge">Save {discountPercent}%</span>
+              ) : null}
+              {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
+              <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
+              {pricing.isTimedDiscount && pricing.discountEndsAt ? (
+                <p className="product-summary__discount-note">
+                  Offer ends {formatDateTime(pricing.discountEndsAt)}
+                </p>
+              ) : null}
             </div>
-          ) : (
-            <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
-          )}
-          <div className="product-summary__price-group">
-            {hasDiscount && discountPercent > 0 ? (
-              <span className="product-summary__discount-badge">Save {discountPercent}%</span>
-            ) : null}
-            {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
-            <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
-            {pricing.isTimedDiscount && pricing.discountEndsAt ? (
-              <p className="product-summary__discount-note">
-                Offer ends {formatDateTime(pricing.discountEndsAt)}
-              </p>
-            ) : null}
           </div>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">

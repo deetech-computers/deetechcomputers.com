@@ -3,22 +3,25 @@
   --pd-primary-dark: #003714;
   --pd-secondary: #1f6c35;
   --pd-on-primary: #ffffff;
+  --pd-primary-fixed: #b5f1ba;
+  --pd-primary-fixed-dim: #9ad4a0;
+  --pd-on-primary-fixed: #002109;
   --pd-accent: #f8f2e6;
   --pd-canvas: #f5f6f7;
   --pd-surface: #ffffff;
-  --pd-ink: #16201a;
+  --pd-ink: #111c2c;
   --pd-muted: #5b6660;
   --pd-line: #e2e8e4;
   --pd-success: #1f6c35;
   --pd-success-soft: #e5f5e8;
   --pd-danger: #ba1a1a;
   --pd-danger-soft: #fdecea;
-  --pd-star: #f0bf3f;
-  --pd-shadow-card: 0 4px 20px rgba(17, 24, 28, 0.06);
-  --pd-shadow-raised: 0 10px 30px rgba(17, 24, 28, 0.12);
-  --pd-radius-sm: 4px;
-  --pd-radius-md: 8px;
-  --pd-radius-lg: 12px;
+  --pd-star: #ffb800;
+  --pd-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --pd-shadow-raised: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --pd-radius-sm: 2px;
+  --pd-radius-md: 4px;
+  --pd-radius-lg: 8px;
   --pd-radius-pill: 999px;
   background: var(--pd-canvas);
 }
@@ -33,10 +36,10 @@
 }
 
 .product-detail-route .panel {
-  background: var(--pd-surface);
-  border: 1px solid var(--pd-line);
-  border-radius: var(--pd-radius-lg);
-  box-shadow: var(--pd-shadow-card);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .product-detail-route .product-breadcrumbs {
