@@ -13,6 +13,7 @@ import { getProductPricing } from "@/lib/product-pricing";
 import { requestWithToken, asArray } from "@/lib/resource";
 import { resolveProductImage } from "@/lib/products";
 import { formatSelectedUpgrades, normalizeProductUpgradeSpecs } from "@/lib/product-upgrades";
+import { MobileNavDrawer } from "./admin-nav";
 
 const PRODUCT_CATEGORIES = [
   ["laptops", "Laptops and Desktops"],
@@ -765,6 +766,7 @@ function BannersWorkspace({
   exportSql,
   runAction,
 }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const bannerLinkLabel = (item) => (item.linkCategory
     ? `Category: ${item.linkCategory}${item.linkSubCategory && item.linkSubCategory !== "all" ? ` / ${item.linkSubCategory}` : ""}`
     : item.link
@@ -849,7 +851,7 @@ function BannersWorkspace({
 
       <section className="admin-banners-mobile-shell">
         <header className="admin-banners-mobile-topbar">
-          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminProductsIcon name="menu" /></button>
           <h1>Banners</h1>
           <button type="button" onClick={() => loadData({ background: true })} aria-label="Refresh banners">
             <AdminProductsIcon name="refresh" />
@@ -918,6 +920,8 @@ function BannersWorkspace({
         >
           <AdminProductsIcon name="plus" />
         </button>
+
+        <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </section>
     </section>
   );
@@ -1317,6 +1321,7 @@ function ReviewsWorkspaceStitch({
   const rejectedReviews = Number(stats?.rejected || 0);
   const averageRating = Number(stats?.avgRating || 0);
   const pendingCount = Math.max(0, totalReviews - approvedReviews);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const pageSize = 15;
   const [page, setPage] = useState(1);
@@ -1552,7 +1557,7 @@ function ReviewsWorkspaceStitch({
 
       <section className="admin-reviews-mobile-shell">
         <header className="admin-reviews-mobile-topbar">
-          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="back" /></Link>
+          <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminProductsIcon name="menu" /></button>
           <h1>Reviews</h1>
           <button type="button" className="admin-reviews-mobile-topbar__filter" onClick={() => setToolbarOpen(true)} aria-label="Open review filters">
             <AdminProductsIcon name="tune" />
@@ -1712,6 +1717,8 @@ function ReviewsWorkspaceStitch({
           </div>
         </section>
       </div>
+
+      <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </section>
   );
 }
@@ -3032,6 +3039,7 @@ function MessagesWorkspaceStitch({
   runAction,
 }) {
   const [activeTicketId, setActiveTicketId] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const activeTicket = items.find((item) => String(item?._id || item?.id || "") === activeTicketId) || null;
 
   return (
@@ -3081,7 +3089,7 @@ function MessagesWorkspaceStitch({
 
       <section className="admin-messages-mobile-shell">
         <header className="admin-messages-mobile-topbar">
-          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminProductsIcon name="menu" /></button>
           <h1>Messages</h1>
           <button type="button" onClick={() => loadData({ background: true })} aria-label="Refresh tickets">
             <AdminProductsIcon name="refresh" />
@@ -3140,6 +3148,8 @@ function MessagesWorkspaceStitch({
             </>
           ) : null}
         </div>
+
+        <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </section>
     </section>
   );
@@ -3270,6 +3280,7 @@ function DiscountsWorkspaceStitch({
   runAction,
 }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const total = Number(stats?.total || 0);
   const available = Number(stats?.available || 0);
   const used = Number(stats?.used || 0);
@@ -3375,7 +3386,7 @@ function DiscountsWorkspaceStitch({
 
       <section className="admin-discounts-mobile-shell">
         <header className="admin-discounts-mobile-topbar">
-          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <button type="button" onClick={() => setDrawerOpen(true)} aria-label="Open navigation menu"><AdminProductsIcon name="menu" /></button>
           <h1>Discounts</h1>
           <button type="button" onClick={() => setMobileFiltersOpen((current) => !current)} aria-label="Toggle filters" aria-expanded={mobileFiltersOpen}>
             <AdminProductsIcon name="tune" />
@@ -3452,6 +3463,8 @@ function DiscountsWorkspaceStitch({
             })}
           </div>
         )}
+
+        <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </section>
     </section>
   );

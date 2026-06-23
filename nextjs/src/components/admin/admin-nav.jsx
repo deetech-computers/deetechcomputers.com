@@ -52,6 +52,48 @@ function AdminNavIcon({ name }) {
   return <svg {...svgProps}><path d="M20 7 7 20l-3-3L17 4zM7 7h.01M17 17h.01" {...common} /></svg>;
 }
 
+export function MobileNavDrawer({ open, onClose }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+  const isActive = (href) => (href === "/admin" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+  const handleLogout = () => {
+    onClose();
+    logout();
+    router.push("/");
+  };
+
+  return (
+    <div className={`admin-mobile-drawer ${open ? "is-open" : ""}`} aria-hidden={!open}>
+      <button type="button" className="admin-mobile-drawer__overlay" onClick={onClose} aria-label="Close navigation menu" />
+      <aside className="admin-mobile-drawer__panel">
+        <div className="admin-nav__brand">
+          <strong>DEETECH</strong>
+          <span>Admin Operations</span>
+        </div>
+        <nav className="admin-nav__links" aria-label="Admin navigation">
+          {items.map(([href, label, icon]) => (
+            <Link key={href} href={href} className={isActive(href) ? "active" : ""} onClick={onClose}>
+              <AdminNavIcon name={icon} />
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <div className="admin-nav__footer">
+          <Link href="/admin" className="admin-nav__footer-link" onClick={onClose}>
+            <AdminNavIcon name="settings" />
+            Settings
+          </Link>
+          <button type="button" className="admin-nav__footer-link admin-nav__footer-link--danger" onClick={handleLogout}>
+            <AdminNavIcon name="logout" />
+            Logout
+          </button>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 export default function AdminNav() {
   const pathname = usePathname();
   const router = useRouter();
