@@ -925,13 +925,17 @@ function BannersWorkspace({
 
 function BannerDesktopRow({ item, busy, linkLabel, runAction }) {
   const [editing, setEditing] = useState(false);
+  const id = item._id || item.id || "";
   return (
     <article className="admin-banners-desktop-row">
       <div className="admin-banners-desktop-row__media">
         {item.imageUrl ? <StableImage src={item.imageUrl} alt={item.title || "Banner"} width={240} height={135} /> : <span>No image</span>}
       </div>
       <div className="admin-banners-desktop-row__body">
-        <h3>{item.title || "DEETECH Banner"}</h3>
+        <div className="admin-banners-desktop-row__head">
+          <h3>{item.title || "DEETECH Banner"}</h3>
+          {id ? <span className="admin-banners-id-chip">ID: {String(id).slice(-6).toUpperCase()}</span> : null}
+        </div>
         <p>{linkLabel}</p>
         <span className="admin-banners-order-number">{String(item.order ?? 0).padStart(2, "0")}</span>
       </div>
@@ -1894,7 +1898,7 @@ function BannerForm({ initial, onSubmit, busy, submitLabel = "Create Banner" }) 
         <label className="admin-banner-form__label">Banner Image Assets</label>
         <input className="field" name="imageUrl" defaultValue={initial?.imageUrl || ""} placeholder="Image URL (e.g. https://cdn.deetech.gh/hero.jpg)" />
         <label className="admin-banner-form__dropzone">
-          <AdminProductsIcon name="image" />
+          <AdminProductsIcon name="upload" />
           <span>Click to upload image (16:9 recommended)</span>
           <input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" />
         </label>
@@ -2041,6 +2045,7 @@ function AdminProductsIcon({ name }) {
     copy: <><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></>,
     person: <><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
     external: <><path d="M9 6H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4" /><path d="M13 4h7v7M20 4 11 13" /></>,
+    upload: <><path d="M7 18a4 4 0 0 1-1-7.9A5 5 0 0 1 16 7a4.5 4.5 0 0 1 1 8.9" /><path d="M12 11v8M9 14l3-3 3 3" /></>,
     back: <><path d="m15 18-6-6 6-6" /></>,
     sync: <><path d="M7 7h9l-2.5-2.5M17 17H8l2.5 2.5M18 7a7 7 0 0 1 1 7M6 17a7 7 0 0 1-1-7" /></>,
   };
@@ -2890,7 +2895,7 @@ function MessageTicketDetailBody({ item, busy, runAction }) {
       </div>
 
       <div className="admin-messages-customer-request">
-        <div className="admin-messages-customer-request__icon"><AdminProductsIcon name="box" /></div>
+        <div className="admin-messages-customer-request__icon"><AdminProductsIcon name="person" /></div>
         <div className="admin-messages-customer-request__content">
           <blockquote>{item.subject || "General support request"}</blockquote>
           {primaryImage ? (
