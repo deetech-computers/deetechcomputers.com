@@ -1,277 +1,524 @@
 @media (min-width: 901px) {
   .admin-discounts-route {
-    --discounts-bg: #f5f6f7;
-    --discounts-panel: #ffffff;
-    --discounts-panel-soft: #f8f2e6;
-    --discounts-line: #e5ddd0;
-    --discounts-text: #10151f;
-    --discounts-muted: #5e6470;
-    --discounts-green: #135c2a;
-    --discounts-green-strong: #0b431d;
-    --discounts-green-soft: #def6e6;
-    --discounts-gold: #cf9b2f;
-    --discounts-gold-soft: #fff1cf;
-    --discounts-red: #bf3c34;
-    --discounts-shadow: 0 18px 44px rgba(16, 24, 40, 0.06);
+    --discounts-ink: #111c2c;
+    --discounts-muted: #59635a;
+    --discounts-green: #184f27;
+    --discounts-green-strong: #003714;
+    --discounts-canvas: #f5f6f7;
+    --discounts-surface: #ffffff;
+    --discounts-soft: #f0f3ff;
+    --discounts-soft-amber: #f8f2e6;
+    --discounts-line: #e2e8f0;
+    --discounts-danger: #ba1a1a;
     min-width: 0;
   }
 
   .admin-discounts-route .admin-main {
     min-width: 0;
-    background: var(--discounts-bg);
+    background: var(--discounts-canvas);
   }
 
   .admin-discounts-route .admin-manager--discounts {
-    width: min(100%, 1460px);
-    min-width: 0;
-    margin: 0 auto;
-    padding: 28px 28px 56px;
-    display: grid;
-    gap: 20px;
-    color: var(--discounts-text);
-  }
-
-  .admin-discounts-route .admin-manager--discounts > .admin-collapsible,
-  .admin-discounts-route .admin-toolbar--stats,
-  .admin-discounts-route .admin-record-list,
-  .admin-discounts-route .admin-state {
-    overflow: hidden;
-    border: 1px solid var(--discounts-line);
-    border-radius: 22px;
-    background: var(--discounts-panel);
-    box-shadow: var(--discounts-shadow);
-  }
-
-  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header {
     width: 100%;
-    min-height: 82px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    padding: 0 26px;
-    border: 0;
-    background:
-      linear-gradient(180deg, rgba(248, 242, 230, 0.88), rgba(255, 255, 255, 0.98));
-    color: var(--discounts-green-strong);
-    cursor: pointer;
+    min-width: 0;
   }
 
-  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+  .admin-discounts-route .admin-discounts-workspace {
+    display: block;
   }
 
-  .admin-discounts-route .admin-manager--discounts > .admin-collapsible > .admin-collapsible__header .admin-collapsible__icon {
-    width: 36px;
-    height: 36px;
+  .admin-discounts-route .admin-discounts-mobile-shell {
+    display: none;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-shell {
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    padding: 32px 32px 56px;
     display: grid;
-    place-items: center;
-    border-radius: 999px;
-    background: #edf6ef;
+    gap: 24px;
+    color: var(--discounts-ink);
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-header h1 {
+    margin: 0;
     color: var(--discounts-green);
-    font-size: 18px;
+    font-size: 32px;
     font-weight: 700;
   }
 
-  .admin-discounts-route #admin-filters-toolbar-body {
-    padding: 24px;
-    border-top: 1px solid var(--discounts-line);
-  }
-
-  .admin-discounts-route .admin-toolbar {
-    display: grid;
-    grid-template-columns: minmax(300px, 1.1fr) repeat(3, minmax(0, 180px)) auto;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .admin-discounts-route .field {
-    width: 100%;
-    min-width: 0;
-    min-height: 50px;
-    padding: 0 15px;
-    border: 1px solid var(--discounts-line);
-    border-radius: 14px;
-    background: #f8fbff;
-    color: var(--discounts-text);
+  .admin-discounts-route .admin-discounts-desktop-header p {
+    margin: 6px 0 0;
+    color: var(--discounts-muted);
     font-size: 15px;
   }
 
-  .admin-discounts-route .field:focus,
-  .admin-discounts-route select:focus,
-  .admin-discounts-route textarea:focus {
-    outline: none;
-    border-color: var(--discounts-green);
-    box-shadow: 0 0 0 3px rgba(19, 92, 42, 0.12);
-  }
-
-  .admin-discounts-route .ghost-button,
-  .admin-discounts-route .primary-button,
-  .admin-discounts-route .danger-button {
-    min-height: 50px;
+  .admin-discounts-route .admin-discounts-desktop-header .ghost-button {
+    height: 40px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 0 18px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 800;
-    text-decoration: none;
+    gap: 8px;
+    padding: 0 16px;
+    border: 1px solid var(--discounts-green);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--discounts-green);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
   }
 
-  .admin-discounts-route .ghost-button {
+  .admin-discounts-route .admin-discounts-desktop-header .ghost-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .admin-discounts-route .admin-discounts-generator,
+  .admin-discounts-route .admin-discounts-desktop-stats article,
+  .admin-discounts-route .admin-discounts-toolbar,
+  .admin-discounts-route .admin-discounts-table-panel {
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid var(--discounts-line);
-    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .admin-discounts-route .admin-discounts-generator {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .admin-discounts-route .admin-discounts-generator__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .admin-discounts-route .admin-discounts-generator__head svg {
+    width: 22px;
+    height: 22px;
     color: var(--discounts-green);
   }
 
-  .admin-discounts-route .primary-button {
-    border: 1px solid var(--discounts-green);
-    background: linear-gradient(180deg, #1a6c34, #0d5c2f);
-    color: #ffffff;
-    box-shadow: 0 14px 24px rgba(13, 92, 47, 0.14);
+  .admin-discounts-route .admin-discounts-generator__head h2 {
+    margin: 0;
+    color: var(--discounts-ink);
+    font-size: 22px;
+    font-weight: 700;
   }
 
-  .admin-discounts-route .danger-button {
-    border: 1px solid #efc4bf;
-    background: #fff7f6;
-    color: var(--discounts-red);
+  .admin-discounts-route .admin-discounts-generator-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 24px;
+    align-items: end;
   }
 
-  .admin-discounts-route .admin-toolbar--stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 18px 20px;
+  .admin-discounts-route .admin-discounts-generator-form label {
+    display: grid;
+    gap: 8px;
   }
 
-  .admin-discounts-route .admin-chip {
-    min-height: 38px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 14px;
-    border-radius: 999px;
-    background: #edf8ef;
-    color: #25703c;
+  .admin-discounts-route .admin-discounts-generator-form label span {
+    color: var(--discounts-muted);
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .admin-discounts-route .admin-chip.is-neutral {
-    background: #eef2ff;
-    color: #55616e;
-  }
-
-  .admin-discounts-route .admin-chip.is-success {
-    background: #e4f6e8;
-    color: #25703c;
-  }
-
-  .admin-discounts-route .admin-chip.is-warning {
-    background: #fff1cf;
-    color: var(--discounts-gold);
-  }
-
-  .admin-discounts-route .admin-chip.is-danger {
-    background: #fde4e2;
-    color: var(--discounts-red);
-  }
-
-  .admin-discounts-route .admin-record-list {
-    display: grid;
-    gap: 14px;
-    padding: 22px;
-    background: linear-gradient(180deg, #ffffff, #fbfcff);
-  }
-
-  .admin-discounts-route .admin-record.panel,
-  .admin-discounts-route .admin-record-card,
-  .admin-discounts-route .admin-collapsible {
-    border: 1px solid var(--discounts-line);
-    border-radius: 22px;
-    background: #ffffff;
-    box-shadow: 0 14px 34px rgba(16, 24, 40, 0.04);
-  }
-
-  .admin-discounts-route .admin-record-card__toggle,
-  .admin-discounts-route .admin-collapsible__header {
-    padding: 24px 26px;
-  }
-
-  .admin-discounts-route .admin-record-card__summary {
-    display: grid;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  .admin-discounts-route .admin-record-card__summary h3 {
-    margin: 0;
-    color: var(--discounts-green-strong);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-
-  .admin-discounts-route .admin-record-card__summary p {
-    margin: 0;
-    color: var(--discounts-muted);
+  .admin-discounts-route .admin-discounts-generator-form input {
+    height: 48px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 10px;
+    background: #edf2f7;
+    color: var(--discounts-ink);
     font-size: 15px;
-    line-height: 1.6;
   }
 
-  .admin-discounts-route .admin-chip-row,
-  .admin-discounts-route .admin-meta-grid,
-  .admin-discounts-route .admin-actions {
+  .admin-discounts-route .admin-discounts-generator-form input:focus {
+    outline: none;
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(24, 79, 39, 0.16);
+  }
+
+  .admin-discounts-route .admin-discounts-generator-form button {
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 10px;
+    border: none;
+    border-radius: 10px;
+    background: var(--discounts-green-strong);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 120ms ease, opacity 120ms ease;
   }
 
-  .admin-discounts-route .admin-meta-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .admin-discounts-route .admin-discounts-generator-form button svg {
+    width: 20px;
+    height: 20px;
   }
 
-  .admin-discounts-route .admin-meta-grid span {
+  .admin-discounts-route .admin-discounts-generator-form button:active {
+    transform: scale(0.98);
+  }
+
+  .admin-discounts-route .admin-discounts-generator-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-stats {
     display: grid;
-    gap: 4px;
-    padding: 14px 16px;
-    border: 1px solid var(--discounts-line);
-    border-radius: 16px;
-    background: #fafcff;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-stats article {
+    padding: 16px;
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-stats article.is-available {
+    border-left: 4px solid #a6f5af;
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-stats article.is-used {
+    border-left: 4px solid var(--discounts-line);
+  }
+
+  .admin-discounts-route .admin-discounts-desktop-stats span {
+    display: block;
     color: var(--discounts-muted);
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .admin-discounts-route .admin-meta-grid strong {
-    color: var(--discounts-text);
-    font-size: 15px;
-    letter-spacing: 0;
-    text-transform: none;
+  .admin-discounts-route .admin-discounts-desktop-stats strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--discounts-green);
+    font-size: 22px;
+    font-weight: 700;
   }
 
-  .admin-discounts-route .admin-actions {
+  .admin-discounts-route .admin-discounts-desktop-stats article.is-used strong {
+    color: var(--discounts-muted);
+  }
+
+  .admin-discounts-route .admin-discounts-toolbar {
+    padding: 14px 16px;
+    border-radius: 14px;
     display: flex;
+    align-items: center;
+    gap: 14px;
     flex-wrap: wrap;
+  }
+
+  .admin-discounts-route .admin-discounts-search {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .admin-discounts-route .admin-discounts-search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--discounts-muted);
+  }
+
+  .admin-discounts-route .admin-discounts-search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px 0 38px;
+    border: none;
+    border-radius: 10px;
+    background: #edf2f7;
+    color: var(--discounts-ink);
+    font-size: 14px;
+  }
+
+  .admin-discounts-route .admin-discounts-search input:focus {
+    outline: none;
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(24, 79, 39, 0.16);
+  }
+
+  .admin-discounts-route .admin-discounts-toolbar__filter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .admin-discounts-route .admin-discounts-toolbar__filter span {
+    color: var(--discounts-muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .admin-discounts-route .admin-discounts-toolbar__filter select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--discounts-line);
+    border-radius: 8px;
+    background: var(--discounts-surface);
+    color: var(--discounts-ink);
+    font-size: 13px;
+  }
+
+  .admin-discounts-route .admin-discounts-toolbar .ghost-button {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--discounts-line);
+    border-radius: 8px;
+    background: var(--discounts-surface);
+    color: var(--discounts-muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .admin-discounts-route .admin-discounts-export-group {
+    display: flex;
+    border: 1px solid var(--discounts-line);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+    margin-left: auto;
+  }
+
+  .admin-discounts-route .admin-discounts-export-group button {
+    height: 30px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--discounts-ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .admin-discounts-route .admin-discounts-export-group button:hover {
+    background: var(--discounts-soft);
+  }
+
+  .admin-discounts-route .admin-discounts-table-panel {
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .admin-discounts-route .admin-discounts-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .admin-discounts-route .admin-discounts-table thead tr {
+    background: var(--discounts-soft);
+  }
+
+  .admin-discounts-route .admin-discounts-table th {
+    padding: 14px 20px;
+    text-align: left;
+    color: var(--discounts-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .admin-discounts-route .admin-discounts-row {
+    border-top: 1px solid var(--discounts-line);
+  }
+
+  .admin-discounts-route .admin-discounts-row:nth-child(even) {
+    background: var(--discounts-soft-amber);
+  }
+
+  .admin-discounts-route .admin-discounts-row td {
+    padding: 14px 20px;
+    vertical-align: middle;
+  }
+
+  .admin-discounts-route .admin-discounts-code-chip {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--discounts-soft);
+    color: var(--discounts-green);
+    font-family: var(--admin-font-mono), monospace;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .admin-discounts-route .admin-discounts-row__percent span {
+    display: inline-flex;
+    height: 24px;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--discounts-green-strong);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .admin-discounts-route .admin-discounts-row.is-used .admin-discounts-row__percent span {
+    background: var(--discounts-soft);
+    color: var(--discounts-green);
+  }
+
+  .admin-discounts-route .admin-discounts-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .admin-discounts-route .admin-discounts-status i {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #8bd894;
+  }
+
+  .admin-discounts-route .admin-discounts-status.is-available {
+    color: var(--discounts-green);
+  }
+
+  .admin-discounts-route .admin-discounts-status.is-used {
+    color: var(--discounts-muted);
+  }
+
+  .admin-discounts-route .admin-discounts-status.is-used i {
+    background: var(--discounts-line);
+  }
+
+  .admin-discounts-route .admin-discounts-details p {
+    margin: 0;
+    color: var(--discounts-ink);
+    font-size: 13px;
+  }
+
+  .admin-discounts-route .admin-discounts-details p span {
+    color: var(--discounts-muted);
+    font-weight: 600;
+  }
+
+  .admin-discounts-route .admin-discounts-details p.is-muted {
+    color: var(--discounts-muted);
+    font-style: italic;
+  }
+
+  .admin-discounts-route .admin-discounts-row__actions {
+    display: flex;
+    align-items: center;
     justify-content: flex-end;
-    padding: 4px 0 0;
+    gap: 8px;
   }
 
-  .admin-discounts-route .admin-actions .ghost-button,
-  .admin-discounts-route .admin-actions .danger-button {
-    min-width: 144px;
+  .admin-discounts-route .admin-discounts-copy {
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border: 1px solid var(--discounts-green);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--discounts-green);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
   }
 
-  .admin-discounts-route .admin-state {
-    padding: 28px;
+  .admin-discounts-route .admin-discounts-copy svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .admin-discounts-route .admin-discounts-copy:hover {
+    background: var(--discounts-green);
+    color: #ffffff;
+  }
+
+  .admin-discounts-route .admin-discounts-delete {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--discounts-danger);
+    cursor: pointer;
+  }
+
+  .admin-discounts-route .admin-discounts-delete svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .admin-discounts-route .admin-discounts-delete:hover {
+    background: #ffdad6;
+  }
+
+  .admin-discounts-route .admin-discounts-row button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-discounts-route .admin-discounts-table-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--discounts-line);
+    background: var(--discounts-soft);
+  }
+
+  .admin-discounts-route .admin-discounts-table-footer p {
+    margin: 0;
+    color: var(--discounts-muted);
+    font-size: 13px;
+  }
+
+  .admin-discounts-route .admin-discounts-empty-state {
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .admin-discounts-route .admin-discounts-empty-state h3 {
+    margin: 0 0 8px;
+    color: var(--discounts-ink);
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .admin-discounts-route .admin-discounts-empty-state p {
+    margin: 0;
     color: var(--discounts-muted);
     font-size: 15px;
   }

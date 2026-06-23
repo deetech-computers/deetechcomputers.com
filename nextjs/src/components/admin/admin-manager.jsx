@@ -765,87 +765,219 @@ function BannersWorkspace({
   exportSql,
   runAction,
 }) {
-  return (
-    <>
-      <section className="admin-hero panel">
-        <div>
-          <p className="section-kicker">Admin Portal</p>
-          <h1>Banners</h1>
-          <p>Create, update, and organize homepage campaign banners with category or custom links.</p>
-        </div>
-        <div className="admin-hero__badge">
-          <strong>{loading ? "..." : count}</strong>
-          <span>records</span>
-        </div>
-      </section>
+  const bannerLinkLabel = (item) => (item.linkCategory
+    ? `Category: ${item.linkCategory}${item.linkSubCategory && item.linkSubCategory !== "all" ? ` / ${item.linkSubCategory}` : ""}`
+    : item.link
+      ? `Custom URL: ${item.link}`
+      : "No link (plain banner)");
 
-      <section className="panel admin-collapsible">
-        <button
-          type="button"
-          className="admin-collapsible__header"
-          onClick={() => setToolbarOpen((current) => !current)}
-          aria-expanded={toolbarOpen}
-          aria-controls="admin-filters-toolbar-body"
-        >
-          <h2>Search, Filters & Exports</h2>
-          <span className="admin-collapsible__icon" aria-hidden="true">{toolbarOpen ? "-" : "+"}</span>
-        </button>
-        {toolbarOpen ? (
-          <div id="admin-filters-toolbar-body" className="admin-collapsible__body">
-            <section className="admin-toolbar">
+  return (
+    <section className="admin-banners-workspace">
+      <section className="admin-banners-desktop-shell">
+        <header className="admin-banners-desktop-toolbar">
+          <div className="admin-banners-desktop-toolbar__title">
+            <h1>Banner Management</h1>
+            <p>Manage homepage heroes and promotional displays.</p>
+          </div>
+          <div className="admin-banners-desktop-toolbar__controls">
+            <label className="admin-banners-desktop-search">
+              <AdminProductsIcon name="search" />
               <input
-                className="field"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search banners..."
+                aria-label="Search banners"
               />
-              <button
-                type="button"
-                className="ghost-button"
-                disabled={loading || refreshing}
-                onClick={() => loadData({ background: true })}
-              >
-                {refreshing ? "Refreshing..." : "Refresh"}
-              </button>
-              <button type="button" className="ghost-button" onClick={exportCsv}>Export CSV</button>
-              <button type="button" className="ghost-button" onClick={exportJson}>Export JSON</button>
-              <button type="button" className="ghost-button" onClick={exportSql}>Export SQL</button>
-            </section>
+            </label>
+            <button type="button" className="admin-banners-icon-button" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh banners">
+              <AdminProductsIcon name="refresh" />
+            </button>
+            <div className="admin-banners-export-group">
+              <button type="button" onClick={exportCsv}>CSV</button>
+              <button type="button" onClick={exportJson}>JSON</button>
+              <button type="button" onClick={exportSql}>SQL</button>
+            </div>
           </div>
-        ) : null}
-      </section>
+        </header>
 
-      <section className="panel admin-create-panel admin-collapsible">
-        <button
-          type="button"
-          className="admin-collapsible__header"
-          onClick={() => setFormOpen((current) => !current)}
-          aria-expanded={formOpen}
-          aria-controls="banner-create-body"
-        >
-          <h2>Create Banner</h2>
-          <span className="admin-collapsible__icon" aria-hidden="true">{formOpen ? "-" : "+"}</span>
-        </button>
-        {formOpen ? (
-          <div id="banner-create-body" className="admin-collapsible__body">
+        <div className="admin-banners-desktop-grid">
+          <section className="admin-banners-desktop-form">
+            <div className="admin-banners-desktop-form__head">
+              <AdminProductsIcon name="plus" />
+              <h2>Create New Banner</h2>
+            </div>
             <BannerForm
               busy={busyAction === "createBanner"}
               onSubmit={(event) => runAction("createBanner", { _id: "createBanner" }, event)}
-              submitLabel="Create Banner"
+              submitLabel="Save & Publish Banner"
             />
-          </div>
-        ) : null}
+          </section>
+
+          <section className="admin-banners-desktop-list">
+            <header className="admin-banners-desktop-list__head">
+              <div>
+                <AdminProductsIcon name="grid" />
+                <h2>Active Marketplace Banners</h2>
+              </div>
+              <span className="admin-banners-count-badge">{loading ? "..." : count} Banner{count === 1 ? "" : "s"} Active</span>
+            </header>
+
+            {!items.length ? (
+              <div className="admin-banners-empty-state">
+                <h3>No banners yet</h3>
+                <p>Your homepage campaigns will appear here once a banner is created.</p>
+              </div>
+            ) : (
+              <div className="admin-banners-desktop-rows">
+                {items.map((item) => {
+                  const id = item._id || item.id;
+                  return (
+                    <BannerDesktopRow
+                      key={id}
+                      item={item}
+                      busy={busyAction === id}
+                      linkLabel={bannerLinkLabel(item)}
+                      runAction={runAction}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        </div>
       </section>
 
-      {!items.length ? (
-        <section className="admin-state panel">
-          <h2>No banners yet</h2>
-          <p>Your homepage campaigns will appear here once a banner is created.</p>
+      <section className="admin-banners-mobile-shell">
+        <header className="admin-banners-mobile-topbar">
+          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <h1>Banners</h1>
+          <button type="button" onClick={() => loadData({ background: true })} aria-label="Refresh banners">
+            <AdminProductsIcon name="refresh" />
+          </button>
+        </header>
+
+        <section className="admin-banners-mobile-create">
+          <button
+            type="button"
+            className="admin-banners-mobile-create__toggle"
+            onClick={() => setFormOpen((current) => !current)}
+            aria-expanded={formOpen}
+            aria-controls="admin-banners-mobile-create-body"
+          >
+            <span><AdminProductsIcon name="plus" />Create Banner</span>
+            <AdminProductsIcon name="chevron" />
+          </button>
+          {formOpen ? (
+            <div id="admin-banners-mobile-create-body" className="admin-banners-mobile-create__body">
+              <BannerForm
+                busy={busyAction === "createBanner"}
+                onSubmit={(event) => runAction("createBanner", { _id: "createBanner" }, event)}
+                submitLabel="Create Banner"
+              />
+            </div>
+          ) : null}
         </section>
-      ) : (
-        <AdminCards type="banners" items={items} onAction={runAction} busyAction={busyAction} />
-      )}
-    </>
+
+        <label className="admin-banners-mobile-search">
+          <AdminProductsIcon name="search" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search banners..." aria-label="Search banners" />
+        </label>
+
+        <div className="admin-banners-mobile-list-head">
+          <h2>Active Banners</h2>
+          <span className="admin-banners-count-badge">{loading ? "..." : count} Active</span>
+        </div>
+
+        {!items.length ? (
+          <div className="admin-banners-empty-state is-mobile">
+            <h3>No banners yet</h3>
+            <p>Your homepage campaigns will appear here once a banner is created.</p>
+          </div>
+        ) : (
+          <div className="admin-banners-mobile-list">
+            {items.map((item) => {
+              const id = item._id || item.id;
+              return (
+                <BannerMobileCard
+                  key={id}
+                  item={item}
+                  busy={busyAction === id}
+                  linkLabel={bannerLinkLabel(item)}
+                  runAction={runAction}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        <button
+          type="button"
+          className="admin-banners-fab"
+          aria-label="Create banner"
+          onClick={() => setFormOpen(true)}
+        >
+          <AdminProductsIcon name="plus" />
+        </button>
+      </section>
+    </section>
+  );
+}
+
+function BannerDesktopRow({ item, busy, linkLabel, runAction }) {
+  const [editing, setEditing] = useState(false);
+  return (
+    <article className="admin-banners-desktop-row">
+      <div className="admin-banners-desktop-row__media">
+        {item.imageUrl ? <StableImage src={item.imageUrl} alt={item.title || "Banner"} width={240} height={135} /> : <span>No image</span>}
+      </div>
+      <div className="admin-banners-desktop-row__body">
+        <h3>{item.title || "DEETECH Banner"}</h3>
+        <p>{linkLabel}</p>
+        <span className="admin-banners-order-number">{String(item.order ?? 0).padStart(2, "0")}</span>
+      </div>
+      <div className="admin-banners-desktop-row__actions">
+        <button type="button" className="ghost-button" onClick={() => setEditing((current) => !current)}>
+          <AdminProductsIcon name="edit" />{editing ? "Close Edit" : "Edit"}
+        </button>
+        <button type="button" className="danger-button" disabled={busy} onClick={() => runAction("deleteBanner", item)}>
+          <AdminProductsIcon name="delete" />Delete
+        </button>
+      </div>
+      {editing ? (
+        <div className="admin-banners-desktop-row__edit">
+          <BannerForm initial={item} submitLabel="Update Banner" busy={busy} onSubmit={(event) => runAction("updateBanner", item, event)} />
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function BannerMobileCard({ item, busy, linkLabel, runAction }) {
+  const [editing, setEditing] = useState(false);
+  return (
+    <article className="admin-banners-mobile-card">
+      <div className="admin-banners-mobile-card__media">
+        {item.imageUrl ? <StableImage src={item.imageUrl} alt={item.title || "Banner"} width={358} height={201} /> : <span>No image</span>}
+        <span className="admin-banners-mobile-card__order">ORDER: {String(item.order ?? 0).padStart(2, "0")}</span>
+      </div>
+      <div className="admin-banners-mobile-card__body">
+        <h3>{item.title || "DEETECH Banner"}</h3>
+        <p>{linkLabel}</p>
+        <div className="admin-banners-mobile-card__actions">
+          <button type="button" className="ghost-button" onClick={() => setEditing((current) => !current)}>
+            <AdminProductsIcon name="edit" />{editing ? "Close" : "Edit"}
+          </button>
+          <button type="button" className="danger-button" disabled={busy} onClick={() => runAction("deleteBanner", item)}>
+            <AdminProductsIcon name="delete" />Delete
+          </button>
+        </div>
+        {editing ? (
+          <div className="admin-banners-mobile-card__edit">
+            <BannerForm initial={item} submitLabel="Update Banner" busy={busy} onSubmit={(event) => runAction("updateBanner", item, event)} />
+          </div>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
@@ -1708,47 +1840,58 @@ function BannerForm({ initial, onSubmit, busy, submitLabel = "Create Banner" }) 
 
   return (
     <form className="admin-form admin-banner-form" onSubmit={onSubmit}>
-      <input className="field" name="imageUrl" defaultValue={initial?.imageUrl || ""} placeholder="Banner image URL (optional when uploading file)" />
-      <label className="admin-inline-control">
-        <span>Or upload banner image (JPG/PNG/WEBP)</span>
-        <input className="field" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" />
-      </label>
+      <div className="admin-banner-form__group">
+        <label className="admin-banner-form__label">Banner Image Assets</label>
+        <input className="field" name="imageUrl" defaultValue={initial?.imageUrl || ""} placeholder="Image URL (e.g. https://cdn.deetech.gh/hero.jpg)" />
+        <label className="admin-banner-form__dropzone">
+          <AdminProductsIcon name="image" />
+          <span>Click to upload image (16:9 recommended)</span>
+          <input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" />
+        </label>
+      </div>
 
-      <select className="field" value={linkMode} onChange={(event) => setLinkMode(event.target.value)} aria-label="Banner link mode">
-        <option value="none">No banner link (plain image)</option>
-        <option value="category">Link to a product category</option>
-        <option value="custom">Use a custom URL</option>
-      </select>
+      <div className="admin-banner-form__group">
+        <label className="admin-banner-form__label">Link Destination</label>
+        <div className="admin-banner-form__segmented" role="group" aria-label="Banner link mode">
+          <button type="button" className={linkMode === "none" ? "is-active" : ""} onClick={() => setLinkMode("none")}>None</button>
+          <button type="button" className={linkMode === "category" ? "is-active" : ""} onClick={() => setLinkMode("category")}>Category</button>
+          <button type="button" className={linkMode === "custom" ? "is-active" : ""} onClick={() => setLinkMode("custom")}>Custom URL</button>
+        </div>
 
-      {linkMode === "category" ? (
-        <>
-          <select className="field" name="linkCategory" value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
-            {categoryOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-          <select
-            className="field"
-            name="linkSubCategory"
-            value={resolvedSubCategory}
-            onChange={(event) => setSelectedSubCategory(event.target.value)}
-          >
-            {subCategoryOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        </>
-      ) : null}
+        {linkMode === "category" ? (
+          <div className="admin-banner-form__category-row">
+            <select className="field" name="linkCategory" value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+              {categoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <select
+              className="field"
+              name="linkSubCategory"
+              value={resolvedSubCategory}
+              onChange={(event) => setSelectedSubCategory(event.target.value)}
+            >
+              {subCategoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        ) : null}
 
-      {linkMode === "custom" ? (
-        <input className="field" name="link" defaultValue={initial?.link || ""} placeholder="Custom link URL (e.g. /products/laptops or https://...)" />
-      ) : null}
-      {linkMode !== "category" ? <input type="hidden" name="linkCategory" value="" /> : null}
-      {linkMode !== "category" ? <input type="hidden" name="linkSubCategory" value="" /> : null}
-      {linkMode !== "custom" ? <input type="hidden" name="link" value="" /> : null}
+        {linkMode === "custom" ? (
+          <input className="field" name="link" defaultValue={initial?.link || ""} placeholder="https://external-link.com" />
+        ) : null}
+        {linkMode !== "category" ? <input type="hidden" name="linkCategory" value="" /> : null}
+        {linkMode !== "category" ? <input type="hidden" name="linkSubCategory" value="" /> : null}
+        {linkMode !== "custom" ? <input type="hidden" name="link" value="" /> : null}
+      </div>
 
-      <input className="field" name="order" placeholder="Display order" type="number" defaultValue={initial?.order ?? 0} />
-      <button className="primary-button" disabled={busy}>{busy ? "Saving..." : submitLabel}</button>
+      <div className="admin-banner-form__group">
+        <label className="admin-banner-form__label">Display Settings</label>
+        <input className="field admin-banner-form__order" name="order" placeholder="Order Number (e.g. 01)" type="number" defaultValue={initial?.order ?? 0} />
+      </div>
+
+      <button className="primary-button admin-banner-form__submit" disabled={busy}>{busy ? "Saving..." : submitLabel}</button>
     </form>
   );
 }
@@ -1845,6 +1988,8 @@ function AdminProductsIcon({ name }) {
     grid: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
     settings: <><circle cx="12" cy="12" r="3" /><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A7 7 0 0 0 15 6l-.3-2.6h-4L10.5 6A7 7 0 0 0 9 7.1l-2.4-1-2 3.4L6.7 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 10.5 18l.3 2.6h4L15 18a7 7 0 0 0 1.5-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z" /></>,
     check: <><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></>,
+    copy: <><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></>,
+    person: <><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
     back: <><path d="m15 18-6-6 6-6" /></>,
     sync: <><path d="M7 7h9l-2.5-2.5M17 17H8l2.5 2.5M18 7a7 7 0 0 1 1 7M6 17a7 7 0 0 1-1-7" /></>,
   };
@@ -2664,30 +2809,594 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
   );
 }
 
-function MessagesWorkspaceShell({ items, onAction, busyAction, userInsights }) {
+function ticketInitials(name, email) {
+  const source = normalizeText(name) || normalizeText(email) || "Customer Support";
+  const parts = source.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
+function MessageTicketDetailBody({ item, busy, runAction }) {
+  const [threadExpanded, setThreadExpanded] = useState(true);
+  const [statusDraft, setStatusDraft] = useState(() => item?.status || "new");
+  const [responseDraft, setResponseDraft] = useState("");
+  const thread = Array.isArray(item.messages) ? item.messages : [];
+  const sortedThread = [...thread].sort((a, b) => new Date(a?.createdAt || 0).getTime() - new Date(b?.createdAt || 0).getTime());
+  const primaryImage = resolveAssetUrl(item.imageUrl);
+  const hasStatusChanged = statusDraft !== (item.status || "new");
+  const hasResponseChanged = responseDraft.trim().length > 0;
+  const canSubmit = hasStatusChanged || hasResponseChanged;
+
+  return (
+    <div className="admin-messages-ticket-body">
+      <div className="admin-messages-ticket-body__chips">
+        <span className={`admin-messages-status-pill ${statusClass(item.status)}`}>{item.status || "new"}</span>
+        {sortedThread.length ? (
+          <span className="admin-messages-meta-chip">{sortedThread.length} thread{sortedThread.length === 1 ? "" : "s"}</span>
+        ) : null}
+        <span className="admin-messages-meta-chip">Created {formatDateTime(item.createdAt)}</span>
+        <span className="admin-messages-meta-chip">Updated {formatDateTime(item.updatedAt)}</span>
+      </div>
+
+      <div className="admin-messages-customer-request">
+        <div className="admin-messages-customer-request__icon"><AdminProductsIcon name="box" /></div>
+        <div className="admin-messages-customer-request__content">
+          <blockquote>{item.subject || "General support request"}</blockquote>
+          {primaryImage ? (
+            <a href={primaryImage} target="_blank" rel="noreferrer" className="admin-messages-attachment">
+              <span>Attachment</span>
+              <StableImage src={primaryImage} alt={`Attachment for ${item.subject || "support ticket"}`} width={140} height={88} />
+            </a>
+          ) : null}
+        </div>
+      </div>
+
+      {sortedThread.length ? (
+        <div className="admin-messages-thread">
+          <button
+            type="button"
+            className="admin-messages-thread__toggle"
+            onClick={() => setThreadExpanded((current) => !current)}
+            aria-expanded={threadExpanded}
+          >
+            <span>Conversation thread</span>
+            <AdminProductsIcon name="chevron" />
+          </button>
+          {threadExpanded ? (
+            <div className="admin-messages-thread__list">
+              {sortedThread.map((entry, index) => {
+                const imageUrl = resolveAssetUrl(entry?.imageUrl);
+                const sender = String(entry?.sender || "").toLowerCase() === "admin" ? "admin" : "user";
+                return (
+                  <div key={`${entry?.createdAt || "entry"}-${index}`} className={`admin-messages-thread__row is-${sender}`}>
+                    <span className="admin-messages-thread__sender">[{sender === "admin" ? "Support" : "Customer"}]</span>
+                    {entry?.text ? <p>{entry.text}</p> : null}
+                    {imageUrl ? (
+                      <a href={imageUrl} target="_blank" rel="noreferrer" className="admin-messages-thread__image">
+                        <StableImage src={imageUrl} alt={`${sender} attachment`} width={120} height={80} />
+                      </a>
+                    ) : null}
+                    <time>{formatDateTime(entry?.createdAt)}</time>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      <form className="admin-messages-composer" onSubmit={(event) => runAction("updateSupport", item, event)}>
+        <div className="admin-messages-composer__head">
+          <label className="admin-messages-composer__status">
+            <span>Update Status:</span>
+            <select name="status" value={statusDraft} onChange={(event) => setStatusDraft(event.target.value)}>
+              <option value="new">New</option>
+              <option value="in-progress">In-Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </label>
+          <span className="admin-messages-composer__count">{responseDraft.trim().length} / 2000 characters</span>
+        </div>
+        <textarea
+          name="response"
+          value={responseDraft}
+          onChange={(event) => setResponseDraft(event.target.value)}
+          placeholder="Type your reply..."
+          rows={4}
+        />
+        <button type="submit" className="admin-messages-composer__submit" disabled={busy || !canSubmit}>
+          <AdminProductsIcon name="check" />{busy ? "Saving..." : "Update Ticket"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function MessageDesktopRow({ item, busy, runAction }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  return (
+    <article className={`admin-messages-desktop-row ${isExpanded ? "is-expanded" : ""}`}>
+      <button type="button" className="admin-messages-desktop-row__summary" onClick={() => setIsExpanded((current) => !current)} aria-expanded={isExpanded}>
+        <span className="admin-messages-avatar">{ticketInitials(item.name, item.email)}</span>
+        <span className="admin-messages-desktop-row__identity">
+          <strong>{item.name || "Customer Support"}</strong>
+          <small>{item.email || "No email"}</small>
+        </span>
+        <span className={`admin-messages-status-pill ${statusClass(item.status)}`}>{item.status || "new"}</span>
+        <span className="admin-messages-desktop-row__updated">
+          <small>Updated</small>
+          <strong>{formatDateTime(item.updatedAt)}</strong>
+        </span>
+        <AdminProductsIcon name="chevron" />
+      </button>
+      {isExpanded ? (
+        <div className="admin-messages-desktop-row__detail">
+          <header>
+            <h3>{item.subject || "Support request"}</h3>
+            <span>Created {formatDateTime(item.createdAt)}</span>
+          </header>
+          <MessageTicketDetailBody item={item} busy={busy} runAction={runAction} />
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function MessageMobileListItem({ item, isActive, onOpen }) {
+  return (
+    <button type="button" className={`admin-messages-mobile-item ${isActive ? "is-active" : ""}`} onClick={onOpen}>
+      <span className="admin-messages-avatar">{ticketInitials(item.name, item.email)}</span>
+      <span className="admin-messages-mobile-item__content">
+        <span className="admin-messages-mobile-item__head">
+          <strong>{item.name || "Customer Support"}</strong>
+          <span className={`admin-messages-status-pill ${statusClass(item.status)}`}>{item.status || "new"}</span>
+        </span>
+        <small>{item.email || "No email"}</small>
+        <span className="admin-messages-mobile-item__foot">
+          <time>{formatDateTime(item.updatedAt)}</time>
+          <AdminProductsIcon name="chevron" />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function MessagesWorkspaceStitch({
+  items,
+  stats,
+  query,
+  setQuery,
+  refreshing,
+  loading,
+  busyAction,
+  loadData,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  const [activeTicketId, setActiveTicketId] = useState("");
+  const activeTicket = items.find((item) => String(item?._id || item?.id || "") === activeTicketId) || null;
+
   return (
     <section className="admin-messages-workspace">
-      <AdminCards
-        type="messages"
-        items={items}
-        onAction={onAction}
-        busyAction={busyAction}
-        userInsights={userInsights}
-      />
+      <section className="admin-messages-desktop-shell">
+        <header className="admin-messages-desktop-toolbar">
+          <div className="admin-messages-desktop-toolbar__title">
+            <h1>Support Terminal</h1>
+          </div>
+          <label className="admin-messages-desktop-search">
+            <AdminProductsIcon name="search" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search support tickets..." aria-label="Search support tickets" />
+          </label>
+          <div className="admin-messages-desktop-toolbar__actions">
+            <button type="button" className="admin-messages-icon-button" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh tickets">
+              <AdminProductsIcon name="refresh" />
+            </button>
+            <div className="admin-messages-export-group">
+              <button type="button" onClick={exportCsv}>CSV</button>
+              <button type="button" onClick={exportJson}>JSON</button>
+              <button type="button" onClick={exportSql}>SQL</button>
+            </div>
+          </div>
+        </header>
+
+        <section className="admin-messages-desktop-stats">
+          <article><span>Total Tickets</span><strong>{formatCount(stats?.total || 0)}</strong></article>
+          <article><span>Showing</span><strong>{formatCount(items.length)}</strong></article>
+          <article className="is-open"><span>Open</span><strong>{formatCount(stats?.open || 0)}</strong></article>
+          <article className="is-resolved"><span>Resolved</span><strong>{formatCount(stats?.resolved || 0)}</strong></article>
+        </section>
+
+        {!items.length ? (
+          <div className="admin-messages-empty-state">
+            <h3>No support tickets yet</h3>
+            <p>Customer support requests will appear here for reply and status updates.</p>
+          </div>
+        ) : (
+          <div className="admin-messages-desktop-list">
+            {items.map((item) => {
+              const id = String(item?._id || item?.id || "");
+              return <MessageDesktopRow key={id} item={item} busy={busyAction === id} runAction={runAction} />;
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="admin-messages-mobile-shell">
+        <header className="admin-messages-mobile-topbar">
+          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <h1>Messages</h1>
+          <button type="button" onClick={() => loadData({ background: true })} aria-label="Refresh tickets">
+            <AdminProductsIcon name="refresh" />
+          </button>
+        </header>
+
+        <section className="admin-messages-mobile-stats">
+          <article><span>Total</span><strong>{formatCount(stats?.total || 0)}</strong></article>
+          <article className="is-open"><span>Open</span><strong>{formatCount(stats?.open || 0)}</strong></article>
+          <article><span>Done</span><strong>{formatCount(stats?.resolved || 0)}</strong></article>
+        </section>
+
+        <label className="admin-messages-mobile-search">
+          <AdminProductsIcon name="search" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tickets..." aria-label="Search support tickets" />
+        </label>
+
+        <div className="admin-messages-mobile-list-head">
+          <h2>Recent Tickets</h2>
+        </div>
+
+        {!items.length ? (
+          <div className="admin-messages-empty-state is-mobile">
+            <h3>No support tickets yet</h3>
+            <p>Customer support requests will appear here for reply and status updates.</p>
+          </div>
+        ) : (
+          <div className="admin-messages-mobile-list">
+            {items.map((item) => {
+              const id = String(item?._id || item?.id || "");
+              return (
+                <MessageMobileListItem
+                  key={id}
+                  item={item}
+                  isActive={id === activeTicketId}
+                  onOpen={() => setActiveTicketId(id)}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        <div className={`admin-messages-mobile-detail ${activeTicket ? "is-active" : ""}`}>
+          {activeTicket ? (
+            <>
+              <header className="admin-messages-mobile-detail__head">
+                <button type="button" onClick={() => setActiveTicketId("")} aria-label="Back to ticket list"><AdminProductsIcon name="back" /></button>
+                <div>
+                  <h3>{activeTicket.subject || "Support request"}</h3>
+                  <span>{activeTicket.name || "Customer Support"}</span>
+                </div>
+              </header>
+              <div className="admin-messages-mobile-detail__body">
+                <MessageTicketDetailBody item={activeTicket} busy={busyAction === activeTicketId} runAction={runAction} />
+              </div>
+            </>
+          ) : null}
+        </div>
+      </section>
     </section>
   );
 }
 
-function DiscountsWorkspaceShell({ items, onAction, busyAction, userInsights }) {
+function DiscountGeneratorForm({ busy, runAction }) {
+  return (
+    <form
+      className="admin-discounts-generator-form"
+      onSubmit={(event) => runAction("generateDiscount", { _id: "generateDiscount" }, event)}
+    >
+      <label>
+        <span>Percent Discount (2-10%)</span>
+        <input name="percent" type="number" min="2" max="10" placeholder="10" required />
+      </label>
+      <label>
+        <span>Code Count (1-50)</span>
+        <input name="count" type="number" min="1" max="50" defaultValue="1" placeholder="25" />
+      </label>
+      <button type="submit" disabled={busy}>
+        <AdminProductsIcon name="plus" />{busy ? "Generating..." : "Generate Codes"}
+      </button>
+    </form>
+  );
+}
+
+function DiscountDesktopRow({ item, busy, runAction }) {
+  const usedByName = normalizeText(item?.usedBy?.name);
+  const usedByEmail = normalizeText(item?.usedBy?.email);
+  const usedBy = usedByName || usedByEmail;
+  const orderRef = normalizeText(item?.order?._id || item?.order);
+  const isUsed = Boolean(item.used);
+  return (
+    <tr className={`admin-discounts-row ${isUsed ? "is-used" : "is-available"}`}>
+      <td><span className="admin-discounts-code-chip">{item.code || "—"}</span></td>
+      <td className="admin-discounts-row__percent"><span>{Number(item.percent || 0)}%</span></td>
+      <td>
+        <span className={`admin-discounts-status ${isUsed ? "is-used" : "is-available"}`}>
+          <i />{isUsed ? "Used" : "Available"}
+        </span>
+      </td>
+      <td>
+        {isUsed ? (
+          <div className="admin-discounts-details">
+            {usedBy ? <p><span>Used by:</span> {usedBy}</p> : null}
+            {orderRef ? <p><span>Order:</span> {orderRef}</p> : null}
+            <p><span>Created:</span> {formatDate(item.createdAt)}</p>
+          </div>
+        ) : (
+          <div className="admin-discounts-details">
+            <p><span>Created:</span> {formatDate(item.createdAt)}</p>
+            <p className="is-muted">No usage recorded</p>
+          </div>
+        )}
+      </td>
+      <td className="admin-discounts-row__actions">
+        <button type="button" className="admin-discounts-copy" disabled={busy} onClick={() => runAction("copyDiscountCode", item)}>
+          <AdminProductsIcon name="copy" />COPY
+        </button>
+        <button type="button" className="admin-discounts-delete" disabled={busy} onClick={() => runAction("deleteDiscount", item)} aria-label="Delete discount code">
+          <AdminProductsIcon name="delete" />
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+function DiscountMobileCard({ item, busy, runAction }) {
+  const usedByName = normalizeText(item?.usedBy?.name);
+  const usedByEmail = normalizeText(item?.usedBy?.email);
+  const usedBy = usedByName || usedByEmail;
+  const orderRef = normalizeText(item?.order?._id || item?.order);
+  const isUsed = Boolean(item.used);
+  return (
+    <article className={`admin-discounts-mobile-card ${isUsed ? "is-used" : "is-available"}`}>
+      <div className="admin-discounts-mobile-card__head">
+        <div>
+          <span className="admin-discounts-code-chip">{item.code || "—"}</span>
+          <span className="admin-discounts-mobile-card__meta">
+            <span className={`admin-discounts-mini-pill ${isUsed ? "is-used" : "is-available"}`}>{isUsed ? "Used" : "Available"}</span>
+            <small>· Created {formatDate(item.createdAt)}</small>
+          </span>
+        </div>
+        <span className="admin-discounts-percent-chip">{Number(item.percent || 0)}%</span>
+      </div>
+
+      {isUsed && (usedBy || orderRef) ? (
+        <div className="admin-discounts-mobile-card__used-by">
+          <AdminProductsIcon name="person" />
+          <div>
+            <strong>{usedBy || "Customer"}</strong>
+            {orderRef ? <small>Order {orderRef}</small> : null}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="admin-discounts-mobile-card__actions">
+        <button type="button" className="admin-discounts-mobile-copy" disabled={busy} onClick={() => runAction("copyDiscountCode", item)}>
+          <AdminProductsIcon name="copy" />Copy Code
+        </button>
+        <button type="button" className="admin-discounts-mobile-delete" disabled={busy} onClick={() => runAction("deleteDiscount", item)}>
+          <AdminProductsIcon name="delete" />Delete Code
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function DiscountsWorkspaceStitch({
+  items,
+  stats,
+  query,
+  setQuery,
+  discountStatusFilter,
+  setDiscountStatusFilter,
+  discountPercentFilter,
+  setDiscountPercentFilter,
+  discountSort,
+  setDiscountSort,
+  resetDiscountFilters,
+  refreshing,
+  loading,
+  busyAction,
+  loadData,
+  exportCsv,
+  exportJson,
+  exportSql,
+  runAction,
+}) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const total = Number(stats?.total || 0);
+  const available = Number(stats?.available || 0);
+  const used = Number(stats?.used || 0);
+  const avgPercent = Number(stats?.avgPercent || 0);
+
   return (
     <section className="admin-discounts-workspace">
-      <AdminCards
-        type="discounts"
-        items={items}
-        onAction={onAction}
-        busyAction={busyAction}
-        userInsights={userInsights}
-      />
+      <section className="admin-discounts-desktop-shell">
+        <header className="admin-discounts-desktop-header">
+          <div>
+            <h1>Discounts Management</h1>
+            <p>Generate, monitor, and manage promotional codes for enterprise procurement.</p>
+          </div>
+          <button type="button" className="ghost-button" disabled={loading || refreshing} onClick={() => loadData({ background: true })}>
+            <AdminProductsIcon name="refresh" />Refresh
+          </button>
+        </header>
+
+        <section className="admin-discounts-generator">
+          <div className="admin-discounts-generator__head">
+            <AdminProductsIcon name="settings" />
+            <h2>Generator Panel</h2>
+          </div>
+          <DiscountGeneratorForm busy={busyAction === "generateDiscount"} runAction={runAction} />
+        </section>
+
+        <section className="admin-discounts-desktop-stats">
+          <article><span>Total Codes</span><strong>{formatCount(total)}</strong></article>
+          <article><span>Showing</span><strong>{formatCount(items.length)}</strong></article>
+          <article className="is-available"><span>Available</span><strong>{formatCount(available)}</strong></article>
+          <article className="is-used"><span>Used</span><strong>{formatCount(used)}</strong></article>
+          <article><span>Avg Percent</span><strong>{avgPercent.toFixed(1)}%</strong></article>
+        </section>
+
+        <section className="admin-discounts-toolbar">
+          <label className="admin-discounts-search">
+            <AdminProductsIcon name="search" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search codes..." aria-label="Search discount codes" />
+          </label>
+          <label className="admin-discounts-toolbar__filter">
+            <span>Status</span>
+            <select value={discountStatusFilter} onChange={(event) => setDiscountStatusFilter(event.target.value)}>
+              <option value="all">All</option>
+              <option value="available">Available</option>
+              <option value="used">Used</option>
+            </select>
+          </label>
+          <label className="admin-discounts-toolbar__filter">
+            <span>Percent</span>
+            <select value={discountPercentFilter} onChange={(event) => setDiscountPercentFilter(event.target.value)}>
+              <option value="all">2-10%</option>
+              {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((percent) => (
+                <option key={percent} value={percent}>{percent}%</option>
+              ))}
+            </select>
+          </label>
+          <label className="admin-discounts-toolbar__filter">
+            <span>Sort</span>
+            <select value={discountSort} onChange={(event) => setDiscountSort(event.target.value)}>
+              {DISCOUNT_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
+          <button type="button" className="ghost-button" onClick={resetDiscountFilters}>Clear Filters</button>
+          <div className="admin-discounts-export-group">
+            <button type="button" onClick={exportCsv}>CSV</button>
+            <button type="button" onClick={exportJson}>JSON</button>
+            <button type="button" onClick={exportSql}>SQL</button>
+          </div>
+        </section>
+
+        <section className="admin-discounts-table-panel">
+          {!items.length ? (
+            <div className="admin-discounts-empty-state">
+              <h3>No discount codes yet</h3>
+              <p>Generated codes will appear here for copy, tracking, and removal.</p>
+            </div>
+          ) : (
+            <>
+              <table className="admin-discounts-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Percent</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item) => {
+                    const id = item._id || item.id;
+                    return <DiscountDesktopRow key={id} item={item} busy={busyAction === id} runAction={runAction} />;
+                  })}
+                </tbody>
+              </table>
+              <footer className="admin-discounts-table-footer">
+                <p>Showing {items.length} of {formatCount(total)} codes</p>
+              </footer>
+            </>
+          )}
+        </section>
+      </section>
+
+      <section className="admin-discounts-mobile-shell">
+        <header className="admin-discounts-mobile-topbar">
+          <Link href="/admin" aria-label="Back to admin dashboard"><AdminProductsIcon name="menu" /></Link>
+          <h1>Discounts</h1>
+          <button type="button" onClick={() => setMobileFiltersOpen((current) => !current)} aria-label="Toggle filters" aria-expanded={mobileFiltersOpen}>
+            <AdminProductsIcon name="tune" />
+          </button>
+        </header>
+
+        {mobileFiltersOpen ? (
+          <section className="admin-discounts-mobile-filters">
+            <label>
+              <span>Search</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search codes..." />
+            </label>
+            <label>
+              <span>Status</span>
+              <select value={discountStatusFilter} onChange={(event) => setDiscountStatusFilter(event.target.value)}>
+                <option value="all">All</option>
+                <option value="available">Available</option>
+                <option value="used">Used</option>
+              </select>
+            </label>
+            <label>
+              <span>Percent</span>
+              <select value={discountPercentFilter} onChange={(event) => setDiscountPercentFilter(event.target.value)}>
+                <option value="all">2-10%</option>
+                {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((percent) => (
+                  <option key={percent} value={percent}>{percent}%</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Sort</span>
+              <select value={discountSort} onChange={(event) => setDiscountSort(event.target.value)}>
+                {DISCOUNT_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+            </label>
+            <div className="admin-discounts-mobile-filters__actions">
+              <button type="button" onClick={resetDiscountFilters}>Reset</button>
+              <button type="button" onClick={() => setMobileFiltersOpen(false)}>Apply</button>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="admin-discounts-mobile-stats">
+          <article><span>Total</span><strong>{formatCount(total)}</strong></article>
+          <article className="is-available"><span>Available</span><strong>{formatCount(available)}</strong></article>
+          <article className="is-used"><span>Used</span><strong>{formatCount(used)}</strong></article>
+        </section>
+
+        <section className="admin-discounts-mobile-generator">
+          <div className="admin-discounts-generator__head">
+            <AdminProductsIcon name="settings" />
+            <h2>Generator</h2>
+          </div>
+          <DiscountGeneratorForm busy={busyAction === "generateDiscount"} runAction={runAction} />
+        </section>
+
+        <div className="admin-discounts-mobile-list-head">
+          <h2>Codes</h2>
+          <button type="button" className="admin-discounts-icon-button" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh codes">
+            <AdminProductsIcon name="refresh" />
+          </button>
+        </div>
+
+        {!items.length ? (
+          <div className="admin-discounts-empty-state is-mobile">
+            <h3>No discount codes yet</h3>
+            <p>Generated codes will appear here for copy, tracking, and removal.</p>
+          </div>
+        ) : (
+          <div className="admin-discounts-mobile-list">
+            {items.map((item) => {
+              const id = item._id || item.id;
+              return <DiscountMobileCard key={id} item={item} busy={busyAction === id} runAction={runAction} />;
+            })}
+          </div>
+        )}
+      </section>
     </section>
   );
 }
@@ -3647,7 +4356,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" ? (
+        {type !== "dashboard" && type !== "orders" && type !== "products" && type !== "users" && type !== "affiliates" && type !== "reviews" && type !== "banners" && type !== "messages" && type !== "discounts" ? (
           <section className="panel admin-collapsible">
             <button
               type="button"
@@ -3841,7 +4550,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             <span className="admin-chip is-warning">Avg rating: {reviewStats.avgRating.toFixed(1)} stars</span>
           </section>
         ) : null}
-        {type === "discounts" && discountStats ? (
+        {false && type === "discounts" && discountStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {discountStats.total}</span>
             <span className="admin-chip is-neutral">Showing: {discountStats.filtered}</span>
@@ -3852,7 +4561,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             <span className="admin-chip is-warning">Avg percent: {discountStats.avgPercent.toFixed(1)}%</span>
           </section>
         ) : null}
-        {type === "messages" && messageStats ? (
+        {false && type === "messages" && messageStats ? (
           <section className="panel admin-toolbar admin-toolbar--stats">
             <span className="admin-chip">Total: {messageStats.total}</span>
             <span className="admin-chip is-neutral">Showing: {messageStats.filtered}</span>
@@ -4006,7 +4715,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
           </section>
         ) : null}
 
-        {type === "discounts" && discountStats ? (
+        {false && type === "discounts" && discountStats ? (
           <section className="admin-viz-grid panel">
             <TinyBarChart
               title="Discount percent distribution"
@@ -4058,7 +4767,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
             ) : null}
           </section>
         ) : null}
-        {type === "discounts" ? (
+        {false && type === "discounts" ? (
           <section className="panel admin-create-panel admin-collapsible">
             <button
               type="button"
@@ -4178,19 +4887,42 @@ export default function AdminManager({ type, productMode = "list", productId = "
         ) : null}
         {!loading && !error && type === "dashboard" ? <DashboardView payload={payload} /> : null}
         {!loading && !error && type === "messages" ? (
-          <MessagesWorkspaceShell
+          <MessagesWorkspaceStitch
             items={items}
-            onAction={runAction}
+            stats={messageStats}
+            query={query}
+            setQuery={setQuery}
+            refreshing={refreshing}
+            loading={loading}
             busyAction={busyAction}
-            userInsights={userInsights}
+            loadData={loadData}
+            exportCsv={exportCsv}
+            exportJson={exportJson}
+            exportSql={exportSql}
+            runAction={runAction}
           />
         ) : null}
         {!loading && !error && type === "discounts" ? (
-          <DiscountsWorkspaceShell
+          <DiscountsWorkspaceStitch
             items={items}
-            onAction={runAction}
+            stats={discountStats}
+            query={query}
+            setQuery={setQuery}
+            discountStatusFilter={discountStatusFilter}
+            setDiscountStatusFilter={setDiscountStatusFilter}
+            discountPercentFilter={discountPercentFilter}
+            setDiscountPercentFilter={setDiscountPercentFilter}
+            discountSort={discountSort}
+            setDiscountSort={setDiscountSort}
+            resetDiscountFilters={resetDiscountFilters}
+            refreshing={refreshing}
+            loading={loading}
             busyAction={busyAction}
-            userInsights={userInsights}
+            loadData={loadData}
+            exportCsv={exportCsv}
+            exportJson={exportJson}
+            exportSql={exportSql}
+            runAction={runAction}
           />
         ) : null}
         {!loading && !error && type !== "dashboard" && type !== "affiliates" && type !== "reviews" && type !== "banners" && type !== "messages" && type !== "discounts" && !(type === "products" && isProductDedicatedPage) ? (

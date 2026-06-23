@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DEETECH Admin - Discounts</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Geist:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c1c9bd",
+                        "tertiary-fixed": "#ffd9de",
+                        "on-surface": "#111c2c",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#541b29",
+                        "surface": "#f9f9ff",
+                        "on-tertiary-container": "#f09bab",
+                        "tertiary-fixed-dim": "#ffb2bf",
+                        "surface-container-highest": "#d8e3fa",
+                        "inverse-surface": "#263142",
+                        "surface-container-high": "#dee8ff",
+                        "on-tertiary-fixed-variant": "#723240",
+                        "surface-bright": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#005321",
+                        "outline": "#71796f",
+                        "on-surface-variant": "#414940",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#8bd894",
+                        "tertiary-container": "#70313f",
+                        "secondary-container": "#a6f5af",
+                        "on-primary-container": "#87c08d",
+                        "primary-container": "#184f27",
+                        "on-primary-fixed-variant": "#1a5129",
+                        "background": "#f5f6f7",
+                        "surface-variant": "#d8e3fa",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#3b0716",
+                        "secondary": "#1f6c35",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "primary": "#003714",
+                        "surface-tint": "#34693e",
+                        "primary-fixed-dim": "#9ad4a0",
+                        "inverse-primary": "#9ad4a0",
+                        "on-background": "#111c2c",
+                        "secondary-fixed": "#a6f5af",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#27723a",
+                        "surface-container": "#e7eeff",
+                        "on-primary-fixed": "#002109",
+                        "on-secondary-fixed": "#002109",
+                        "primary-fixed": "#b5f1ba",
+                        "surface-dim": "#cfdaf1",
+                        "brand-divider": "#e8e0d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "8px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "gutter": "24px",
+                        "xl": "40px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "mono-data": ["Geist"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .sidebar-active {
+            background-color: rgba(24, 79, 39, 0.1);
+            border-right: 4px solid #003714;
+            color: #003714;
+            font-weight: 700;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(232, 224, 212, 0.5);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .zebra-row:nth-child(even) {
+            background-color: #f8f2e6;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden">
+<!-- SIDEBAR (Persistent) -->
+<aside class="w-[280px] h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col py-lg px-md z-50">
+<div class="flex items-center gap-sm mb-xl px-sm">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hardware</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary leading-tight">DEETECH Admin</h1>
+<p class="text-label-md text-on-surface-variant">Enterprise Hardware</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span class="font-label-md uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">shopping_cart</span>
+<span class="font-label-md uppercase tracking-wider">Orders</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">inventory_2</span>
+<span class="font-label-md uppercase tracking-wider">Products</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">group</span>
+<span class="font-label-md uppercase tracking-wider">Users</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">handshake</span>
+<span class="font-label-md uppercase tracking-wider">Affiliates</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">rate_review</span>
+<span class="font-label-md uppercase tracking-wider">Reviews</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">ad_units</span>
+<span class="font-label-md uppercase tracking-wider">Banners</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">mail</span>
+<span class="font-label-md uppercase tracking-wider">Messages</span>
+</a>
+<!-- Active State: Discounts -->
+<a class="sidebar-active flex items-center gap-md px-md py-sm rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sell</span>
+<span class="font-label-md uppercase tracking-wider">Discounts</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1 pt-lg border-t border-brand-divider">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">settings</span>
+<span class="font-label-md uppercase tracking-wider">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">logout</span>
+<span class="font-label-md uppercase tracking-wider">Logout</span>
+</a>
+</div>
+</aside>
+<!-- MAIN CONTENT -->
+<main class="ml-[280px] min-h-screen">
+<!-- TOP APP BAR -->
+<header class="flex justify-between items-center w-full h-16 px-lg sticky top-0 z-40 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-lg py-2 w-80 text-body-sm focus:ring-2 focus:ring-primary" placeholder="Search orders, codes, or customers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="bg-primary text-white px-md py-2 rounded-xl font-label-md uppercase tracking-widest hover:opacity-90 transition-opacity">Export Data</button>
+<div class="flex items-center gap-md text-on-surface-variant">
+<button class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full border border-outline-variant" data-alt="Close-up studio portrait of a professional African man in a business suit, soft professional lighting, corporate office background blurred, ultra high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD-bmwjnxjJoNdUx2pPVuIXpZONby5IEuHHrZSyOigY-eFG3goVf4_lZBfh9835kO2lceJlZ9TUjWUBu61C2Wh_Xm5YHJLaMyCM_2QOzWVQpXJZl71XS56ToYnp-a7dcnFs_1jUmEB8-z2RajNzvQle5VyInSMaaTqHp7Apcum_7baJ105Ftr8-lU1aspzZ7k1pyoLHw_k35_p0xGtlp9kGcT2xfkK96meAONi71pVqwJauHDVPDVVmuuwY3hVeivFQo8O6t52nt0"/>
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<div class="p-lg max-w-7xl mx-auto space-y-lg">
+<!-- PAGE HEADER -->
+<div class="flex items-end justify-between">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-primary">Discounts Management</h2>
+<p class="text-body-md text-on-surface-variant">Generate, monitor, and manage promotional codes for enterprise procurement.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-2 px-md py-2 border border-primary text-primary rounded-xl font-label-md uppercase tracking-widest hover:bg-primary-container/5 transition-colors">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                        Refresh
+                    </button>
+</div>
+</div>
+<!-- GENERATOR PANEL -->
+<section class="glass-card rounded-xl p-lg">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-primary">auto_fix_high</span>
+<h3 class="text-headline-md font-headline-md">Generator Panel</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg items-end">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-2">PERCENT DISCOUNT (2-10%)</label>
+<input class="w-full bg-[#EDF2F7] border-none rounded-lg p-3 text-body-md focus:bg-white focus:ring-2 focus:ring-primary transition-all" max="10" min="2" placeholder="10" type="number"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant mb-2">CODE COUNT (1-50)</label>
+<input class="w-full bg-[#EDF2F7] border-none rounded-lg p-3 text-body-md focus:bg-white focus:ring-2 focus:ring-primary transition-all" max="50" min="1" placeholder="25" type="number"/>
+</div>
+<div class="md:col-span-2">
+<button class="w-full bg-primary text-white h-[48px] rounded-lg font-headline-md text-headline-md flex items-center justify-center gap-md hover:shadow-lg transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">add_circle</span>
+                            Generate Codes
+                        </button>
+</div>
+</div>
+</section>
+<!-- STATS ROW -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-md">
+<div class="glass-card p-md rounded-xl text-center">
+<p class="text-label-md text-on-surface-variant">TOTAL CODES</p>
+<h4 class="text-headline-md font-headline-md text-primary mt-1">1,240</h4>
+</div>
+<div class="glass-card p-md rounded-xl text-center">
+<p class="text-label-md text-on-surface-variant">SHOWING</p>
+<h4 class="text-headline-md font-headline-md text-primary mt-1">25</h4>
+</div>
+<div class="glass-card p-md rounded-xl text-center border-l-4 border-l-secondary-container">
+<p class="text-label-md text-on-surface-variant">AVAILABLE</p>
+<h4 class="text-headline-md font-headline-md text-secondary mt-1">842</h4>
+</div>
+<div class="glass-card p-md rounded-xl text-center border-l-4 border-l-outline-variant">
+<p class="text-label-md text-on-surface-variant">USED</p>
+<h4 class="text-headline-md font-headline-md text-on-surface-variant mt-1">398</h4>
+</div>
+<div class="glass-card p-md rounded-xl text-center">
+<p class="text-label-md text-on-surface-variant">AVG PERCENT</p>
+<h4 class="text-headline-md font-headline-md text-primary mt-1">5.4%</h4>
+</div>
+</div>
+<!-- TOOLBAR -->
+<section class="glass-card rounded-xl p-md flex flex-wrap items-center gap-md">
+<div class="relative flex-1 min-w-[200px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#EDF2F7] border-none rounded-lg pl-10 pr-md py-2 text-body-sm focus:bg-white focus:ring-1 focus:ring-primary" placeholder="Search codes..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md text-on-surface-variant">STATUS:</span>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-sm py-1.5 focus:ring-primary">
+<option>All</option>
+<option>Available</option>
+<option>Used</option>
+</select>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md text-on-surface-variant">PERCENT:</span>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-sm py-1.5 focus:ring-primary">
+<option>2-10%</option>
+<option>2%</option>
+<option>5%</option>
+<option>10%</option>
+</select>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md text-on-surface-variant">SORT:</span>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-sm py-1.5 focus:ring-primary">
+<option>Newest First</option>
+<option>Oldest First</option>
+<option>Percent High-Low</option>
+</select>
+</div>
+<div class="h-8 w-px bg-brand-divider"></div>
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container-highest rounded-lg transition-colors group" title="Refresh">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">refresh</span>
+</button>
+<div class="relative group">
+<button class="flex items-center gap-1 px-md py-1.5 border border-outline-variant rounded-lg text-body-sm hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export
+                            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<!-- Simple mockup dropdown -->
+<div class="absolute right-0 top-full mt-1 w-32 bg-white rounded-lg shadow-lg border border-outline-variant hidden group-hover:block z-20">
+<a class="block px-md py-2 text-body-sm hover:bg-surface-container-low" href="#">CSV</a>
+<a class="block px-md py-2 text-body-sm hover:bg-surface-container-low" href="#">JSON</a>
+<a class="block px-md py-2 text-body-sm hover:bg-surface-container-low" href="#">SQL</a>
+</div>
+</div>
+</div>
+</section>
+<!-- DATA GRID -->
+<section class="glass-card rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-brand-divider">
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Code</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-widest text-center">Percent</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Status</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Details</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-brand-divider">
+<!-- Row 1 -->
+<tr class="zebra-row hover:bg-primary-container/5 transition-colors group">
+<td class="px-lg py-md">
+<span class="font-mono-data text-body-md font-bold text-primary bg-primary-container/10 px-2 py-1 rounded">GH-SALE-10</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="bg-primary text-white px-2.5 py-0.5 rounded-full text-label-md">10%</span>
+</td>
+<td class="px-lg py-md">
+<span class="flex items-center gap-1.5 text-secondary font-medium text-body-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+                                    Available
+                                </span>
+</td>
+<td class="px-lg py-md">
+<div class="space-y-0.5">
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Created:</span> <span class="font-mono-data">2023-11-24</span></p>
+<p class="text-body-sm text-on-surface-variant italic opacity-60">No usage recorded</p>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex items-center gap-1 px-sm py-1 border border-primary text-primary rounded-lg text-label-md font-semibold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                                        COPY
+                                    </button>
+<button class="p-1 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="zebra-row hover:bg-primary-container/5 transition-colors group">
+<td class="px-lg py-md">
+<span class="font-mono-data text-body-md font-bold text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded">GH-BLK-05</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="bg-primary-container text-on-primary-container px-2.5 py-0.5 rounded-full text-label-md">5%</span>
+</td>
+<td class="px-lg py-md">
+<span class="flex items-center gap-1.5 text-on-surface-variant font-medium text-body-sm">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+                                    Used
+                                </span>
+</td>
+<td class="px-lg py-md">
+<div class="space-y-0.5">
+<p class="text-body-sm text-on-surface"><span class="text-label-md font-semibold">Used by:</span> k.mensah@email.com</p>
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Order:</span> <span class="font-mono-data">#GH-8821</span></p>
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Created:</span> <span class="font-mono-data">2023-11-20</span></p>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex items-center gap-1 px-sm py-1 border border-primary text-primary rounded-lg text-label-md font-semibold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                                        COPY
+                                    </button>
+<button class="p-1 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="zebra-row hover:bg-primary-container/5 transition-colors group">
+<td class="px-lg py-md">
+<span class="font-mono-data text-body-md font-bold text-primary bg-primary-container/10 px-2 py-1 rounded">GH-PRM-02</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="bg-primary text-white px-2.5 py-0.5 rounded-full text-label-md">2%</span>
+</td>
+<td class="px-lg py-md">
+<span class="flex items-center gap-1.5 text-secondary font-medium text-body-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+                                    Available
+                                </span>
+</td>
+<td class="px-lg py-md">
+<div class="space-y-0.5">
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Created:</span> <span class="font-mono-data">2023-11-25</span></p>
+<p class="text-body-sm text-on-surface-variant italic opacity-60">No usage recorded</p>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex items-center gap-1 px-sm py-1 border border-primary text-primary rounded-lg text-label-md font-semibold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                                        COPY
+                                    </button>
+<button class="p-1 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Repeat filler rows for artboard depth -->
+<tr class="zebra-row hover:bg-primary-container/5 transition-colors group">
+<td class="px-lg py-md">
+<span class="font-mono-data text-body-md font-bold text-on-surface-variant bg-surface-container-highest px-2 py-1 rounded">GH-OFF-08</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="bg-primary-container text-on-primary-container px-2.5 py-0.5 rounded-full text-label-md">8%</span>
+</td>
+<td class="px-lg py-md">
+<span class="flex items-center gap-1.5 text-on-surface-variant font-medium text-body-sm">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+                                    Used
+                                </span>
+</td>
+<td class="px-lg py-md">
+<div class="space-y-0.5">
+<p class="text-body-sm text-on-surface"><span class="text-label-md font-semibold">Used by:</span> a.boateng@itprocure.gh</p>
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Order:</span> <span class="font-mono-data">#GH-8940</span></p>
+<p class="text-body-sm text-on-surface-variant"><span class="text-label-md font-semibold">Created:</span> <span class="font-mono-data">2023-11-18</span></p>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex items-center gap-1 px-sm py-1 border border-primary text-primary rounded-lg text-label-md font-semibold hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                                        COPY
+                                    </button>
+<button class="p-1 text-error hover:bg-error-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-lg py-md bg-surface-container-low flex justify-between items-center border-t border-brand-divider">
+<p class="text-body-sm text-on-surface-variant">Showing 1-25 of 1,240 codes</p>
+<div class="flex items-center gap-2">
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 bg-primary text-white rounded-lg text-body-sm font-bold">1</button>
+<button class="w-10 h-10 hover:bg-white border border-transparent hover:border-outline-variant rounded-lg text-body-sm transition-colors">2</button>
+<button class="w-10 h-10 hover:bg-white border border-transparent hover:border-outline-variant rounded-lg text-body-sm transition-colors">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="w-10 h-10 hover:bg-white border border-transparent hover:border-outline-variant rounded-lg text-body-sm transition-colors">50</button>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Micro-interaction for feedback -->
+<div class="fixed bottom-lg right-lg glass-card px-lg py-md rounded-xl border-l-4 border-l-secondary translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-md z-[100]" id="toast">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div>
+<p class="font-headline-md text-body-md text-primary leading-none">Code Copied</p>
+<p class="text-body-sm text-on-surface-variant mt-1">Discount code copied to clipboard.</p>
+</div>
+</div>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText.includes('COPY')) {
+                btn.addEventListener('click', () => {
+                    const toast = document.getElementById('toast');
+                    toast.classList.remove('translate-y-20', 'opacity-0');
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-20', 'opacity-0');
+                    }, 3000);
+                });
+            }
+        });
+
+        // Add ripple-like effect on primary button
+        const generateBtn = document.querySelector('button.bg-primary.h-\\[48px\\]');
+        generateBtn.addEventListener('mousedown', function(e) {
+            this.style.transform = 'scale(0.98)';
+        });
+        generateBtn.addEventListener('mouseup', function(e) {
+            this.style.transform = 'scale(1)';
+        });
+    </script>
+</body></html>

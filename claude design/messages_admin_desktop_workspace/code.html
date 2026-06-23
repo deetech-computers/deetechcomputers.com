@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DEETECH Admin - Messages</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Geist:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9ff",
+                    "surface-variant": "#d8e3fa",
+                    "surface-container": "#e7eeff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffd9de",
+                    "on-tertiary-fixed": "#3b0716",
+                    "on-surface": "#111c2c",
+                    "outline-variant": "#c1c9bd",
+                    "outline": "#71796f",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#a6f5af",
+                    "on-secondary-container": "#27723a",
+                    "tertiary": "#541b29",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#414940",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9ff",
+                    "on-primary-fixed-variant": "#1a5129",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-highest": "#d8e3fa",
+                    "surface-container-low": "#f0f3ff",
+                    "on-secondary-fixed": "#002109",
+                    "primary-fixed": "#b5f1ba",
+                    "secondary-container": "#a6f5af",
+                    "on-primary-fixed": "#002109",
+                    "inverse-surface": "#263142",
+                    "secondary-fixed-dim": "#8bd894",
+                    "surface-dim": "#cfdaf1",
+                    "secondary": "#1f6c35",
+                    "primary-fixed-dim": "#9ad4a0",
+                    "on-background": "#111c2c",
+                    "tertiary-container": "#70313f",
+                    "on-tertiary-fixed-variant": "#723240",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary-container": "#87c08d",
+                    "surface-container-high": "#dee8ff",
+                    "tertiary-fixed-dim": "#ffb2bf",
+                    "primary-container": "#184f27",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#9ad4a0",
+                    "primary": "#003714",
+                    "on-tertiary-container": "#f09bab",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#34693e",
+                    "on-secondary-fixed-variant": "#005321",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "xl": "40px",
+                    "container-max": "1280px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "mono-data": ["Geist"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "headline-xl": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f5f6f7; }
+        .ticket-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
+        .border-brand { border-color: #e8e0d4; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased">
+<!-- Annotation -->
+<div class="fixed top-2 right-2 z-50 bg-inverse-surface text-inverse-on-surface px-2 py-1 text-[10px] font-mono rounded select-none">
+        Desktop Artboard (1440px)
+    </div>
+<!-- Layout Container -->
+<div class="flex min-h-screen">
+<!-- Sidebar Component (JSON-driven Mapping) -->
+<aside class="bg-surface shadow-sm h-screen w-[280px] fixed left-0 top-0 flex flex-col py-lg border-r border-brand z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Admin Central</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Institutional Rigor</p>
+</div>
+<nav class="flex-1 px-sm space-y-1">
+<!-- Navigation Items -->
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span> Orders
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Products
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">group</span> Users
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">handshake</span> Affiliates
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">rate_review</span> Reviews
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">ad_units</span> Banners
+                </a>
+<!-- ACTIVE TAB: Messages -->
+<a class="flex items-center gap-md px-md py-sm font-body-md text-primary font-bold border-r-4 border-primary bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span> Messages
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">sell</span> Discounts
+                </a>
+</nav>
+<div class="mt-auto px-sm pt-lg border-t border-brand">
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+                </a>
+<a class="flex items-center gap-md px-md py-sm font-body-md text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+                </a>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="ml-[280px] flex-1 bg-background flex flex-col overflow-y-auto">
+<!-- Top App Bar (JSON-driven Mapping) -->
+<header class="flex justify-between items-center w-full pl-lg pr-lg h-16 sticky top-0 z-40 bg-surface-container-lowest border-b border-brand">
+<div class="flex items-center gap-lg w-1/2">
+<h2 class="font-headline-md text-headline-md font-bold text-primary mr-md">Support Terminal</h2>
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#EDF2F7] border-none rounded px-10 py-2 focus:ring-2 focus:ring-primary focus:bg-white transition-all text-body-sm" placeholder="Search support tickets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 hover:bg-surface-container transition-colors rounded">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+<div class="relative group">
+<button class="flex items-center gap-xs px-md py-2 border border-brand rounded font-label-md text-label-md hover:bg-surface-container transition-all">
+                            Export <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<!-- Dropdown Mock -->
+<div class="absolute right-0 top-full mt-1 bg-white border border-brand shadow-lg hidden group-hover:block z-50 rounded min-w-[120px]">
+<a class="block px-md py-sm text-body-sm hover:bg-surface-container" href="#">CSV</a>
+<a class="block px-md py-sm text-body-sm hover:bg-surface-container" href="#">JSON</a>
+<a class="block px-md py-sm text-body-sm hover:bg-surface-container" href="#">SQL</a>
+</div>
+</div>
+<button class="bg-primary text-white px-lg py-2 rounded font-label-md text-label-md hover:opacity-90 transition-opacity">
+                        Create Ticket
+                    </button>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden border border-brand ml-md">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female IT procurement officer with glasses, wearing a sharp corporate blazer. The background is a brightly lit, modern office environment with hints of soft forest green decor, consistent with a high-trust institutional workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE2aS2IlzrWFQdcR34YRRFUUmj2tmLCRalaTmUt_nkl5fzk3rZFYADZVyDy8_GbZa-S4fXNMMevvqqAeokWn8xZZX2PHWg_7kFJwXJ6zm3o5grZv2E05vt28OS5Ix8N3ZAkPjL9Am9srlPSyb83q5f8kq65ArFQc7pa6jexo0eAdUhnoxEGnJPBy2tuGSfyoP6Xn9NNT-rX8AcPvIpS5ksTxQuri6P3KnAmyBUYbalxj4I3fr0OzlTxvqwIk6PhZ4M_2zw2mYWTf0"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-lg space-y-lg">
+<!-- KPI Stats Row -->
+<div class="grid grid-cols-4 gap-lg">
+<div class="bg-white p-lg border border-brand rounded ticket-shadow">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Total Tickets</p>
+<h3 class="font-mono-data text-[32px] leading-none text-primary">1,284</h3>
+</div>
+<div class="bg-white p-lg border border-brand rounded ticket-shadow">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Showing</p>
+<h3 class="font-mono-data text-[32px] leading-none text-secondary">25</h3>
+</div>
+<div class="bg-[#f8f2e6] p-lg border border-[#e8d4b4] rounded ticket-shadow">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Open</p>
+<h3 class="font-mono-data text-[32px] leading-none text-[#8b6b10]">42</h3>
+</div>
+<div class="bg-[#f0fff4] p-lg border border-[#c6f6d5] rounded ticket-shadow">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Resolved</p>
+<h3 class="font-mono-data text-[32px] leading-none text-secondary">1,242</h3>
+</div>
+</div>
+<!-- Ticket Queue -->
+<div class="space-y-md">
+<!-- Collapsed Ticket -->
+<div class="bg-white border border-brand rounded p-md flex items-center justify-between hover:border-primary transition-colors cursor-pointer ticket-shadow">
+<div class="flex items-center gap-lg">
+<div class="h-10 w-10 rounded bg-primary-container text-white flex items-center justify-center font-bold">EB</div>
+<div>
+<h4 class="font-body-md font-bold">Emmanuel Boateng</h4>
+<p class="font-body-sm text-on-surface-variant opacity-70">eboateng@admin.com</p>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded text-[10px] font-bold uppercase tracking-widest">New</span>
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface-variant">Updated</p>
+<p class="font-mono-data text-body-sm">2023-11-24</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+<!-- Expanded Ticket -->
+<div class="bg-white border-2 border-primary rounded overflow-hidden ticket-shadow">
+<!-- Ticket Header -->
+<div class="p-lg border-b border-brand flex justify-between items-start bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-md mb-xs">
+<h3 class="font-headline-md text-headline-md font-bold">Delayed Shipment - Order #GH-8821</h3>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-sm py-xs rounded text-[10px] font-bold uppercase tracking-widest">In-Progress</span>
+</div>
+<div class="flex gap-md">
+<span class="flex items-center gap-xs font-mono-data text-[12px] bg-surface p-1 px-2 border border-brand">
+<span class="material-symbols-outlined text-[14px]">schedule</span> Created: 14:22
+                                    </span>
+<span class="flex items-center gap-xs font-mono-data text-[12px] bg-surface p-1 px-2 border border-brand">
+<span class="material-symbols-outlined text-[14px]">update</span> Updated: 09:15
+                                    </span>
+<span class="flex items-center gap-xs font-mono-data text-[12px] bg-surface p-1 px-2 border border-brand">
+<span class="material-symbols-outlined text-[14px]">forum</span> Threads: 4
+                                    </span>
+</div>
+</div>
+<div class="text-right text-on-surface-variant font-body-sm">
+                                Created 2023-11-23
+                            </div>
+</div>
+<!-- Ticket Body -->
+<div class="p-lg space-y-xl">
+<!-- Customer Request -->
+<div class="flex gap-lg">
+<div class="w-12 h-12 rounded bg-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="space-y-md flex-1">
+<div class="bg-surface p-lg rounded-xl border border-brand relative">
+<p class="font-body-md italic text-on-surface leading-relaxed">
+                                            "My order hasn't arrived yet. The tracking number isn't updating. It's been 5 days since I got the confirmation email."
+                                        </p>
+<div class="mt-lg">
+<p class="font-label-md text-label-md uppercase mb-sm text-on-surface-variant">Attachment</p>
+<div class="w-32 h-20 bg-surface-container-highest border border-brand rounded overflow-hidden group relative cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of a crumpled paper shipping receipt with barcodes and Ghana logistics logos. The lighting is harsh and detailed, highlighting the texture of the thermal paper and ink. Modern office environment background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYM4s0oZWJaskLPO0aADi5TIWauVlE_v2LZn6wXwjIfUuXYNlLfw6JymU-4Fz5oLf1mfSif9CKBryXZJ3XZl4rDH9E07ajXSbTspNXTPRxgOLxbgO7qLJcqSp2xKMgFriOFgp282rpKk7sKLnn60CSQIN-xBixwFWppVYmfK-OuKawXnt8J-JgtAR8dzh3N6Q6nPi97CPqaH3bKFKE0lKP4PS7RHiIDMOeTd3tvmhWSVvC0gnQhysYc-tawtt4uyuUk8TqkDcqlxk"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Conversation Thread -->
+<div class="space-y-px border border-brand rounded overflow-hidden">
+<!-- Message 1 (Support) -->
+<div class="bg-[#f8f2e6] p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-label-md text-secondary font-bold">[Support]</span>
+<p class="font-body-sm">"We are looking into this with our logistics partner."</p>
+</div>
+<span class="font-mono-data text-body-sm opacity-60">09:15</span>
+</div>
+<!-- Message 2 (Customer) -->
+<div class="bg-white p-md flex items-center justify-between border-t border-brand">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">[Customer]</span>
+<p class="font-body-sm">"Thank you, please update me soon."</p>
+</div>
+<span class="font-mono-data text-body-sm opacity-60">10:30</span>
+</div>
+</div>
+</div>
+<!-- Composer -->
+<div class="p-lg bg-surface-container-low border-t border-brand">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<label class="font-label-md text-label-md text-on-surface-variant">Update Status:</label>
+<select class="bg-white border border-brand rounded px-md py-1 text-body-sm focus:ring-primary focus:border-primary">
+<option>New</option>
+<option selected="">In-Progress</option>
+<option>Resolved</option>
+</select>
+</div>
+<span class="font-mono-data text-body-sm text-on-surface-variant">0 / 2000 characters</span>
+</div>
+<textarea class="w-full bg-white border border-brand rounded-lg p-md focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none" placeholder="Type your reply..." rows="4"></textarea>
+<div class="flex justify-end">
+<button class="bg-primary opacity-50 cursor-not-allowed text-white px-xl py-3 rounded-full font-bold flex items-center gap-sm shadow-lg" disabled="">
+<span class="material-symbols-outlined">send</span> Update Ticket
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple micro-interaction for the textarea
+        const textarea = document.querySelector('textarea');
+        const counter = document.querySelector('.font-mono-data.text-on-surface-variant');
+        const btn = document.querySelector('button[disabled]');
+
+        textarea.addEventListener('input', (e) => {
+            const len = e.target.value.length;
+            counter.textContent = `${len} / 2000 characters`;
+            
+            if (len > 0) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.classList.add('hover:scale-[1.02]', 'active:scale-[0.98]');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.classList.remove('hover:scale-[1.02]', 'active:scale-[0.98]');
+            }
+        });
+
+        // Hover animation for cards
+        const cards = document.querySelectorAll('.ticket-shadow');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease-out';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

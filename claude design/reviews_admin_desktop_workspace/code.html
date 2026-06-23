@@ -1,0 +1,415 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>DEETECH Admin - Reviews Moderation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Geist:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c9bd;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #71796f;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#ffb2bf",
+                      "on-tertiary-container": "#f09bab",
+                      "surface-container-high": "#dee8ff",
+                      "on-tertiary-fixed-variant": "#723240",
+                      "surface-container-highest": "#d8e3fa",
+                      "inverse-surface": "#263142",
+                      "surface-bright": "#f9f9ff",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c1c9bd",
+                      "tertiary-fixed": "#ffd9de",
+                      "on-surface": "#111c2c",
+                      "on-primary": "#ffffff",
+                      "tertiary": "#541b29",
+                      "surface": "#f9f9ff",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#8bd894",
+                      "on-secondary-fixed-variant": "#005321",
+                      "outline": "#71796f",
+                      "on-surface-variant": "#414940",
+                      "secondary": "#1f6c35",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-tertiary-fixed": "#3b0716",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "primary": "#003714",
+                      "primary-fixed-dim": "#9ad4a0",
+                      "inverse-primary": "#9ad4a0",
+                      "surface-tint": "#34693e",
+                      "tertiary-container": "#70313f",
+                      "secondary-container": "#a6f5af",
+                      "on-primary-container": "#87c08d",
+                      "primary-container": "#184f27",
+                      "background": "#f9f9ff",
+                      "on-primary-fixed-variant": "#1a5129",
+                      "surface-variant": "#d8e3fa",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed": "#b5f1ba",
+                      "on-secondary-fixed": "#002109",
+                      "surface-dim": "#cfdaf1",
+                      "on-background": "#111c2c",
+                      "secondary-fixed": "#a6f5af",
+                      "on-secondary": "#ffffff",
+                      "surface-container": "#e7eeff",
+                      "on-primary-fixed": "#002109",
+                      "on-secondary-container": "#27723a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "12px",
+                      "xl": "12px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "xl": "40px",
+                      "xs": "4px",
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "container-max": "1280px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-xl": ["Hanken Grotesk"],
+                      "headline-lg": ["Hanken Grotesk"],
+                      "mono-data": ["Geist"],
+                      "label-md": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-sm": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-[#f5f6f7] text-on-surface font-body-md min-h-screen flex overflow-hidden">
+<!-- Desktop Label Annotation -->
+<div class="fixed top-2 right-2 z-[100] bg-inverse-surface text-inverse-on-surface text-[10px] px-2 py-0.5 rounded opacity-50 pointer-events-none">Desktop</div>
+<!-- SideNavBar (from JSON) -->
+
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar Moderation Toolbar -->
+<header class="h-20 bg-surface flex items-center justify-between px-xl border-b border-outline-variant sticky top-0 z-30">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#EDF2F7] border-none rounded-lg pl-10 pr-4 py-2 text-body-sm focus:ring-2 focus:ring-primary focus:bg-white transition-all" placeholder="Search reviews, products or users..." type="text">
+</div>
+<div class="flex items-center gap-md">
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2 text-body-sm focus:border-primary outline-none">
+<option>All Status</option>
+<option>Approved</option>
+<option>Pending</option>
+<option>Rejected</option>
+</select>
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2 text-body-sm focus:border-primary outline-none">
+<option>Rating: All</option>
+<option>5 Stars</option>
+<option>4+ Stars</option>
+<option>3+ Stars</option>
+<option>2+ Stars</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-md ml-xl">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white font-bold">JD</div>
+<div class="hidden xl:block">
+<p class="text-body-sm font-bold leading-tight">Kwame Admin</p>
+<p class="text-label-md text-on-surface-variant">Super Admin</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Scrollable Workspace -->
+<div class="flex-1 overflow-y-auto p-xl">
+<!-- Stats Row -->
+<div class="grid grid-cols-4 gap-lg mb-xl">
+<div class="bg-white p-lg rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<p class="text-on-surface-variant text-label-md font-semibold mb-1">TOTAL REVIEWS</p>
+<h3 class="text-headline-md font-bold text-on-surface">1,284</h3>
+<div class="flex items-center gap-1 text-secondary mt-2 text-label-md">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">12% from last month</span>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<p class="text-on-surface-variant text-label-md font-semibold mb-1">APPROVED</p>
+<h3 class="text-headline-md font-bold text-on-surface">1,052</h3>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-secondary h-full" style="width: 82%"></div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<p class="text-on-surface-variant text-label-md font-semibold mb-1">REJECTED</p>
+<h3 class="text-headline-md font-bold text-on-surface">42</h3>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-error h-full" style="width: 4%"></div>
+</div>
+</div>
+<div class="bg-white p-lg rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<p class="text-on-surface-variant text-label-md font-semibold mb-1">AVERAGE RATING</p>
+<div class="flex items-center gap-2">
+<h3 class="text-headline-md font-bold text-on-surface">4.8</h3>
+<div class="flex text-amber-500">
+<span class="material-symbols-outlined filled-icon text-[20px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[20px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[20px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[20px]">star</span>
+<span class="material-symbols-outlined text-[20px]">star_half</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Moderation Queue -->
+<div class="bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 overflow-hidden">
+<div class="px-lg py-md bg-surface-container-low border-b border-outline-variant flex items-center justify-between">
+<h2 class="font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">pending_actions</span>
+                        Moderation Queue
+                    </h2>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 bg-surface-container rounded-lg text-body-sm font-semibold hover:bg-surface-variant transition-colors">Select All</button>
+<button class="px-4 py-1.5 bg-primary text-white rounded-lg text-body-sm font-semibold hover:opacity-90 transition-colors">Batch Approve</button>
+</div>
+</div>
+<div class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<div class="p-lg hover:bg-[#f8f2e6] transition-colors group">
+<div class="flex items-start gap-lg">
+<div class="flex-shrink-0 pt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox">
+</div>
+<div class="flex-1 grid grid-cols-[140px_1fr_200px] gap-xl">
+<div class="space-y-1">
+<div class="flex text-amber-500 mb-2">
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+</div>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-[11px] font-bold uppercase tracking-wider">Approved</span>
+<p class="font-mono-data text-label-md text-on-surface-variant pt-2">2023-11-14 14:22</p>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-surface">Emmanuel Tetteh <span class="text-on-surface-variant font-normal">on</span> <a class="text-primary hover:underline" href="#">HP LaserJet Enterprise M507dn</a></h4>
+<p class="text-body-md text-on-surface-variant leading-relaxed">The print quality is exceptional for our office needs in Accra. We've been running it for a week with zero jams. Setup was straightforward, and the delivery from DEETECH was incredibly fast.</p>
+</div>
+<div class="flex flex-col gap-2 justify-center items-end">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-error text-error rounded-lg text-label-md font-bold hover:bg-error/5 transition-all">Reject</button>
+<button class="px-3 py-1.5 bg-primary text-white rounded-lg text-label-md font-bold hover:opacity-90 transition-all">Approve</button>
+</div>
+<div class="flex gap-4 text-on-surface-variant mt-2">
+<button class="text-label-md hover:text-primary underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span> Open Product
+                                        </button>
+<button class="text-label-md hover:text-error underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span> Delete
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="p-lg hover:bg-[#f8f2e6] transition-colors group">
+<div class="flex items-start gap-lg">
+<div class="flex-shrink-0 pt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox">
+</div>
+<div class="flex-1 grid grid-cols-[140px_1fr_200px] gap-xl">
+<div class="space-y-1">
+<div class="flex text-amber-500 mb-2">
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider">Pending</span>
+<p class="font-mono-data text-label-md text-on-surface-variant pt-2">2023-11-14 11:05</p>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-surface">Abena Mensah <span class="text-on-surface-variant font-normal">on</span> <a class="text-primary hover:underline" href="#">Logitech MX Master 3S</a></h4>
+<p class="text-body-md text-on-surface-variant leading-relaxed">Good mouse but the scrolling feels a bit different than the previous version. Not sure if it's a defect or intended design. Will monitor for another week.</p>
+</div>
+<div class="flex flex-col gap-2 justify-center items-end">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-error text-error rounded-lg text-label-md font-bold hover:bg-error/5 transition-all">Reject</button>
+<button class="px-3 py-1.5 bg-primary text-white rounded-lg text-label-md font-bold hover:opacity-90 transition-all">Approve</button>
+</div>
+<div class="flex gap-4 text-on-surface-variant mt-2">
+<button class="text-label-md hover:text-primary underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span> Open Product
+                                        </button>
+<button class="text-label-md hover:text-error underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span> Delete
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="p-lg hover:bg-[#f8f2e6] transition-colors group">
+<div class="flex items-start gap-lg">
+<div class="flex-shrink-0 pt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox">
+</div>
+<div class="flex-1 grid grid-cols-[140px_1fr_200px] gap-xl">
+<div class="space-y-1">
+<div class="flex text-amber-500 mb-2">
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[11px] font-bold uppercase tracking-wider">Rejected</span>
+<p class="font-mono-data text-label-md text-on-surface-variant pt-2">2023-11-13 18:45</p>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-surface">James K. <span class="text-on-surface-variant font-normal">on</span> <a class="text-primary hover:underline" href="#">Apple MacBook Pro 14" M3</a></h4>
+<p class="text-body-md text-on-surface-variant leading-relaxed">SCAM STORE DO NOT BUY. BOX ARRIVED EMPTY. [Comment flagged for investigation: User has history of fraudulent delivery claims]</p>
+</div>
+<div class="flex flex-col gap-2 justify-center items-end">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant text-on-surface-variant rounded-lg text-label-md font-bold hover:bg-surface-container transition-all">Restore</button>
+<button class="px-3 py-1.5 border border-error text-error rounded-lg text-label-md font-bold hover:bg-error/5 transition-all">Permanent Delete</button>
+</div>
+<div class="flex gap-4 text-on-surface-variant mt-2">
+<button class="text-label-md hover:text-primary underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span> Open Product
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="p-lg hover:bg-[#f8f2e6] transition-colors group">
+<div class="flex items-start gap-lg">
+<div class="flex-shrink-0 pt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox">
+</div>
+<div class="flex-1 grid grid-cols-[140px_1fr_200px] gap-xl">
+<div class="space-y-1">
+<div class="flex text-amber-500 mb-2">
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider">Pending</span>
+<p class="font-mono-data text-label-md text-on-surface-variant pt-2">2023-11-13 15:30</p>
+</div>
+<div class="space-y-1">
+<h4 class="font-bold text-on-surface">Isaac Ofori <span class="text-on-surface-variant font-normal">on</span> <a class="text-primary hover:underline" href="#">Dell Latitude 5440</a></h4>
+<p class="text-body-md text-on-surface-variant leading-relaxed">Perfect work laptop for my software development team. The battery life is impressive and the keyboard is very comfortable for long coding sessions. Highly recommended for professionals.</p>
+</div>
+<div class="flex flex-col gap-2 justify-center items-end">
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-error text-error rounded-lg text-label-md font-bold hover:bg-error/5 transition-all">Reject</button>
+<button class="px-3 py-1.5 bg-primary text-white rounded-lg text-label-md font-bold hover:opacity-90 transition-all">Approve</button>
+</div>
+<div class="flex gap-4 text-on-surface-variant mt-2">
+<button class="text-label-md hover:text-primary underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span> Open Product
+                                        </button>
+<button class="text-label-md hover:text-error underline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span> Delete
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-lg py-md bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<p class="text-body-sm text-on-surface-variant">Showing 1-15 of 1,284 reviews</p>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-white font-bold text-body-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-body-sm transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-body-sm transition-colors">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-body-sm transition-colors">86</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for selection
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const row = e.target.closest('.group');
+                if (e.target.checked) {
+                    row.classList.add('bg-secondary-container/10');
+                } else {
+                    row.classList.remove('bg-secondary-container/10');
+                }
+            });
+        });
+    </script>
+
+
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

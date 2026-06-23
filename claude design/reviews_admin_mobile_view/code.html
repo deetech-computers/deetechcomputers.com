@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=390px, initial-scale=1.0" name="viewport"/>
+<title>DEETECH Admin Reviews - Mobile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Geist:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb2bf",
+                        "on-tertiary-container": "#f09bab",
+                        "surface-container-high": "#dee8ff",
+                        "on-tertiary-fixed-variant": "#723240",
+                        "surface-container-highest": "#d8e3fa",
+                        "inverse-surface": "#263142",
+                        "surface-bright": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c1c9bd",
+                        "tertiary-fixed": "#ffd9de",
+                        "on-surface": "#111c2c",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#541b29",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#8bd894",
+                        "on-secondary-fixed-variant": "#005321",
+                        "outline": "#71796f",
+                        "on-surface-variant": "#414940",
+                        "secondary": "#1f6c35",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-fixed": "#3b0716",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "primary": "#003714",
+                        "primary-fixed-dim": "#9ad4a0",
+                        "inverse-primary": "#9ad4a0",
+                        "surface-tint": "#34693e",
+                        "tertiary-container": "#70313f",
+                        "secondary-container": "#a6f5af",
+                        "on-primary-container": "#87c08d",
+                        "primary-container": "#184f27",
+                        "background": "#f5f6f7",
+                        "on-primary-fixed-variant": "#1a5129",
+                        "surface-variant": "#d8e3fa",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#b5f1ba",
+                        "on-secondary-fixed": "#002109",
+                        "surface-dim": "#cfdaf1",
+                        "on-background": "#111c2c",
+                        "secondary-fixed": "#a6f5af",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#e7eeff",
+                        "on-primary-fixed": "#002109",
+                        "on-secondary-container": "#27723a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xl": "40px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "container-max": "1280px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "mono-data": ["Geist"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .filter-sheet {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .filter-sheet.active {
+            transform: translateY(0);
+        }
+        .review-card {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        body {
+            background-color: #f5f6f7;
+            width: 390px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .status-pill-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-pill-approved {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- Screen Annotation -->
+<div class="fixed top-2 -right-16 rotate-45 bg-primary text-on-primary px-8 py-1 text-[10px] font-bold uppercase tracking-widest z-[100] shadow-lg">
+        Mobile
+    </div>
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 bg-surface shadow-sm h-16 flex items-center justify-between px-md">
+<div class="flex items-center gap-md">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Reviews</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant active:scale-95 transition-all" id="filterToggle">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</header>
+<main class="pb-24">
+<!-- Stats Summary Grid -->
+<section class="p-md grid grid-cols-2 gap-sm">
+<div class="bg-surface rounded-xl p-md review-card">
+<span class="text-label-md text-on-surface-variant block mb-1">TOTAL REVIEWS</span>
+<span class="font-mono-data text-headline-md text-primary">2,841</span>
+</div>
+<div class="bg-surface rounded-xl p-md review-card">
+<span class="text-label-md text-on-surface-variant block mb-1">PENDING MOD</span>
+<span class="font-mono-data text-headline-md text-secondary">42</span>
+</div>
+</section>
+<!-- Search Bar -->
+<div class="px-md mb-md">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+<input class="w-full h-12 bg-surface-container-lowest border-none rounded-lg pl-10 pr-4 text-body-sm focus:ring-2 focus:ring-primary shadow-sm" placeholder="Search by product or user..." type="text"/>
+</div>
+</div>
+<!-- Review Stack -->
+<div class="flex flex-col gap-md px-md">
+<!-- Card 1 (Pending) -->
+<div class="bg-surface rounded-xl p-md review-card flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-md text-on-surface line-clamp-1">ASUS ROG Zephyrus G14</h3>
+<div class="flex items-center mt-1">
+<div class="flex text-amber-500 mr-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="font-mono-data text-label-md text-on-surface-variant">2023-11-24</span>
+</div>
+</div>
+<span class="status-pill-pending px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</div>
+<p class="text-body-sm text-on-surface-variant line-clamp-3">
+                    Incredible performance for the size, but the fan noise under heavy load is quite noticeable. Build quality feels premium though. The Ghanaian keyboard layout is actually very convenient for my coding workflow...
+                </p>
+<div class="flex flex-col gap-sm pt-2 border-t border-outline-variant">
+<div class="flex gap-sm">
+<button class="flex-1 h-10 bg-primary text-on-primary rounded-lg font-label-md uppercase tracking-wider flex items-center justify-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> Approve
+                        </button>
+<button class="flex-1 h-10 border border-error text-error rounded-lg font-label-md uppercase tracking-wider flex items-center justify-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">cancel</span> Reject
+                        </button>
+</div>
+<button class="w-full h-10 bg-surface-container-low text-primary rounded-lg font-label-md uppercase tracking-wider flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span> Open Product
+                    </button>
+</div>
+</div>
+<!-- Card 2 (Approved) -->
+<div class="bg-surface rounded-xl p-md review-card flex flex-col gap-md opacity-80">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-md text-on-surface line-clamp-1">Logitech MX Master 3S</h3>
+<div class="flex items-center mt-1">
+<div class="flex text-amber-500 mr-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-mono-data text-label-md text-on-surface-variant">2023-11-22</span>
+</div>
+</div>
+<span class="status-pill-approved px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</div>
+<p class="text-body-sm text-on-surface-variant line-clamp-3">
+                    Best mouse I have ever used. The silent clicks are a game changer in a shared office environment.
+                </p>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant">
+<button class="text-primary font-label-md uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span> Product Details
+                    </button>
+<button class="text-error font-label-md uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">delete</span> Delete
+                    </button>
+</div>
+</div>
+<!-- Card 3 (Pending) -->
+<div class="bg-surface rounded-xl p-md review-card flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-md text-on-surface line-clamp-1">Dell UltraSharp 27" 4K</h3>
+<div class="flex items-center mt-1">
+<div class="flex text-amber-500 mr-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="font-mono-data text-label-md text-on-surface-variant">2023-11-21</span>
+</div>
+</div>
+<span class="status-pill-pending px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</div>
+<p class="text-body-sm text-on-surface-variant line-clamp-3">
+                    Arrived with two dead pixels. For this price point, I expected better quality control. Reaching out to support now.
+                </p>
+<div class="flex flex-col gap-sm pt-2 border-t border-outline-variant">
+<div class="flex gap-sm">
+<button class="flex-1 h-10 bg-primary text-on-primary rounded-lg font-label-md uppercase tracking-wider flex items-center justify-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> Approve
+                        </button>
+<button class="flex-1 h-10 border border-error text-error rounded-lg font-label-md uppercase tracking-wider flex items-center justify-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">cancel</span> Reject
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Filter Sheet -->
+<div class="fixed inset-0 bg-black/40 z-50 opacity-0 pointer-events-none transition-opacity duration-300" id="filterOverlay"></div>
+<div class="filter-sheet fixed bottom-0 left-0 right-0 bg-surface z-[60] rounded-t-3xl p-lg flex flex-col gap-md max-w-[390px] mx-auto" id="filterSheet">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto mb-2"></div>
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-on-surface">Filter Reviews</h2>
+<button class="text-primary font-bold" id="filterClose">Done</button>
+</div>
+<div class="flex flex-col gap-sm">
+<label class="text-label-md text-on-surface-variant uppercase tracking-widest">Moderation Status</label>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-2 rounded-full border border-primary bg-primary text-on-primary text-body-sm">All</button>
+<button class="px-md py-2 rounded-full border border-outline-variant text-on-surface-variant text-body-sm">Pending</button>
+<button class="px-md py-2 rounded-full border border-outline-variant text-on-surface-variant text-body-sm">Approved</button>
+<button class="px-md py-2 rounded-full border border-outline-variant text-on-surface-variant text-body-sm">Rejected</button>
+</div>
+</div>
+<div class="flex flex-col gap-sm">
+<label class="text-label-md text-on-surface-variant uppercase tracking-widest">Minimum Rating</label>
+<div class="flex gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface">1★</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface">2★</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface">3★</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface">4★</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-secondary-container/20 text-primary">5★</button>
+</div>
+</div>
+<div class="flex flex-col gap-sm mb-lg">
+<label class="text-label-md text-on-surface-variant uppercase tracking-widest">Sort Order</label>
+<select class="w-full h-12 bg-surface-container-low border-none rounded-lg text-body-sm px-4 focus:ring-primary">
+<option>Newest First</option>
+<option>Oldest First</option>
+<option>Highest Rated</option>
+<option>Lowest Rated</option>
+</select>
+</div>
+</div>
+<!-- Navigation Bar Logic (Suppressed as per rules for sub-page intent focus, but TopNavBar structure from JSON was adapted for mobile header) -->
+<script>
+        const filterToggle = document.getElementById('filterToggle');
+        const filterSheet = document.getElementById('filterSheet');
+        const filterOverlay = document.getElementById('filterOverlay');
+        const filterClose = document.getElementById('filterClose');
+
+        function toggleFilter() {
+            filterSheet.classList.toggle('active');
+            filterOverlay.classList.toggle('opacity-100');
+            filterOverlay.classList.toggle('pointer-events-auto');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        filterToggle.addEventListener('click', toggleFilter);
+        filterClose.addEventListener('click', toggleFilter);
+        filterOverlay.addEventListener('click', toggleFilter);
+
+        // Simple touch feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.opacity = '0.7';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.opacity = '1';
+            });
+        });
+    </script>
+</body></html>
