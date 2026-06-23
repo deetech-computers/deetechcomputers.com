@@ -121,20 +121,20 @@ export async function refreshToken(req, res) {
 export async function forgotPassword(req, res) {
   const { email } = req.body;
   const user = await User.findOne({ email });
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+
+  // Always return the same response whether or not the email is registered,
+  // to avoid leaking which addresses have accounts (user enumeration).
+  if (user) {
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 30 * 60 * 1000; // 30m
+    await user.save();
+
+    const resetUrl = `${FRONTEND_URL}/reset-password.html?token=${resetToken}`;
+    await sendPasswordResetEmail(user.email, resetUrl);
   }
 
-  const resetToken = crypto.randomBytes(20).toString("hex");
-  user.resetPasswordToken = resetToken;
-  user.resetPasswordExpires = Date.now() + 3600000; // 1h
-  await user.save();
-
-  const resetUrl = `${FRONTEND_URL}/reset-password.html?token=${resetToken}`;
-  await sendPasswordResetEmail(user.email, resetUrl);
-
-  res.json({ message: "Password reset link sent" });
+  res.json({ message: "If that email is registered, a password reset link has been sent" });
 }
 
 // RESET PASSWORD

@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import mongoSanitize from "express-mongo-sanitize";
 import "express-async-errors";
 import mongoose from "mongoose";
 import path from "path";
@@ -81,6 +82,11 @@ export default async function createApp() {
   );
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true }));
+  app.use(
+    mongoSanitize({
+      replaceWith: "_",
+    })
+  );
 
   // 📝 Logging
   if (NODE_ENV !== "test") {
