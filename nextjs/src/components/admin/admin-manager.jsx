@@ -1370,6 +1370,10 @@ function ReviewsWorkspaceStitch({
   return (
     <section className="admin-reviews-workspace">
       <section className="admin-reviews-desktop-shell">
+        <header className="admin-reviews-desktop-head">
+          <h1>Reviews</h1>
+          <p>Moderate and manage customer product reviews.</p>
+        </header>
         <header className="admin-reviews-desktop-toolbar">
           <div className="admin-reviews-desktop-toolbar__search">
             <input
@@ -2089,6 +2093,7 @@ function AdminAffiliatesIcon({ name }) {
   const paths = {
     menu: <path d="M4 7h16M4 12h16M4 17h16" />,
     back: <path d="m15 18-6-6 6-6" />,
+    refresh: <><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></>,
     search: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>,
     filter: <><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>,
     download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14" /></>,
@@ -2221,17 +2226,19 @@ function AffiliateWorkspace({
       </header>
       <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      <section className="admin-affiliates-topbar" aria-label="Affiliate search and export">
-        <label><AdminAffiliatesIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search affiliates by name, code or number..." /></label>
-        <button type="button" className="admin-affiliates-refresh" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh affiliates">Refresh</button>
-        <details className="admin-affiliates-export"><summary><AdminAffiliatesIcon name="download" />Export</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
-      </section>
+      <header className="admin-affiliates-head">
+        <h1>Affiliates</h1>
+        <p>Manage affiliate accounts, payouts, and program settings.</p>
+      </header>
 
-      <section className="admin-affiliates-filters" aria-label="Affiliate filters">
+      <section className="admin-affiliates-topbar" aria-label="Affiliate search, filters and export">
+        <label><AdminAffiliatesIcon name="search" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search affiliates by name, code or number..." /></label>
         <select value={tierFilter} onChange={(event) => setTierFilter(event.target.value)} aria-label="Affiliate tier"><option value="all">Tier: All</option><option value="starter">Starter</option><option value="bronze">Bronze</option><option value="silver">Silver</option><option value="gold">Gold</option></select>
         <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Affiliate status"><option value="all">Status: All</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
         <select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Sort affiliates">{AFFILIATE_SORT_OPTIONS.map(([value, label]) => <option key={value} value={value}>Sort: {label}</option>)}</select>
-        <button type="button" onClick={resetFilters}>Clear Filters</button>
+        <button type="button" className="admin-affiliates-clear" onClick={resetFilters}>Clear Filters</button>
+        <button type="button" className="admin-affiliates-refresh" disabled={loading || refreshing} onClick={() => loadData({ background: true })} aria-label="Refresh affiliates"><AdminAffiliatesIcon name="refresh" />Refresh</button>
+        <details className="admin-affiliates-export"><summary><AdminAffiliatesIcon name="download" />Export</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
       </section>
 
       <section className="admin-affiliates-stats" aria-label="Affiliate summary">
@@ -3049,10 +3056,11 @@ function MessagesWorkspaceStitch({
   return (
     <section className="admin-messages-workspace">
       <section className="admin-messages-desktop-shell">
+        <header className="admin-messages-desktop-head">
+          <h1>Messages</h1>
+          <p>Support Terminal &mdash; reply to tickets and manage status.</p>
+        </header>
         <header className="admin-messages-desktop-toolbar">
-          <div className="admin-messages-desktop-toolbar__title">
-            <h1>Support Terminal</h1>
-          </div>
           <label className="admin-messages-desktop-search">
             <AdminProductsIcon name="search" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search support tickets..." aria-label="Search support tickets" />
@@ -4365,7 +4373,10 @@ export default function AdminManager({ type, productMode = "list", productId = "
               <button type="button" onClick={() => setToolbarOpen(true)} aria-label="Filter users"><AdminUsersIcon name="filter" /></button>
             </header>
             <header className="admin-users-head">
-              <div><span>DEETECH</span><i>/</i><strong>User Management</strong></div>
+              <div>
+                <h1>User Management</h1>
+                <p>View, activate, and inspect customer and admin accounts.</p>
+              </div>
               <details className="admin-users-export"><summary><AdminUsersIcon name="download" />Export Reports</summary><div><button type="button" onClick={exportCsv}>CSV</button><button type="button" onClick={exportJson}>JSON</button><button type="button" onClick={exportSql}>SQL</button></div></details>
             </header>
             <section className="admin-users-toolbar" aria-label="User search and filters">

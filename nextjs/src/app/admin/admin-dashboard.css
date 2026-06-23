@@ -30,9 +30,10 @@
   .admin-dashboard__topbar h1 {
     margin: 0 0 6px;
     color: #003714;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.2;
+    font-size: var(--admin-text-title);
+    font-weight: var(--admin-text-title-weight);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
 
   .admin-dashboard__topbar p {
@@ -158,10 +159,10 @@
   .admin-dash-card p {
     margin: 0;
     color: #414940;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: var(--admin-text-stat-label);
+    font-weight: 700;
     line-height: 1.4;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -174,7 +175,7 @@
     min-width: 0;
     color: #003714;
     font-family: var(--admin-font-mono), monospace;
-    font-size: 16px;
+    font-size: var(--admin-text-stat-value);
     font-weight: 700;
     line-height: 1.2;
     overflow-wrap: anywhere;
@@ -190,7 +191,7 @@
 
   .admin-dash-card__helper {
     color: #5b8f65;
-    font-size: 10px;
+    font-size: var(--admin-text-meta);
     font-weight: 700;
   }
 
@@ -249,8 +250,8 @@
   .admin-dash-panel h2 {
     margin: 0;
     color: #003714;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: var(--admin-text-section);
+    font-weight: var(--admin-text-section-weight);
   }
 
   .admin-status-donut {
@@ -388,7 +389,7 @@
   .admin-dash-panel__head > span:not(.admin-dash-panel__count) {
     color: #414940;
     font-family: var(--admin-font-mono), monospace;
-    font-size: 9px;
+    font-size: var(--admin-text-meta);
   }
 
   .admin-dash-panel__head .admin-dash-panel__head-icon {
@@ -454,7 +455,7 @@
     display: block;
     min-width: 0;
     color: #111c2c;
-    font-size: 12px;
+    font-size: var(--admin-text-body);
     font-weight: 700;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -464,7 +465,7 @@
   .admin-dash-row p {
     margin: 3px 0 0;
     color: #71796f;
-    font-size: 10px;
+    font-size: var(--admin-text-meta);
     line-height: 1.35;
     overflow: hidden;
     text-overflow: ellipsis;

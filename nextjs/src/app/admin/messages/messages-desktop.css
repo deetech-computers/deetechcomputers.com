@@ -43,18 +43,25 @@
     color: var(--messages-ink);
   }
 
+  .admin-messages-route .admin-messages-desktop-head h1 {
+    margin: 0 0 5px;
+    color: var(--messages-green-strong);
+    font-size: var(--admin-text-title);
+    font-weight: var(--admin-text-title-weight);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .admin-messages-route .admin-messages-desktop-head p {
+    margin: 0;
+    color: var(--messages-muted);
+    font-size: var(--admin-text-body);
+  }
+
   .admin-messages-route .admin-messages-desktop-toolbar {
     display: flex;
     align-items: center;
     gap: 20px;
-  }
-
-  .admin-messages-route .admin-messages-desktop-toolbar__title h1 {
-    margin: 0;
-    color: var(--messages-green-strong);
-    font-size: 24px;
-    font-weight: 700;
-    white-space: nowrap;
   }
 
   .admin-messages-route .admin-messages-desktop-search {
@@ -171,7 +178,7 @@
     display: block;
     margin-bottom: 4px;
     color: var(--messages-muted);
-    font-size: 11px;
+    font-size: var(--admin-text-stat-label);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -179,7 +186,8 @@
 
   .admin-messages-route .admin-messages-desktop-stats strong {
     font-family: var(--admin-font-mono), monospace;
-    font-size: 32px;
+    font-size: var(--admin-text-stat-value);
+    font-weight: 700;
     line-height: 1;
     color: var(--messages-green);
   }

@@ -24,6 +24,22 @@ body:has(.admin-route) .app-content,
 .admin-route {
   color: #111c2c;
   font-family: var(--admin-font-sans), sans-serif;
+  /* Canonical admin type scale. Every admin page should size its page title,
+     section heading, stat value/label, body, meta, button, and input text
+     from these tokens so the whole section reads as one consistent system. */
+  --admin-text-title: 32px;
+  --admin-text-title-weight: 700;
+  --admin-text-title-mobile: 24px;
+  --admin-text-section: 22px;
+  --admin-text-section-weight: 700;
+  --admin-text-stat-value: 28px;
+  --admin-text-stat-value-mobile: 22px;
+  --admin-text-stat-label: 12px;
+  --admin-text-body: 15px;
+  --admin-text-meta: 13px;
+  --admin-text-button: 14px;
+  --admin-text-input: 15px;
+  --admin-control-height: 44px;
 }
 
 .admin-route button,

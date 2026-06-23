@@ -41,6 +41,21 @@
     gap: 20px;
   }
 
+  .admin-reviews-route .admin-reviews-desktop-head h1 {
+    margin: 0 0 5px;
+    color: var(--reviews-green-strong);
+    font-size: var(--admin-text-title);
+    font-weight: var(--admin-text-title-weight);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .admin-reviews-route .admin-reviews-desktop-head p {
+    margin: 0;
+    color: var(--reviews-muted);
+    font-size: var(--admin-text-body);
+  }
+
   .admin-reviews-route .admin-reviews-desktop-toolbar {
     display: grid;
     grid-template-columns: minmax(320px, 1fr) minmax(420px, 1.1fr) auto;
@@ -227,18 +242,19 @@
 
   .admin-reviews-route .admin-reviews-desktop-stat > span {
     color: var(--reviews-green-strong);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    font-size: var(--admin-text-stat-label);
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .admin-reviews-route .admin-reviews-desktop-stat > strong {
     color: var(--reviews-text);
-    font-size: 34px;
-    font-weight: 800;
+    font-family: var(--admin-font-mono), monospace;
+    font-size: var(--admin-text-stat-value);
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.01em;
   }
 
   .admin-reviews-route .admin-reviews-desktop-stat > small {
@@ -306,8 +322,8 @@
     align-items: center;
     gap: 10px;
     color: var(--reviews-text);
-    font-size: 22px;
-    font-weight: 700;
+    font-size: var(--admin-text-section);
+    font-weight: var(--admin-text-section-weight);
     letter-spacing: -0.01em;
   }
 

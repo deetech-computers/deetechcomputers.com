@@ -52,8 +52,8 @@
   .admin-banners-route .admin-banners-desktop-toolbar__title h1 {
     margin: 0;
     color: var(--banners-ink);
-    font-size: 32px;
-    font-weight: 800;
+    font-size: var(--admin-text-title);
+    font-weight: var(--admin-text-title-weight);
     letter-spacing: -0.01em;
   }
 
@@ -183,7 +183,7 @@
   .admin-banners-route .admin-banners-desktop-form__head h2 {
     margin: 0;
     color: var(--banners-ink);
-    font-size: 24px;
+    font-size: var(--admin-text-section);
     font-weight: 700;
   }
 
@@ -341,7 +341,7 @@
   .admin-banners-route .admin-banners-desktop-list__head h2 {
     margin: 0;
     color: var(--banners-ink);
-    font-size: 24px;
+    font-size: var(--admin-text-section);
     font-weight: 700;
   }
 

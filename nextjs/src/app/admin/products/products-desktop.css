@@ -51,9 +51,10 @@
   .admin-products-list-route .admin-products-head h1 {
     margin: 0 0 5px;
     color: var(--products-green);
-    font-size: 30px;
-    font-weight: 750;
-    line-height: 1.05;
+    font-size: var(--admin-text-title);
+    font-weight: var(--admin-text-title-weight);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
   }
 
   .admin-products-list-route .admin-products-head p {
@@ -112,8 +113,9 @@
   .admin-products-list-route .admin-products-metrics small {
     overflow: hidden;
     color: var(--products-muted);
-    font-size: 12px;
-    letter-spacing: .04em;
+    font-size: var(--admin-text-stat-label);
+    font-weight: 700;
+    letter-spacing: .06em;
     text-overflow: ellipsis;
     text-transform: uppercase;
     white-space: nowrap;
@@ -122,15 +124,15 @@
   .admin-products-list-route .admin-products-metrics strong {
     overflow: hidden;
     color: var(--products-green);
-    font-size: 25px;
-    font-weight: 750;
+    font-size: var(--admin-text-stat-value);
+    font-weight: 700;
     line-height: 1.1;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .admin-products-list-route .admin-products-metrics article:last-child strong {
-    font-size: 19px;
+    font-size: 22px;
     text-transform: capitalize;
   }
 
