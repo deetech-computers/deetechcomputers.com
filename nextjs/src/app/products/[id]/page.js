@@ -16,6 +16,7 @@ import { requestWithToken } from "@/lib/resource";
 import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import { normalizeAffiliateCode } from "@/lib/affiliate-attribution";
 import {
+  buildCloudinarySrcSet,
   canonicalCategory,
   fetchProductById,
   fetchProducts,
@@ -27,6 +28,7 @@ import {
   getProductReviewCount,
   getProductStock,
   isProductDiscountActive,
+  optimizeCloudinaryImage,
   resolveProductImage,
 } from "@/lib/products";
 import { getProductPricing } from "@/lib/product-pricing";
@@ -74,6 +76,15 @@ function getProductSummary(product) {
     product?.description ||
     "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
   );
+}
+
+function normalizeDisplayTitle(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/[a-z]/.test(raw)) return raw;
+  return raw
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (match) => match.toUpperCase());
 }
 
 function getReviewAverage(reviews) {
@@ -221,12 +232,19 @@ export default function ProductDetailPage() {
   const [reviewStatus, setReviewStatus] = useState("idle");
   const [reviewFormOpen, setReviewFormOpen] = useState(true);
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
+
+  function handleAddToCart(item, qty = 1, options = {}) {
+    if (!item) return;
+    addItem(item, qty, options);
+  }
   const [qty, setQty] = useState(1);
   const [selectedUpgrades, setSelectedUpgrades] = useState({});
   const [upgradePanelOpen, setUpgradePanelOpen] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+  const [loadedMainImage, setLoadedMainImage] = useState({ image: "", src: "", srcSet: undefined });
+  const [mainImageLoading, setMainImageLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
@@ -235,6 +253,7 @@ export default function ProductDetailPage() {
   const previewThumbnailRailRef = useRef(null);
   const relatedRailRef = useRef(null);
   const tabsSectionRef = useRef(null);
+  const galleryTouchStartXRef = useRef(null);
   const [relatedRailNav, setRelatedRailNav] = useState({ left: false, right: false });
   const productId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
@@ -245,19 +264,54 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!productId) return;
 
+    let cancelled = false;
+    let idleHandle = null;
+    let timerHandle = null;
+
     setStatus("loading");
     setError("");
+    setProduct(null);
+    setAllProducts([]);
 
-    Promise.all([fetchProductById(productId), fetchProducts()])
-      .then(([item, items]) => {
+    fetchProductById(productId)
+      .then((item) => {
+        if (cancelled) return;
         setProduct(item);
-        setAllProducts(items);
         setStatus("ready");
+
+        const loadRelatedProducts = () => {
+          fetchProducts()
+            .then((items) => {
+              if (!cancelled) setAllProducts(items);
+            })
+            .catch(() => {
+              if (!cancelled) setAllProducts([]);
+            });
+        };
+
+        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+          idleHandle = window.requestIdleCallback(loadRelatedProducts, { timeout: 1800 });
+        } else if (typeof window !== "undefined") {
+          timerHandle = window.setTimeout(loadRelatedProducts, 450);
+        } else {
+          loadRelatedProducts();
+        }
       })
       .catch((err) => {
+        if (cancelled) return;
         setError(err.message);
         setStatus("error");
       });
+
+    return () => {
+      cancelled = true;
+      if (idleHandle && typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timerHandle && typeof window !== "undefined") {
+        window.clearTimeout(timerHandle);
+      }
+    };
   }, [productId]);
 
   useEffect(() => {
@@ -319,10 +373,34 @@ export default function ProductDetailPage() {
   }, [affiliateShareCode]);
 
   const images = useMemo(() => getProductImages(product), [product]);
-  const currentImage = images[activeImage] || images[0] || "";
+  const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
+  const currentImage = images[activeImageIndex] || "";
+  const optimizedCurrentImage = useMemo(
+    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 560, force: true }),
+    [currentImage]
+  );
+  const optimizedCurrentImageSrcSet = useMemo(
+    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true }),
+    [currentImage]
+  );
+  const optimizedGalleryImages = useMemo(
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 560, force: true })),
+    [images]
+  );
+  const optimizedThumbnailImages = useMemo(
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
+    [images]
+  );
+  const hasLoadedSelectedMainImage = loadedMainImage.src === optimizedCurrentImage;
+  const visibleMainImage =
+    loadedMainImage.src && !hasLoadedSelectedMainImage
+      ? loadedMainImage
+      : { image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet };
 
   useEffect(() => {
     setActiveImage(0);
+    setLoadedMainImage({ image: "", src: "", srcSet: undefined });
+    setMainImageLoading(false);
     setActiveTab("description");
     setQty(1);
     setSelectedUpgrades({});
@@ -330,6 +408,58 @@ export default function ProductDetailPage() {
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    optimizedGalleryImages.forEach((src) => {
+      if (!src) return;
+      const image = new window.Image();
+      image.src = src;
+    });
+  }, [optimizedGalleryImages]);
+
+  useEffect(() => {
+    if (!optimizedCurrentImage) {
+      setLoadedMainImage({ image: "", src: "", srcSet: undefined });
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    if (loadedMainImage.src === optimizedCurrentImage) {
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setMainImageLoading(Boolean(loadedMainImage.src));
+
+    if (typeof window === "undefined") {
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+      return undefined;
+    }
+
+    const image = new window.Image();
+    image.onload = () => {
+      if (cancelled) return;
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+    };
+    image.onerror = () => {
+      if (cancelled) return;
+      setLoadedMainImage({ image: currentImage, src: optimizedCurrentImage, srcSet: optimizedCurrentImageSrcSet });
+      setMainImageLoading(false);
+    };
+    if (optimizedCurrentImageSrcSet) {
+      image.srcset = optimizedCurrentImageSrcSet;
+      image.sizes = "(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px";
+    }
+    image.src = optimizedCurrentImage;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentImage, loadedMainImage.src, optimizedCurrentImage, optimizedCurrentImageSrcSet]);
 
   useEffect(() => {
     if (!product?._id) return;
@@ -494,11 +624,27 @@ export default function ProductDetailPage() {
   }, [allProducts, product?._id, product?.category]);
 
   if (status === "loading") {
-    return <main className="shell page-section"><div className="panel">Loading product...</div></main>;
+    return (
+      <main className="shell page-section product-detail-page">
+        <div className="product-detail-loading" aria-label="Loading product details">
+          <div className="product-detail-loading__top">
+            <div className="product-detail-loading__gallery panel" />
+            <div className="product-detail-loading__summary panel">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+          <div className="product-detail-loading__tabs panel" />
+        </div>
+      </main>
+    );
   }
 
   if (status === "error" || !product) {
-    return <main className="shell page-section"><div className="panel">Could not load product: {error}</div></main>;
+    return <main className="shell page-section product-detail-page"><div className="panel">Could not load product: {error}</div></main>;
   }
 
   const stock = getProductStock(product);
@@ -517,6 +663,8 @@ export default function ProductDetailPage() {
   );
   const description = getProductDescription(product);
   const summary = getProductSummary(product);
+  const displayBrand = normalizeDisplayTitle(product?.brand || categoryLabel);
+  const displayName = normalizeDisplayTitle(product?.name);
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = reviews.length || getProductReviewCount(product);
@@ -536,7 +684,15 @@ export default function ProductDetailPage() {
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
-    .slice(0, 12);
+    .slice(0, 12)
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => {
+      const aOutOfStock = getProductStock(a.item) < 1;
+      const bOutOfStock = getProductStock(b.item) < 1;
+      if (aOutOfStock !== bOutOfStock) return aOutOfStock ? 1 : -1;
+      return a.index - b.index;
+    })
+    .map(({ item }) => item);
 
   const previewModal = previewOpen && currentImage
     ? createPortal(
@@ -584,7 +740,7 @@ export default function ProductDetailPage() {
                 <button
                   key={`preview-${image}-${index}`}
                   type="button"
-                  className={activeImage === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
+                  className={activeImageIndex === index ? "product-preview__thumb is-active" : "product-preview__thumb"}
                   onClick={() => setActiveImage(index)}
                   aria-label={`Preview image ${index + 1}`}
                 >
@@ -617,6 +773,26 @@ export default function ProductDetailPage() {
 
   function incrementQty() {
     setQty((current) => Math.min(Math.max(stock, 1), current + 1));
+  }
+
+  function handleGalleryTouchStart(event) {
+    galleryTouchStartXRef.current = event.touches?.[0]?.clientX ?? null;
+  }
+
+  function handleGalleryTouchEnd(event) {
+    const startX = galleryTouchStartXRef.current;
+    galleryTouchStartXRef.current = null;
+    if (startX === null || images.length < 2) return;
+
+    const endX = event.changedTouches?.[0]?.clientX ?? startX;
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 40) return;
+
+    if (deltaX > 0) {
+      setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1));
+    } else {
+      setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1));
+    }
   }
 
   function buildShareUrl() {
@@ -713,7 +889,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section product-detail-page">
       <section className="product-breadcrumbs" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span>/</span>
@@ -731,16 +907,25 @@ export default function ProductDetailPage() {
               type="button"
               className="product-gallery__main product-gallery__main--interactive"
               onClick={() => setPreviewOpen(true)}
+              onTouchStart={handleGalleryTouchStart}
+              onTouchEnd={handleGalleryTouchEnd}
               aria-label="Tap to preview product image"
             >
-              {currentImage ? (
-                <StableImage
-                  src={currentImage}
-                  alt={product.name}
-                  width={1200}
-                  height={1200}
-                  className="product-gallery__main-image"
-                />
+              {visibleMainImage.src ? (
+                <>
+                  <StableImage
+                    src={visibleMainImage.src}
+                    srcSet={visibleMainImage.srcSet}
+                    sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
+                    alt={product.name}
+                    width={560}
+                    height={560}
+                    loading="eager"
+                    fetchPriority="high"
+                    className="product-gallery__main-image"
+                  />
+                  {mainImageLoading ? <span className="product-gallery__main-loading" aria-hidden="true" /> : null}
+                </>
               ) : (
                 <div className="product-card__placeholder">No image</div>
               )}
@@ -750,7 +935,7 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   className="product-gallery__stage-arrow product-gallery__stage-arrow--left"
-                  onClick={() => setActiveImage((index) => (index === 0 ? images.length - 1 : index - 1))}
+                  onClick={() => setActiveImage(activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1)}
                   aria-label="Previous product image"
                 >
                   &lsaquo;
@@ -758,7 +943,7 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   className="product-gallery__stage-arrow product-gallery__stage-arrow--right"
-                  onClick={() => setActiveImage((index) => (index === images.length - 1 ? 0 : index + 1))}
+                  onClick={() => setActiveImage(activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1)}
                   aria-label="Next product image"
                 >
                   &rsaquo;
@@ -767,8 +952,25 @@ export default function ProductDetailPage() {
             ) : null}
           </div>
 
+          {images.length > 1 ? (
+            <div className="product-gallery__dots" role="tablist" aria-label="Image pagination">
+              {images.map((_, index) => (
+                <button
+                  key={`dot-${index}`}
+                  type="button"
+                  className={activeImageIndex === index ? "product-gallery__dot is-active" : "product-gallery__dot"}
+                  onClick={() => setActiveImage(index)}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
+          ) : null}
+
           {images.length ? (
-            <div className="product-gallery__selector" aria-label="Product images">
+            <div
+              className="product-gallery__selector"
+              aria-label="Product images"
+            >
               <button
                 type="button"
                 className="product-gallery__arrow"
@@ -777,17 +979,20 @@ export default function ProductDetailPage() {
               >
                 &lsaquo;
               </button>
-              <div ref={thumbnailRailRef} className="product-gallery__thumbs">
+              <div
+                ref={thumbnailRailRef}
+                className="product-gallery__thumbs"
+              >
                 {images.map((image, index) => (
                   <button
                     key={`${image}-${index}`}
                     type="button"
-                    className={activeImage === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
+                    className={activeImageIndex === index ? "product-gallery__thumb is-active" : "product-gallery__thumb"}
                     onClick={() => setActiveImage(index)}
                     aria-label={`View image ${index + 1}`}
                   >
                     <StableImage
-                      src={image}
+                      src={optimizedThumbnailImages[index] || image}
                       alt={`${product.name} ${index + 1}`}
                       width={140}
                       height={140}
@@ -808,28 +1013,34 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="product-summary panel">
-          <p className="product-summary__eyebrow">{product?.brand || categoryLabel}</p>
-          <h1>{product.name}</h1>
-          <div className="product-summary__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
-            <span>
-              {Array.from({ length: 5 }, (_, index) => (
-                <span key={index}>{index < rating ? "★" : "☆"}</span>
-              ))}
-            </span>
-            <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
-            <small>{reviewCount > 0 ? `(${reviewCount} reviews)` : "(0 reviews)"}</small>
-          </div>
-          <div className="product-summary__price-group">
-            {hasDiscount && discountPercent > 0 ? (
-              <span className="product-summary__discount-badge">Save {discountPercent}%</span>
-            ) : null}
-            {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
-            <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
-            {pricing.isTimedDiscount && pricing.discountEndsAt ? (
-              <p className="product-summary__discount-note">
-                Offer ends {formatDateTime(pricing.discountEndsAt)}
-              </p>
-            ) : null}
+          <div className="product-summary__card">
+            <p className="product-summary__eyebrow">{displayBrand}</p>
+            <h1>{displayName}</h1>
+            {reviewCount > 0 ? (
+              <div className="product-summary__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                <span>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <span key={index}>{index < rating ? "★" : "☆"}</span>
+                  ))}
+                </span>
+                <strong>{ratingValue.toFixed(1)}</strong>
+                <small>{`(${reviewCount} reviews)`}</small>
+              </div>
+            ) : (
+              <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
+            )}
+            <div className="product-summary__price-group">
+              {hasDiscount && discountPercent > 0 ? (
+                <span className="product-summary__discount-badge">Save {discountPercent}%</span>
+              ) : null}
+              {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
+              <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
+              {pricing.isTimedDiscount && pricing.discountEndsAt ? (
+                <p className="product-summary__discount-note">
+                  Offer ends {formatDateTime(pricing.discountEndsAt)}
+                </p>
+              ) : null}
+            </div>
           </div>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">
@@ -927,6 +1138,7 @@ export default function ProductDetailPage() {
 
           <div className="product-summary__buy">
             <div className="product-summary__qty-control" aria-label="Product quantity">
+              <label htmlFor="qty" className="sr-only">Quantity</label>
               <button type="button" className="product-summary__qty-button" onClick={decrementQty} aria-label="Reduce quantity">
                 -
               </button>
@@ -947,7 +1159,11 @@ export default function ProductDetailPage() {
               type="button"
               className="primary-button product-summary__cart"
               disabled={stock < 1}
-              onClick={() => addItem(product, qty, { selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades) })}
+              onClick={() =>
+                handleAddToCart(product, qty, {
+                  selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades),
+                })
+              }
             >
               {stock < 1 ? "Out of stock" : "Add to cart"}
             </button>
@@ -1051,30 +1267,32 @@ export default function ProductDetailPage() {
 
           {activeTab === "reviews" ? (
             <div className="product-tabs__panel">
-              <div className="product-review-overview">
-                <div className="product-review-overview__score">
-                  <strong>{reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"}</strong>
-                  <span>Out of 5</span>
-                  <p className="product-card__rating" aria-label={`${reviewCount > 0 ? ratingValue.toFixed(1) : "0.0"} out of 5 stars`}>
-                    {Array.from({ length: 5 }, (_, index) => (
-                      <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
-                    ))}
-                  </p>
-                  <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
-                </div>
+              {reviewCount > 0 ? (
+                <div className="product-review-overview">
+                  <div className="product-review-overview__score">
+                    <strong>{ratingValue.toFixed(1)}</strong>
+                    <span>Out of 5</span>
+                    <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
+                      ))}
+                    </p>
+                    <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
+                  </div>
 
-                <div className="product-review-overview__bars">
-                  {reviewBreakdown.map((item) => (
-                    <div key={item.stars} className="product-review-bar">
-                      <span>{item.stars} Star</span>
-                      <div className="product-review-bar__track">
-                        <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
+                  <div className="product-review-overview__bars">
+                    {reviewBreakdown.map((item) => (
+                      <div key={item.stars} className="product-review-bar">
+                        <span>{item.stars} Star</span>
+                        <div className="product-review-bar__track">
+                          <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
+                        </div>
+                        <strong>{item.count}</strong>
                       </div>
-                      <strong>{item.count}</strong>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               <div className="product-review-actions">
                 <div className="product-review-actions__copy">
@@ -1234,7 +1452,7 @@ export default function ProductDetailPage() {
             <div ref={relatedRailRef} className="related-products__grid related-products__rail">
               {relatedProducts.map((item) => (
                 <div key={item._id} className="related-products__item">
-                  <ProductCard product={item} onAddToCart={addItem} variant="related" />
+                  <ProductCard product={item} onAddToCart={handleAddToCart} variant="related" />
                 </div>
               ))}
             </div>
