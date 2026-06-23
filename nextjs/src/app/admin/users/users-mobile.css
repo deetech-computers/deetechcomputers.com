@@ -45,7 +45,7 @@
     background: var(--users-surface);
   }
 
-  .admin-users-route .admin-users-mobile-head h1 { margin: 0; font-size: 20px; font-weight: 650; }
+  .admin-users-route .admin-users-mobile-head h1 { margin: 0; font-size: var(--admin-text-title-mobile); font-weight: 700; }
   .admin-users-route .admin-users-mobile-head a,
   .admin-users-route .admin-users-mobile-head button { width: 42px; height: 42px; display: grid; place-items: center; border: 0; background: transparent; color: var(--users-green); text-decoration: none; }
 

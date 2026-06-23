@@ -80,7 +80,7 @@
     margin: 0;
     text-align: center;
     color: var(--messages-green);
-    font-size: 22px;
+    font-size: var(--admin-text-title-mobile);
     font-weight: 700;
   }
 
@@ -115,8 +115,9 @@
 
   .admin-messages-route .admin-messages-mobile-stats strong {
     color: var(--messages-green);
-    font-size: 20px;
-    font-weight: 800;
+    font-family: var(--admin-font-mono), monospace;
+    font-size: var(--admin-text-stat-value-mobile);
+    font-weight: 700;
   }
 
   .admin-messages-route .admin-messages-mobile-search {

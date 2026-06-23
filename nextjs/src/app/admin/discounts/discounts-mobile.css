@@ -77,7 +77,7 @@
     margin: 0;
     text-align: center;
     color: var(--discounts-green);
-    font-size: 22px;
+    font-size: var(--admin-text-title-mobile);
     font-weight: 700;
   }
 

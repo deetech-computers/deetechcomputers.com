@@ -31,14 +31,14 @@
   .admin-affiliates-route select { font: inherit; letter-spacing: 0; }
 
   .admin-affiliates-route .admin-affiliates-mobile-head { position: sticky; top: 0; z-index: 35; width: calc(100% + 24px); min-height: 60px; display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px; align-items: center; margin: 0 -12px; padding: 0 12px; border-bottom: 1px solid var(--affiliate-line); background: #fff; }
-  .admin-affiliates-route .admin-affiliates-mobile-head h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  .admin-affiliates-route .admin-affiliates-mobile-head h1 { margin: 0; font-size: var(--admin-text-title-mobile); font-weight: 700; }
   .admin-affiliates-route .admin-affiliates-mobile-head a,
   .admin-affiliates-route .admin-affiliates-mobile-head button { width: 42px; height: 42px; display: grid; place-items: center; border: 0; background: transparent; color: var(--affiliate-green); text-decoration: none; }
 
   .admin-affiliates-route .admin-affiliates-mobile-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
   .admin-affiliates-route .admin-affiliates-mobile-stats article { min-width: 0; min-height: 68px; display: grid; align-content: center; gap: 7px; padding: 10px; border: 1px solid var(--affiliate-line); border-radius: 4px; background: #fff; }
-  .admin-affiliates-route .admin-affiliates-mobile-stats span { color: var(--affiliate-muted); font-size: 9px; text-transform: uppercase; }
-  .admin-affiliates-route .admin-affiliates-mobile-stats strong { overflow: hidden; color: var(--affiliate-green); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-affiliates-route .admin-affiliates-mobile-stats span { color: var(--affiliate-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .admin-affiliates-route .admin-affiliates-mobile-stats strong { overflow: hidden; color: var(--affiliate-green); font-family: var(--admin-font-mono), monospace; font-size: var(--admin-text-stat-value-mobile); text-overflow: ellipsis; white-space: nowrap; }
 
   .admin-affiliates-route .admin-affiliates-mobile-panels { display: grid; gap: 8px; }
   .admin-affiliates-route .admin-affiliates-mobile-panels > button { min-height: 48px; display: grid; grid-template-columns: 24px 1fr 20px; align-items: center; gap: 8px; padding: 0 13px; border: 1px solid var(--affiliate-line); border-radius: 4px; background: var(--affiliate-soft); color: var(--affiliate-green); font-size: 11px; font-weight: 650; text-align: left; }
