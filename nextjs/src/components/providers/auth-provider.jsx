@@ -14,6 +14,7 @@ import {
   readServerSessionSnapshot,
   readSessionSnapshot,
   subscribeToSession,
+  syncAdminHintCookie,
   writeSession,
 } from "@/lib/session";
 import { clearAllCheckoutDrafts } from "@/lib/checkout";
@@ -36,6 +37,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     setHydrated(true);
   }, []);
+
+  // Keeps the /admin access cookie in sync with whatever session is
+  // currently active, including a session that was already logged in
+  // before this cookie existed (restored straight from localStorage).
+  useEffect(() => {
+    syncAdminHintCookie(token, user);
+  }, [token, user]);
 
   const normalizeAuthResult = (data) => {
     const tokenValue = data?.token || null;

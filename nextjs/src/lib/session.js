@@ -20,6 +20,18 @@ function clearAdminHintCookie() {
   document.cookie = `${ADMIN_HINT_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax;`;
 }
 
+// Re-syncs the cookie to whatever session is currently active. Needed
+// because a session restored from localStorage (e.g. a browser that was
+// already logged in as admin before this cookie existed) never re-runs
+// writeSession, so the cookie would otherwise never get set.
+export function syncAdminHintCookie(token, user) {
+  if (token && user?.role === "admin") {
+    setAdminHintCookie();
+  } else {
+    clearAdminHintCookie();
+  }
+}
+
 let cachedToken = null;
 let cachedUserJson = null;
 let cachedUser = null;
@@ -112,11 +124,7 @@ export function writeSession({ token, user }) {
     ? { token: cachedToken, user: cachedUser }
     : EMPTY_SESSION;
 
-  if (cachedToken && cachedUser?.role === "admin") {
-    setAdminHintCookie();
-  } else {
-    clearAdminHintCookie();
-  }
+  syncAdminHintCookie(cachedToken, cachedUser);
 
   window.dispatchEvent(new Event(SESSION_UPDATED_EVENT));
 }
