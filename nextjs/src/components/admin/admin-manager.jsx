@@ -2659,7 +2659,7 @@ function AdminRecordCard({ type, item, onAction, busyAction, userInsights, defau
       <article className={`admin-record admin-user-record ${active ? "is-active" : "is-inactive"}`}>
         <div className="admin-user-record__identity">
           <span className="admin-user-record__avatar">
-            {item.avatarUrl ? <img src={item.avatarUrl} alt="" /> : initials}
+            <StableImage src={item.avatarUrl || ""} alt="" width={44} height={44} fallback={initials} />
           </span>
           <span><strong>{item.name || item.email}</strong><small>{item.email}</small><em>{item.region || "No region"} &bull; Joined {formatDate(item.createdAt)}</em></span>
         </div>

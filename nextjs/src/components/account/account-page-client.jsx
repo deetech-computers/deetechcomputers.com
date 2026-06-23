@@ -533,11 +533,13 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
       <div className="account-dashboard__sidebar-scroll">
         <div className="account-sidebar-profile">
           <div className="account-sidebar-profile__avatar" aria-hidden="true">
-            {profile?.avatarUrl ? (
-              <img src={profile.avatarUrl} alt="" />
-            ) : (
-              getAccountInitials(profile)
-            )}
+            <StableImage
+              src={profile?.avatarUrl || ""}
+              alt=""
+              width={58}
+              height={58}
+              fallback={getAccountInitials(profile)}
+            />
           </div>
           <div className="account-sidebar-profile__copy">
             <strong>{displayName}</strong>
@@ -607,7 +609,13 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
       <div className="account-personal-card account-personal-card--summary">
         <div className="account-personal-profile">
           <div className="account-personal-profile__avatar">
-            {form.avatarUrl ? <img src={form.avatarUrl} alt="" /> : getAccountInitials(form)}
+            <StableImage
+              src={form.avatarUrl || ""}
+              alt=""
+              width={70}
+              height={70}
+              fallback={getAccountInitials(form)}
+            />
             <button
               type="button"
               className="account-personal-profile__avatar-edit"

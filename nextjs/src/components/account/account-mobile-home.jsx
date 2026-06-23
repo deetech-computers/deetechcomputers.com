@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import StableImage from "@/components/ui/stable-image";
 
 const MOBILE_ACCOUNT_ITEMS = [
   { id: "personal", label: "Personal Information", href: "/account?tab=personal", icon: "person" },
@@ -142,7 +143,13 @@ export default function MobileAccountHome({
 
         <article className="account-mobile-home__profile">
           <div className="account-mobile-home__avatar" aria-hidden="true">
-            {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : getInitials(profile)}
+            <StableImage
+              src={profile?.avatarUrl || ""}
+              alt=""
+              width={64}
+              height={64}
+              fallback={getInitials(profile)}
+            />
           </div>
           <div className="account-mobile-home__identity">
             <strong>{displayName}</strong>

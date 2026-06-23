@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import StableImage from "@/components/ui/stable-image";
 
 function getDisplayName(profile) {
   const first = String(profile?.firstName || "").trim();
@@ -107,7 +108,13 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
       <div className="account-mobile-personal__body">
         <section className="account-mobile-personal__identity">
           <div className="account-mobile-personal__avatar">
-            {form.avatarUrl ? <img src={form.avatarUrl} alt="" /> : getInitials(form)}
+            <StableImage
+              src={form.avatarUrl || ""}
+              alt=""
+              width={108}
+              height={108}
+              fallback={getInitials(form)}
+            />
             <button
               type="button"
               onClick={() => avatarInputRef.current?.click()}
