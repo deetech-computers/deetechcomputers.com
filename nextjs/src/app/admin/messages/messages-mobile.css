@@ -93,7 +93,7 @@
   .admin-messages-route .admin-messages-mobile-stats article {
     padding: 12px;
     border: 1px solid var(--messages-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--messages-surface);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     display: grid;
@@ -138,7 +138,7 @@
     height: 46px;
     padding: 0 14px 0 40px;
     border: none;
-    border-radius: 10px;
+    border-radius: 4px;
     background: var(--messages-surface);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     color: var(--messages-ink);
@@ -166,7 +166,7 @@
     align-items: center;
     gap: 14px;
     border: 1px solid var(--messages-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--messages-surface);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     text-align: left;
@@ -274,7 +274,7 @@
   .admin-messages-route .admin-messages-empty-state {
     padding: 40px 20px;
     border: 1px dashed var(--messages-line);
-    border-radius: 14px;
+    border-radius: 4px;
     background: var(--messages-surface);
     text-align: center;
   }
@@ -373,7 +373,7 @@
     align-items: center;
     padding: 0 8px;
     border: 1px solid var(--messages-line);
-    border-radius: 6px;
+    border-radius: 4px;
     background: var(--messages-surface);
     color: var(--messages-muted);
     font-family: var(--admin-font-mono), monospace;
@@ -391,7 +391,7 @@
     flex-shrink: 0;
     display: grid;
     place-items: center;
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--messages-soft);
     color: var(--messages-muted);
   }
@@ -406,7 +406,7 @@
     min-width: 0;
     padding: 14px;
     border: 1px solid var(--messages-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--messages-surface);
   }
 
@@ -432,13 +432,13 @@
   }
 
   .admin-messages-route .admin-messages-attachment img {
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid var(--messages-line);
   }
 
   .admin-messages-route .admin-messages-thread {
     border: 1px solid var(--messages-line);
-    border-radius: 12px;
+    border-radius: 4px;
     overflow: hidden;
   }
 
@@ -490,7 +490,7 @@
   }
 
   .admin-messages-route .admin-messages-thread__image img {
-    border-radius: 6px;
+    border-radius: 4px;
   }
 
   .admin-messages-route .admin-messages-thread__row time {
@@ -504,7 +504,7 @@
     padding: 14px;
     display: grid;
     gap: 10px;
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--messages-soft);
   }
 
@@ -532,7 +532,7 @@
     height: 34px;
     padding: 0 10px;
     border: 1px solid var(--messages-line);
-    border-radius: 6px;
+    border-radius: 4px;
     background: var(--messages-surface);
     font-size: 13px;
   }
@@ -548,7 +548,7 @@
     height: 96px;
     padding: 12px;
     border: 1px solid var(--messages-line);
-    border-radius: 10px;
+    border-radius: 4px;
     background: var(--messages-surface);
     color: var(--messages-ink);
     font-size: 14px;
@@ -563,7 +563,7 @@
     justify-content: center;
     gap: 8px;
     border: none;
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--messages-green-strong);
     color: #ffffff;
     font-weight: 700;

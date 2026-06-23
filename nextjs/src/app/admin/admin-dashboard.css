@@ -77,7 +77,7 @@
     gap: 8px;
     padding: 0 17px;
     border: 1px solid #c1c9bd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #e7eeff;
     color: #003714;
     font-size: 14px;
@@ -369,7 +369,7 @@
     min-height: 38px;
     grid-template-columns: minmax(72px, 1fr) 64px 36px;
     padding: 0 8px;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #f0f3ff;
   }
 
@@ -516,7 +516,7 @@
     gap: 9px;
     margin: auto 16px 16px;
     border: 1px solid #1f6c35;
-    border-radius: 8px;
+    border-radius: 4px;
     color: #1f6c35;
     font-size: 13px;
     font-weight: 700;

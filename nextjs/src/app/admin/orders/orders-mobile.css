@@ -98,7 +98,7 @@
     gap: 10px;
     padding: 0 15px;
     border: 1px solid var(--orders-line);
-    border-radius: 16px;
+    border-radius: 4px;
     background: var(--orders-surface);
     color: #71796f;
     box-shadow: 0 2px 8px rgba(17, 28, 44, .04);
@@ -137,7 +137,7 @@
     display: grid;
     place-items: center;
     border: 1px solid var(--orders-line);
-    border-radius: 16px;
+    border-radius: 4px;
     background: var(--orders-surface);
     color: var(--orders-green);
     box-shadow: 0 2px 8px rgba(17, 28, 44, .05);
@@ -157,7 +157,7 @@
     display: grid;
     padding: 6px;
     border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: 4px;
     background: #fff;
     box-shadow: 0 14px 36px rgba(17, 28, 44, .16);
   }
@@ -166,7 +166,7 @@
     min-height: 44px;
     padding: 0 12px;
     border: 0;
-    border-radius: 6px;
+    border-radius: 4px;
     background: transparent;
     color: var(--orders-ink);
     text-align: left;
@@ -193,7 +193,7 @@
     margin: 0;
     padding: 0;
     border: 1px solid var(--orders-line);
-    border-radius: 18px;
+    border-radius: 4px;
     background: var(--orders-surface);
     box-shadow: 0 3px 10px rgba(17, 28, 44, .07);
   }
@@ -358,7 +358,7 @@
     display: grid;
     gap: 1px;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 4px;
     background: #e2e8f0;
   }
 
@@ -431,7 +431,7 @@
     height: 52px;
     padding: 0 12px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 4px;
     outline: 0;
     background: var(--orders-field);
     color: var(--orders-ink);
@@ -442,7 +442,7 @@
     min-width: 0;
     min-height: 52px;
     padding: 0 12px;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 15px;
     font-weight: 800;
   }

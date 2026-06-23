@@ -87,7 +87,7 @@
     min-height: 118px;
     padding: 16px;
     border: 1px solid var(--reviews-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--reviews-panel);
     box-shadow: 0 12px 28px rgba(16, 24, 40, 0.05);
     display: grid;
@@ -116,7 +116,7 @@
     width: 100%;
     min-height: 48px;
     border: 1px solid var(--reviews-line);
-    border-radius: 8px;
+    border-radius: 4px;
     background: #f8fbff;
     color: var(--reviews-text);
     padding: 0 14px;
@@ -138,7 +138,7 @@
     gap: 12px;
     text-align: center;
     border: 1px dashed var(--reviews-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: linear-gradient(180deg, #fbfcff, #ffffff);
     padding: 28px 18px;
   }
@@ -166,7 +166,7 @@
   .admin-reviews-route .admin-reviews-mobile-card {
     padding: 16px;
     border: 1px solid var(--reviews-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 12px 28px rgba(16, 24, 40, 0.05);
     display: grid;
@@ -278,7 +278,7 @@
   .admin-reviews-route .ghost-button,
   .admin-reviews-route .primary-button {
     min-height: 44px;
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 0 14px;
     font-size: 14px;
     font-weight: 700;
@@ -372,7 +372,7 @@
     display: grid;
     gap: 16px;
     padding: 12px 18px 24px;
-    border-radius: 26px 26px 0 0;
+    border-radius: 4px 4px 0 0;
     background: #ffffff;
     transform: translateY(102%);
     transition: transform 180ms ease;
@@ -441,7 +441,7 @@
   .admin-reviews-route .admin-reviews-mobile-sheet__ratings button {
     min-height: 42px;
     border: 1px solid var(--reviews-line);
-    border-radius: 12px;
+    border-radius: 4px;
     background: #ffffff;
     color: var(--reviews-green);
     font-size: 13px;

@@ -55,7 +55,7 @@
     align-items: center;
     gap: 9px;
     padding: 0 13px;
-    border-radius: 5px;
+    border-radius: 4px;
     background: var(--users-field);
     color: var(--users-muted);
   }
@@ -65,7 +65,7 @@
   .admin-users-route .admin-users-result-count strong { color: var(--users-green); font-family: var(--admin-font-mono), monospace; font-size: 12px; }
 
   .admin-users-route .admin-record-list--users { min-width: 0; display: grid; gap: 10px; }
-  .admin-users-route .admin-user-record { min-width: 0; display: grid; gap: 11px; padding: 14px; border: 1px solid var(--users-line); border-radius: 6px; background: #fff; box-shadow: 0 3px 8px rgba(17, 28, 44, .045); }
+  .admin-users-route .admin-user-record { min-width: 0; display: grid; gap: 11px; padding: 14px; border: 1px solid var(--users-line); border-radius: 4px; background: #fff; box-shadow: 0 3px 8px rgba(17, 28, 44, .045); }
   .admin-users-route .admin-user-record__identity { min-width: 0; display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 11px; }
   .admin-users-route .admin-user-record__avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #e7eeff; color: var(--users-green); font-size: 11px; font-weight: 800; }
   .admin-users-route .admin-user-record__identity > span:last-child { min-width: 0; display: grid; gap: 3px; }
@@ -85,14 +85,14 @@
 
   .admin-users-route .admin-users-filter-sheet { position: fixed; inset: 0; z-index: 110; display: grid; align-items: end; }
   .admin-users-route .admin-users-filter-sheet__backdrop { position: absolute; inset: 0; border: 0; background: rgba(17, 28, 44, .42); }
-  .admin-users-route .admin-users-filter-sheet > section { position: relative; z-index: 1; display: grid; gap: 14px; padding: 20px 16px 26px; border-radius: 14px 14px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(17, 28, 44, .15); }
+  .admin-users-route .admin-users-filter-sheet > section { position: relative; z-index: 1; display: grid; gap: 14px; padding: 20px 16px 26px; border-radius: 4px 4px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(17, 28, 44, .15); }
   .admin-users-route .admin-users-filter-sheet header { display: flex; align-items: center; justify-content: space-between; }
   .admin-users-route .admin-users-filter-sheet h2 { margin: 0; color: var(--users-green); font-size: 20px; }
   .admin-users-route .admin-users-filter-sheet header button { width: 40px; height: 40px; border: 0; background: transparent; font-size: 27px; }
   .admin-users-route .admin-users-filter-sheet label { display: grid; gap: 6px; color: var(--users-muted); font-size: 11px; font-weight: 700; }
-  .admin-users-route .admin-users-filter-sheet select { width: 100%; min-height: 48px; padding: 0 12px; border: 1px solid var(--users-line); border-radius: 5px; background: var(--users-field); color: var(--users-ink); }
+  .admin-users-route .admin-users-filter-sheet select { width: 100%; min-height: 48px; padding: 0 12px; border: 1px solid var(--users-line); border-radius: 4px; background: var(--users-field); color: var(--users-ink); }
   .admin-users-route .admin-users-filter-sheet > section > div { display: grid; grid-template-columns: 1fr 1.3fr; gap: 9px; }
-  .admin-users-route .admin-users-filter-sheet > section > div button { min-height: 48px; border: 1px solid var(--users-green); border-radius: 5px; background: #fff; color: var(--users-green); font-weight: 700; }
+  .admin-users-route .admin-users-filter-sheet > section > div button { min-height: 48px; border: 1px solid var(--users-green); border-radius: 4px; background: #fff; color: var(--users-green); font-weight: 700; }
   .admin-users-route .admin-users-filter-sheet > section > div button:last-child { background: var(--users-green); color: #fff; }
 
   .admin-users-route .admin-overlay { position: fixed; inset: 0; z-index: 120; background: var(--users-canvas); }
@@ -106,9 +106,9 @@
   .admin-users-route .admin-overlay__head button::before { content: "×"; display: grid; place-items: center; color: var(--users-green); font-size: 25px; }
 
   .admin-users-route .admin-overlay__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; }
-  .admin-users-route .admin-overlay__stats span { min-width: 0; min-height: 58px; display: grid; place-items: center; padding: 8px; border: 1px solid var(--users-line); border-radius: 5px; background: #fff; color: var(--users-green); font-size: 10px; font-weight: 700; text-align: center; }
+  .admin-users-route .admin-overlay__stats span { min-width: 0; min-height: 58px; display: grid; place-items: center; padding: 8px; border: 1px solid var(--users-line); border-radius: 4px; background: #fff; color: var(--users-green); font-size: 10px; font-weight: 700; text-align: center; }
   .admin-users-route .admin-overlay__grid { display: grid; gap: 12px; }
-  .admin-users-route .admin-viz-card { min-width: 0; margin-bottom: 12px; padding: 14px; border: 1px solid var(--users-line); border-radius: 6px; background: #fff; }
+  .admin-users-route .admin-viz-card { min-width: 0; margin-bottom: 12px; padding: 14px; border: 1px solid var(--users-line); border-radius: 4px; background: #fff; }
   .admin-users-route .admin-viz-card h3 { margin: 0 0 12px; color: var(--users-green); font-size: 12px; text-transform: uppercase; }
   .admin-users-route .admin-viz-bars { display: grid; gap: 9px; }
   .admin-users-route .admin-viz-bar-row { min-width: 0; display: grid; grid-template-columns: minmax(65px, .8fr) minmax(70px, 1fr) 28px; align-items: center; gap: 7px; font-size: 9px; }
@@ -123,7 +123,7 @@
 
   .admin-users-route .admin-user360-actions { position: fixed; right: 0; bottom: 0; left: 0; z-index: 125; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px max(12px, calc((100vw - 456px) / 2)); border-top: 1px solid var(--users-line); background: rgba(249, 249, 255, .97); }
   .admin-users-route .admin-user360-actions button,
-  .admin-users-route .admin-user360-actions span { min-height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid var(--users-green); border-radius: 5px; background: #fff; color: var(--users-green); font-size: 10px; font-weight: 750; text-align: center; }
+  .admin-users-route .admin-user360-actions span { min-height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid var(--users-green); border-radius: 4px; background: #fff; color: var(--users-green); font-size: 10px; font-weight: 750; text-align: center; }
   .admin-users-route .admin-user360-actions button:last-child { border-color: #e0b5b0; color: var(--users-danger); }
   .admin-users-route .admin-state { width: 100%; margin: 0; }
 }

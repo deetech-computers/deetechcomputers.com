@@ -100,7 +100,7 @@
     min-height: 36px;
     padding: 0 12px;
     border: 1px solid #c1c9bd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #fff;
     color: #003714;
     font-weight: 700;
@@ -113,7 +113,7 @@
     align-items: center;
     gap: 12px;
     padding: 0 10px;
-    border-radius: 8px;
+    border-radius: 4px;
     color: #111c2c;
     font-weight: 600;
     text-decoration: none;
@@ -238,7 +238,7 @@
     height: 42px;
     display: grid;
     place-items: center;
-    border-radius: 12px;
+    border-radius: 4px;
     background: #ffd9de;
     color: #541b29;
   }
@@ -407,7 +407,7 @@
     height: 40px;
     display: grid;
     place-items: center;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #e7eeff;
     color: #003714;
     font-size: 12px;
