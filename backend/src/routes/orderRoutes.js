@@ -10,6 +10,7 @@ import {
   getAllOrders,
   getRecentOrderAttempts,
   getGuestOrderById,
+  lookupGuestOrder,
   updateOrderToPaid,
   updateOrderToDelivered,
   updateOrderStatus,
@@ -21,8 +22,15 @@ import {
   getHubtelPaymentStatus,
 } from "../controllers/orderController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
+import { createRateLimiter } from "../middleware/rateLimitFactory.js";
 
 const router = express.Router();
+
+const guestLookupLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 8,
+  message: { message: "Too many lookup attempts, try again later." },
+});
 
 // Create new order (user) / Get all orders (admin)
 router
@@ -38,6 +46,7 @@ router.post("/hubtel/return/:clientReference", asyncHandler(handleHubtelReturnCo
 router.get("/hubtel/status/:clientReference", asyncHandler(getHubtelPaymentStatus));
 router.get("/attempts", protect, admin, asyncHandler(getRecentOrderAttempts));
 router.get("/guest-track/:id", asyncHandler(getGuestOrderById));
+router.post("/guest-track-lookup", guestLookupLimiter, asyncHandler(lookupGuestOrder));
 
 // Get current user's orders
 router.route("/myorders").get(protect, asyncHandler(getMyOrders));

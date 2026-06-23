@@ -233,8 +233,11 @@ export default function TrackOrderPage() {
             <OrderTrackIcon name="accepted" />
           </div>
           <h2>Login required</h2>
-          <p>Sign in to track account orders. Guest orders can be tracked from the secure link sent to the checkout email.</p>
-          <Link href="/login" className="primary-link">Go to login</Link>
+          <p>Sign in to track account orders, or look up a guest order with your order ID and checkout email.</p>
+          <div className="track-order-state__actions">
+            <Link href="/login" className="primary-link">Go to login</Link>
+            <Link href="/track-order" className="ghost-link">Track a guest order</Link>
+          </div>
         </section>
       ) : error || !order ? (
         <section className="panel track-order-state">

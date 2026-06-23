@@ -90,3 +90,11 @@ export const updateOrderStatusSchema = Joi.object({
   isDelivered: Joi.boolean(),
   deliveredAt: Joi.date(),
 }).min(1);
+
+// Guest order lookup - requires the order id AND the email used at
+// checkout together, so a leaked/guessed email alone can't surface any
+// order data.
+export const guestOrderLookupSchema = Joi.object({
+  orderId: Joi.string().hex().length(24).required(),
+  email: Joi.string().email().required(),
+});

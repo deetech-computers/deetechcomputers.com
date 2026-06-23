@@ -18261,6 +18261,26 @@ button, input, select, textarea { font: inherit; }
 .track-order-hero__crumbs a:focus-visible {
   color: #184f27;
 }
+.track-order-entry-card {
+  display: grid;
+  gap: 16px;
+  width: min(480px, 100%);
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 36px);
+}
+.track-order-entry-card__error {
+  margin: 0;
+  color: #ba1a1a;
+  font-size: 0.88rem;
+}
+.track-order-entry-card__note {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid #ece7de;
+  color: #665d52;
+  font-size: 0.88rem;
+  text-align: center;
+}
 .track-order-shell {
   display: grid;
   gap: 22px;
@@ -18536,6 +18556,12 @@ button, input, select, textarea { font: inherit; }
   max-width: 460px;
   color: #665d52;
   line-height: 1.6;
+}
+.track-order-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
 }
 @media (max-width: 640px) {
   body.has-track-order-page .site-header {

@@ -6,7 +6,7 @@ import DiscountCode from "../models/DiscountCode.js";
 import Affiliate from "../models/Affiliate.js";
 import Referral from "../models/Referral.js";
 import crypto from "crypto";
-import { createOrderSchema, createGuestOrderSchema } from "../validators/orderSchemas.js";
+import { createOrderSchema, createGuestOrderSchema, guestOrderLookupSchema } from "../validators/orderSchemas.js";
 import {
   ADMIN_EMAIL,
   BACKEND_PUBLIC_URL,
@@ -2349,6 +2349,52 @@ export async function getGuestOrderById(req, res) {
   }
 
   res.json(serializeGuestTrackOrder(order));
+}
+
+// Guest order lookup by order id + checkout email together. Neither value
+// alone is enough to find an order, so guessing/leaking an email can't be
+// used to enumerate someone's orders. On success this mints the same
+// signed tracking token getGuestOrderById verifies, so the frontend can
+// hand off to the existing token-based tracking view.
+export async function lookupGuestOrder(req, res) {
+  const notFoundMessage = "We couldn't find an order matching those details.";
+
+  const { error, value } = guestOrderLookupSchema.validate(req.body || {});
+  if (error) {
+    res.status(404);
+    throw new Error(notFoundMessage);
+  }
+
+  const orderId = String(value.orderId || "").trim();
+  const email = normalizeOrderEmailAddress(value.email || "");
+
+  const order = await Order.findOne({
+    _id: orderId,
+    user: null,
+    $or: [{ shippingEmail: email }, { guestEmail: email }],
+  });
+
+  if (!order) {
+    await writeOrderAttemptLog({
+      req,
+      scope: "guest",
+      stage: "status_check",
+      outcome: "guest_lookup_not_found",
+      clientOrderRef: orderId,
+      guestEmail: email,
+      reason: "Guest order lookup found no match for id + email",
+    });
+    res.status(404);
+    throw new Error(notFoundMessage);
+  }
+
+  const token = buildGuestTrackingToken(order);
+  if (!token) {
+    res.status(500);
+    throw new Error("Guest tracking is not configured.");
+  }
+
+  res.json({ orderId: String(order._id), token });
 }
 
 // Get logged-in user's single order
