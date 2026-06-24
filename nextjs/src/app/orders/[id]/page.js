@@ -85,6 +85,15 @@ function OrderTrackIcon({ name }) {
       </svg>
     );
   }
+  if (name === "support") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <path d="M6.5 6.5 9 9M17.5 6.5 15 9M6.5 17.5 9 15M17.5 17.5 15 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 7h10v8H4zM14 10h4l2 2v3h-6z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -250,119 +259,156 @@ export default function TrackOrderPage() {
         </section>
       ) : (
         <section className="track-order-shell">
-          <div className="track-order-top panel">
-            <div className="track-order-top__header">
-              <div>
-                {guestToken ? (
-                  <Link href="/" className="ghost-link track-order-top__back">
-                    Back to Home
-                  </Link>
-                ) : (
-                  <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
-                    Back to My Orders
-                  </Link>
-                )}
-                <h2>Order Status</h2>
-                <p>Order ID : #{order.orderNumber || order._id}</p>
+          <div className="track-order-main">
+            <div className="track-order-top panel">
+              <div className="track-order-top__header">
+                <div>
+                  {guestToken ? (
+                    <Link href="/" className="ghost-link track-order-top__back">
+                      Back to Home
+                    </Link>
+                  ) : (
+                    <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
+                      Back to My Orders
+                    </Link>
+                  )}
+                  <h2>Order Status</h2>
+                  <p>Order ID : #{order.orderNumber || order._id}</p>
+                </div>
                 <span className={`track-order-status-pill is-${String(order.orderStatus || "pending").toLowerCase()}`}>
                   {currentStepLabel}
                 </span>
               </div>
-              <div className="track-order-top__meta">
-                <span>Payment method</span>
-                <em>{paymentLabel(order.paymentMethod)}</em>
-                <strong>{formatCurrency(Number(order.totalPrice || 0))}</strong>
-                <small>
-                  {Number(order.shippingPrice || 0) > 0
-                    ? `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Delivery ${formatCurrency(Number(order.shippingPrice || 0))}`
-                    : `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Free Delivery`}
-                </small>
-                {productSavings > 0 ? <small>Product savings {formatCurrency(productSavings)}</small> : null}
-                <button
-                  type="button"
-                  className="track-order-top__download"
-                  onClick={() => downloadInvoiceHtml(order)}
-                  aria-label="Download receipt"
-                >
-                  <OrderTrackIcon name="download" />
-                  <span>Download Receipt</span>
-                </button>
+
+              <div className="track-order-progress">
+                {steps.map((step, index) => (
+                  <div
+                    key={step.key}
+                    className={[
+                      "track-order-step",
+                      step.done ? "is-done" : "",
+                      step.active ? "is-active" : "",
+                      order.orderStatus === "cancelled" ? "is-muted" : "",
+                    ].filter(Boolean).join(" ")}
+                  >
+                    <div className="track-order-step__icon">
+                      <OrderTrackIcon name={step.key} />
+                    </div>
+                    <div className="track-order-step__copy">
+                      <strong>{TRACK_STEPS[index].label}</strong>
+                      <span>{step.caption}</span>
+                    </div>
+                  </div>
+                ))}
+                <div className="track-order-progress__line" aria-hidden="true">
+                  <span
+                    className="track-order-progress__fill"
+                    style={{
+                      "--track-progress": progressRatio,
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="track-order-progress">
-              {steps.map((step, index) => (
-                <div
-                  key={step.key}
-                  className={[
-                    "track-order-step",
-                    step.done ? "is-done" : "",
-                    step.active ? "is-active" : "",
-                    order.orderStatus === "cancelled" ? "is-muted" : "",
-                  ].filter(Boolean).join(" ")}
-                >
-                  <div className="track-order-step__icon">
-                    <OrderTrackIcon name={step.key} />
-                  </div>
-                  <div className="track-order-step__copy">
-                    <strong>{TRACK_STEPS[index].label}</strong>
-                    <span>{step.caption}</span>
-                  </div>
-                </div>
-              ))}
-              <div className="track-order-progress__line" aria-hidden="true">
-                <span
-                  className="track-order-progress__fill"
-                  style={{
-                    "--track-progress": progressRatio,
-                  }}
-                />
+            <section className="panel track-order-products">
+              <div className="track-order-products__head">
+                <h2>Products</h2>
+                <span>{(order.orderItems || []).length} item{(order.orderItems || []).length === 1 ? "" : "s"}</span>
               </div>
-            </div>
+
+              <div className="track-order-products__list">
+                {(order.orderItems || []).map((item, index) => {
+                  const product = item?.product || {};
+                  const image = resolveProductImage(product?.images?.[0] || product?.image);
+                  const productHref = product?._id ? `/products/${product._id}` : "/products";
+                  const pricing = getLinePricing(item);
+                  return (
+                    <article key={`${product?._id || index}`} className="track-order-product">
+                      <Link href={productHref} className="track-order-product__link">
+                        <div className="track-order-product__thumb">
+                          {image ? (
+                            <StableImage
+                              src={image}
+                              alt={product?.name || "Product"}
+                              width={112}
+                              height={112}
+                            />
+                          ) : (
+                            <div className="product-card__placeholder">No image</div>
+                          )}
+                        </div>
+                        <div className="track-order-product__copy">
+                          <strong>{product?.name || "Product"}</strong>
+                          <span>{formatCategoryLabel(product?.category || product?.brand || "Product")}</span>
+                        </div>
+                      </Link>
+                      <div className="track-order-product__meta">
+                        <span>Qty {Number(item?.qty || 1)}</span>
+                        {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
+                        <strong>{formatCurrency(pricing.currentLineTotal)}</strong>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
           </div>
 
-          <section className="panel track-order-products">
-            <div className="track-order-products__head">
-              <h2>Products</h2>
-              <span>{(order.orderItems || []).length} item{(order.orderItems || []).length === 1 ? "" : "s"}</span>
+          <aside className="track-order-sidebar">
+            <div className="panel track-order-summary">
+              <h3>Payment Summary</h3>
+              <div className="track-order-summary__rows">
+                <div>
+                  <span>Payment Method</span>
+                  <strong>{paymentLabel(order.paymentMethod)}</strong>
+                </div>
+                <div>
+                  <span>Subtotal</span>
+                  <span className="track-order-summary__mono">{formatCurrency(Number(order.itemsPrice || 0))}</span>
+                </div>
+                <div>
+                  <span>Delivery</span>
+                  {Number(order.shippingPrice || 0) > 0 ? (
+                    <span className="track-order-summary__mono">{formatCurrency(Number(order.shippingPrice || 0))}</span>
+                  ) : (
+                    <strong className="track-order-summary__free">Free</strong>
+                  )}
+                </div>
+                {productSavings > 0 ? (
+                  <div>
+                    <span>Product savings</span>
+                    <strong className="track-order-summary__free">-{formatCurrency(productSavings)}</strong>
+                  </div>
+                ) : null}
+              </div>
+              <hr />
+              <div className="track-order-summary__total">
+                <span>Total Amount</span>
+                <strong>{formatCurrency(Number(order.totalPrice || 0))}</strong>
+                {order.paymentGatewayReference ? (
+                  <p>Transaction ID: {order.paymentGatewayReference}</p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                className="track-order-summary__download"
+                onClick={() => downloadInvoiceHtml(order)}
+              >
+                <OrderTrackIcon name="download" />
+                Download Receipt
+              </button>
             </div>
 
-            <div className="track-order-products__list">
-              {(order.orderItems || []).map((item, index) => {
-                const product = item?.product || {};
-                const image = resolveProductImage(product?.images?.[0] || product?.image);
-                const productHref = product?._id ? `/products/${product._id}` : "/products";
-                const pricing = getLinePricing(item);
-                return (
-                  <article key={`${product?._id || index}`} className="track-order-product">
-                    <Link href={productHref} className="track-order-product__link">
-                      <div className="track-order-product__thumb">
-                        {image ? (
-                          <StableImage
-                            src={image}
-                            alt={product?.name || "Product"}
-                            width={112}
-                            height={112}
-                          />
-                        ) : (
-                          <div className="product-card__placeholder">No image</div>
-                        )}
-                      </div>
-                      <div className="track-order-product__copy">
-                        <strong>{product?.name || "Product"}</strong>
-                        <span>{formatCategoryLabel(product?.category || product?.brand || "Product")}</span>
-                      </div>
-                    </Link>
-                    <div className="track-order-product__meta">
-                      <span>Qty {Number(item?.qty || 1)}</span>
-                      {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
-                      <strong>{formatCurrency(pricing.currentLineTotal)}</strong>
-                    </div>
-                  </article>
-                );
-              })}
+            <div className="panel track-order-help">
+              <h4>
+                <OrderTrackIcon name="support" />
+                Need Help?
+              </h4>
+              <p>Our support team is available 24/7 for delivery related inquiries.</p>
+              <Link href="/contact">Open Support Ticket</Link>
             </div>
-          </section>
+          </aside>
         </section>
       )}
       </div>
