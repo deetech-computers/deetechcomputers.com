@@ -49,9 +49,9 @@
 .shop-layout--loading {
   min-height: 1280px;
 }
-.shop-sidebar,
-.shop-toolbar {
-  border-radius: 0;
+.shop-sidebar.panel,
+.shop-toolbar.panel {
+  border-radius: 4px;
 }
 .shop-sidebar {
   display: grid; gap: 18px; align-content: start; position: sticky; top: 110px; align-self: start; height: fit-content;

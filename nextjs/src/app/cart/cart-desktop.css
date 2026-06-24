@@ -19,9 +19,9 @@
 .cart-layout--page {
   gap: 28px;
 }
-.cart-table,
-.cart-summary {
-  border-radius: 0;
+.cart-table.panel,
+.cart-summary.panel {
+  border-radius: 4px;
   background: #ffffff;
   box-shadow: none;
 }

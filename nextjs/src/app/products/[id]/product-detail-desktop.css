@@ -87,10 +87,10 @@
 .product-detail-loading__tabs {
   min-height: 230px;
 }
-.product-gallery,
-.product-summary,
-.product-tabs {
-  border-radius: 0;
+.product-gallery.panel,
+.product-summary.panel,
+.product-tabs.panel {
+  border-radius: 4px;
 }
 .product-gallery {
   display: grid;
@@ -245,7 +245,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.product-summary h1 {
+.product-summary.panel h1 {
   margin: 0;
   font-size: clamp(1.8rem, 4vw, 2.3rem);
   line-height: 1.08;
