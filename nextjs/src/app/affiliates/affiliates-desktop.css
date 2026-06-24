@@ -247,7 +247,7 @@
 }
 .affiliate-learn__commission li::before,
 .affiliate-learn__why li::before {
-  content: "âœ“";
+  content: "\2713";
   color: #099240;
   font-weight: 900;
   line-height: 1.2;

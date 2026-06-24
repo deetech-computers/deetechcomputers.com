@@ -2649,7 +2649,7 @@ button, input, select, textarea { font: inherit; }
     color: #9fc3ff;
   }
   .footer-section[open] summary::after {
-    content: "â€“";
+    content: "–";
   }
   .footer-links {
     display: none;
