@@ -326,3 +326,8 @@
     min-height: 106px;
   }
 }
+@media (max-width: 640px) {
+  .products-results {
+    font-size: 0.82rem;
+  }
+}

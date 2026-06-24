@@ -516,3 +516,15 @@
     top: 108px;
   }
 }
+.checkout-page-route .checkout-affiliate__status {
+  font-size: 0.84rem;
+}
+.checkout-page-route .checkout-affiliate__status.is-valid {
+  color: #184d22;
+}
+.checkout-page-route .checkout-affiliate__status.is-invalid {
+  color: #b42318;
+}
+.checkout-page-route .checkout-affiliate__status.is-validating {
+  color: var(--muted);
+}

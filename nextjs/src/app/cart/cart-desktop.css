@@ -583,3 +583,15 @@
   transform: translateY(0);
   box-shadow: 0 10px 24px rgba(10, 79, 207, 0.2);
 }
+.cart-page-route .checkout-affiliate__status {
+  font-size: 0.84rem;
+}
+.cart-page-route .checkout-affiliate__status.is-valid {
+  color: #184d22;
+}
+.cart-page-route .checkout-affiliate__status.is-invalid {
+  color: #b42318;
+}
+.cart-page-route .checkout-affiliate__status.is-validating {
+  color: var(--muted);
+}
