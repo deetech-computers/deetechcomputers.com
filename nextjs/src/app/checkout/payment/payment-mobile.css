@@ -19,11 +19,11 @@
     padding: 14px;
     gap: 12px;
   }
-  .checkout-payment__logo {
+  .checkout-payment__logo.stable-image {
     width: 88px;
     height: 32px;
   }
-  .checkout-payment__logo--large {
+  .checkout-payment__logo--large.stable-image {
     width: 108px;
     height: 38px;
   }

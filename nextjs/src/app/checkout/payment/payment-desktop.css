@@ -52,13 +52,13 @@
   border-radius: 999px;
   background: #184d22;
 }
-.checkout-payment__logo {
+.checkout-payment__logo.stable-image {
   width: 120px;
   height: 40px;
   object-fit: contain;
   flex: 0 0 auto;
 }
-.checkout-payment__logo--large {
+.checkout-payment__logo--large.stable-image {
   width: 132px;
   height: 48px;
 }
