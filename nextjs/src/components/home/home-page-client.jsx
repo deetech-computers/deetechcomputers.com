@@ -7,6 +7,8 @@ import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
 import { API_BASE } from "@/lib/config";
 import { requestJson } from "@/lib/http";
+import "./home-desktop.css";
+import "./home-mobile.css";
 import {
   buildProductsHref,
   canonicalCategory,
@@ -633,7 +635,7 @@ export default function HomePage() {
   }
 
   return (
-    <main>
+    <main className="home-page-route">
       <section className="hero-section">
         <div className="hero-banner">
           <div className="hero-banner__slides" style={{ transform: `translateX(-${bannerIndex * 100}%)` }}>

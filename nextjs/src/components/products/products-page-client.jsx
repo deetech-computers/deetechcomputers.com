@@ -7,6 +7,8 @@ import ProductCard from "@/components/products/product-card";
 import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
 import { formatCurrency } from "@/lib/format";
+import "./products-listing-desktop.css";
+import "./products-listing-mobile.css";
 import {
   buildProductsHref,
   canonicalCategory,
