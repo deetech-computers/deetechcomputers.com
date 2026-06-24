@@ -158,110 +158,120 @@ export default function OrderCompletedPage() {
         {order && summary ? (
           <div className="order-complete__layout">
             <div className="order-complete__main">
-            <section className="order-complete__meta">
-              <div>
-                <span>Order ID</span>
-                <strong>#{order.orderId || order.reference || "N/A"}</strong>
-              </div>
-              <div>
-                <span>Payment Method</span>
-                <strong>{paymentLabel(order.paymentMethod)}</strong>
-              </div>
-              <div>
-                <span>Transaction ID</span>
-                <strong>{order.transactionId || "N/A"}</strong>
-              </div>
-              <div>
-                <span>Estimated Delivery Date</span>
-                <strong>{formatDate(order.estimatedDeliveryDate)}</strong>
-              </div>
-              <button
-                type="button"
-                className="order-complete__invoice"
-                onClick={() => downloadInvoiceHtml(order, summary)}
-              >
-                Download Invoice
-              </button>
-            </section>
+              <section className="panel order-complete__meta">
+                <div className="order-complete__meta-grid">
+                  <div>
+                    <span>Order ID</span>
+                    <strong className="order-complete__mono">#{order.orderId || order.reference || "N/A"}</strong>
+                  </div>
+                  <div>
+                    <span>Date</span>
+                    <strong>{formatDate(order.date || order.createdAt)}</strong>
+                  </div>
+                  <div>
+                    <span>Total</span>
+                    <strong className="order-complete__mono">{formatCurrency(summary.total)}</strong>
+                  </div>
+                  <div>
+                    <span>Payment</span>
+                    <strong>{paymentLabel(order.paymentMethod)}</strong>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="order-complete__invoice"
+                  onClick={() => downloadInvoiceHtml(order, summary)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3v12m0 0-4-4m4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Download Invoice
+                </button>
+              </section>
 
-            <section className="panel order-complete__details">
-              <div className="order-complete__details-head">
-                <h2>Order Details</h2>
-              </div>
+              <section className="panel order-complete__details">
+                <div className="order-complete__details-head">
+                  <h2>Order Items</h2>
+                </div>
 
-              <div className="order-complete__table-head">
-                <span>Products</span>
-                <span>Sub Total</span>
-              </div>
-
-              <div className="order-complete__items">
-                {summary.items.map((item, index) => {
-                  const pricing = getLinePricing(item);
-                  return (
-                    <article key={`${item.name}-${index}`} className="order-complete__item">
-                      <div className="order-complete__product">
-                        <div className="order-complete__thumb">
-                          {resolveProductImage(item.image) ? (
-                            <StableImage
-                              src={resolveProductImage(item.image)}
-                              alt={item.name || "Product"}
-                              width={110}
-                              height={110}
-                            />
-                          ) : (
-                            <div className="product-card__placeholder">No image</div>
-                          )}
+                <div className="order-complete__items">
+                  {summary.items.map((item, index) => {
+                    const pricing = getLinePricing(item);
+                    return (
+                      <article key={`${item.name}-${index}`} className="order-complete__item">
+                        <div className="order-complete__product">
+                          <div className="order-complete__thumb">
+                            {resolveProductImage(item.image) ? (
+                              <StableImage
+                                src={resolveProductImage(item.image)}
+                                alt={item.name || "Product"}
+                                width={110}
+                                height={110}
+                              />
+                            ) : (
+                              <div className="product-card__placeholder">No image</div>
+                            )}
+                          </div>
+                          <div className="order-complete__product-copy">
+                            <strong>{item.name || "Product"}</strong>
+                            <small>{formatCategoryLabel(item.category || "Product")}</small>
+                          </div>
                         </div>
-                        <div className="order-complete__product-copy">
-                          <strong>{item.name || "Product"}</strong>
-                          <small>{formatCategoryLabel(item.category || "Product")}</small>
+                        <span className="order-complete__qty">{Number(item.qty || 1)}</span>
+                        <div className="order-complete__price-stack">
+                          {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
+                          <strong className="order-complete__price">{formatCurrency(pricing.currentLineTotal)}</strong>
                         </div>
-                      </div>
-                      <div className="order-complete__price-stack">
-                        {pricing.hasDiscount ? <small>{formatCurrency(pricing.originalLineTotal)}</small> : null}
-                        <strong className="order-complete__price">{formatCurrency(pricing.currentLineTotal)}</strong>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-
-              <div className="order-complete__totals">
-              {Number(summary.productSavings || 0) > 0 ? (
-                <div className="order-complete__totals-line">
-                  <span>Product Savings</span>
-                  <strong>-{formatCurrency(Number(summary.productSavings || 0))}</strong>
+                      </article>
+                    );
+                  })}
                 </div>
-              ) : null}
-              <div className="order-complete__totals-line">
-                <span>Shipping</span>
-                <strong>{summary.shipping === 0 ? "FREE" : formatCurrency(summary.shipping)}</strong>
-              </div>
-                <div className="order-complete__totals-line">
-                  <span>Taxes</span>
-                  <strong>{formatCurrency(0)}</strong>
-                </div>
-                <div className="order-complete__totals-line">
-                  <span>Coupon Discount</span>
-                  <strong>-{formatCurrency(Number(summary.discountAmount || 0))}</strong>
-                </div>
-              </div>
-
-              <div className="order-complete__total">
-                <span>Total</span>
-                <strong>{formatCurrency(summary.total)}</strong>
-              </div>
-            </section>
+              </section>
             </div>
 
             <div className="order-complete__side">
-              <div className="hero-actions">
-                {trackingHref ? (
-                  <Link href={trackingHref} className="primary-link">Track Order</Link>
-                ) : null}
-                <Link href="/products" className="primary-link">Continue Shopping</Link>
-                <Link href="/" className="ghost-link">Go Home</Link>
-              </div>
+              <section className="panel order-complete__summary">
+                <h3>Summary</h3>
+                <div className="order-complete__summary-rows">
+                  <div>
+                    <span>Subtotal</span>
+                    <span className="order-complete__mono">{formatCurrency(summary.subtotal)}</span>
+                  </div>
+                  {Number(summary.productSavings || 0) > 0 ? (
+                    <div>
+                      <span>Product Savings</span>
+                      <strong className="order-complete__free">-{formatCurrency(Number(summary.productSavings || 0))}</strong>
+                    </div>
+                  ) : null}
+                  <div>
+                    <span>Delivery Fee</span>
+                    {summary.shipping === 0 ? (
+                      <strong className="order-complete__free">Free</strong>
+                    ) : (
+                      <span className="order-complete__mono">{formatCurrency(summary.shipping)}</span>
+                    )}
+                  </div>
+                  {Number(summary.discountAmount || 0) > 0 ? (
+                    <div>
+                      <span>Coupon Discount</span>
+                      <strong className="order-complete__free">-{formatCurrency(Number(summary.discountAmount || 0))}</strong>
+                    </div>
+                  ) : null}
+                </div>
+                <div className="order-complete__summary-total">
+                  <span>Total Amount</span>
+                  <strong>{formatCurrency(summary.total)}</strong>
+                </div>
+                <div className="order-complete__actions">
+                  {trackingHref ? (
+                    <Link href={trackingHref} className="order-complete__primary">Track Order</Link>
+                  ) : null}
+                  <Link href="/products" className="order-complete__outline">Continue Shopping</Link>
+                  <Link href="/" className="order-complete__text-link">Go Home</Link>
+                </div>
+              </section>
+
               <div className="order-complete__security">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -281,13 +291,13 @@ export default function OrderCompletedPage() {
             </div>
             <h2>Order Details</h2>
             <p className="hero-copy">Your order has already been processed. Please check your email for the confirmation details.</p>
-            <div className="hero-actions">
+            <div className="order-complete__empty-actions">
               {trackingHref ? (
-                <Link href={trackingHref} className="primary-link">Track Order</Link>
+                <Link href={trackingHref} className="order-complete__primary">Track Order</Link>
               ) : null}
-              <Link href="/products" className="primary-link">Continue Shopping</Link>
-              <Link href="/" className="ghost-link">Go Home</Link>
+              <Link href="/products" className="order-complete__outline">Continue Shopping</Link>
             </div>
+            <Link href="/" className="order-complete__text-link">Go Home</Link>
           </section>
         )}
       </section>
