@@ -18,10 +18,10 @@
     padding: 0;
     background: transparent;
   }
-  .product-gallery__main {
+  .product-gallery.panel .product-gallery__main {
     border-radius: 0;
   }
-  .product-gallery__dots {
+  .product-gallery.panel .product-gallery__dots {
     display: flex;
     justify-content: center;
     gap: 6px;
@@ -36,7 +36,7 @@
   .product-gallery__dot.is-active {
     background: #184f27;
   }
-  .product-gallery__stage-arrow {
+  .product-gallery.panel .product-gallery__stage-arrow {
     display: none;
   }
   .product-summary.panel {
@@ -45,7 +45,7 @@
     margin-top: -16px;
     border-radius: 4px;
   }
-  .product-summary__eyebrow {
+  .product-summary.panel .product-summary__eyebrow {
     display: inline-flex;
     width: fit-content;
     background: #a6f5af;
@@ -57,13 +57,13 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .product-summary__buy {
+  .product-summary.panel .product-summary__buy {
     display: none;
   }
-  .product-summary__upgrades {
+  .product-summary.panel .product-summary__upgrades {
     padding-top: 16px;
   }
-  .product-summary__upgrade-options {
+  .product-summary.panel .product-summary__upgrade-options {
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
@@ -75,12 +75,12 @@
   .product-summary__upgrade-chip {
     flex: 0 0 auto;
   }
-  .product-summary__inline-actions {
+  .product-summary.panel .product-summary__inline-actions {
     justify-content: flex-start;
     border-top: 0;
     padding-top: 0;
   }
-  .product-summary__icon-action {
+  .product-summary.panel .product-summary__icon-action {
     width: 44px;
     height: 44px;
     justify-content: center;
@@ -92,13 +92,13 @@
   .product-summary__icon-label {
     display: none;
   }
-  .product-tabs__panel--description {
+  .product-tabs.panel .product-tabs__panel--description {
     grid-template-columns: 1fr;
   }
   .product-description__media {
     display: none;
   }
-  .product-sticky-bar {
+  .product-detail-page .product-sticky-bar {
     display: flex;
     align-items: center;
     gap: 12px;
