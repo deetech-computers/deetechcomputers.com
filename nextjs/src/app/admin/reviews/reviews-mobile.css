@@ -33,12 +33,19 @@
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 35;
+    width: calc(100% + 28px);
     min-height: 64px;
     display: grid;
     grid-template-columns: 40px 1fr 40px;
     align-items: center;
     gap: 12px;
-    padding: 8px 2px;
+    margin: 0 -14px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--reviews-line);
+    background: var(--reviews-panel);
   }
 
   .admin-reviews-route .admin-reviews-mobile-topbar > button:first-child {
