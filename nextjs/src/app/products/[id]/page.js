@@ -241,7 +241,6 @@ export default function ProductDetailPage() {
   }
   const [qty, setQty] = useState(1);
   const [selectedUpgrades, setSelectedUpgrades] = useState({});
-  const [upgradePanelOpen, setUpgradePanelOpen] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
@@ -405,7 +404,6 @@ export default function ProductDetailPage() {
     setActiveTab("description");
     setQty(1);
     setSelectedUpgrades({});
-    setUpgradePanelOpen(false);
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
@@ -884,6 +882,9 @@ export default function ProductDetailPage() {
       <section className="product-detail-view">
         <div className="product-gallery panel">
           <div className="product-gallery__stage">
+            {stock < 1 ? (
+              <span className="product-gallery__ribbon">Out of stock</span>
+            ) : null}
             <button
               type="button"
               className="product-gallery__main product-gallery__main--interactive"
@@ -904,6 +905,12 @@ export default function ProductDetailPage() {
                     className="product-gallery__main-image"
                   />
                   {mainImageLoading ? <span className="product-gallery__main-loading" aria-hidden="true" /> : null}
+                  <span className="product-gallery__tap-badge">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M9 11V5a1.5 1.5 0 0 1 3 0v5M12 10V4a1.5 1.5 0 0 1 3 0v6M15 10.5V7a1.5 1.5 0 0 1 3 0v6.5c0 3-2 5.5-6 5.5h-1c-2.7 0-3.7-1-5-3l-2.3-4a1.4 1.4 0 0 1 2.3-1.6L8 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Tap to view
+                  </span>
                 </>
               ) : (
                 <div className="product-card__placeholder">No image</div>
@@ -930,6 +937,17 @@ export default function ProductDetailPage() {
               </>
             ) : null}
           </div>
+
+          {images.length > 1 ? (
+            <div className="product-gallery__dots" aria-hidden="true">
+              {images.map((image, index) => (
+                <span
+                  key={`dot-${image}-${index}`}
+                  className={activeImageIndex === index ? "product-gallery__dot is-active" : "product-gallery__dot"}
+                />
+              ))}
+            </div>
+          ) : null}
 
           {images.length ? (
             <div
@@ -1007,94 +1025,81 @@ export default function ProductDetailPage() {
           </div>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">
-              <button
-                type="button"
-                className={upgradePanelOpen ? "product-summary__upgrade-toggle is-open" : "product-summary__upgrade-toggle"}
-                onClick={() => setUpgradePanelOpen((current) => !current)}
-                aria-expanded={upgradePanelOpen}
-              >
-                <div className="product-summary__upgrade-head">
-                  <strong>Upgrade specs</strong>
-                  <small>Select only if you want a higher configuration.</small>
-                </div>
-                <span className="product-summary__upgrade-toggle-icon">{upgradePanelOpen ? "-" : "+"}</span>
-              </button>
-              {upgradePanelOpen ? (
-                <div className="product-summary__upgrade-body">
-                  {upgradeSpecs.ramOptions.length ? (
-                    <div className="product-summary__upgrade-group">
-                      <span>RAM</span>
-                      <div className="product-summary__upgrade-options">
+              <span className="product-summary__upgrades-heading">Configure Hardware</span>
+              <div className="product-summary__upgrade-body">
+                {upgradeSpecs.ramOptions.length ? (
+                  <div className="product-summary__upgrade-group">
+                    <span>Memory (RAM)</span>
+                    <div className="product-summary__upgrade-options">
+                      <button
+                        type="button"
+                        className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                        onClick={() =>
+                          setSelectedUpgrades((current) => {
+                            const next = { ...current };
+                            delete next.ram;
+                            return next;
+                          })
+                        }
+                      >
+                        <span>Original</span>
+                      </button>
+                      {upgradeSpecs.ramOptions.map((option) => (
                         <button
+                          key={`ram-${option.label}`}
                           type="button"
-                          className={!selectedUpgrades.ram ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                          className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
                           onClick={() =>
-                            setSelectedUpgrades((current) => {
-                              const next = { ...current };
-                              delete next.ram;
-                              return next;
-                            })
+                            setSelectedUpgrades((current) => ({
+                              ...current,
+                              ram: option.label,
+                            }))
                           }
                         >
-                          <span>Original</span>
+                          <span>{option.label}</span>
+                          {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
                         </button>
-                        {upgradeSpecs.ramOptions.map((option) => (
-                          <button
-                            key={`ram-${option.label}`}
-                            type="button"
-                            className={selectedUpgrades.ram === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                            onClick={() =>
-                              setSelectedUpgrades((current) => ({
-                                ...current,
-                                ram: option.label,
-                              }))
-                            }
-                          >
-                            <span>{option.label}</span>
-                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                          </button>
-                        ))}
-                      </div>
+                      ))}
                     </div>
-                  ) : null}
-                  {upgradeSpecs.storageOptions.length ? (
-                    <div className="product-summary__upgrade-group">
-                      <span>Storage</span>
-                      <div className="product-summary__upgrade-options">
+                  </div>
+                ) : null}
+                {upgradeSpecs.storageOptions.length ? (
+                  <div className="product-summary__upgrade-group">
+                    <span>Storage</span>
+                    <div className="product-summary__upgrade-options">
+                      <button
+                        type="button"
+                        className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                        onClick={() =>
+                          setSelectedUpgrades((current) => {
+                            const next = { ...current };
+                            delete next.storage;
+                            return next;
+                          })
+                        }
+                      >
+                        <span>Original</span>
+                      </button>
+                      {upgradeSpecs.storageOptions.map((option) => (
                         <button
+                          key={`storage-${option.label}`}
                           type="button"
-                          className={!selectedUpgrades.storage ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
+                          className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
                           onClick={() =>
-                            setSelectedUpgrades((current) => {
-                              const next = { ...current };
-                              delete next.storage;
-                              return next;
-                            })
+                            setSelectedUpgrades((current) => ({
+                              ...current,
+                              storage: option.label,
+                            }))
                           }
                         >
-                          <span>Original</span>
+                          <span>{option.label}</span>
+                          {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
                         </button>
-                        {upgradeSpecs.storageOptions.map((option) => (
-                          <button
-                            key={`storage-${option.label}`}
-                            type="button"
-                            className={selectedUpgrades.storage === option.label ? "product-summary__upgrade-chip is-active" : "product-summary__upgrade-chip"}
-                            onClick={() =>
-                              setSelectedUpgrades((current) => ({
-                                ...current,
-                                storage: option.label,
-                              }))
-                            }
-                          >
-                            <span>{option.label}</span>
-                            {Number(option.priceDelta || 0) > 0 ? <small>+ {formatCurrency(option.priceDelta)}</small> : null}
-                          </button>
-                        ))}
-                      </div>
+                      ))}
                     </div>
-                  ) : null}
-                </div>
-              ) : null}
+                  </div>
+                ) : null}
+              </div>
             </div>
           ) : null}
           <p className="product-summary__copy">{summary}</p>
@@ -1135,15 +1140,15 @@ export default function ProductDetailPage() {
           <div className="product-summary__inline-actions" aria-label="Product actions">
             <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
               <ProductActionIcon name="copy" />
-              <span>Copy</span>
+              <span className="product-summary__icon-label">Copy</span>
             </button>
             <button type="button" className={`product-summary__icon-action${wishlisted ? " is-active" : ""}`} onClick={handleWishlist}>
               <ProductActionIcon name="wishlist" />
-              <span>Wishlist</span>
+              <span className="product-summary__icon-label">Wishlist</span>
             </button>
             <button type="button" className="product-summary__icon-action" onClick={handleShare}>
               <ProductActionIcon name="share" />
-              <span>Share</span>
+              <span className="product-summary__icon-label">Share</span>
             </button>
           </div>
 
@@ -1208,8 +1213,34 @@ export default function ProductDetailPage() {
 
         <div className="product-tabs__body">
           {activeTab === "description" ? (
-            <div className="product-tabs__panel">
-              <p>{description}</p>
+            <div className="product-tabs__panel product-tabs__panel--description">
+              <div className="product-description__copy">
+                <h2>Product Overview</h2>
+                <p>{description}</p>
+                {productSpecs.length ? (
+                  <ul className="product-description__highlights">
+                    {productSpecs.slice(0, 3).map(([key, value]) => (
+                      <li key={key}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                          <path d="m8 12.5 2.6 2.6L16.5 9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        {String(value)}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              {images[1] || images[0] ? (
+                <div className="product-description__media">
+                  <StableImage
+                    src={optimizeCloudinaryImage(images[1] || images[0], { width: 640, height: 480 })}
+                    alt={`${product.name} detail`}
+                    width={640}
+                    height={480}
+                  />
+                </div>
+              ) : null}
             </div>
           ) : null}
 
@@ -1422,6 +1453,31 @@ export default function ProductDetailPage() {
           </div>
         </section>
       ) : null}
+
+      <div className="product-sticky-bar" aria-hidden="true">
+        <div className="product-sticky-bar__qty" aria-label="Product quantity">
+          <button type="button" onClick={decrementQty} aria-label="Reduce quantity">-</button>
+          <span>{qty}</span>
+          <button type="button" onClick={incrementQty} aria-label="Increase quantity">+</button>
+        </div>
+        <button
+          type="button"
+          className="product-sticky-bar__cart"
+          disabled={stock < 1}
+          onClick={() =>
+            handleAddToCart(product, qty, {
+              selectedUpgrades: normalizeUpgradeSelection(selectedUpgrades),
+            })
+          }
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="20" r="1.4" fill="currentColor" />
+            <circle cx="17" cy="20" r="1.4" fill="currentColor" />
+            <path d="M3 4h2l2.4 11.2a1.6 1.6 0 0 0 1.6 1.3h7.4a1.6 1.6 0 0 0 1.6-1.3L20 7H6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {stock < 1 ? "Out of stock" : "Add to cart"}
+        </button>
+      </div>
 
       {portalReady ? previewModal : null}
     </main>
