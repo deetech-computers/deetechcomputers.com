@@ -327,7 +327,7 @@
   gap: 8px;
 }
 .affiliate-learn__tier-card li::before {
-  content: "âœ“";
+  content: "\2713";
   color: #099240;
   font-weight: 900;
 }
