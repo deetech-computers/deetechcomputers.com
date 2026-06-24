@@ -105,8 +105,8 @@
   .cart-row__remove-mobile:hover,
   .cart-row__remove-mobile:focus-visible {
     transform: translateY(-1px);
-    border-color: #0d56da;
-    color: #0a43ad;
+    border-color: #184f27;
+    color: #003714;
     background: rgba(13, 86, 218, 0.05);
     box-shadow: 0 12px 24px rgba(13, 86, 218, 0.1);
   }
