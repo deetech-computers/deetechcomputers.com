@@ -15,6 +15,8 @@ import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { addWishlistEntry, readWishlistIds, removeWishlistEntry } from "@/lib/wishlist";
 import { normalizeAffiliateCode } from "@/lib/affiliate-attribution";
+import "./product-detail-desktop.css";
+import "./product-detail-mobile.css";
 import {
   buildCloudinarySrcSet,
   canonicalCategory,
