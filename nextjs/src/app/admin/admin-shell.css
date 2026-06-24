@@ -97,7 +97,8 @@ body:has(.admin-route) .app-content,
   overflow: visible;
 }
 
-.admin-state {
+.admin-state,
+.admin-state.panel {
   width: min(680px, calc(100% - 32px));
   margin: 32px auto;
   padding: 24px;

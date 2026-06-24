@@ -175,7 +175,7 @@
 .order-complete .ghost-link:active {
   transform: translateY(0);
 }
-.order-complete__details {
+.order-complete__details.panel {
   display: grid;
   gap: 0;
   padding: 0;
@@ -340,7 +340,7 @@
   display: grid;
   gap: 10px;
 }
-.order-complete__empty {
+.order-complete__empty.panel {
   display: grid;
   justify-items: center;
   gap: 16px;

@@ -2695,7 +2695,7 @@
   margin-left: 8px;
   color: var(--text);
 }
-.account-order-card {
+.account-order-card.panel {
   padding: 24px;
   overflow: hidden;
   border: 1px solid #c1c9bd;

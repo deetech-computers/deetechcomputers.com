@@ -96,7 +96,7 @@
 .wishlist-skeleton__actions span:not(:first-child) {
   width: 150px;
 }
-.wishlist-table {
+.wishlist-table.panel {
   padding: 0;
   background: #ffffff;
   border: 0;
