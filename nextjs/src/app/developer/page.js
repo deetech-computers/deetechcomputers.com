@@ -1,5 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import "@/components/content/static-content-page-desktop.css";
+import "@/components/content/static-content-page-mobile.css";
+import "./developer-desktop.css";
+import "./developer-mobile.css";
 
 const educationTimeline = [
   "Started junior high school at Cambridge International School, Suntreso, Kumasi",

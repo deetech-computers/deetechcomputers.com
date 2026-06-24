@@ -9,6 +9,8 @@ import { useToast } from "@/components/providers/toast-provider";
 import { SITE_URL } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
+import "./wishlist-desktop.css";
+import "./wishlist-mobile.css";
 import {
   clearWishlistEntries,
   readWishlistEntries,

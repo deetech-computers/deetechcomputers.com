@@ -9,51 +9,6 @@
   align-items: center;
   flex-wrap: wrap;
 }
-.contact-support-preview {
-  display: grid;
-  gap: 18px;
-  padding: 28px;
-  border: 1px solid #c1c9bd;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
-.contact-support-preview h3 {
-  margin: 0;
-  color: #111c2c;
-  font-size: 1.15rem;
-  line-height: 1.35;
-}
-.contact-support-preview p {
-  margin: 0;
-  color: #414940;
-  line-height: 1.6;
-}
-.contact-support-preview .primary-link {
-  display: inline-flex;
-  min-height: 56px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  background: #2bd567;
-  box-shadow: 0 10px 22px rgba(43, 213, 103, 0.22);
-}
-.contact-support-preview__latest {
-  border: 0;
-  border-radius: 14px;
-  padding: 12px 14px;
-  background: #f7f8fa;
-  display: grid;
-  gap: 6px;
-}
-.contact-support-preview__latest strong {
-  font-size: 1rem;
-}
-.contact-support-preview__latest p > span {
-  text-transform: capitalize;
-  font-weight: 700;
-  color: #0d56da;
-}
 .contact-form-panel {
   background: #fff;
   border: 1px solid #e9e2d6;
@@ -280,7 +235,52 @@
   background: #e52f2f;
   box-shadow: none;
 }
-.contact-support-preview__cta {
+.contact-page-simple .contact-support-preview {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid #c1c9bd;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.contact-page-simple .contact-support-preview h3 {
+  margin: 0;
+  color: #111c2c;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+.contact-page-simple .contact-support-preview p {
+  margin: 0;
+  color: #414940;
+  line-height: 1.6;
+}
+.contact-page-simple .contact-support-preview .primary-link {
+  display: inline-flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #2bd567;
+  box-shadow: 0 10px 22px rgba(43, 213, 103, 0.22);
+}
+.contact-page-simple .contact-support-preview__latest {
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #f7f8fa;
+  display: grid;
+  gap: 6px;
+}
+.contact-page-simple .contact-support-preview__latest strong {
+  font-size: 1rem;
+}
+.contact-page-simple .contact-support-preview__latest p > span {
+  text-transform: capitalize;
+  font-weight: 700;
+  color: #0d56da;
+}
+.contact-page-simple .contact-support-preview__cta {
   min-height: 40px;
   padding: 0 14px;
   border-radius: 8px;
@@ -294,6 +294,6 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.contact-support-preview__cta:hover {
+.contact-page-simple .contact-support-preview__cta:hover {
   background: #0b49ba;
 }
