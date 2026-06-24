@@ -28,10 +28,10 @@
 }
 .cart-table.panel {
   padding: 0;
-  border: 0;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 18px 60px rgba(27, 25, 22, 0.08);
   overflow: hidden;
 }
 .cart-table__head {
@@ -226,8 +226,9 @@
 .cart-summary.panel {
   padding: 24px;
   border-radius: 4px;
-  border: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(217, 226, 240, 0.95);
+  background: #ffffff;
+  box-shadow: 0 18px 60px rgba(27, 25, 22, 0.08);
   display: grid;
   gap: 18px;
   align-self: start;
@@ -405,8 +406,8 @@
   padding: 56px 40px;
   border-radius: 4px;
   background: #ffffff;
-  border: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(217, 226, 240, 0.95);
+  box-shadow: 0 18px 60px rgba(27, 25, 22, 0.08);
   display: grid;
   justify-items: center;
   text-align: center;
