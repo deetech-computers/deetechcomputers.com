@@ -41,6 +41,7 @@ export default function OrderCompletedPage() {
 
     if (typeof window !== "undefined") {
       const savedOrder = readLastOrder();
+      clearLastOrder();
       setOrder(savedOrder);
       const shouldAnimate =
         window.sessionStorage.getItem("deetech-order-complete-animate") === "1";
@@ -87,14 +88,12 @@ export default function OrderCompletedPage() {
 
       return () => {
         cancelled = true;
-        clearLastOrder();
       };
     }
-    setOrder(readLastOrder());
+    const savedOrder = readLastOrder();
+    clearLastOrder();
+    setOrder(savedOrder);
     setPageReady(true);
-    return () => {
-      clearLastOrder();
-    };
   }, []);
 
   const summary = useMemo(() => {
