@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import "./reset-password-desktop.css";
+import "./reset-password-mobile.css";
 
 export default async function ResetPasswordAliasPage({ searchParams }) {
   const params = await searchParams;

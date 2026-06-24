@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { API_BASE_AUTH } from "@/lib/config";
 import { requestJson } from "@/lib/http";
+import "@/components/auth/auth-hp-desktop.css";
+import "@/components/auth/auth-hp-mobile.css";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

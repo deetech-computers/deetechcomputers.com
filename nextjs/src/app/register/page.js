@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
+import "@/components/auth/auth-hp-desktop.css";
+import "@/components/auth/auth-hp-mobile.css";
 
 export default function RegisterPage() {
   const router = useRouter();

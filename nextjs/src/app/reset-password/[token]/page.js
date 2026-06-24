@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { API_BASE_AUTH } from "@/lib/config";
 import { requestJson } from "@/lib/http";
+import "../reset-password-desktop.css";
+import "../reset-password-mobile.css";
 
 export default function ResetPasswordPage({ params }) {
   const router = useRouter();
