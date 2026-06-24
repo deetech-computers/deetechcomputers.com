@@ -22,6 +22,8 @@ import { requestWithToken } from "@/lib/resource";
 import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
 import { formatCurrency } from "@/lib/format";
 import { getLinesDiscountTotal } from "@/lib/order-line-pricing";
+import "./account-desktop.css";
+import "./account-mobile.css";
 import {
   buildAdminNotifications,
   buildNotificationScope,
