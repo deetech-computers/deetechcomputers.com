@@ -62,68 +62,6 @@
     min-height: 21px;
   }
 
-  .admin-dashboard-mobile-menu {
-    display: block;
-  }
-
-  .admin-dashboard-mobile-menu__backdrop {
-    position: fixed;
-    z-index: 100;
-    inset: 0;
-    border: 0;
-    background: rgba(17, 28, 44, 0.35);
-  }
-
-  .admin-dashboard-mobile-menu__panel {
-    position: fixed;
-    z-index: 101;
-    inset: 0 auto 0 0;
-    width: min(82vw, 310px);
-    display: grid;
-    align-content: start;
-    gap: 3px;
-    padding: 20px 16px;
-    background: #f9f9ff;
-    box-shadow: 18px 0 50px rgba(17, 28, 44, 0.18);
-  }
-
-  .admin-dashboard-mobile-menu__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 0 4px 16px;
-    color: #003714;
-  }
-
-  .admin-dashboard-mobile-menu__head button {
-    min-height: 36px;
-    padding: 0 12px;
-    border: 1px solid #c1c9bd;
-    border-radius: 4px;
-    background: #fff;
-    color: #003714;
-    font-weight: 700;
-  }
-
-  .admin-dashboard-mobile-menu__panel a {
-    min-height: 46px;
-    display: grid;
-    grid-template-columns: 24px minmax(0, 1fr);
-    align-items: center;
-    gap: 12px;
-    padding: 0 10px;
-    border-radius: 4px;
-    color: #111c2c;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .admin-dashboard-mobile-menu__panel a:first-of-type {
-    background: #a6f5af;
-    color: #27723a;
-  }
-
   .admin-dash-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -6,19 +6,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { API_BASE, API_BASE_ORDERS, API_BASE_PRODUCTS, API_BASE_SUPPORT, API_BASE_USERS } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { requestWithToken } from "@/lib/resource";
+import { MobileNavDrawer } from "./admin-nav";
 
 const REFRESH_MS = 30_000;
-const MOBILE_ADMIN_LINKS = [
-  ["/admin", "Dashboard", "dashboard"],
-  ["/admin/orders", "Orders", "orders"],
-  ["/admin/products", "Products", "products"],
-  ["/admin/users", "Users", "users"],
-  ["/admin/affiliates", "Affiliates", "affiliates"],
-  ["/admin/reviews", "Reviews", "messages"],
-  ["/admin/banners", "Banners", "banner"],
-  ["/admin/messages", "Messages", "messages"],
-  ["/admin/discounts", "Discounts", "discounts"],
-];
 
 function formatDateTime(value) {
   const date = value ? new Date(value) : null;
@@ -374,23 +364,7 @@ export default function AdminDashboard() {
           </Link>
         </header>
 
-        {mobileNavOpen ? (
-          <div className="admin-dashboard-mobile-menu" role="dialog" aria-modal="true" aria-label="Admin navigation">
-            <button type="button" className="admin-dashboard-mobile-menu__backdrop" aria-label="Close admin menu" onClick={() => setMobileNavOpen(false)} />
-            <nav className="admin-dashboard-mobile-menu__panel" aria-label="Admin sections">
-              <div className="admin-dashboard-mobile-menu__head">
-                <strong>DEETECH Admin</strong>
-                <button type="button" onClick={() => setMobileNavOpen(false)}>Close</button>
-              </div>
-              {MOBILE_ADMIN_LINKS.map(([href, label, icon]) => (
-                <Link key={href} href={href} onClick={() => setMobileNavOpen(false)}>
-                  <AdminDashIcon name={icon} />
-                  {label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        ) : null}
+        <MobileNavDrawer open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
         <section className="admin-dashboard__topbar">
           <div>
