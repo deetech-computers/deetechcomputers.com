@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { requestJson } from "@/lib/http";
+import { downloadInvoiceHtml } from "@/lib/invoice";
 import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { requestWithToken } from "@/lib/resource";
@@ -73,6 +74,14 @@ function OrderTrackIcon({ name }) {
         <circle cx="7" cy="18" r="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
         <circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
         <path d="M3 10H1m2 3H2m1-6H2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (name === "download") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3v12m0 0-4-4m4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   }
@@ -269,6 +278,15 @@ export default function TrackOrderPage() {
                     : `Subtotal ${formatCurrency(Number(order.itemsPrice || 0))} + Free Delivery`}
                 </small>
                 {productSavings > 0 ? <small>Product savings {formatCurrency(productSavings)}</small> : null}
+                <button
+                  type="button"
+                  className="track-order-top__download"
+                  onClick={() => downloadInvoiceHtml(order)}
+                  aria-label="Download receipt"
+                >
+                  <OrderTrackIcon name="download" />
+                  <span>Download Receipt</span>
+                </button>
               </div>
             </div>
 

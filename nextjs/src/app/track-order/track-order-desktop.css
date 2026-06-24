@@ -272,6 +272,32 @@
   color: #5b6660;
   font-size: 0.78rem;
 }
+.track-order-top__download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: #184f27;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.track-order-top__download:hover,
+.track-order-top__download:focus-visible {
+  background: #003714;
+}
+.track-order-top__download svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
 .track-order-progress {
   position: relative;
   display: grid;
