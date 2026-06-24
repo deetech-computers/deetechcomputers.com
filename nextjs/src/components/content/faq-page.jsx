@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import "./static-content-page-desktop.css";
+import "./static-content-page-mobile.css";
 
 const items = [
   ["What types of products do you offer?", "We offer laptops, desktops, monitors, accessories, networking gear, printers, gaming devices, and selected mobile devices based on current stock and verified quality."],

@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import "./static-content-page-desktop.css";
+import "./static-content-page-mobile.css";
 
 function PolicyContentBlock({ block }) {
   return (
