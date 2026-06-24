@@ -6,6 +6,10 @@ import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
 import { useAuth } from "@/hooks/use-auth";
 import { API_BASE, API_BASE_SUPPORT } from "@/lib/config";
+import "@/components/content/static-content-page-desktop.css";
+import "@/components/content/static-content-page-mobile.css";
+import "./contact-desktop.css";
+import "./contact-mobile.css";
 
 const contactCards = [
   {
