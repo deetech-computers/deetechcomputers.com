@@ -2360,7 +2360,7 @@ export async function getGuestOrderById(req, res) {
     throw new Error("Order not found");
   }
 
-  const order = await Order.findOne({ _id: orderId, user: null })
+  const order = await Order.findOne({ _id: orderId })
     .populate("orderItems.product", "name price brand category images image");
 
   if (!order) {
@@ -2396,7 +2396,6 @@ export async function lookupGuestOrder(req, res) {
 
   const order = await Order.findOne({
     _id: orderId,
-    user: null,
     $or: [{ shippingEmail: email }, { guestEmail: email }],
   });
 
