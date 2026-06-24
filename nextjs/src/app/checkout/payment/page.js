@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import EmptyState from "@/components/ui/empty-state";
 import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
@@ -924,13 +923,11 @@ export default function CheckoutPaymentPage() {
   if (!items.length && transitionStage === "idle") {
     return (
       <main className="shell page-section checkout-payment-route">
-        <EmptyState
-          icon="cart"
-          title="Your cart is empty"
-          description="Add products to your cart before moving to checkout."
-          actionHref="/products"
-          actionLabel="Browse products"
-        />
+        <section className="panel cart-empty">
+          <h2>Your cart is empty</h2>
+          <p className="hero-copy">Add products to your cart before moving to checkout.</p>
+          <Link href="/products" className="primary-link">Browse products</Link>
+        </section>
       </main>
     );
   }

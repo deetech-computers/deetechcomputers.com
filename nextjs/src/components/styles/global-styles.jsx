@@ -2113,28 +2113,25 @@ button, input, select, textarea { font: inherit; }
 }
 .empty-state .primary-link,
 .empty-state .primary-button {
-  background:
-    radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.14), transparent 34%),
-    linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%) !important;
+  background: #184f27 !important;
+  background-image: none !important;
   color: #ffffff !important;
-  box-shadow: 0 14px 32px rgba(10, 79, 207, 0.22);
-  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
+  border-radius: 4px;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 .empty-state .primary-link:hover,
 .empty-state .primary-link:focus-visible,
 .empty-state .primary-button:hover,
 .empty-state .primary-button:focus-visible {
-  background:
-    radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.14), transparent 34%),
-    linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%) !important;
+  background: #003714 !important;
   transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(10, 79, 207, 0.28);
-  filter: saturate(1.04);
+  box-shadow: 0 18px 38px rgba(24, 79, 39, 0.28);
 }
 .empty-state .primary-link:active,
 .empty-state .primary-button:active {
   transform: translateY(0);
-  box-shadow: 0 10px 24px rgba(10, 79, 207, 0.2);
+  box-shadow: 0 10px 24px rgba(24, 79, 39, 0.2);
 }
 .auth-form { display: grid; gap: 14px; margin-top: 18px; }
 .auth-links {
