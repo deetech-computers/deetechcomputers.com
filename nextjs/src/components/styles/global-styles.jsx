@@ -18284,17 +18284,13 @@ button, input, select, textarea { font: inherit; }
   display: grid;
   gap: 4px;
 }
-.track-order-page {
+.track-order-page,
+.track-order-entry-page {
   min-height: 70vh;
-  background:
-    radial-gradient(circle at 50% 16%, rgba(24, 79, 39, 0.06), transparent 32%),
-    #f5f6f7;
+  background: #f5f6f7;
 }
 .track-order-page__shell {
-  padding-block: 42px 76px;
-}
-.track-order-mobile-head {
-  display: none;
+  padding-block: 32px 64px;
 }
 .track-order-hero {
   display: grid;
@@ -18305,24 +18301,26 @@ button, input, select, textarea { font: inherit; }
 }
 .track-order-hero h1 {
   margin: 0;
-  color: #1b1916;
-  font-size: clamp(2.8rem, 6vw, 4.8rem);
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.95;
+  color: #003714;
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 .track-order-hero p {
   max-width: 680px;
   margin: 0;
-  color: #665d52;
+  color: #5b6660;
 }
 .track-order-hero__crumbs {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  color: #1b1916;
-  font-size: 0.95rem;
+  gap: 8px;
+  color: #5b6660;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .track-order-hero__crumbs a {
   color: inherit;
@@ -18338,17 +18336,31 @@ button, input, select, textarea { font: inherit; }
   width: min(480px, 100%);
   margin: 0 auto;
   padding: clamp(24px, 4vw, 36px);
+  border: 1px solid #e2e8e4;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.track-order-entry-card label span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5b6660;
 }
 .track-order-entry-card__error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   color: #ba1a1a;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 .track-order-entry-card__note {
   margin: 0;
   padding-top: 14px;
-  border-top: 1px solid #ece7de;
-  color: #665d52;
+  border-top: 1px solid #e2e8e4;
+  color: #5b6660;
   font-size: 0.88rem;
   text-align: center;
 }
@@ -18361,236 +18373,252 @@ button, input, select, textarea { font: inherit; }
 .track-order-top,
 .track-order-products,
 .track-order-state {
-  border: 1px solid rgba(24, 79, 39, 0.12);
-  border-radius: 22px;
-  box-shadow: 0 26px 70px rgba(27, 25, 22, 0.08);
+  border: 1px solid #e2e8e4;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 .track-order-top {
   display: grid;
-  gap: 34px;
-  padding: 28px;
+  gap: 24px;
+  padding: 24px;
 }
 .track-order-top__header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, auto);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, auto);
   align-items: start;
   gap: 24px;
 }
 .track-order-top__back {
   width: fit-content;
-  min-height: 44px;
-  margin-bottom: 16px;
-  padding-inline: 18px;
-  border: 1px solid #e8e0d4;
-  border-radius: 999px;
-  color: #1b1916;
-  background: #fffdf9;
+  min-height: 36px;
+  margin-bottom: 14px;
+  padding-inline: 0;
+  border: 0;
+  color: #184f27;
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.86rem;
   text-decoration: none;
 }
 .track-order-top__back:hover,
 .track-order-top__back:focus-visible {
-  border-color: rgba(24, 79, 39, 0.28);
-  color: #184f27;
-  transform: translateY(-1px);
+  text-decoration: underline;
 }
 .track-order-top__header h2 {
-  color: #1b1916;
-  font-size: clamp(1.45rem, 3vw, 2rem);
-  font-weight: 900;
+  color: #003714;
+  font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  font-weight: 700;
 }
 .track-order-top__header p {
-  margin: 8px 0 12px;
-  color: #3a352d;
-  font-size: 1.05rem;
+  margin: 6px 0 12px;
+  color: #5b6660;
+  font-size: 0.92rem;
+  font-family: "Geist", monospace;
 }
 .track-order-status-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
+  min-height: 28px;
   padding: 0 12px;
   border-radius: 999px;
-  background: rgba(24, 79, 39, 0.1);
-  color: #184f27;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.05em;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.track-order-status-pill.is-cancelled {
-  background: rgba(192, 57, 43, 0.1);
-  color: #9f2d2d;
+.track-order-status-pill.is-delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+.track-order-status-pill.is-cancelled,
+.track-order-status-pill.is-failed {
+  background: #fdecea;
+  color: #ba1a1a;
 }
 .track-order-top__meta {
   display: grid;
-  min-width: 280px;
+  min-width: 260px;
   justify-items: end;
-  gap: 6px;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f8f2e6;
   text-align: right;
 }
 .track-order-top__meta em {
-  color: #1b1916;
-  font-size: 0.9rem;
+  color: #5b6660;
+  font-size: 0.8rem;
   font-style: normal;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 .track-order-top__meta strong {
   color: #003714;
-  font-size: 1.45rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: "Geist", monospace;
+}
+.track-order-top__meta small {
+  color: #5b6660;
+  font-size: 0.78rem;
 }
 .track-order-progress {
   position: relative;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
   padding-top: 8px;
 }
 .track-order-progress__line {
   position: absolute;
-  left: calc(10% + 24px);
-  right: calc(10% + 24px);
-  top: 37px;
+  left: calc(10% + 20px);
+  right: calc(10% + 20px);
+  top: 20px;
   z-index: 0;
-  height: 5px;
+  height: 2px;
   overflow: hidden;
-  border-radius: 999px;
-  background: #e8e0d4;
+  background: #e2e8e4;
 }
 .track-order-progress__fill {
   display: block;
   width: calc(var(--track-progress, 0) * 100%);
   height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #184f27, #d9a441);
+  background: #184f27;
 }
 .track-order-step {
   position: relative;
   z-index: 1;
   display: grid;
   justify-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   text-align: center;
 }
 .track-order-step__icon {
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
-  border: 1px solid #e8e0d4;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #b8b1a5;
-  box-shadow: 0 12px 28px rgba(27, 25, 22, 0.06);
+  border-radius: 999px;
+  background: #e2e8e4;
+  color: #5b6660;
 }
 .track-order-step__icon svg {
-  width: 26px;
-  height: 26px;
+  width: 18px;
+  height: 18px;
   display: block;
 }
 .track-order-step__copy {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 .track-order-step strong {
-  color: #1b1916;
-  font-size: 0.96rem;
-  font-weight: 900;
+  color: #5b6660;
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 .track-order-step span {
-  color: #665d52;
-  font-size: 0.86rem;
-  line-height: 1.45;
+  color: #8a9088;
+  font-size: 0.76rem;
+  line-height: 1.4;
 }
-.track-order-step.is-done .track-order-step__icon,
-.track-order-step.is-active .track-order-step__icon {
-  border-color: rgba(24, 79, 39, 0.22);
-  color: #184f27;
-  background: #f0fff4;
+.track-order-step.is-done .track-order-step__icon {
+  background: #1f6c35;
+  color: #ffffff;
 }
 .track-order-step.is-active .track-order-step__icon {
-  box-shadow: 0 0 0 6px rgba(24, 79, 39, 0.08), 0 16px 34px rgba(24, 79, 39, 0.14);
+  background: #184f27;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px #b5f1ba;
 }
 .track-order-step.is-done strong,
 .track-order-step.is-active strong {
   color: #003714;
 }
-.track-order-step.is-muted .track-order-step__icon,
+.track-order-step.is-muted .track-order-step__icon {
+  background: #fdecea;
+  color: #ba1a1a;
+}
 .track-order-step.is-muted strong,
 .track-order-step.is-muted span {
-  color: #9f2d2d;
+  color: #ba1a1a;
 }
 .track-order-products {
   display: grid;
-  gap: 18px;
-  padding: 28px;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
 }
 .track-order-products__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid #e8e0d4;
+  padding: 16px 24px;
+  background: #f5f6f7;
+  border-bottom: 1px solid #e2e8e4;
 }
 .track-order-products__head h2 {
-  color: #1b1916;
-  font-size: 1.5rem;
-  font-weight: 900;
+  color: #003714;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 .track-order-products__head span {
-  color: #665d52;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: #5b6660;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 .track-order-products__list {
   display: grid;
+  padding: 0 24px;
 }
 .track-order-product {
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
-  padding: 18px 0;
-  border-bottom: 1px solid #e8e0d4;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8e4;
 }
 .track-order-product:last-child {
   border-bottom: 0;
 }
 .track-order-product__link {
-  grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
 }
 .track-order-product__thumb {
-  width: 76px;
-  height: 76px;
-  border: 1px solid #e8e0d4;
-  border-radius: 14px;
-  background: #f8f2e6;
+  width: 64px;
+  height: 64px;
+  border: 1px solid #e2e8e4;
+  border-radius: 8px;
+  background: #f5f6f7;
 }
 .track-order-product__copy strong {
-  color: #1b1916;
-  font-weight: 900;
+  color: #003714;
+  font-weight: 700;
 }
 .track-order-product__copy span {
-  color: #665d52;
+  color: #5b6660;
 }
 .track-order-product__meta {
   display: grid;
-  min-width: 150px;
+  min-width: 130px;
   justify-items: end;
-  gap: 7px;
+  gap: 6px;
   text-align: right;
 }
 .track-order-product__meta small {
-  color: #8f8a80;
+  color: #8a9088;
   text-decoration: line-through;
 }
 .track-order-product__meta strong {
   color: #003714;
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Geist", monospace;
 }
 .track-order-state {
   display: grid;
@@ -18598,21 +18626,21 @@ button, input, select, textarea { font: inherit; }
   gap: 14px;
   max-width: 780px;
   margin-inline: auto;
-  padding: 58px 28px;
+  padding: 48px 24px;
   text-align: center;
 }
 .track-order-state__mark {
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   display: grid;
   place-items: center;
-  border-radius: 24px;
-  background: #edf3ff;
+  border-radius: 999px;
+  background: #f8f2e6;
   color: #184f27;
 }
 .track-order-state__mark svg {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
 }
 .track-order-state h2,
 .track-order-state p {
@@ -18620,12 +18648,12 @@ button, input, select, textarea { font: inherit; }
 }
 .track-order-state h2 {
   color: #003714;
-  font-size: 1.45rem;
-  font-weight: 900;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 .track-order-state p {
   max-width: 460px;
-  color: #665d52;
+  color: #5b6660;
   line-height: 1.6;
 }
 .track-order-state__actions {
@@ -18635,165 +18663,112 @@ button, input, select, textarea { font: inherit; }
   gap: 16px;
 }
 @media (max-width: 640px) {
-  body.has-track-order-page .site-header {
-    display: none;
-  }
   body.has-track-order-page .app-content {
     padding-top: 0;
   }
   .track-order-page {
     min-height: 100dvh;
-    background:
-      radial-gradient(circle at 50% 30%, rgba(24, 79, 39, 0.06), transparent 38%),
-      #f5f6f7;
-  }
-  .track-order-mobile-head {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    min-height: 68px;
-    padding: 10px 16px;
-    border-bottom: 1px solid rgba(24, 79, 39, 0.2);
-    background: #ffffff;
-  }
-  .track-order-mobile-head a {
-    display: inline-flex;
-    min-width: 0;
-    align-items: center;
-    gap: 8px;
-    color: #003714;
-    font-size: 0.88rem;
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .track-order-mobile-head a svg {
-    width: 22px;
-    height: 22px;
-    flex: 0 0 auto;
-  }
-  .track-order-mobile-head a span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .track-order-mobile-head h1 {
-    min-width: 0;
-    margin: 0;
-    overflow: hidden;
-    color: #111827;
-    font-size: clamp(0.9rem, 4.1vw, 1.08rem);
-    font-weight: 900;
-    letter-spacing: 0;
-    line-height: 1.1;
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .track-order-mobile-head__icon {
-    display: grid;
-    min-width: 0;
-    justify-items: end;
-    color: #003714;
-  }
-  .track-order-mobile-head__icon svg {
-    width: 24px;
-    height: 24px;
+    background: #f5f6f7;
   }
   .track-order-page__shell {
     width: 100%;
     max-width: none;
-    padding: 18px 16px 34px;
+    padding: 16px 16px 34px;
   }
   .track-order-hero {
-    display: none;
+    margin-bottom: 18px;
+    text-align: left;
+    justify-items: start;
+  }
+  .track-order-hero h1 {
+    font-size: 1.4rem;
+  }
+  .track-order-hero__crumbs {
+    justify-content: flex-start;
   }
   .track-order-shell {
-    gap: 16px;
+    gap: 14px;
     max-width: none;
   }
-  .track-order-top,
-  .track-order-products,
-  .track-order-state {
-    border-color: rgba(24, 79, 39, 0.16);
-    border-radius: 14px;
-    box-shadow: 0 18px 42px rgba(27, 25, 22, 0.07);
-  }
   .track-order-top {
-    gap: 24px;
+    gap: 18px;
     padding: 18px;
   }
   .track-order-top__header {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 14px;
   }
   .track-order-top__back {
-    display: none;
+    display: inline-flex;
   }
   .track-order-top__header h2 {
-    font-size: 1.28rem;
+    font-size: 1.2rem;
   }
   .track-order-top__header p {
     max-width: 100%;
     overflow-wrap: anywhere;
-    font-size: 0.9rem;
+    font-size: 0.86rem;
   }
   .track-order-status-pill {
-    min-height: 28px;
+    min-height: 26px;
     font-size: 0.68rem;
   }
   .track-order-top__meta {
     width: 100%;
     min-width: 0;
     justify-items: start;
-    padding: 14px;
-    border: 1px solid #e8e0d4;
-    border-radius: 12px;
-    background: #f8f2e6;
     text-align: left;
   }
   .track-order-top__meta strong {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
   .track-order-progress {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 0;
     padding-top: 0;
   }
   .track-order-progress__line {
-    left: 23px;
-    right: auto;
-    top: 24px;
-    bottom: 24px;
-    width: 4px;
-    height: auto;
-  }
-  .track-order-progress__fill {
-    width: 100%;
-    height: calc(var(--track-progress, 0) * 100%);
+    display: none;
   }
   .track-order-step {
-    grid-template-columns: 48px minmax(0, 1fr);
+    position: relative;
+    grid-template-columns: 40px minmax(0, 1fr);
     justify-items: start;
-    align-items: center;
-    gap: 10px;
-    min-height: 64px;
+    align-items: start;
+    gap: 12px;
+    padding-bottom: 24px;
     text-align: left;
   }
+  .track-order-step::before {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8e4;
+  }
+  .track-order-step:last-child {
+    padding-bottom: 0;
+  }
+  .track-order-step:last-child::before {
+    display: none;
+  }
+  .track-order-step.is-done::before,
+  .track-order-step.is-active::before {
+    background: #1f6c35;
+  }
   .track-order-step__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 40px;
+    height: 40px;
   }
   .track-order-step__icon svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
   }
   .track-order-step__copy {
     gap: 4px;
+    padding-top: 8px;
   }
   .track-order-step strong {
     font-size: 0.9rem;
@@ -18801,28 +18776,30 @@ button, input, select, textarea { font: inherit; }
   .track-order-step span {
     font-size: 0.78rem;
   }
-  .track-order-products {
-    padding: 18px;
+  .track-order-products__head {
+    padding: 14px 16px;
   }
   .track-order-products__head h2 {
-    font-size: 1.16rem;
+    font-size: 0.86rem;
   }
   .track-order-products__head span {
     font-size: 0.72rem;
   }
+  .track-order-products__list {
+    padding: 0 16px;
+  }
   .track-order-product {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 16px 0;
+    gap: 10px;
+    padding: 14px 0;
   }
   .track-order-product__link {
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: 56px minmax(0, 1fr);
     gap: 12px;
   }
   .track-order-product__thumb {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
+    width: 56px;
+    height: 56px;
   }
   .track-order-product__copy strong {
     white-space: normal;
@@ -18837,27 +18814,18 @@ button, input, select, textarea { font: inherit; }
     min-width: 0;
     justify-items: start;
     gap: 4px;
-    padding-left: 76px;
+    padding-left: 68px;
     text-align: left;
   }
   .track-order-state {
     min-height: calc(100dvh - 120px);
-    padding: 42px 22px;
-  }
-  .track-order-state__mark {
-    width: 72px;
-    height: 72px;
-    border-radius: 20px;
-  }
-  .track-order-state__mark svg {
-    width: 36px;
-    height: 36px;
+    padding: 36px 20px;
   }
   .track-order-state h2 {
-    font-size: 1.18rem;
+    font-size: 1.15rem;
   }
   .track-order-state p {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
   }
 }
 @keyframes checkoutSuccessFade {

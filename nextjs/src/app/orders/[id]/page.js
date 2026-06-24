@@ -193,19 +193,6 @@ export default function TrackOrderPage() {
 
   return (
     <main className="track-order-page">
-      <header className="track-order-mobile-head">
-        <Link href={backHref} aria-label={`Back to ${backLabel}`}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span>{backLabel}</span>
-        </Link>
-        <h1>Track Order</h1>
-        <span className="track-order-mobile-head__icon" aria-hidden="true">
-          <OrderTrackIcon name="shipped" />
-        </span>
-      </header>
-
       <div className="shell track-order-page__shell">
         <section className="track-order-hero">
           <p className="track-order-hero__crumbs">
