@@ -11,6 +11,8 @@ import { requestJson } from "@/lib/http";
 import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
 import { requestWithToken } from "@/lib/resource";
+import "../../track-order/track-order-desktop.css";
+import "../../track-order/track-order-mobile.css";
 
 const TRACK_STEPS = [
   { key: "placed", label: "Order Placed", icon: "placed" },

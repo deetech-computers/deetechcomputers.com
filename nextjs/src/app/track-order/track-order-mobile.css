@@ -1,0 +1,164 @@
+
+@media (max-width: 640px) {
+  .track-order-page {
+    min-height: 100dvh;
+    background: #f5f6f7;
+  }
+  .track-order-page__shell {
+    width: 100%;
+    max-width: none;
+    padding: 16px 16px 34px;
+  }
+  .track-order-hero {
+    margin-bottom: 18px;
+    text-align: left;
+    justify-items: start;
+  }
+  .track-order-hero h1 {
+    font-size: 1.4rem;
+  }
+  .track-order-hero__crumbs {
+    justify-content: flex-start;
+  }
+  .track-order-shell {
+    gap: 14px;
+    max-width: none;
+  }
+  .track-order-top {
+    gap: 18px;
+    padding: 18px;
+  }
+  .track-order-top__header {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .track-order-top__back {
+    display: inline-flex;
+  }
+  .track-order-top__header h2 {
+    font-size: 1.2rem;
+  }
+  .track-order-top__header p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: 0.86rem;
+  }
+  .track-order-status-pill {
+    min-height: 26px;
+    font-size: 0.68rem;
+  }
+  .track-order-top__meta {
+    width: 100%;
+    min-width: 0;
+    justify-items: start;
+    text-align: left;
+  }
+  .track-order-top__meta strong {
+    font-size: 1.3rem;
+  }
+  .track-order-progress {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 0;
+  }
+  .track-order-progress__line {
+    display: none;
+  }
+  .track-order-step {
+    position: relative;
+    grid-template-columns: 40px minmax(0, 1fr);
+    justify-items: start;
+    align-items: start;
+    gap: 12px;
+    padding-bottom: 24px;
+    text-align: left;
+  }
+  .track-order-step::before {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8e4;
+  }
+  .track-order-step:last-child {
+    padding-bottom: 0;
+  }
+  .track-order-step:last-child::before {
+    display: none;
+  }
+  .track-order-step.is-done::before,
+  .track-order-step.is-active::before {
+    background: #1f6c35;
+  }
+  .track-order-step__icon {
+    width: 40px;
+    height: 40px;
+  }
+  .track-order-step__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .track-order-step__copy {
+    gap: 4px;
+    padding-top: 8px;
+  }
+  .track-order-step strong {
+    font-size: 0.9rem;
+  }
+  .track-order-step span {
+    font-size: 0.78rem;
+  }
+  .track-order-products__head {
+    padding: 14px 16px;
+  }
+  .track-order-products__head h2 {
+    font-size: 0.86rem;
+  }
+  .track-order-products__head span {
+    font-size: 0.72rem;
+  }
+  .track-order-products__list {
+    padding: 0 16px;
+  }
+  .track-order-product {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 14px 0;
+  }
+  .track-order-product__link {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .track-order-product__thumb {
+    width: 56px;
+    height: 56px;
+  }
+  .track-order-product__copy strong {
+    white-space: normal;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .track-order-product__copy span {
+    font-size: 0.78rem;
+  }
+  .track-order-product__meta {
+    grid-column: 1;
+    min-width: 0;
+    justify-items: start;
+    gap: 4px;
+    padding-left: 68px;
+    text-align: left;
+  }
+  .track-order-state {
+    min-height: calc(100dvh - 120px);
+    padding: 36px 20px;
+  }
+  .track-order-state h2 {
+    font-size: 1.15rem;
+  }
+  .track-order-state p {
+    font-size: 0.9rem;
+  }
+}

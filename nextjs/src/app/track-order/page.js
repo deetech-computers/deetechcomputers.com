@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { requestJson } from "@/lib/http";
+import "./track-order-desktop.css";
+import "./track-order-mobile.css";
 
 export default function TrackOrderEntryPage() {
   const router = useRouter();

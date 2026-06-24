@@ -8,6 +8,8 @@ import { API_BASE, SITE_URL } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
+import "./affiliates-desktop.css";
+import "./affiliates-mobile.css";
 
 function formatDate(value) {
   if (!value) return "Pending";
