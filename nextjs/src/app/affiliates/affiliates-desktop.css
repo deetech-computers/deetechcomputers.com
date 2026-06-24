@@ -714,7 +714,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 .affiliate-stats strong {
   max-width: 100%;
