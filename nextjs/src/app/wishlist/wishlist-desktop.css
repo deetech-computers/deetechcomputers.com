@@ -324,39 +324,112 @@
   transform: translateY(-1px);
   color: #8d5c09;
 }
-.wishlist-empty {
+.wishlist-guest-state {
   display: grid;
-  gap: 18px;
-  justify-items: start;
+  max-width: 1060px;
+  margin: 0 auto 54px;
 }
-.wishlist-empty .stack-actions {
+.wishlist-guest-state__card {
+  min-height: 360px;
+  padding: clamp(34px, 5vw, 64px);
+  border: 1px solid rgba(24, 79, 39, 0.18);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(156, 243, 168, 0.22), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+  box-shadow: 0 26px 70px rgba(27, 25, 22, 0.08);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 20px;
+}
+.wishlist-guest-state__mark {
+  width: 88px;
+  height: 88px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #f0fff4;
+  color: #184f27;
+}
+.wishlist-guest-state__mark svg {
+  width: 40px;
+  height: 40px;
+}
+.wishlist-guest-state__copy {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+.wishlist-guest-state__eyebrow {
+  margin: 0;
+  color: #18572a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.wishlist-guest-state__copy h2 {
+  margin: 0;
+  color: #0b1320;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1.15;
+}
+.wishlist-guest-state__copy p:last-child {
+  margin: 0;
+  max-width: 480px;
+  color: #4b5550;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.wishlist-guest-state__actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-.wishlist-empty .primary-link,
-.wishlist-empty .ghost-link {
-  min-width: 166px;
+.wishlist-guest-state__primary,
+.wishlist-guest-state__secondary {
+  min-width: 160px;
   min-height: 50px;
   padding: 0 24px;
-  text-align: center;
-  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
 }
-.wishlist-empty .primary-link:hover,
-.wishlist-empty .primary-link:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(10, 79, 207, 0.24);
+.wishlist-guest-state__primary {
+  background: #184f27;
+  color: #ffffff;
+  box-shadow: 0 16px 32px rgba(24, 79, 39, 0.18);
 }
-.wishlist-empty .ghost-link:hover,
-.wishlist-empty .ghost-link:focus-visible {
+.wishlist-guest-state__primary:hover,
+.wishlist-guest-state__primary:focus-visible {
+  background: #003714;
   transform: translateY(-2px);
-  border-color: rgba(13, 86, 218, 0.3);
-  color: #0a43ad;
+  box-shadow: 0 18px 38px rgba(24, 79, 39, 0.24);
+}
+.wishlist-guest-state__primary:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 24px rgba(24, 79, 39, 0.18);
+}
+.wishlist-guest-state__secondary {
+  border: 1px solid rgba(24, 79, 39, 0.34);
+  background: #ffffff;
+  color: #184f27;
+}
+.wishlist-guest-state__secondary:hover,
+.wishlist-guest-state__secondary:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(24, 79, 39, 0.5);
   box-shadow: 0 14px 28px rgba(17, 24, 39, 0.08);
 }
-.wishlist-empty .primary-link:active,
-.wishlist-empty .ghost-link:active {
+.wishlist-guest-state__secondary:active {
   transform: translateY(0);
   box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
 }
@@ -523,71 +596,4 @@
     line-height: 1.35;
   }
 @media (prefers-reduced-motion: reduce) {
-  .wishlist-row__remove,
-  .wishlist-row__remove-mobile,
-  .wishlist-row__cart,
-  .wishlist-actions__copy,
-  .wishlist-actions__add-all,
-  .wishlist-actions__clear,
-  .wishlist-empty .primary-link,
-  .wishlist-empty .ghost-link,
-  .wishlist-empty-state__primary,
-  .wishlist-empty-state__quick-links a,
-  .wishlist-empty-state__mark,
-  .wishlist-empty-state__mark span,
-  .wishlist-empty-state__quick-links svg {
-    transition: none;
-    animation: none;
-  }
-  .wishlist-row__remove:hover,
-  .wishlist-row__remove:focus-visible,
-  .wishlist-row__remove:active,
-  .wishlist-row__remove-mobile:hover,
-  .wishlist-row__remove-mobile:focus-visible,
-  .wishlist-row__remove-mobile:active,
-  .wishlist-row__cart:hover,
-  .wishlist-row__cart:focus-visible,
-  .wishlist-row__cart:active,
-  .wishlist-actions__copy:hover,
-  .wishlist-actions__copy:focus-visible,
-  .wishlist-actions__copy:active,
-  .wishlist-actions__add-all:hover,
-  .wishlist-actions__add-all:focus-visible,
-  .wishlist-actions__add-all:active,
-  .wishlist-actions__clear:hover,
-  .wishlist-actions__clear:focus-visible,
-  .wishlist-empty .primary-link:hover,
-  .wishlist-empty .primary-link:focus-visible,
-  .wishlist-empty .primary-link:active,
-  .wishlist-empty .ghost-link:hover,
-  .wishlist-empty .ghost-link:focus-visible,
-  .wishlist-empty .ghost-link:active,
-  .wishlist-empty-state__primary:hover,
-  .wishlist-empty-state__primary:focus-visible,
-  .wishlist-empty-state__primary:active,
-  .wishlist-empty-state__quick-links a:hover,
-  .wishlist-empty-state__quick-links a:focus-visible {
-    transform: none;
-  }
-}
-.wishlist-empty .primary-link {
-  background:
-    radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.14), transparent 34%),
-    linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 14px 32px rgba(10, 79, 207, 0.22);
-  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
-}
-.wishlist-empty .primary-link:hover,
-  .wishlist-empty .primary-link:focus-visible {
-  background:
-    radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.14), transparent 34%),
-    linear-gradient(135deg, #0b4dac 0%, #0a4fcf 45%, #0a4aa8 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(10, 79, 207, 0.28);
-  filter: saturate(1.04);
-}
-.wishlist-empty .primary-link:active {
-  transform: translateY(0);
-  box-shadow: 0 10px 24px rgba(10, 79, 207, 0.2);
 }

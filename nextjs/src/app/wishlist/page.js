@@ -234,13 +234,24 @@ export default function WishlistPage() {
       {status === "loading" ? (
         <WishlistSkeleton />
       ) : !isAuthenticated ? (
-        <section className="panel wishlist-empty">
-          <h2>Wishlist is for account holders</h2>
-          <p className="hero-copy">Create an account or login to save products to your wishlist and access them from any device.</p>
-          <div className="stack-actions">
-            <Link href="/login" className="primary-link">Login</Link>
-            <Link href="/register" className="ghost-link">Create account</Link>
-            <Link href="/account" className="ghost-link">Go to account</Link>
+        <section className="wishlist-guest-state" aria-labelledby="wishlist-guest-title">
+          <div className="wishlist-guest-state__card">
+            <div className="wishlist-guest-state__mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div className="wishlist-guest-state__copy">
+              <p className="wishlist-guest-state__eyebrow">Saved products</p>
+              <h2 id="wishlist-guest-title">Wishlist is for account holders</h2>
+              <p>Create an account or login to save products to your wishlist and access them from any device.</p>
+            </div>
+            <div className="wishlist-guest-state__actions">
+              <Link href="/login" className="wishlist-guest-state__primary">Login</Link>
+              <Link href="/register" className="wishlist-guest-state__secondary">Create account</Link>
+              <Link href="/account" className="wishlist-guest-state__secondary">Go to account</Link>
+            </div>
           </div>
         </section>
       ) : !wishlistItems.length ? (
