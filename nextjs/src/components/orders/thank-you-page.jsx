@@ -156,7 +156,8 @@ export default function OrderCompletedPage() {
         </section>
 
         {order && summary ? (
-          <>
+          <div className="order-complete__layout">
+            <div className="order-complete__main">
             <section className="order-complete__meta">
               <div>
                 <span>Order ID</span>
@@ -251,23 +252,44 @@ export default function OrderCompletedPage() {
                 <strong>{formatCurrency(summary.total)}</strong>
               </div>
             </section>
-          </>
-        ) : (
-          <section className="panel order-complete__details">
-            <div className="order-complete__details-head">
-              <h2>Order Details</h2>
             </div>
+
+            <div className="order-complete__side">
+              <div className="hero-actions">
+                {trackingHref ? (
+                  <Link href={trackingHref} className="primary-link">Track Order</Link>
+                ) : null}
+                <Link href="/products" className="primary-link">Continue Shopping</Link>
+                <Link href="/" className="ghost-link">Go Home</Link>
+              </div>
+              <div className="order-complete__security">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                  <path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>Guaranteed Security &amp; Support</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <section className="panel order-complete__empty">
+            <div className="order-complete__empty-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M12 8v5M12 16h.01" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h2>Order Details</h2>
             <p className="hero-copy">Your order has already been processed. Please check your email for the confirmation details.</p>
+            <div className="hero-actions">
+              {trackingHref ? (
+                <Link href={trackingHref} className="primary-link">Track Order</Link>
+              ) : null}
+              <Link href="/products" className="primary-link">Continue Shopping</Link>
+              <Link href="/" className="ghost-link">Go Home</Link>
+            </div>
           </section>
         )}
-
-        <div className="hero-actions">
-          {trackingHref ? (
-            <Link href={trackingHref} className="primary-link">Track Order</Link>
-          ) : null}
-          <Link href="/products" className="primary-link">Continue Shopping</Link>
-          <Link href="/" className="ghost-link">Go Home</Link>
-        </div>
       </section>
     </main>
   );
