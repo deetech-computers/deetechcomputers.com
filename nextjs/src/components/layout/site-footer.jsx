@@ -187,7 +187,7 @@ export default function SiteFooter() {
       links: [
         { href: "/how-it-works", label: "How It Works" },
         { href: "/faq", label: "Frequently Asked Questions" },
-        { href: "/account?tab=orders", label: "Track an Order" },
+        { href: isAuthenticated ? "/account?tab=orders" : "/track-order", label: "Track an Order" },
         { href: "/delivery-policy", label: "Shipping & Delivery" },
         { href: "/return-refund", label: "How to Start a Return" },
         { href: "/payment-policy", label: "Payment Options" },
