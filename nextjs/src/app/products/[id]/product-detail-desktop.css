@@ -44,6 +44,7 @@
 .product-detail-loading__gallery.panel {
   aspect-ratio: 1 / 1;
   min-height: 520px;
+  border-radius: 4px;
   background:
     linear-gradient(90deg, rgba(248, 245, 240, 0.72), rgba(255, 255, 255, 0.92), rgba(248, 245, 240, 0.72));
   background-size: 220% 100%;
@@ -58,7 +59,7 @@
 .product-detail-loading__summary span,
 .product-detail-loading__tabs.panel {
   display: block;
-  border-radius: 0;
+  border-radius: 4px;
   background:
     linear-gradient(90deg, rgba(239, 244, 250, 0.78), rgba(255, 255, 255, 0.96), rgba(239, 244, 250, 0.78));
   background-size: 220% 100%;
