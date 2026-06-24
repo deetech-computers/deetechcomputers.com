@@ -8,6 +8,8 @@ import StableImage from "@/components/ui/stable-image";
 import { API_BASE } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
 import { buildOrderItems, readCheckoutDraft, writeCheckoutDraft } from "@/lib/checkout";
+import "./cart-desktop.css";
+import "./cart-mobile.css";
 import { requestJson } from "@/lib/http";
 import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
@@ -229,7 +231,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section cart-page-route">
       <section className="cart-hero">
         <h1>Shopping Cart</h1>
         <p className="cart-hero__crumbs">

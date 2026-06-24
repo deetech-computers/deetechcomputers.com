@@ -23,6 +23,8 @@ import {
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
 import { fetchProfile } from "@/lib/auth";
+import "./checkout-desktop.css";
+import "./checkout-mobile.css";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -285,7 +287,7 @@ export default function CheckoutPage() {
 
   if (!items.length) {
     return (
-      <main className="shell page-section">
+      <main className="shell page-section checkout-page-route">
         <section className="panel cart-empty">
           <h2>Your cart is empty</h2>
           <p className="hero-copy">Add products to your cart before moving to checkout.</p>
@@ -296,7 +298,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section checkout-page-route">
       <section className="checkout-hero">
         <h1>Checkout</h1>
         <p className="checkout-hero__crumbs">

@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { API_BASE_ORDERS } from "@/lib/config";
 import { prepareHubtelRetryDrafts } from "@/lib/checkout";
 import { requestJson } from "@/lib/http";
+import "../payment-status-desktop.css";
+import "../payment-status-mobile.css";
 
 export default function HubtelPaymentCancelledClient() {
   const router = useRouter();
@@ -67,7 +69,7 @@ export default function HubtelPaymentCancelledClient() {
   }, [clientReference, router, statusToken]);
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section payment-status-route">
       <section className="panel cart-empty">
         <h1>Payment Cancelled</h1>
         <p className="hero-copy">

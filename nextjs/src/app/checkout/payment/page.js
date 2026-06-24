@@ -32,6 +32,8 @@ import { requestJson } from "@/lib/http";
 import { buildCheckoutPricing, fetchCheckoutPricingPreview } from "@/lib/order-pricing";
 import { requestWithToken } from "@/lib/resource";
 import { formatSelectedUpgrades } from "@/lib/product-upgrades";
+import "./payment-desktop.css";
+import "./payment-mobile.css";
 
 function buildSavedOrderItem(item) {
   const pricing = getLinePricing(item);
@@ -921,7 +923,7 @@ export default function CheckoutPaymentPage() {
 
   if (!items.length && transitionStage === "idle") {
     return (
-      <main className="shell page-section">
+      <main className="shell page-section checkout-payment-route">
         <EmptyState
           icon="cart"
           title="Your cart is empty"
@@ -935,7 +937,7 @@ export default function CheckoutPaymentPage() {
 
   if (!ready) {
     return (
-      <main className="shell page-section">
+      <main className="shell page-section checkout-payment-route">
         <section className="panel cart-empty">
           <h2>Preparing payment step...</h2>
           <p className="hero-copy">Checking your checkout details.</p>
@@ -945,7 +947,7 @@ export default function CheckoutPaymentPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section checkout-payment-route">
       {transitionStage !== "idle" ? (
         <div
           className={

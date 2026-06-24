@@ -8,6 +8,8 @@ import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing"
 import { formatCurrency } from "@/lib/format";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { formatCategoryLabel, resolveProductImage } from "@/lib/products";
+import "./order-completed-desktop.css";
+import "./order-completed-mobile.css";
 
 function paymentLabel(value) {
   if (value === "mtn") return "MTN Mobile Money";
@@ -123,7 +125,7 @@ export default function OrderCompletedPage() {
 
   if (!pageReady) {
     return (
-      <main className="page-section">
+      <main className="page-section order-completed-route">
         <section className="order-complete-pending" aria-live="polite">
           <div className="order-complete-pending__card">
             <div className="order-complete-pending__spinner" aria-hidden="true" />
@@ -136,7 +138,7 @@ export default function OrderCompletedPage() {
   }
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section order-completed-route">
       <section className="checkout-hero">
         <h1>Order Completed</h1>
         <p className="checkout-hero__crumbs">

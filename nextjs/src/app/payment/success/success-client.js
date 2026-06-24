@@ -8,6 +8,8 @@ import { requestJson } from "@/lib/http";
 import { clearCompletedCheckoutState } from "@/lib/checkout";
 import { getLinePricing } from "@/lib/order-line-pricing";
 import { writeLastOrder } from "@/lib/order-confirmation";
+import "../payment-status-desktop.css";
+import "../payment-status-mobile.css";
 
 function buildEstimatedDelivery(dateInput) {
   const base = new Date(dateInput || Date.now());
@@ -187,7 +189,7 @@ export default function HubtelPaymentSuccessClient() {
   }, [clearCart, clientReference, returnToken, router, statusToken]);
 
   return (
-    <main className="shell page-section">
+    <main className="shell page-section payment-status-route">
       <section className="panel cart-empty">
         <h1>
           {status === "error"
