@@ -8,7 +8,8 @@ import StableImage from "@/components/ui/stable-image";
 import { useToast } from "@/components/providers/toast-provider";
 import { SITE_URL } from "@/lib/config";
 import { formatCurrency } from "@/lib/format";
-import { fetchProducts, formatCategoryLabel, getProductPrice, getProductStock, resolveProductImage } from "@/lib/products";
+import { fetchProducts, formatCategoryLabel, getProductStock, resolveProductImage } from "@/lib/products";
+import { getProductPricing } from "@/lib/product-pricing";
 import "./wishlist-desktop.css";
 import "./wishlist-mobile.css";
 import {
@@ -17,19 +18,6 @@ import {
   removeWishlistEntry,
   writeWishlistEntries,
 } from "@/lib/wishlist";
-
-function formatDateLabel(value) {
-  if (!value) return "Recently added";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Recently added";
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
 
 function RemoveIcon() {
   return (
@@ -154,13 +142,16 @@ export default function WishlistPage() {
         const product = productMap.get(entry.id);
         if (!product) return null;
 
+        const pricing = getProductPricing(product);
+
         return {
           entry,
           product,
           id: entry.id,
-          price: getProductPrice(product),
+          price: pricing.currentPrice,
+          originalPrice: pricing.originalPrice,
+          hasDiscount: pricing.isDiscountActive,
           inStock: getProductStock(product) > 0,
-          dateLabel: formatDateLabel(entry.addedAt),
           image: resolveProductImage(product?.images?.[0] || product?.image),
           categoryLabel: formatCategoryLabel(product?.category || "Product"),
         };
@@ -301,27 +292,15 @@ export default function WishlistPage() {
         <section className="wishlist-shell">
           <div className="wishlist-table panel">
             <header className="wishlist-table__head" aria-hidden="true">
-              <span></span>
               <span>Product</span>
               <span>Price</span>
-              <span>Date Added</span>
-              <span>Stock Status</span>
-              <span></span>
+              <span>Stock</span>
+              <span>Actions</span>
             </header>
 
             <div className="wishlist-list">
-              {wishlistItems.map((item) => (
-                <article key={item.id} className="wishlist-row">
-                  <button
-                    type="button"
-                    className="wishlist-row__remove"
-                    onClick={() => handleRemove(item.id)}
-                    aria-label={`Remove ${item.product.name} from wishlist`}
-                  >
-                    <RemoveIcon />
-                    <span>Remove</span>
-                  </button>
-
+              {wishlistItems.map((item, index) => (
+                <article key={item.id} className={index % 2 === 1 ? "wishlist-row is-striped" : "wishlist-row"}>
                   <Link href={`/products/${item.id}`} className="wishlist-row__product">
                     <div className="wishlist-row__thumb">
                       <StableImage
@@ -338,10 +317,27 @@ export default function WishlistPage() {
                     </div>
                   </Link>
 
-                  <p className="wishlist-row__price">{formatCurrency(item.price)}</p>
-                  <p className="wishlist-row__date">{item.dateLabel}</p>
+                  <div className="wishlist-row__category-mobile">
+                    <span>{item.categoryLabel}</span>
+                    <button
+                      type="button"
+                      className="wishlist-row__remove-mobile"
+                      onClick={() => handleRemove(item.id)}
+                      aria-label={`Remove ${item.product.name} from wishlist`}
+                    >
+                      <RemoveIcon />
+                    </button>
+                  </div>
+
+                  <div className="wishlist-row__price-block">
+                    <p className="wishlist-row__price">{formatCurrency(item.price)}</p>
+                    {item.hasDiscount ? (
+                      <p className="wishlist-row__price-old">{formatCurrency(item.originalPrice)}</p>
+                    ) : null}
+                  </div>
+
                   <p className={item.inStock ? "wishlist-row__stock is-in-stock" : "wishlist-row__stock is-out-of-stock"}>
-                    {item.inStock ? "Instock" : "Out of stock"}
+                    {item.inStock ? "In Stock" : "Out of Stock"}
                   </p>
 
                   <div className="wishlist-row__action">
@@ -353,24 +349,13 @@ export default function WishlistPage() {
                     >
                       {item.inStock ? "Add to Cart" : "Out of Stock"}
                     </button>
-                  </div>
-
-                  <div className="wishlist-row__mobile-actions">
                     <button
                       type="button"
-                      className="wishlist-row__remove-mobile"
+                      className="wishlist-row__remove"
                       onClick={() => handleRemove(item.id)}
+                      aria-label={`Remove ${item.product.name} from wishlist`}
                     >
                       <RemoveIcon />
-                      <span>Remove</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="wishlist-row__cart"
-                      disabled={!item.inStock}
-                      onClick={() => handleAddToCart(item.product)}
-                    >
-                      {item.inStock ? "Add to Cart" : "Out of Stock"}
                     </button>
                   </div>
                 </article>
