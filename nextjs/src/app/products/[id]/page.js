@@ -241,7 +241,6 @@ export default function ProductDetailPage() {
   }
   const [qty, setQty] = useState(1);
   const [selectedUpgrades, setSelectedUpgrades] = useState({});
-  const [upgradePanelOpen, setUpgradePanelOpen] = useState(false);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
@@ -405,7 +404,6 @@ export default function ProductDetailPage() {
     setActiveTab("description");
     setQty(1);
     setSelectedUpgrades({});
-    setUpgradePanelOpen(false);
     setPreviewOpen(false);
     setWishlisted(product?._id ? readWishlistIds().includes(String(product._id)) : false);
   }, [product?._id]);
@@ -1007,19 +1005,7 @@ export default function ProductDetailPage() {
           </div>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">
-              <button
-                type="button"
-                className={upgradePanelOpen ? "product-summary__upgrade-toggle is-open" : "product-summary__upgrade-toggle"}
-                onClick={() => setUpgradePanelOpen((current) => !current)}
-                aria-expanded={upgradePanelOpen}
-              >
-                <div className="product-summary__upgrade-head">
-                  <strong>Upgrade specs</strong>
-                  <small>Select only if you want a higher configuration.</small>
-                </div>
-                <span className="product-summary__upgrade-toggle-icon">{upgradePanelOpen ? "-" : "+"}</span>
-              </button>
-              <div className={upgradePanelOpen ? "product-summary__upgrade-body is-open" : "product-summary__upgrade-body"}>
+              <div className="product-summary__upgrade-body">
                   {upgradeSpecs.ramOptions.length ? (
                     <div className="product-summary__upgrade-group">
                       <span>Memory (RAM)</span>

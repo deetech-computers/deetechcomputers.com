@@ -314,61 +314,6 @@
   padding-top: 18px;
   border-top: 1px solid #e2ddd1;
 }
-.product-summary__upgrade-toggle {
-  display: none;
-  width: 100%;
-  border: 1px solid #cfe0d2;
-  border-radius: 4px;
-  padding: 14px 16px;
-  background: #ffffff;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
-}
-.product-summary__upgrade-toggle:hover,
-.product-summary__upgrade-toggle.is-open {
-  border-color: #9ad4a0;
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(24, 79, 39, 0.06);
-}
-.product-summary__upgrade-toggle-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #c9e0cd;
-  background: #eef7f0;
-  color: #184f27;
-  font-size: 1.1rem;
-  font-weight: 800;
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.product-summary__upgrade-toggle:hover .product-summary__upgrade-toggle-icon,
-.product-summary__upgrade-toggle.is-open .product-summary__upgrade-toggle-icon {
-  border-color: #184f27;
-  background: #184f27;
-  color: #fff;
-}
-.product-summary__upgrade-head {
-  display: grid;
-  gap: 6px;
-}
-.product-summary__upgrade-head strong {
-  color: #1f1d1b;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-.product-summary__upgrade-head small {
-  color: #665d52;
-  font-size: 0.86rem;
-  line-height: 1.5;
-}
 .product-summary__upgrade-group {
   display: grid;
   gap: 10px;
