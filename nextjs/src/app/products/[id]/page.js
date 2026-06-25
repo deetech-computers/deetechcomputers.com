@@ -1122,10 +1122,6 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="product-summary__inline-actions" aria-label="Product actions">
-            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
-              <ProductActionIcon name="copy" />
-              <span>Copy</span>
-            </button>
             <button type="button" className={`product-summary__icon-action${wishlisted ? " is-active" : ""}`} onClick={handleWishlist}>
               <ProductActionIcon name="wishlist" />
               <span>Wishlist</span>
@@ -1133,6 +1129,10 @@ export default function ProductDetailPage() {
             <button type="button" className="product-summary__icon-action" onClick={handleShare}>
               <ProductActionIcon name="share" />
               <span>Share</span>
+            </button>
+            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
+              <ProductActionIcon name="copy" />
+              <span>Copy Link</span>
             </button>
           </div>
 

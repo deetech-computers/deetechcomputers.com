@@ -251,8 +251,8 @@
 }
 .product-summary.panel h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 4vw, 2.3rem);
-  line-height: 1.08;
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+  line-height: 1.25;
 }
 .product-summary__rating {
   display: flex;
@@ -274,7 +274,7 @@
 .product-summary__price {
   margin: 0;
   color: #1f1d1b;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
 }
 .product-summary__price-group {
@@ -371,12 +371,12 @@
 }
 .product-summary__upgrade-chip.is-active {
   border-color: #184f27;
-  background: #eaf6ec;
-  color: #003714;
+  background: #184f27;
+  color: #ffffff;
   box-shadow: 0 8px 18px rgba(24, 79, 39, 0.1);
 }
 .product-summary__upgrade-chip.is-active small {
-  color: #083a92;
+  color: #b5f1ba;
 }
 .product-summary__copy {
   margin: 0;
@@ -443,26 +443,29 @@
   transform: translateY(-1px);
 }
 .product-summary__inline-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  align-items: stretch;
+  display: flex;
+  justify-content: flex-start;
+  gap: 24px;
+  align-items: center;
+  border-top: 1px solid #e2ddd1;
+  padding-top: 16px;
 }
 .product-summary__icon-action {
-  width: 100%;
+  width: auto;
   min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #fff;
-  color: #2a251e;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #5b6660;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  padding: 10px 12px;
+  padding: 0;
   text-align: center;
-  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 180ms ease;
+  font-weight: 600;
+  transition: color 180ms ease, transform 180ms ease;
 }
 .product-summary__icon-action svg,
 .product-summary__icon-action span[aria-hidden="true"] {
@@ -474,14 +477,10 @@
   flex: 0 0 auto;
 }
 .product-summary__icon-action:hover {
-  border-color: #cfe6d3;
-  background: #f0f9f1;
-  transform: scale(1.04);
+  color: #184f27;
 }
 .product-summary__icon-action.is-active {
-  border-color: rgba(217, 164, 65, 0.45);
-  background: rgba(217, 164, 65, 0.12);
-  color: #003714;
+  color: #184f27;
 }
 .product-summary__meta {
   display: grid;

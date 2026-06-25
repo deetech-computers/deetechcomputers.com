@@ -82,15 +82,28 @@
     height: 17px;
   }
   .product-summary__inline-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+    border-top: 0;
+    padding-top: 0;
   }
   .product-summary__icon-action {
+    width: 100%;
     flex-direction: column;
+    border: 1px solid var(--line);
     border-radius: 4px;
+    background: #fff;
+    color: #2a251e;
     padding: 14px 8px;
     gap: 6px;
     font-size: 0.78rem;
     font-weight: 600;
+  }
+  .product-summary__icon-action:hover,
+  .product-summary__icon-action.is-active {
+    color: #184f27;
+    border-color: #184f27;
   }
   .product-summary__icon-action svg,
   .product-summary__icon-action span[aria-hidden="true"] {
