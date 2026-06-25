@@ -11,6 +11,13 @@
   .product-detail-view {
     min-height: 1080px;
   }
+  .product-gallery.panel {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+  }
+  .product-gallery__selector {
+    padding: 0 16px;
+  }
   .product-detail-loading {
     gap: 16px;
     min-height: 1420px;
@@ -154,8 +161,8 @@
     gap: 8px;
   }
   .product-gallery__thumb {
-    flex-basis: 72px;
-    min-height: 64px;
+    flex-basis: 64px;
+    min-height: 48px;
   }
   .product-tabs__nav {
     justify-content: flex-start;
