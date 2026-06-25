@@ -883,26 +883,6 @@ export default function ProductDetailPage() {
                 <div className="product-card__placeholder">No image</div>
               )}
             </button>
-            {images.length > 1 ? (
-              <>
-                <button
-                  type="button"
-                  className="product-gallery__stage-arrow product-gallery__stage-arrow--left"
-                  onClick={() => setActiveImage(activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1)}
-                  aria-label="Previous product image"
-                >
-                  &lsaquo;
-                </button>
-                <button
-                  type="button"
-                  className="product-gallery__stage-arrow product-gallery__stage-arrow--right"
-                  onClick={() => setActiveImage(activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1)}
-                  aria-label="Next product image"
-                >
-                  &rsaquo;
-                </button>
-              </>
-            ) : null}
           </div>
 
           {images.length ? (

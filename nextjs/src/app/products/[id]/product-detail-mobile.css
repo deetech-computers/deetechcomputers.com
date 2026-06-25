@@ -132,14 +132,15 @@
     width: 20px;
     height: 20px;
   }
+  .product-gallery {
+    gap: 6px;
+  }
   .product-gallery__main {
     padding: 0;
+    box-shadow: 0 6px 18px rgba(27, 25, 22, 0.08);
   }
   .product-gallery__selector {
-    min-height: 64px;
-  }
-  .product-gallery__stage-arrow {
-    display: none;
+    min-height: 52px;
   }
   .product-gallery__thumbs {
     gap: 8px;
