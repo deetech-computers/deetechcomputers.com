@@ -142,9 +142,27 @@ function ProductListView({ products }) {
   );
 }
 
+function ProductSkeletonCards({ count = 6 }) {
+  return (
+    <div className="product-grid product-grid--catalog shop-product-skeleton-grid" aria-label="Loading products">
+      {Array.from({ length: count }, (_, index) => (
+        <article key={`shop-skeleton-${index}`} className="product-card product-card--catalog product-card--skeleton">
+          <div className="product-card__skeleton-media" />
+          <div className="product-card__skeleton-body">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="product-card__skeleton-footer" />
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function ProductGridSkeleton() {
   return (
-    <div className="shop-layout shop-layout--loading" id="shop-results" aria-busy="true">
+    <div className="shop-layout shop-layout--loading shop-layout--loading-desktop" id="shop-results" aria-busy="true">
       <aside className="shop-sidebar panel" aria-label="Filter options">
         <div className="shop-skeleton shop-skeleton--heading" />
         <div className="shop-skeleton shop-skeleton--line" />
@@ -157,19 +175,21 @@ function ProductGridSkeleton() {
         <div className="shop-toolbar panel">
           <div className="shop-skeleton shop-skeleton--toolbar" />
         </div>
-        <div className="product-grid product-grid--catalog shop-product-skeleton-grid" aria-label="Loading products">
-          {Array.from({ length: 6 }, (_, index) => (
-            <article key={`shop-skeleton-${index}`} className="product-card product-card--catalog product-card--skeleton">
-              <div className="product-card__skeleton-media" />
-              <div className="product-card__skeleton-body">
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className="product-card__skeleton-footer" />
-            </article>
-          ))}
+        <ProductSkeletonCards count={6} />
+      </section>
+    </div>
+  );
+}
+
+function ProductGridSkeletonMobile() {
+  return (
+    <div className="shop-layout shop-layout--loading shop-layout--loading-mobile" aria-busy="true" aria-hidden="true">
+      <section className="shop-content">
+        <div className="shop-toolbar panel shop-toolbar--skeleton-m">
+          <div className="shop-skeleton shop-skeleton--toolbar-summary-m" />
+          <div className="shop-skeleton shop-skeleton--toolbar-controls-m" />
         </div>
+        <ProductSkeletonCards count={6} />
       </section>
     </div>
   );
@@ -982,7 +1002,12 @@ export default function ProductsPageClient({ initialFilters }) {
         <h1>{activeCategoryLabel}</h1>
       </section>
 
-      {status === "loading" && <ProductGridSkeleton />}
+      {status === "loading" && (
+        <>
+          <ProductGridSkeleton />
+          <ProductGridSkeletonMobile />
+        </>
+      )}
       {status === "error" && <div className="panel">Could not load products: {error}</div>}
 
       {status === "ready" && (

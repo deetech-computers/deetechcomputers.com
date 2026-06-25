@@ -39,6 +39,27 @@
   .shop-sidebar {
     display: none;
   }
+  .shop-layout--loading-desktop {
+    display: none;
+  }
+  .shop-layout--loading-mobile {
+    display: grid;
+    gap: 12px;
+    min-height: 1280px;
+  }
+  .shop-toolbar--skeleton-m {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+  }
+  .shop-skeleton--toolbar-summary-m {
+    width: 60%;
+    height: 16px;
+  }
+  .shop-skeleton--toolbar-controls-m {
+    width: 100%;
+    height: 38px;
+  }
   .shop-filter-list {
     gap: 7px;
   }
@@ -314,11 +335,6 @@
   .shop-page .product-grid--catalog,
   .shop-page .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 640px) {
-  .shop-page .shop-skeleton--toolbar {
-    min-height: 106px;
   }
 }
 @media (max-width: 640px) {

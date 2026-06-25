@@ -33,7 +33,10 @@
   align-items: start;
   min-height: 760px;
 }
-.product-detail-loading {
+.product-detail-loading--mobile {
+  display: none;
+}
+.product-detail-loading--desktop {
   display: grid;
   gap: 28px;
   min-height: 1040px;

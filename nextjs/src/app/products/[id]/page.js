@@ -594,7 +594,7 @@ export default function ProductDetailPage() {
   if (status === "loading") {
     return (
       <main className="shell page-section product-detail-page">
-        <div className="product-detail-loading" aria-label="Loading product details">
+        <div className="product-detail-loading product-detail-loading--desktop" aria-label="Loading product details">
           <div className="product-detail-loading__top">
             <div className="product-detail-loading__gallery panel" />
             <div className="product-detail-loading__summary panel">
@@ -606,6 +606,23 @@ export default function ProductDetailPage() {
             </div>
           </div>
           <div className="product-detail-loading__tabs panel" />
+        </div>
+        <div className="product-detail-loading product-detail-loading--mobile" aria-label="Loading product details" aria-hidden="true">
+          <div className="product-detail-loading__crumb" />
+          <div className="product-detail-loading__gallery-m" />
+          <div className="product-detail-loading__thumbs-m">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="product-detail-loading__summary-m panel">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="product-detail-loading__tabs-m panel" />
         </div>
       </main>
     );

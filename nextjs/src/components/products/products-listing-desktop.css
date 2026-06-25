@@ -49,6 +49,9 @@
 .shop-layout--loading {
   min-height: 1280px;
 }
+.shop-layout--loading-mobile {
+  display: none;
+}
 .shop-sidebar.panel,
 .shop-toolbar.panel {
   border-radius: 4px;
