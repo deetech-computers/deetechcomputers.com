@@ -52,6 +52,24 @@ export default function AdminLogs() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [pageSize, setPageSize] = useState(15);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return undefined;
+    const media = window.matchMedia("(max-width: 900px)");
+    const sync = () => setPageSize(media.matches ? 10 : 15);
+    sync();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", sync);
+      return () => media.removeEventListener("change", sync);
+    }
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize]);
 
   useEffect(() => {
     if (!token || user?.role !== "admin") return undefined;
@@ -64,7 +82,7 @@ export default function AdminLogs() {
 
       const params = new URLSearchParams();
       params.set("page", String(page));
-      params.set("limit", "25");
+      params.set("limit", String(pageSize));
       if (search.trim()) params.set("search", search.trim());
       if (actionFilter !== "all") params.set("action", actionFilter);
       if (actorTypeFilter !== "all") params.set("actorType", actorTypeFilter);
@@ -90,7 +108,7 @@ export default function AdminLogs() {
     return () => {
       cancelled = true;
     };
-  }, [token, user?.role, page, search, actionFilter, actorTypeFilter]);
+  }, [token, user?.role, page, pageSize, search, actionFilter, actorTypeFilter]);
 
   if (!token || user?.role !== "admin") {
     return (

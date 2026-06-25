@@ -346,8 +346,8 @@
     scroll-padding-inline: 0;
   }
   .related-products__item {
-    flex: 0 0 min(76vw, 250px);
-    max-width: min(76vw, 250px);
+    flex: 0 0 min(46vw, 176px);
+    max-width: min(46vw, 176px);
     min-width: 0;
     padding: 0;
   }

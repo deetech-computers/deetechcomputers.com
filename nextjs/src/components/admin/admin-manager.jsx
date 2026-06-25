@@ -1808,27 +1808,6 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
         </section>
       </ProductEditorSection>
 
-      <ProductEditorSection title="Description Overview Image" icon="image">
-        <section className="admin-product-images">
-          <div className="admin-product-images__head"><div><h3>Description Tab Image</h3><p>Optional. Shown beside the product overview on the Description tab. Leave empty to show specs/description full width with no image.</p></div></div>
-          <div className="admin-product-images__grid">
-            <label className="admin-image-slot"><span>Image URL</span><input className="field" name="descriptionImageUrl" defaultValue={initial?.descriptionImage || ""} placeholder="https://..." /></label>
-            <label className="admin-image-upload"><AdminProductsIcon name="image" /><span>Or upload a file</span><input className="field" name="descriptionImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" /></label>
-          </div>
-          {initial?.descriptionImage ? (
-            <div className="admin-product-images__current">
-              <strong>Current Description Image</strong>
-              <div className="admin-product-images__preview-grid">
-                <div className="admin-product-images__preview-card">
-                  <StableImage src={resolveProductImage(initial.descriptionImage)} alt="Current description image" width={120} height={120} />
-                  <label className="admin-check"><input type="checkbox" name="removeDescriptionImage" value="true" /><span>Remove this image</span></label>
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </section>
-      </ProductEditorSection>
-
       <ProductEditorSection title="Homepage Placement" icon="grid">
         <input type="hidden" name="homeSections" value={selectedSections.join(",")} />
         <fieldset className="admin-check-group"><legend>Select every homepage collection where this product should appear.</legend><div className="admin-check-grid">{HOME_SECTION_OPTIONS.map(([key, label]) => <label key={key} className="admin-check admin-check--box"><input type="checkbox" checked={selectedSections.includes(key)} onChange={() => toggleHomeSection(key)} /><span>{label}</span></label>)}</div></fieldset>
@@ -1889,6 +1868,27 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
             value={serializeUpgradeSpecs(upgradeEnabled, ramOptions, storageOptions)}
           />
         )}
+        </section>
+      </ProductEditorSection>
+
+      <ProductEditorSection title="Description Overview Image" icon="image">
+        <section className="admin-product-images">
+          <div className="admin-product-images__head"><div><h3>Description Tab Image</h3><p>Optional. Shown beside the product overview on the Description tab. Leave empty to show specs/description full width with no image.</p></div></div>
+          <div className="admin-product-images__grid">
+            <label className="admin-image-slot"><span>Image URL</span><input className="field" name="descriptionImageUrl" defaultValue={initial?.descriptionImage || ""} placeholder="https://..." /></label>
+            <label className="admin-image-upload"><AdminProductsIcon name="image" /><span>Or upload a file</span><input className="field" name="descriptionImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" /></label>
+          </div>
+          {initial?.descriptionImage ? (
+            <div className="admin-product-images__current">
+              <strong>Current Description Image</strong>
+              <div className="admin-product-images__preview-grid">
+                <div className="admin-product-images__preview-card">
+                  <StableImage src={resolveProductImage(initial.descriptionImage)} alt="Current description image" width={120} height={120} />
+                  <label className="admin-check"><input type="checkbox" name="removeDescriptionImage" value="true" /><span>Remove this image</span></label>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </section>
       </ProductEditorSection>
 
