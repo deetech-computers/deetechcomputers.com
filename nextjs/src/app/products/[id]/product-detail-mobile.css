@@ -13,10 +13,7 @@
     gap: 0;
   }
   .product-gallery.panel {
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
     border: 0;
-    border-radius: 0;
     box-shadow: none;
     padding: 0;
     background: transparent;
@@ -45,7 +42,7 @@
   .product-summary.panel {
     position: relative;
     z-index: 5;
-    margin-top: -6px;
+    margin-top: -16px;
     border-radius: 4px;
   }
   .product-summary.panel .product-summary__eyebrow {
@@ -203,11 +200,9 @@
     grid-template-columns: 1fr;
   }
   .product-summary__upgrades {
+    padding: 15px;
     gap: 14px;
-  }
-  .product-summary__upgrades-heading {
-    display: block;
-    margin-bottom: 2px;
+    border-radius: 18px;
   }
   .product-summary__upgrade-toggle {
     gap: 10px;
@@ -222,11 +217,23 @@
   .product-summary__upgrade-chip {
     min-height: 42px;
     padding: 9px 13px;
-    border-radius: 4px;
+    border-radius: 14px;
     font-size: 0.92rem;
   }
   .product-summary__upgrade-chip small {
     font-size: 0.74rem;
+  }
+  .product-summary__social {
+    gap: 10px;
+  }
+  .product-summary__social-links a {
+    width: 23px;
+    height: 23px;
+  }
+  .product-summary__social-links svg,
+  .product-summary__social-links span[aria-hidden="true"] {
+    width: 17px;
+    height: 17px;
   }
   .product-summary__inline-actions {
     gap: 8px;
@@ -243,7 +250,6 @@
     grid-template-columns: 28px minmax(0, 1fr) 28px;
     gap: 8px;
     min-height: 64px;
-    padding: 0 16px;
   }
   .product-gallery__arrow {
     width: 30px;
@@ -340,8 +346,8 @@
     scroll-padding-inline: 0;
   }
   .related-products__item {
-    flex: 0 0 min(46vw, 176px);
-    max-width: min(46vw, 176px);
+    flex: 0 0 min(76vw, 250px);
+    max-width: min(76vw, 250px);
     min-width: 0;
     padding: 0;
   }

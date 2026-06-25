@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import ProductCard from "@/components/products/product-card";
 import StableImage from "@/components/ui/stable-image";
 import { useCart } from "@/hooks/use-cart";
@@ -67,6 +67,15 @@ function getProductDescription(product) {
     product?.description ||
     product?.shortDescription ||
     product?.short_description ||
+    "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
+  );
+}
+
+function getProductSummary(product) {
+  return (
+    product?.shortDescription ||
+    product?.short_description ||
+    product?.description ||
     "This product is part of our carefully selected collection built to deliver dependable quality, strong day-to-day performance, and a cleaner setup for work or home."
   );
 }
@@ -136,6 +145,13 @@ function getReviewerInitials(name) {
   return (parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CU").slice(0, 2);
 }
 
+const SOCIAL_LINKS = [
+  { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
+  { label: "WhatsApp", href: "https://wa.me/message/WEYXKNNA6KXXL1", icon: "whatsapp" },
+  { label: "Facebook", href: "https://www.facebook.com/share/19NkhoTCdi/?mibextid=wwXIfr", icon: "facebook" },
+  { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
+];
+
 function ProductActionIcon({ name }) {
   if (name === "copy") {
     return (
@@ -167,8 +183,44 @@ function ProductActionIcon({ name }) {
   return <span aria-hidden="true">{icons[name] || "•"}</span>;
 }
 
+function SocialAppIcon({ name }) {
+  if (name === "facebook") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M13.4 21v-7.3h2.4l.4-2.9h-2.8V9c0-.8.2-1.4 1.4-1.4H16V5.1c-.2 0-.9-.1-1.8-.1-2.5 0-4.2 1.5-4.2 4.4v1.4H7.5v2.9H10V21h3.4Z" fill="currentColor" />
+      </svg>
+    );
+  }
+  if (name === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" />
+      </svg>
+    );
+  }
+  if (name === "whatsapp") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 4.5a7.4 7.4 0 0 0-6.4 11.2L4.6 20l4.5-1a7.4 7.4 0 1 0 2.9-14.5Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M9.6 8.7c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-.9 2.3.1 1.3 1 2.6 1.2 2.8.2.2 1.9 3.1 4.7 4.2 2.8 1.1 2.8.7 3.3.6.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.1.1-1.3-.1-.2-.3-.3-.7-.5l-1.6-.8c-.4-.2-.7-.3-.9.2l-.6.7c-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.5-1.9-1.7-2.2-.2-.4 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-.7-1.8Z" fill="currentColor" />
+      </svg>
+    );
+  }
+  if (name === "tiktok") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.6 4c.4 1.8 1.5 3.3 3.4 4V10a7.6 7.6 0 0 1-3.3-.8v5.3a4.9 4.9 0 1 1-4.2-4.8V12a2.6 2.6 0 1 0 1.8 2.5V4h2.3Z" fill="currentColor" />
+      </svg>
+    );
+  }
+  return null;
+}
+
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { addItem } = useCart();
   const { token, isAuthenticated } = useAuth();
@@ -609,6 +661,7 @@ export default function ProductDetailPage() {
     selectedUpgrades
   );
   const description = getProductDescription(product);
+  const summary = getProductSummary(product);
   const displayBrand = normalizeDisplayTitle(product?.brand || categoryLabel);
   const displayName = normalizeDisplayTitle(product?.name);
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
@@ -970,11 +1023,6 @@ export default function ProductDetailPage() {
               </p>
             ) : null}
           </div>
-          <p className="product-summary__availability">
-            {stock > 0
-              ? "Available in stock for immediate pickup or delivery across Ghana."
-              : "Currently out of stock. Check back soon or browse similar items below."}
-          </p>
           {hasUpgradeableSpecs ? (
             <div className="product-summary__upgrades">
               <span className="product-summary__upgrades-heading">Configure Hardware</span>
@@ -1054,6 +1102,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
           ) : null}
+          <p className="product-summary__copy">{summary}</p>
 
           <div className="product-summary__buy">
             <div className="product-summary__qty-control" aria-label="Product quantity">
@@ -1089,6 +1138,10 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="product-summary__inline-actions" aria-label="Product actions">
+            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
+              <ProductActionIcon name="copy" />
+              <span className="product-summary__icon-label">Copy</span>
+            </button>
             <button type="button" className={`product-summary__icon-action${wishlisted ? " is-active" : ""}`} onClick={handleWishlist}>
               <ProductActionIcon name="wishlist" />
               <span className="product-summary__icon-label">Wishlist</span>
@@ -1097,10 +1150,32 @@ export default function ProductDetailPage() {
               <ProductActionIcon name="share" />
               <span className="product-summary__icon-label">Share</span>
             </button>
-            <button type="button" className="product-summary__icon-action" onClick={handleCopy}>
-              <ProductActionIcon name="copy" />
-              <span className="product-summary__icon-label">Copy Link</span>
-            </button>
+          </div>
+
+          <div className="product-summary__meta">
+            <p><strong>Category:</strong> {categoryLabel}</p>
+            <p>
+              <strong>Stock:</strong>
+              <span className={stock > 0 ? "product-summary__stock-badge is-in-stock" : "product-summary__stock-badge is-out-of-stock"}>
+                {stock > 0 ? "In Stock" : "Out of Stock"}
+              </span>
+            </p>
+          </div>
+
+          <div className="product-summary__social">
+            <p>Follow and reach us</p>
+            <div className="product-summary__social-links">
+              {SOCIAL_LINKS.map((item) => (
+                <a key={item.label} href={item.href} target="_blank" rel="noreferrer" aria-label={item.label}>
+                  <SocialAppIcon name={item.icon} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="product-summary__actions">
+            <button type="button" className="ghost-button" onClick={() => router.push("/wishlist")}>Browse wishlist</button>
+            <button type="button" className="ghost-button" onClick={() => router.push("/cart")}>Go to cart</button>
           </div>
         </div>
       </section>
@@ -1138,13 +1213,13 @@ export default function ProductDetailPage() {
 
         <div className="product-tabs__body">
           {activeTab === "description" ? (
-            <div className={`product-tabs__panel product-tabs__panel--description${product.descriptionImage ? "" : " product-tabs__panel--description-full"}`}>
+            <div className="product-tabs__panel product-tabs__panel--description">
               <div className="product-description__copy">
                 <h2>Product Overview</h2>
                 <p>{description}</p>
                 {productSpecs.length ? (
                   <ul className="product-description__highlights">
-                    {productSpecs.slice(0, product.descriptionImage ? 3 : 6).map(([key, value]) => (
+                    {productSpecs.slice(0, 3).map(([key, value]) => (
                       <li key={key}>
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -1156,10 +1231,10 @@ export default function ProductDetailPage() {
                   </ul>
                 ) : null}
               </div>
-              {product.descriptionImage ? (
+              {images[1] || images[0] ? (
                 <div className="product-description__media">
                   <StableImage
-                    src={optimizeCloudinaryImage(product.descriptionImage, { width: 640, height: 480 })}
+                    src={optimizeCloudinaryImage(images[1] || images[0], { width: 640, height: 480 })}
                     alt={`${product.name} detail`}
                     width={640}
                     height={480}
