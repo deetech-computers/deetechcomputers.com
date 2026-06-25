@@ -428,11 +428,6 @@
 .product-summary__upgrade-chip.is-active small {
   color: #b5f1ba;
 }
-.product-summary__copy {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.7;
-}
 .product-summary__buy {
   display: grid;
   grid-template-columns: 128px minmax(0, 1fr);
