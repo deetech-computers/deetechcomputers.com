@@ -223,18 +223,6 @@
   .product-summary__upgrade-chip small {
     font-size: 0.74rem;
   }
-  .product-summary__social {
-    gap: 10px;
-  }
-  .product-summary__social-links a {
-    width: 23px;
-    height: 23px;
-  }
-  .product-summary__social-links svg,
-  .product-summary__social-links span[aria-hidden="true"] {
-    width: 17px;
-    height: 17px;
-  }
   .product-summary__inline-actions {
     gap: 8px;
   }
