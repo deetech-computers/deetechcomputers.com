@@ -1213,13 +1213,13 @@ export default function ProductDetailPage() {
 
         <div className="product-tabs__body">
           {activeTab === "description" ? (
-            <div className="product-tabs__panel product-tabs__panel--description">
+            <div className={`product-tabs__panel product-tabs__panel--description${product.descriptionImage ? "" : " product-tabs__panel--description-full"}`}>
               <div className="product-description__copy">
                 <h2>Product Overview</h2>
                 <p>{description}</p>
                 {productSpecs.length ? (
                   <ul className="product-description__highlights">
-                    {productSpecs.slice(0, 3).map(([key, value]) => (
+                    {productSpecs.slice(0, product.descriptionImage ? 3 : 6).map(([key, value]) => (
                       <li key={key}>
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -1231,10 +1231,10 @@ export default function ProductDetailPage() {
                   </ul>
                 ) : null}
               </div>
-              {images[1] || images[0] ? (
+              {product.descriptionImage ? (
                 <div className="product-description__media">
                   <StableImage
-                    src={optimizeCloudinaryImage(images[1] || images[0], { width: 640, height: 480 })}
+                    src={optimizeCloudinaryImage(product.descriptionImage, { width: 640, height: 480 })}
                     alt={`${product.name} detail`}
                     width={640}
                     height={480}

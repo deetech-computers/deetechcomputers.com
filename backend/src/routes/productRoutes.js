@@ -19,12 +19,17 @@ import { upload } from "../middleware/uploadMiddleware.js"; // multer middleware
 const router = express.Router();
 
 // Products routes
+const productImageUpload = upload.fields([
+  { name: "images", maxCount: 6 },
+  { name: "descriptionImage", maxCount: 1 },
+]);
+
 router.route("/")
   .get(getProducts)
   .post(
     protect,
     admin,
-    upload.array("images", 6),
+    productImageUpload,
     validateRequest(createProductSchema),
     createProduct
   );
@@ -34,7 +39,7 @@ router.route("/:id")
   .put(
     protect,
     admin,
-    upload.array("images", 6),
+    productImageUpload,
     validateRequest(updateProductSchema),
     updateProduct
   )

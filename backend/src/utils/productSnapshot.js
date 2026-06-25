@@ -66,6 +66,7 @@ function normalizeProduct(product) {
     image_url: mainImage,
     image: mainImage,
     images: imageList.length ? imageList : (mainImage ? [mainImage] : []),
+    descriptionImage: String(product.descriptionImage || "").trim(),
     sold: Number(product.sold || 0),
     createdAt: product.createdAt || null,
     updatedAt: product.updatedAt || null,
@@ -75,7 +76,7 @@ function normalizeProduct(product) {
 export async function buildProductSnapshotPayload() {
   const products = await Product.find({})
     .select(
-      "_id name short_description description specs brand category subCategory price discountPrice discountMode discountStartsAt discountEndsAt upgradeSpecs countInStock isFeatured homeSections image_url images sold createdAt updatedAt"
+      "_id name short_description description specs brand category subCategory price discountPrice discountMode discountStartsAt discountEndsAt upgradeSpecs countInStock isFeatured homeSections image_url images descriptionImage sold createdAt updatedAt"
     )
     .lean();
 

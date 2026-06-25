@@ -772,6 +772,9 @@
   gap: 28px;
   align-items: center;
 }
+.product-tabs__panel--description-full {
+  grid-template-columns: 1fr;
+}
 .product-description__copy {
   display: grid;
   gap: 14px;

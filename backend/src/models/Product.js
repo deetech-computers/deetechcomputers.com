@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema(
     homeSections: [{ type: String }],
     image_url: { type: String, trim: true, default: "" },
     images: [{ type: String }],
+    descriptionImage: { type: String, trim: true, default: "" },
     sold: { type: Number, default: 0 },
     reviews: [
       {

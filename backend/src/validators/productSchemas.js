@@ -45,6 +45,7 @@ export const createProductSchema = Joi.object({
   image_url: Joi.string().allow("").optional(),
   images: Joi.array().items(Joi.string().uri()).optional(),
   imageUrls: Joi.string().allow("").optional(),
+  descriptionImageUrl: Joi.string().allow("").optional(),
   homeSections: Joi.alternatives().try(
     Joi.string().allow(""),
     Joi.array().items(Joi.string())
@@ -100,6 +101,8 @@ export const updateProductSchema = Joi.object({
     Joi.array().items(Joi.string())
   ).optional(),
   imageUrls: Joi.string().allow("").optional(),
+  descriptionImageUrl: Joi.string().allow("").optional(),
+  removeDescriptionImage: Joi.alternatives().try(Joi.boolean(), Joi.string().allow("")).optional(),
   homeSections: Joi.alternatives().try(
     Joi.string().allow(""),
     Joi.array().items(Joi.string())

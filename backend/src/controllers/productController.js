@@ -247,9 +247,28 @@ async function uploadProductImages(files = []) {
   return uploaded;
 }
 
+async function resolveDescriptionImage(req, currentValue = "") {
+  const file = req.files?.descriptionImage?.[0];
+  if (file && file.size > 0) {
+    const stored = await storeImageFile(file, "deetech/products");
+    return stored.url;
+  }
+  const removeRequested =
+    req.body.removeDescriptionImage === "true" || req.body.removeDescriptionImage === true;
+  if (removeRequested) {
+    return "";
+  }
+  if (req.body.descriptionImageUrl !== undefined) {
+    const pastedUrl = String(req.body.descriptionImageUrl || "").trim();
+    if (pastedUrl) return pastedUrl;
+  }
+  return currentValue;
+}
+
 // @desc    Create new product (admin only) with images
 export const createProduct = asyncHandler(async (req, res) => {
-  const uploadedImages = await uploadProductImages(req.files || []);
+  const uploadedImages = await uploadProductImages(req.files?.images || []);
+  const descriptionImage = await resolveDescriptionImage(req, "");
   const galleryUrls = parseImageUrls(req.body.imageUrls);
   const incomingMainImage = String(req.body.image_url || "").trim();
   const allImages = uniqueImages([incomingMainImage, ...uploadedImages, ...galleryUrls]);
@@ -303,6 +322,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     homeSections: parseHomeSections(req.body.homeSections),
     image_url: mainImage,
     images: allImages,
+    descriptionImage,
   });
 
   const createdProduct = await product.save();
@@ -416,7 +436,8 @@ export const updateProduct = asyncHandler(async (req, res) => {
     product.homeSections = parseHomeSections(req.body.homeSections);
   }
 
-  const uploadedImages = await uploadProductImages(req.files || []);
+  const uploadedImages = await uploadProductImages(req.files?.images || []);
+  product.descriptionImage = await resolveDescriptionImage(req, product.descriptionImage || "");
   const galleryUrls = parseImageUrls(req.body.imageUrls);
   const requestedExistingImages = parseExistingImagesInput(req.body.existingImages);
   const currentImages = Array.isArray(product.images) ? uniqueImages(product.images) : [];
