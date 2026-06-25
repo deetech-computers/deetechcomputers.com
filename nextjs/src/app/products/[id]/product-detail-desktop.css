@@ -159,7 +159,7 @@
   overflow: hidden;
   padding: 0;
   border: 0;
-  border-radius: 10px;
+  border-radius: 4px;
   position: relative;
 }
 .product-gallery__preview-trigger {
@@ -264,11 +264,12 @@
   flex: 0 0 118px;
   min-height: 84px;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 4px;
 }
 .product-gallery__thumb.is-active {
-  border-color: #23201b;
-  box-shadow: inset 0 0 0 1px #23201b;
+  border-color: #184f27;
+  border-width: 2px;
+  box-shadow: none;
 }
 .product-gallery__thumb img {
   width: 100%;
@@ -363,11 +364,7 @@
   border-top: 1px solid #e2ddd1;
 }
 .product-summary__upgrades-heading {
-  color: #5b6660;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  display: none;
 }
 .product-summary__upgrade-group {
   display: grid;
@@ -440,22 +437,25 @@
   gap: 0;
   align-items: stretch;
   min-width: 128px;
-}
-.product-summary__qty-button {
   border: 1px solid #d8d0c3;
+  border-radius: 4px;
+  background: #fff;
+  overflow: hidden;
+}
+.product-summary__qty-control .product-summary__qty-button {
+  border: 0;
   background: #fff;
   color: #1f1d1b;
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
 }
-.product-summary__qty {
+.product-summary__qty-control .product-summary__qty {
   width: 100%;
   text-align: center;
   min-height: 48px;
+  border: 0;
   border-radius: 0;
-  border-left: 0;
-  border-right: 0;
   padding: 0 6px;
   appearance: textfield;
   -moz-appearance: textfield;
@@ -955,7 +955,7 @@
   width: 46px;
   height: 46px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 4px;
   background: transparent;
   color: #c2c8d8;
   font-size: 2rem;
@@ -1112,7 +1112,7 @@
 }
 .product-detail-page .product-card__eyebrow { color: var(--muted); }
 .product-detail-page .product-card {
-  background: var(--panel); border: 1px solid rgba(217, 226, 240, 0.95); border-radius: 28px; box-shadow: var(--shadow);
+  background: var(--panel); border: 1px solid rgba(217, 226, 240, 0.95); border-radius: 4px; box-shadow: var(--shadow);
 }
 .product-detail-page .product-card--skeleton span,
   .product-detail-page .product-card__skeleton-media,
