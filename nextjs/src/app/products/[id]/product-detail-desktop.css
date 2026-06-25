@@ -110,8 +110,8 @@
   position: relative;
 }
 .product-gallery__main {
+  width: 100%;
   aspect-ratio: 4 / 5;
-  max-height: 640px;
   background: transparent;
   display: grid;
   place-items: center;
@@ -120,6 +120,11 @@
   border: 0;
   border-radius: 4px;
   position: relative;
+}
+@media (min-width: 981px) {
+  .product-gallery__main {
+    max-height: 640px;
+  }
 }
 .product-gallery__preview-trigger {
   width: 100%;
