@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
@@ -1731,7 +1731,8 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const subCategories = SUBCATEGORY_BY_CATEGORY[category] || SUBCATEGORY_BY_CATEGORY.laptops;
   const [subCategory, setSubCategory] = useState(initial?.subCategory || initial?.brand || subCategories[0]);
   const [imageUrlSlots, setImageUrlSlots] = useState(() => buildInitialImageUrlSlots(initial));
-  const [uploadSlotCount, setUploadSlotCount] = useState(2);
+  const [uploadSlotIds, setUploadSlotIds] = useState(() => [0, 1]);
+  const nextUploadSlotId = useRef(2);
   const resolvedSubCategory = subCategories.includes(subCategory) ? subCategory : subCategories[0];
   const [selectedSections, setSelectedSections] = useState(() => {
     const existing = Array.isArray(initial?.homeSections) ? initial.homeSections : [];
@@ -1743,7 +1744,11 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
   const [upgradeEnabled, setUpgradeEnabled] = useState(Boolean(initialUpgradeSpecs.enabled));
   const [ramOptions, setRamOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.ramOptions));
   const [storageOptions, setStorageOptions] = useState(() => buildUpgradeDraft(initialUpgradeSpecs.storageOptions));
-  const currentProductImages = useMemo(() => buildCurrentProductImages(initial), [initial]);
+  const allCurrentProductImages = useMemo(() => buildCurrentProductImages(initial), [initial]);
+  const currentProductImages = useMemo(
+    () => allCurrentProductImages.filter((image) => imageUrlSlots.includes(image)),
+    [allCurrentProductImages, imageUrlSlots]
+  );
 
   function toggleHomeSection(key) {
     setSelectedSections((current) =>
@@ -1759,8 +1764,40 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
     setImageUrlSlots((current) => (current.length >= MAX_PRODUCT_IMAGES ? current : [...current, ""]));
   }
 
+  function removeImageUrlSlot(index) {
+    setImageUrlSlots((current) => {
+      if (index === 0) {
+        return current.map((entry, slotIndex) => (slotIndex === 0 ? "" : entry));
+      }
+      const next = current.filter((_, slotIndex) => slotIndex !== index);
+      while (next.length < 2) next.push("");
+      return next;
+    });
+  }
+
+  function removeImageUrlByValue(url) {
+    setImageUrlSlots((current) => {
+      const index = current.findIndex((entry) => entry === url);
+      if (index === -1) return current;
+      if (index === 0) {
+        return current.map((entry, slotIndex) => (slotIndex === 0 ? "" : entry));
+      }
+      const next = current.filter((_, slotIndex) => slotIndex !== index);
+      while (next.length < 2) next.push("");
+      return next;
+    });
+  }
+
   function addUploadSlot() {
-    setUploadSlotCount((current) => (current >= MAX_PRODUCT_IMAGES ? current : current + 1));
+    setUploadSlotIds((current) => {
+      if (current.length >= MAX_PRODUCT_IMAGES) return current;
+      const id = nextUploadSlotId.current++;
+      return [...current, id];
+    });
+  }
+
+  function removeUploadSlot(id) {
+    setUploadSlotIds((current) => (current.length <= 1 ? current : current.filter((slotId) => slotId !== id)));
   }
 
   const normalizedImageSlots = imageUrlSlots
@@ -1798,13 +1835,63 @@ function ProductForm({ initial, onSubmit, submitLabel, busy }) {
         <section className="admin-product-images">
           <div className="admin-product-images__head"><div><h3>Web Image URLs</h3><p>Main image stays first. Add up to {MAX_PRODUCT_IMAGES} product images total.</p></div>{imageUrlSlots.length < MAX_PRODUCT_IMAGES ? <button type="button" className="ghost-button" onClick={addImageUrlSlot}>+ Add Image URL</button> : null}</div>
           <div className="admin-product-images__grid">
-            {imageUrlSlots.map((value, index) => <label key={`image-url-${index}`} className="admin-image-slot"><span>{index === 0 ? "Main Image URL" : `Image ${index + 1} URL`}</span><input className="field" name={index === 0 ? "image_url" : undefined} value={value} onChange={(event) => updateImageUrlSlot(index, event.target.value)} placeholder={index === 0 ? "https://..." : `Additional image ${index + 1} URL`} /></label>)}
+            {imageUrlSlots.map((value, index) => (
+              <label key={`image-url-${index}`} className="admin-image-slot">
+                <span>{index === 0 ? "Main Image URL" : `Image ${index + 1} URL`}</span>
+                <div className="admin-image-slot__row">
+                  <input className="field" name={index === 0 ? "image_url" : undefined} value={value} onChange={(event) => updateImageUrlSlot(index, event.target.value)} placeholder={index === 0 ? "https://..." : `Additional image ${index + 1} URL`} />
+                  {value ? (
+                    <button type="button" className="admin-image-slot__remove" onClick={() => removeImageUrlSlot(index)} aria-label="Clear this image URL">
+                      <AdminProductsIcon name="delete" />
+                    </button>
+                  ) : null}
+                </div>
+              </label>
+            ))}
           </div>
-          {currentProductImages.length ? <div className="admin-product-images__current"><strong>Current Saved Images</strong><div className="admin-product-images__preview-grid">{currentProductImages.map((image, index) => <div key={`${image}-${index}`} className="admin-product-images__preview-card"><StableImage src={resolveProductImage(image)} alt={`Product image ${index + 1}`} width={120} height={120} /><small>{index === 0 ? "Current main image" : `Current image ${index + 1}`}</small><code>{image}</code></div>)}</div></div> : null}
+          {currentProductImages.length ? (
+            <div className="admin-product-images__current">
+              <strong>Current Saved Images</strong>
+              <div className="admin-product-images__preview-grid">
+                {currentProductImages.map((image, index) => (
+                  <div key={`${image}-${index}`} className="admin-product-images__preview-card">
+                    <button type="button" className="admin-product-images__preview-remove" onClick={() => removeImageUrlByValue(image)} aria-label="Delete this image">
+                      <AdminProductsIcon name="delete" />
+                    </button>
+                    <StableImage src={resolveProductImage(image)} alt={`Product image ${index + 1}`} width={120} height={120} />
+                    <small>{index === 0 ? "Current main image" : `Current image ${index + 1}`}</small>
+                    <code>{image}</code>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </section>
         <section className="admin-product-images admin-product-images--uploads">
-          <div className="admin-product-images__head"><div><h3>Image Uploads</h3><p>JPG, PNG, WEBP, GIF, BMP, HEIC or HEIF. Maximum {MAX_PRODUCT_IMAGES} files.</p></div>{uploadSlotCount < MAX_PRODUCT_IMAGES ? <button type="button" className="ghost-button" onClick={addUploadSlot}>+ Add More Images</button> : null}</div>
-          <div className="admin-product-images__grid">{Array.from({ length: uploadSlotCount }).map((_, index) => <label key={`image-upload-${index}`} className="admin-image-upload"><AdminProductsIcon name="image" /><span>{index === 0 ? "Main image upload" : `Image ${index + 1} upload`}</span><input className="field" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" /></label>)}</div>
+          <div className="admin-product-images__head"><div><h3>Image Uploads</h3><p>JPG, PNG, WEBP, GIF, BMP, HEIC or HEIF. Maximum {MAX_PRODUCT_IMAGES} files.</p></div>{uploadSlotIds.length < MAX_PRODUCT_IMAGES ? <button type="button" className="ghost-button" onClick={addUploadSlot}>+ Add More Images</button> : null}</div>
+          <div className="admin-product-images__grid">
+            {uploadSlotIds.map((id, index) => (
+              <label key={`image-upload-${id}`} className="admin-image-upload">
+                <AdminProductsIcon name="image" />
+                <span>{index === 0 ? "Main image upload" : `Image ${index + 1} upload`}</span>
+                <input className="field" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif" />
+                {uploadSlotIds.length > 1 ? (
+                  <button
+                    type="button"
+                    className="admin-image-upload__remove"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      removeUploadSlot(id);
+                    }}
+                    aria-label="Remove this upload slot"
+                  >
+                    <AdminProductsIcon name="delete" />
+                  </button>
+                ) : null}
+              </label>
+            ))}
+          </div>
         </section>
       </ProductEditorSection>
 

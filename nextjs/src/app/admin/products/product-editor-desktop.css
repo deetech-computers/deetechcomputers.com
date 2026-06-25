@@ -281,6 +281,57 @@
   .admin-product-editor-route .admin-image-upload svg { width: 24px; height: 24px; color: var(--editor-green); }
   .admin-product-editor-route .admin-image-upload input { width: 100%; min-height: auto; padding: 4px; border: 0; background: transparent; font-size: 10px; }
 
+  .admin-product-editor-route .admin-image-slot__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .admin-product-editor-route .admin-image-slot__row .field {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .admin-product-editor-route .admin-image-slot__remove,
+  .admin-product-editor-route .admin-image-upload__remove,
+  .admin-product-editor-route .admin-product-images__preview-remove {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2c9c9;
+    border-radius: 4px;
+    background: #fff5f5;
+    color: #ba1a1a;
+    cursor: pointer;
+  }
+
+  .admin-product-editor-route .admin-image-slot__remove svg,
+  .admin-product-editor-route .admin-image-upload__remove svg,
+  .admin-product-editor-route .admin-product-images__preview-remove svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .admin-product-editor-route .admin-image-slot__remove:hover,
+  .admin-product-editor-route .admin-image-upload__remove:hover,
+  .admin-product-editor-route .admin-product-images__preview-remove:hover {
+    background: #ba1a1a;
+    color: #fff;
+  }
+
+  .admin-product-editor-route .admin-image-upload {
+    position: relative;
+  }
+
+  .admin-product-editor-route .admin-image-upload__remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+
   .admin-product-editor-route .admin-product-images__current {
     display: grid;
     gap: 10px;
@@ -293,6 +344,7 @@
   }
 
   .admin-product-editor-route .admin-product-images__preview-card {
+    position: relative;
     min-width: 0;
     display: grid;
     gap: 5px;
@@ -303,6 +355,13 @@
 
   .admin-product-editor-route .admin-product-images__preview-card img { width: 100%; aspect-ratio: 1; object-fit: contain; }
   .admin-product-editor-route .admin-product-images__preview-card code { overflow: hidden; color: var(--editor-muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+
+  .admin-product-editor-route .admin-product-images__preview-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 1;
+  }
 
   .admin-product-editor-route .admin-check-group {
     min-width: 0;
