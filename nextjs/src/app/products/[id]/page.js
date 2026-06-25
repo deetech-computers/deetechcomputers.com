@@ -98,18 +98,6 @@ function getReviewAverage(reviews) {
   return ratings.reduce((sum, value) => sum + value, 0) / ratings.length;
 }
 
-function getReviewBreakdown(reviews) {
-  return [5, 4, 3, 2, 1].map((stars) => {
-    const count = (reviews || []).filter((review) => Number(review?.rating) === stars).length;
-    const total = reviews?.length || 0;
-    return {
-      stars,
-      count,
-      percentage: total ? (count / total) * 100 : 0,
-    };
-  });
-}
-
 function getReviewTimeLabel(value) {
   const timestamp = new Date(value || Date.now()).getTime();
   const diff = Date.now() - timestamp;
@@ -133,16 +121,6 @@ function formatDateTime(value) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
-
-function getReviewerInitials(name) {
-  const parts = String(name || "Customer")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2);
-
-  return (parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CU").slice(0, 2);
 }
 
 const SOCIAL_LINKS = [
@@ -232,7 +210,7 @@ export default function ProductDetailPage() {
   const [reviewSort, setReviewSort] = useState("newest");
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "" });
   const [reviewStatus, setReviewStatus] = useState("idle");
-  const [reviewFormOpen, setReviewFormOpen] = useState(true);
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
 
   function handleAddToCart(item, qty = 1, options = {}) {
@@ -667,7 +645,6 @@ export default function ProductDetailPage() {
   const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
   const rating = Math.round(ratingValue);
   const reviewCount = reviews.length || getProductReviewCount(product);
-  const reviewBreakdown = getReviewBreakdown(reviews);
   const sortedReviews = [...reviews].sort((a, b) => {
     if (reviewSort === "oldest") {
       return new Date(a?.createdAt || 0).getTime() - new Date(b?.createdAt || 0).getTime();
@@ -988,9 +965,7 @@ export default function ProductDetailPage() {
               <strong>{ratingValue.toFixed(1)}</strong>
               <small>{`(${reviewCount} reviews)`}</small>
             </div>
-          ) : (
-            <div className="product-summary__rating product-summary__rating--placeholder" aria-hidden="true" />
-          )}
+          ) : null}
           <div className="product-summary__price-group">
             {hasDiscount && discountPercent > 0 ? (
               <span className="product-summary__discount-badge">Save {discountPercent}%</span>
@@ -1218,156 +1193,129 @@ export default function ProductDetailPage() {
           ) : null}
 
           {activeTab === "reviews" ? (
-            <div className="product-tabs__panel">
-              {reviewCount > 0 ? (
-                <div className="product-review-overview">
-                  <div className="product-review-overview__score">
-                    <strong>{ratingValue.toFixed(1)}</strong>
-                    <span>Out of 5</span>
-                    <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
-                      {Array.from({ length: 5 }, (_, index) => (
-                        <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
-                      ))}
-                    </p>
-                    <small>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</small>
-                  </div>
-
-                  <div className="product-review-overview__bars">
-                    {reviewBreakdown.map((item) => (
-                      <div key={item.stars} className="product-review-bar">
-                        <span>{item.stars} Star</span>
-                        <div className="product-review-bar__track">
-                          <div className="product-review-bar__fill" style={{ width: `${item.percentage}%` }} />
-                        </div>
-                        <strong>{item.count}</strong>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="product-review-actions">
-                <div className="product-review-actions__copy">
-                  <h3>Review List</h3>
-                  <p>{reviewCount ? `Showing 1-${sortedReviews.length} of ${reviewCount} results` : "No reviews yet. Be the first to share your experience with this product."}</p>
-                </div>
-                <label className="product-review-actions__sort">
-                  <span>Sort by</span>
-                  <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="highest">Highest rating</option>
-                    <option value="lowest">Lowest rating</option>
-                  </select>
-                </label>
-              </div>
-
-              <div className="product-review-shell">
-                <div className="product-review-list">
-                  {sortedReviews.length ? (
-                    sortedReviews.map((review, index) => {
-                      const reviewerName = review?.user?.name || review?.name || "Customer";
-                      return (
-                        <article key={review?._id || index} className="product-review">
-                          <div className="product-review__header">
-                            <div className="product-review__identity">
-                              <div className="product-review__avatar" aria-hidden="true">
-                                {getReviewerInitials(reviewerName)}
-                              </div>
-                              <div>
-                                <strong>{reviewerName}</strong>
-                                <span className="product-review__verified">(Verified)</span>
-                              </div>
-                            </div>
-                            <time>{getReviewTimeLabel(review?.createdAt)}</time>
-                          </div>
-                          <h4>{review?.title || "Customer review"}</h4>
-                          <p>{review?.comment || review?.message || "No review text provided."}</p>
-                          <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
-                            {Array.from({ length: 5 }, (_, index) => (
-                              <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
-                            ))}
-                            <strong>{Number(review?.rating || 0).toFixed(1)}</strong>
-                          </p>
-                          {review?.image_url ? (
-                            <div className="product-review__media">
-                              <StableImage
-                                src={resolveProductImage(review.image_url)}
-                                alt={review?.title || "Review upload"}
-                                width={280}
-                                height={280}
-                              />
-                            </div>
-                          ) : null}
-                        </article>
-                      );
-                    })
+            <div className="product-tabs__panel product-tabs__panel--reviews">
+              <div className="product-review-layout">
+                <div className="product-review-score-card">
+                  {reviewCount > 0 ? (
+                    <>
+                      <strong className="product-review-score-card__value">{ratingValue.toFixed(1)}</strong>
+                      <p className="product-card__rating" aria-label={`${ratingValue.toFixed(1)} out of 5 stars`}>
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <span key={index} className={index < rating ? "is-filled" : ""}>{"★"}</span>
+                        ))}
+                      </p>
+                      <small>Based on {reviewCount} verified {reviewCount === 1 ? "purchase" : "purchases"}</small>
+                    </>
                   ) : (
-                    <p>No reviews yet. Be the first to share your experience with this product.</p>
+                    <p className="product-review-score-card__empty">No reviews yet. Be the first to share your experience with this product.</p>
                   )}
+                  {isAuthenticated ? (
+                    <button
+                      type="button"
+                      className="product-review-score-card__cta"
+                      onClick={() => setReviewFormOpen((current) => !current)}
+                      aria-expanded={reviewFormOpen}
+                      aria-controls="product-review-form-body"
+                    >
+                      {myReview ? "Update your review" : "Write a Review"}
+                    </button>
+                  ) : null}
+                </div>
+
+                <div className="product-review-list-wrap">
+                  {reviewCount > 0 ? (
+                    <label className="product-review-actions__sort">
+                      <span>Sort by</span>
+                      <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="highest">Highest rating</option>
+                        <option value="lowest">Lowest rating</option>
+                      </select>
+                    </label>
+                  ) : null}
+                  <div className="product-review-list">
+                    {sortedReviews.length ? (
+                      sortedReviews.map((review, index) => {
+                        const reviewerName = review?.user?.name || review?.name || "Customer";
+                        return (
+                          <article key={review?._id || index} className="product-review">
+                            <div className="product-review__header">
+                              <strong>{reviewerName}</strong>
+                              <time>{getReviewTimeLabel(review?.createdAt)}</time>
+                            </div>
+                            <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
+                              {Array.from({ length: 5 }, (_, index) => (
+                                <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
+                              ))}
+                            </p>
+                            <p>{review?.comment || review?.message || "No review text provided."}</p>
+                            {review?.image_url ? (
+                              <div className="product-review__media">
+                                <StableImage
+                                  src={resolveProductImage(review.image_url)}
+                                  alt={review?.title || "Review upload"}
+                                  width={280}
+                                  height={280}
+                                />
+                              </div>
+                            ) : null}
+                          </article>
+                        );
+                      })
+                    ) : (
+                      <p className="product-review-list__empty">No reviews yet. Be the first to share your experience with this product.</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {isAuthenticated ? (
-                <aside className="product-review-form product-review-form--full">
-                  <button
-                    type="button"
-                    className="product-review-form__toggle"
-                    onClick={() => setReviewFormOpen((current) => !current)}
-                    aria-expanded={reviewFormOpen}
-                    aria-controls="product-review-form-body"
-                  >
-                    <span>{myReview ? "Update your review" : "Write a review"}</span>
-                    <span className="product-review-form__toggle-icon" aria-hidden="true">{reviewFormOpen ? "−" : "+"}</span>
-                  </button>
-
-                  {reviewFormOpen ? (
-                    <div id="product-review-form-body" className="product-review-form__body">
-                      <p>Share your real experience to help other customers buy with confidence.</p>
-                      <form className="auth-form" onSubmit={handleReviewSubmit}>
-                        <label>
-                          <span>Rating</span>
-                          <div className="product-review-form__rating" role="radiogroup" aria-label="Rate this product">
-                            {[1, 2, 3, 4, 5].map((value) => (
-                              <button
-                                key={value}
-                                type="button"
-                                role="radio"
-                                aria-checked={reviewForm.rating === value}
-                                aria-label={`${value} star${value === 1 ? "" : "s"}`}
-                                className={`product-review-form__star${reviewForm.rating >= value ? " is-active" : ""}`}
-                                onClick={() => setReviewForm((current) => ({ ...current, rating: value }))}
-                              >
-                                ★
-                              </button>
-                            ))}
-                          </div>
-                        </label>
-                        <label>
-                          <span>Review title</span>
-                          <input
-                            className="field"
-                            value={reviewForm.title}
-                            onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
-                            placeholder="Summarize your experience"
-                          />
-                        </label>
-                        <label>
-                          <span>Your review</span>
-                          <textarea
-                            className="field"
-                            rows="5"
-                            value={reviewForm.comment}
-                            onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-                            placeholder="Tell other customers what stood out to you"
-                          />
-                        </label>
-                        <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
-                          {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
-                        </button>
-                      </form>
-                    </div>
-                  ) : null}
+              {reviewFormOpen && isAuthenticated ? (
+                <aside id="product-review-form-body" className="product-review-form product-review-form--full">
+                  <h3>{myReview ? "Update your review" : "Write a review"}</h3>
+                  <p>Share your real experience to help other customers buy with confidence.</p>
+                  <form className="auth-form" onSubmit={handleReviewSubmit}>
+                    <label>
+                      <span>Rating</span>
+                      <div className="product-review-form__rating" role="radiogroup" aria-label="Rate this product">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            role="radio"
+                            aria-checked={reviewForm.rating === value}
+                            aria-label={`${value} star${value === 1 ? "" : "s"}`}
+                            className={`product-review-form__star${reviewForm.rating >= value ? " is-active" : ""}`}
+                            onClick={() => setReviewForm((current) => ({ ...current, rating: value }))}
+                          >
+                            ★
+                          </button>
+                        ))}
+                      </div>
+                    </label>
+                    <label>
+                      <span>Review title</span>
+                      <input
+                        className="field"
+                        value={reviewForm.title}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
+                        placeholder="Summarize your experience"
+                      />
+                    </label>
+                    <label>
+                      <span>Your review</span>
+                      <textarea
+                        className="field"
+                        rows="5"
+                        value={reviewForm.comment}
+                        onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
+                        placeholder="Tell other customers what stood out to you"
+                      />
+                    </label>
+                    <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
+                      {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
+                    </button>
+                  </form>
                 </aside>
               ) : null}
             </div>
