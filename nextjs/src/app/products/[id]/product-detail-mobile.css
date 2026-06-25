@@ -139,6 +139,9 @@
     padding: 0;
     box-shadow: 0 6px 18px rgba(27, 25, 22, 0.08);
   }
+  .product-gallery__main img {
+    object-fit: contain;
+  }
   .product-gallery__selector {
     min-height: 52px;
   }
