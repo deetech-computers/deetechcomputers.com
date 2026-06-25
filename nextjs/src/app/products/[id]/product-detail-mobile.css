@@ -8,6 +8,9 @@
   .product-detail {
     min-height: 2100px;
   }
+  .product-breadcrumbs {
+    margin-bottom: 10px;
+  }
   .product-detail-view {
     min-height: 1080px;
   }

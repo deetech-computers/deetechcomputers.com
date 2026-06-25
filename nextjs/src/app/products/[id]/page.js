@@ -354,19 +354,19 @@ export default function ProductDetailPage() {
   const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
   const currentImage = images[activeImageIndex] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 560, force: true }),
+    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 747, force: true }),
     [currentImage]
   );
   const optimizedCurrentImageSrcSet = useMemo(
-    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true }),
+    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true, heightRatio: 4 / 3 }),
     [currentImage]
   );
   const optimizedGalleryImages = useMemo(
-    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 560, force: true })),
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 747, force: true })),
     [images]
   );
   const optimizedThumbnailImages = useMemo(
-    () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 140 })),
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 140, height: 104 })),
     [images]
   );
   const hasLoadedSelectedMainImage = loadedMainImage.src === optimizedCurrentImage;
