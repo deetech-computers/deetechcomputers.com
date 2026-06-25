@@ -1121,6 +1121,9 @@
   font-weight: 600;
   text-decoration: line-through;
 }
+.checkout-payment-route .product-card__price-old.is-hidden {
+  visibility: hidden;
+}
 .checkout-payment-route .product-card__price {
   margin: 0; color: #1f1d1b; font-size: 0.95rem; font-weight: 700;
   transition: color 180ms ease;

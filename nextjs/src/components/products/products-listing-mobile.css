@@ -25,7 +25,6 @@
 @media (max-width: 640px) {
   .shop-page {
     padding-bottom: 96px;
-    min-height: 1880px;
   }
   .shop-hero {
     padding: 0;
@@ -193,9 +192,6 @@
   }
 }
 @media (max-width: 760px) {
-  .shop-toolbar__controls {
-    padding: 18px 14px;
-  }
   .shop-toolbar__controls,
   .shop-toolbar__sort,
   .shop-toolbar__sort select,
@@ -211,9 +207,8 @@
     grid-template-columns: 1fr;
     align-items: start;
   }
-  .shop-active-filters,
   .shop-active-filter {
-    padding: 16px;
+    padding: 10px 14px;
   }
   .shop-mobile-bar {
     z-index: 70;

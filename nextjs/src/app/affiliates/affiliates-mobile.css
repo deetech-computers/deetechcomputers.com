@@ -82,7 +82,7 @@
     gap: 14px;
     padding: 26px;
     border: 1px solid rgba(0, 55, 20, 0.18);
-    border-radius: 8px;
+    border-radius: 4px;
     background: #14552b;
     color: #ffffff;
     box-shadow: 0 16px 34px rgba(20, 85, 43, 0.16);
@@ -172,7 +172,7 @@
     align-items: center;
     gap: 6px;
     padding: 0 14px;
-    border-radius: 6px;
+    border-radius: 4px;
     border: 0;
     background: #a5dca6;
     color: #003714;
@@ -224,7 +224,7 @@
     min-height: 132px;
     padding: 17px;
     border: 1px solid #c1c9bd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #fbfaff;
   }
   .affiliate-mobile-dashboard__stats article.is-gold {
@@ -253,7 +253,7 @@
     gap: 18px;
     padding: 26px;
     border: 1px solid #c1c9bd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
   }
   .affiliate-mobile-dashboard__payout-head {
@@ -330,7 +330,7 @@
     gap: 12px;
     padding: 18px;
     border: 1px solid #95eba8;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ddfae6;
     color: #00551e;
   }
@@ -349,7 +349,7 @@
     gap: 18px;
     padding: 22px;
     border: 1px solid #c1c9bd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.035);
   }
@@ -561,7 +561,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 0;
     background: #00401b;
     color: #ffffff;

@@ -47,6 +47,10 @@
   gap: 22px;
   min-width: 0;
 }
+.affiliate-desktop-dashboard {
+  display: grid;
+  gap: 22px;
+}
 .affiliate-loading,
 .affiliate-empty {
   padding: 28px;
@@ -143,7 +147,7 @@
   gap: 8px;
   padding: 18px 16px 16px;
   border: 2px solid #184f27;
-  border-radius: 18px;
+  border-radius: 4px;
   background: #fff;
   text-align: center;
 }
@@ -194,7 +198,7 @@
   gap: 14px;
   padding: 18px;
   border: 1px solid #d5deee;
-  border-radius: 18px;
+  border-radius: 4px;
   background: #fff;
 }
 .affiliate-learn__commission > p {
@@ -215,7 +219,7 @@
   justify-items: center;
   gap: 2px;
   padding: 18px 16px;
-  border-radius: 16px;
+  border-radius: 4px;
   border: 2px solid #184f27;
   background: #fff;
   color: #184f27;
@@ -243,7 +247,7 @@
   align-items: flex-start;
   padding: 10px 12px;
   border: 1px solid #d9e0ed;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #f9fbff;
 }
 .affiliate-learn__commission li::before,
@@ -281,7 +285,7 @@
   gap: 8px;
   padding: 14px;
   border: 2px solid #d5deee;
-  border-radius: 16px;
+  border-radius: 4px;
   background: #fff;
 }
 .affiliate-learn__tier-card h4 {
@@ -347,26 +351,26 @@
 .affiliate-learn__examples,
 .affiliate-learn__why {
   border: 1px solid #d5deee;
-  border-radius: 16px;
+  border-radius: 4px;
   background: #fff;
   padding: 16px;
 }
 .affiliate-learn__examples h3 {
   padding: 10px 12px;
   margin: -16px -16px 12px;
-  border-radius: 14px 14px 0 0;
+  border-radius: 4px 4px 0 0;
   background: linear-gradient(90deg, #184f27, #1f6c35);
   color: #fff;
 }
 .affiliate-learn__journey {
   border: 1px solid #d5deee;
-  border-radius: 16px;
+  border-radius: 4px;
   background: #fff;
   padding: 16px;
 }
 .affiliate-learn__faq-item {
   border: 1px solid #d5deee;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #fff;
 }
 .affiliate-learn__faq-item summary {
@@ -546,6 +550,9 @@
   .affiliate-main {
     gap: 24px;
   }
+  .affiliate-desktop-dashboard {
+    gap: 24px;
+  }
   .affiliate-command {
     grid-template-columns: minmax(0, 1fr) minmax(360px, 0.62fr);
     gap: clamp(28px, 5vw, 70px);
@@ -684,7 +691,7 @@
   min-height: 170px;
   padding: 24px;
   border: 1px solid #d9ddd3;
-  border-radius: 8px;
+  border-radius: 4px;
   background: #ffffff;
   box-shadow: 0 14px 30px rgba(27, 25, 22, 0.035);
   animation: affiliateRise 520ms ease both;
@@ -914,7 +921,7 @@
   width: 64px;
   height: 64px;
   place-items: center;
-  border-radius: 18px;
+  border-radius: 4px;
   background: #184f27;
   color: #fff;
   font-weight: 900;
@@ -1123,7 +1130,7 @@
     min-height: 280px;
     padding: 44px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #14552b;
     color: #ffffff;
     box-shadow: 0 18px 44px rgba(20, 85, 43, 0.18);
@@ -1182,7 +1189,7 @@
     gap: 12px;
     padding: 28px;
     border: 1px solid #d7dacd;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
     color: #1b1916;
     box-shadow: 0 16px 34px rgba(0, 0, 0, 0.12);
@@ -1215,7 +1222,7 @@
     padding: 34px 38px;
     border: 1px solid #d8ddd3;
     border-top: 4px solid #d9a441;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 14px 30px rgba(27, 25, 22, 0.035);
   }
@@ -1245,7 +1252,7 @@
   .affiliate-referrals.panel,
   .affiliate-analytics {
     border: 1px solid #d8ddd3;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 14px 30px rgba(27, 25, 22, 0.035);
   }
@@ -1297,7 +1304,7 @@
   .affiliate-learn__journey,
   .affiliate-learn__faq-item {
     border: 1px solid #d8ddd3;
-    border-radius: 8px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: none;
   }
@@ -1319,7 +1326,7 @@
   .affiliate-learn__commission li,
   .affiliate-learn__why li {
     border: 1px solid #d8ddd3;
-    border-radius: 6px;
+    border-radius: 4px;
     background: #fbfcfb;
   }
   .affiliate-learn__commission li::before,

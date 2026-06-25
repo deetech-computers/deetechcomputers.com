@@ -317,7 +317,9 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
         </Link>
         <p className="product-card__description">{isRelated ? summary : summary}</p>
         <div className="product-card__price-wrap">
-          {hasDiscount ? <p className="product-card__price-old">{formatCurrency(originalPrice)}</p> : null}
+          <p className={`product-card__price-old${hasDiscount ? "" : " is-hidden"}`} aria-hidden={!hasDiscount}>
+            {hasDiscount ? formatCurrency(originalPrice) : " "}
+          </p>
           <p className="product-card__price">{formatCurrency(price)}</p>
         </div>
         {!isRelated && reviewCount > 0 ? (
