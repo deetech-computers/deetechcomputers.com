@@ -13,7 +13,10 @@
     gap: 0;
   }
   .product-gallery.panel {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
     border: 0;
+    border-radius: 0;
     box-shadow: none;
     padding: 0;
     background: transparent;
@@ -240,6 +243,7 @@
     grid-template-columns: 28px minmax(0, 1fr) 28px;
     gap: 8px;
     min-height: 64px;
+    padding: 0 16px;
   }
   .product-gallery__arrow {
     width: 30px;
