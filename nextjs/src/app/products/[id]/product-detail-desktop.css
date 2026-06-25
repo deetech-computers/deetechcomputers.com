@@ -1522,7 +1522,7 @@
   transition: background 220ms ease, color 220ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 .product-detail-page .product-card__cart-button:hover {
-  background: #004aad;
+  background: #184f27;
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -1552,7 +1552,7 @@
   }
   .product-detail-page .product-card:hover .product-card__price,
   .product-detail-page .product-card:focus-within .product-card__price {
-    color: #004aad;
+    color: #184f27;
   }
   .product-detail-page .product-card--home .product-card__footer--reveal {
     display: grid;

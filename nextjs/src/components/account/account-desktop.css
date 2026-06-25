@@ -208,6 +208,7 @@
   width: min(680px, 100%);
   margin: clamp(96px, 15vh, 180px) auto 0;
   padding: 44px 48px 42px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background: #ffffff;
   text-align: center;
@@ -940,6 +941,7 @@
   width: min(680px, 100%);
   margin: clamp(96px, 15vh, 180px) auto 0;
   padding: 46px 48px 42px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background: #ffffff;
   text-align: center;
@@ -1948,6 +1950,7 @@
   width: min(720px, 100%);
   margin: clamp(78px, 12vh, 140px) auto 0;
   padding: 52px 42px 40px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background: #ffffff;
   text-align: center;
@@ -2203,6 +2206,7 @@
   width: min(680px, 100%);
   margin: clamp(92px, 14vh, 170px) auto 0;
   padding: 40px 40px 36px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background: #ffffff;
   text-align: center;
@@ -2871,6 +2875,7 @@
   min-height: 560px;
   margin: clamp(70px, 10vh, 110px) auto 0;
   padding: 76px 56px 54px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   background:
     radial-gradient(circle at 50% 30%, rgba(230, 248, 235, 0.86), rgba(255, 255, 255, 0) 32%),
@@ -3227,7 +3232,7 @@
 .account-support-sidebar .contact-support-preview__latest p > span {
   text-transform: capitalize;
   font-weight: 700;
-  color: #0d56da;
+  color: #184f27;
 }
 .account-support-sidebar .contact-support-preview__cta {
   min-height: 40px;
@@ -3236,7 +3241,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #0d56da;
+  background: #184f27;
   color: #fff;
   font-weight: 700;
   font-size: 0.9rem;
@@ -3244,5 +3249,5 @@
   letter-spacing: 0.04em;
 }
 .account-support-sidebar .contact-support-preview__cta:hover {
-  background: #0b49ba;
+  background: #003714;
 }
