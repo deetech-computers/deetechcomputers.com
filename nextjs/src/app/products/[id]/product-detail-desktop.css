@@ -837,6 +837,9 @@
   gap: 6px;
   min-width: 180px;
 }
+.product-review-actions__sort .field {
+  border-radius: 4px;
+}
 .product-review-actions__sort span {
   color: var(--muted);
   font-size: 0.8rem;
@@ -975,6 +978,9 @@
 }
 .product-review-form__star.is-active {
   color: #f0bf3f;
+}
+.product-review-form .field {
+  border-radius: 4px;
 }
 .product-review-form textarea.field {
   min-height: 128px;
