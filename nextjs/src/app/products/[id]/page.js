@@ -511,15 +511,6 @@ export default function ProductDetailPage() {
     };
   }, [images.length, previewOpen]);
 
-  function scrollThumbnailRail(direction) {
-    const rail = thumbnailRailRef.current;
-    if (!rail) return;
-    rail.scrollBy({
-      left: direction * Math.max(rail.clientWidth * 0.72, 180),
-      behavior: "smooth",
-    });
-  }
-
   function scrollPreviewThumbnailRail(direction) {
     const rail = previewThumbnailRailRef.current;
     if (!rail) return;
@@ -879,6 +870,14 @@ export default function ProductDetailPage() {
                     className="product-gallery__main-image"
                   />
                   {mainImageLoading ? <span className="product-gallery__main-loading" aria-hidden="true" /> : null}
+                  <span className="product-gallery__preview-badge">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                    <span className="product-gallery__preview-badge-text product-gallery__preview-badge-text--desktop">Click to preview</span>
+                    <span className="product-gallery__preview-badge-text product-gallery__preview-badge-text--mobile">Tap to preview</span>
+                  </span>
                 </>
               ) : (
                 <div className="product-card__placeholder">No image</div>
@@ -911,14 +910,6 @@ export default function ProductDetailPage() {
               className="product-gallery__selector"
               aria-label="Product images"
             >
-              <button
-                type="button"
-                className="product-gallery__arrow"
-                onClick={() => scrollThumbnailRail(-1)}
-                aria-label="Scroll product images left"
-              >
-                &lsaquo;
-              </button>
               <div
                 ref={thumbnailRailRef}
                 className="product-gallery__thumbs"
@@ -940,14 +931,6 @@ export default function ProductDetailPage() {
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                className="product-gallery__arrow"
-                onClick={() => scrollThumbnailRail(1)}
-                aria-label="Scroll product images right"
-              >
-                &rsaquo;
-              </button>
             </div>
           ) : null}
         </div>
