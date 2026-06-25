@@ -4,6 +4,24 @@
   .has-affiliate-mobile-dashboard .affiliate-desktop-dashboard {
     display: none;
   }
+  .affiliate-skeleton__hero {
+    grid-template-columns: 1fr;
+  }
+  .affiliate-skeleton__hero .affiliate-skeleton__code {
+    justify-self: stretch;
+    height: 80px;
+  }
+  .affiliate-skeleton__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .affiliate-skeleton__stat {
+    min-height: 130px;
+  }
+  .affiliate-skeleton__grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
   .has-affiliate-mobile-dashboard .affiliate-layout {
     padding: 0;
     margin: 0;

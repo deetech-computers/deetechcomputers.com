@@ -20,6 +20,28 @@
   }
 }
 @media (max-width: 860px) {
+  .account-skeleton {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .account-skeleton__sidebar {
+    gap: 12px;
+  }
+  .account-skeleton__nav {
+    display: none;
+  }
+  .account-skeleton__nav:nth-child(2),
+  .account-skeleton__nav:nth-child(3) {
+    display: block;
+    min-height: 64px;
+  }
+  .account-skeleton__content {
+    min-height: 320px;
+    padding: 20px;
+  }
+  .account-skeleton__grid {
+    grid-template-columns: 1fr;
+  }
   .account-password-form {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;

@@ -1362,13 +1362,47 @@ function LogoutSection({ onLogout }) {
   );
 }
 
+function AccountLoadingSkeleton() {
+  return (
+    <main className="shell page-section account-page-main" aria-label="Loading your account" aria-busy="true">
+      <div className="account-dashboard-shell">
+        <div className="account-skeleton">
+          <div className="account-skeleton__sidebar">
+            <div className="account-skeleton__profile">
+              <span className="account-skeleton__avatar" />
+              <span className="account-skeleton__line account-skeleton__line--name" />
+              <span className="account-skeleton__line account-skeleton__line--email" />
+            </div>
+            {Array.from({ length: 7 }).map((_, index) => (
+              <span key={index} className="account-skeleton__nav" />
+            ))}
+          </div>
+          <div className="account-skeleton__content">
+            <span className="account-skeleton__line account-skeleton__line--title" />
+            <span className="account-skeleton__line" />
+            <span className="account-skeleton__line account-skeleton__line--short" />
+            <div className="account-skeleton__grid">
+              <span className="account-skeleton__block" />
+              <span className="account-skeleton__block" />
+              <span className="account-skeleton__block" />
+              <span className="account-skeleton__block" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 function AccountTransientState({ mode = "loading" }) {
-  const isRedirect = mode === "redirect";
+  if (mode === "loading") {
+    return <AccountLoadingSkeleton />;
+  }
   return (
     <main className="shell page-section account-transient-page">
       <section className="account-transient-card" aria-live="polite">
         <span className="account-transient-spinner" aria-hidden="true" />
-        <p>{isRedirect ? "Redirecting to login..." : "Loading your account..."}</p>
+        <p>Redirecting to login...</p>
       </section>
     </main>
   );

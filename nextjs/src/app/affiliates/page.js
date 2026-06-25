@@ -515,7 +515,29 @@ export default function AffiliatesPage() {
       <section className="panel affiliate-layout">
         <div className="affiliate-main">
           {loading ? (
-            <div className="affiliate-loading">Loading affiliate dashboard...</div>
+            <div className="affiliate-skeleton" aria-label="Loading affiliate dashboard" aria-busy="true">
+              <div className="affiliate-skeleton__hero">
+                <span className="affiliate-skeleton__line affiliate-skeleton__line--badge" />
+                <span className="affiliate-skeleton__line affiliate-skeleton__line--heading" />
+                <span className="affiliate-skeleton__line" />
+                <span className="affiliate-skeleton__code" />
+              </div>
+              <div className="affiliate-skeleton__card" />
+              <div className="affiliate-skeleton__stats">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <span key={index} className="affiliate-skeleton__stat" />
+                ))}
+              </div>
+              <div className="affiliate-skeleton__grid">
+                <span className="affiliate-skeleton__panel" />
+                <span className="affiliate-skeleton__panel" />
+              </div>
+              <div className="affiliate-skeleton__grid">
+                <span className="affiliate-skeleton__panel" />
+                <span className="affiliate-skeleton__panel" />
+              </div>
+              <span className="affiliate-skeleton__table" />
+            </div>
           ) : !isAuthenticated ? (
             <>
               <section className="affiliate-join-card">
