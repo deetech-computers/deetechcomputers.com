@@ -51,11 +51,26 @@
   .product-summary {
     min-height: 560px;
   }
+  .product-summary.panel h1 {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+  .product-summary__price {
+    font-size: 1.7rem;
+  }
   .product-summary__buy {
     display: none;
   }
   .product-summary__upgrades {
     gap: 14px;
+  }
+  .product-summary__upgrade-group {
+    padding-top: 14px;
+    border-top: 1px solid #e2ddd1;
+  }
+  .product-summary__upgrade-group:first-child {
+    padding-top: 0;
+    border-top: 0;
   }
   .product-summary__upgrade-options {
     gap: 8px;
