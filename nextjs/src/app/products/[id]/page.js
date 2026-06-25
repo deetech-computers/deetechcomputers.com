@@ -1019,11 +1019,10 @@ export default function ProductDetailPage() {
                 </div>
                 <span className="product-summary__upgrade-toggle-icon">{upgradePanelOpen ? "-" : "+"}</span>
               </button>
-              {upgradePanelOpen ? (
-                <div className="product-summary__upgrade-body">
+              <div className={upgradePanelOpen ? "product-summary__upgrade-body is-open" : "product-summary__upgrade-body"}>
                   {upgradeSpecs.ramOptions.length ? (
                     <div className="product-summary__upgrade-group">
-                      <span>RAM</span>
+                      <span>Memory (RAM)</span>
                       <div className="product-summary__upgrade-options">
                         <button
                           type="button"
@@ -1093,8 +1092,7 @@ export default function ProductDetailPage() {
                       </div>
                     </div>
                   ) : null}
-                </div>
-              ) : null}
+              </div>
             </div>
           ) : null}
           <p className="product-summary__copy">{summary}</p>
@@ -1128,6 +1126,11 @@ export default function ProductDetailPage() {
                 })
               }
             >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="9" cy="20" r="1.4" fill="currentColor" />
+                <circle cx="17" cy="20" r="1.4" fill="currentColor" />
+                <path d="M3 4h2l2.4 11.2a1.6 1.6 0 0 0 1.6 1.3h7.4a1.6 1.6 0 0 0 1.6-1.3L20 7H6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               {stock < 1 ? "Out of stock" : "Add to cart"}
             </button>
           </div>

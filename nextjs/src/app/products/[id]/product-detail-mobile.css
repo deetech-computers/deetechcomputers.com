@@ -58,9 +58,19 @@
     padding: 15px;
     gap: 14px;
     border-radius: 4px;
+    border: 1px solid #dde6da;
+    background: #f5fbf6;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   }
   .product-summary__upgrade-toggle {
+    display: grid;
     gap: 10px;
+  }
+  .product-summary__upgrade-body {
+    display: none;
+  }
+  .product-summary__upgrade-body.is-open {
+    display: grid;
   }
   .product-summary__upgrade-toggle-icon {
     width: 30px;
