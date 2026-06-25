@@ -849,6 +849,12 @@ export default function CheckoutPaymentPage() {
           guestTrackingUrl: result?.guestTrackingUrl || "",
           items: items.map((item) => buildSavedOrderItem(item)),
         };
+        const autoFlowElapsed = Date.now() - processingStart;
+        if (autoFlowElapsed < PROCESSING_FLOOR_MS) {
+          await new Promise((resolve) =>
+            window.setTimeout(resolve, PROCESSING_FLOOR_MS - autoFlowElapsed)
+          );
+        }
         setHubtelClientReference(orderRef);
         setHubtelStatusToken(statusToken);
         setHubtelWaiting(false);
@@ -954,7 +960,6 @@ export default function CheckoutPaymentPage() {
           }
           aria-live="polite"
         >
-          <div className="checkout-success-transition__halo" aria-hidden="true" />
           <div className="checkout-success-transition__card">
             <div
               className={
@@ -965,24 +970,38 @@ export default function CheckoutPaymentPage() {
               aria-hidden="true"
             >
               {transitionStage === "success" ? (
-                <span className="checkout-success-transition__celebration">
-                  <span className="checkout-success-transition__burst" />
-                  <span className="checkout-success-transition__cone" />
-                </span>
+                <svg className="checkout-success-transition__check" viewBox="0 0 52 52" fill="none">
+                  <circle className="checkout-success-transition__check-ring" cx="26" cy="26" r="24" />
+                  <path className="checkout-success-transition__check-mark" d="M15 27.5 22.5 35 38 18" />
+                </svg>
               ) : (
                 <span className="checkout-success-transition__spinner" />
               )}
             </div>
             <strong className="checkout-success-transition__title">
-              {transitionStage === "success" ? "Thank you for your purchase" : "Processing your order"}
+              {transitionStage === "success" ? "Order placed!" : "Processing your order"}
             </strong>
             <p className="checkout-success-transition__message">
               {transitionStage === "success"
-                ? "Everything is set. Your order is underway and we are preparing your completed receipt."
+                ? "Thank you for your purchase. Your order is confirmed and we're preparing your receipt."
                 : hubtelWaiting
                   ? "Waiting for Hubtel payment confirmation. Once paid, we will automatically complete your order and redirect you."
                   : "Please hold on while we validate your payment, save your order, and prepare your completion page."}
             </p>
+            <div className="checkout-success-transition__steps" aria-hidden="true">
+              <span className={`checkout-success-transition__step${transitionStage === "success" ? " is-done" : " is-active"}`}>
+                <span className="checkout-success-transition__step-dot" />
+                Payment
+              </span>
+              <span className={`checkout-success-transition__step${transitionStage === "success" ? " is-done" : ""}`}>
+                <span className="checkout-success-transition__step-dot" />
+                Order
+              </span>
+              <span className={`checkout-success-transition__step${transitionStage === "success" ? " is-done is-active" : ""}`}>
+                <span className="checkout-success-transition__step-dot" />
+                Confirmation
+              </span>
+            </div>
             {hubtelWaiting ? (
               <button type="button" className="checkout-payment__secondary" onClick={stopWaitingForHubtelPayment}>
                 Stop waiting and retry

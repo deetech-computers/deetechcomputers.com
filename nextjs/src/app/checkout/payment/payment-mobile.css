@@ -5,13 +5,6 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
-  .checkout-success-transition,
-  .checkout-success-transition__halo,
-  .checkout-success-transition__spinner,
-  .checkout-success-transition__burst-dot,
-  .checkout-success-transition__spark {
-    animation: none !important;
-  }
 }
 @media (max-width: 640px) {
   .checkout-payment__option {
@@ -83,21 +76,20 @@
     padding: 28px 20px;
   }
   .checkout-success-transition__check {
-    width: auto;
-    height: auto;
-    font-size: 2rem;
+    width: 38px;
+    height: 38px;
   }
   .checkout-success-transition__badge {
-    width: 78px;
-    height: 78px;
-  }
-  .checkout-success-transition__celebration {
-    width: 50px;
-    height: 50px;
+    width: 72px;
+    height: 72px;
   }
   .checkout-success-transition__spinner {
     width: 30px;
     height: 30px;
+  }
+  .checkout-success-transition__steps {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 @media (max-width: 760px) {
