@@ -806,6 +806,12 @@
   gap: 14px;
   align-content: start;
 }
+.product-review-photos-trigger {
+  display: none;
+}
+.product-review-photos-modal {
+  display: none;
+}
 .product-review-list-wrap__head {
   display: flex;
   align-items: center;

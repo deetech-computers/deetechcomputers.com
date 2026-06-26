@@ -230,6 +230,7 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [reviewImagePreview, setReviewImagePreview] = useState("");
+  const [reviewPhotosModalOpen, setReviewPhotosModalOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const thumbnailRailRef = useRef(null);
@@ -554,6 +555,39 @@ export default function ProductDetailPage() {
     };
   }, [reviewImagePreview]);
 
+  useEffect(() => {
+    if (!reviewPhotosModalOpen) return undefined;
+
+    const scrollY = window.scrollY;
+    const previousOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setReviewPhotosModalOpen(false);
+      }
+    };
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [reviewPhotosModalOpen]);
+
   function scrollPreviewThumbnailRail(direction) {
     const rail = previewThumbnailRailRef.current;
     if (!rail) return;
@@ -711,6 +745,7 @@ export default function ProductDetailPage() {
     }
     return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
   });
+  const reviewsWithPhotos = sortedReviews.filter((review) => review?.image_url);
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
@@ -811,6 +846,50 @@ export default function ProductDetailPage() {
               width={1200}
               height={1200}
             />
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  const reviewPhotosModal = reviewPhotosModalOpen
+    ? createPortal(
+        <div className="product-review-photos-modal" role="dialog" aria-modal="true" aria-label="Review photos">
+          <div className="product-review-photos-modal__overlay" onClick={() => setReviewPhotosModalOpen(false)} />
+          <div className="product-review-photos-modal__panel">
+            <div className="product-review-photos-modal__head">
+              <h3>Photos from reviews</h3>
+              <button type="button" onClick={() => setReviewPhotosModalOpen(false)} aria-label="Close">
+                x
+              </button>
+            </div>
+            <div className="product-review-photos-modal__list">
+              {reviewsWithPhotos.map((review, index) => {
+                const reviewerName = review?.user?.name || review?.name || "Customer";
+                return (
+                  <button
+                    key={review?._id || index}
+                    type="button"
+                    className="product-review-photos-modal__item"
+                    onClick={() => {
+                      setReviewPhotosModalOpen(false);
+                      setReviewImagePreview(resolveProductImage(review.image_url));
+                    }}
+                  >
+                    <StableImage
+                      src={resolveProductImage(review.image_url)}
+                      alt={review?.title || "Review upload"}
+                      width={90}
+                      height={90}
+                    />
+                    <span>
+                      <strong>{reviewerName}</strong>
+                      <small>{review?.comment || "No review text provided."}</small>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>,
         document.body
@@ -1323,6 +1402,15 @@ export default function ProductDetailPage() {
                       </label>
                     ) : null}
                   </div>
+                  {reviewsWithPhotos.length ? (
+                    <button
+                      type="button"
+                      className="product-review-photos-trigger"
+                      onClick={() => setReviewPhotosModalOpen(true)}
+                    >
+                      View photos from reviews ({reviewsWithPhotos.length})
+                    </button>
+                  ) : null}
                   <div className="product-review-list">
                     {sortedReviews.length ? (
                       sortedReviews.slice(0, visibleReviewCount).map((review, index) => {
@@ -1520,6 +1608,7 @@ export default function ProductDetailPage() {
 
       {portalReady ? previewModal : null}
       {portalReady ? reviewImagePreviewModal : null}
+      {portalReady ? reviewPhotosModal : null}
     </main>
   );
 }
