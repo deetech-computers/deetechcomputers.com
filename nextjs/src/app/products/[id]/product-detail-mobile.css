@@ -369,6 +369,9 @@
   }
   .product-review-photos-modal__list {
     display: grid;
+    grid-auto-rows: min-content;
+    align-content: start;
+    align-items: start;
     gap: 12px;
     padding: 16px;
     overflow-y: auto;
