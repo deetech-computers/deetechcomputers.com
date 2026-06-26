@@ -82,6 +82,10 @@
   margin-bottom: 28px;
   text-align: center;
 }
+.track-order-hero:has(.track-order-hero__title-row) {
+  justify-items: start;
+  text-align: left;
+}
 .track-order-hero h1 {
   margin: 0;
   color: #003714;
@@ -93,9 +97,10 @@
 .track-order-hero__title-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
 }
 .track-order-hero__back {
   flex: 0 0 auto;
