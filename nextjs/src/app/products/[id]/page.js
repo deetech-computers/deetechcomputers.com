@@ -231,6 +231,8 @@ export default function ProductDetailPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [reviewImagePreview, setReviewImagePreview] = useState("");
   const [reviewPhotosModalOpen, setReviewPhotosModalOpen] = useState(false);
+  const [photoModalSort, setPhotoModalSort] = useState("newest");
+  const [photoModalRatingFilter, setPhotoModalRatingFilter] = useState("all");
   const [portalReady, setPortalReady] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const thumbnailRailRef = useRef(null);
@@ -745,7 +747,22 @@ export default function ProductDetailPage() {
     }
     return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
   });
-  const reviewsWithPhotos = sortedReviews.filter((review) => review?.image_url);
+  const reviewsWithPhotos = reviews
+    .filter((review) => review?.image_url)
+    .filter((review) => photoModalRatingFilter === "all" || Number(review?.rating || 0) === Number(photoModalRatingFilter))
+    .sort((a, b) => {
+      if (photoModalSort === "oldest") {
+        return new Date(a?.createdAt || 0).getTime() - new Date(b?.createdAt || 0).getTime();
+      }
+      if (photoModalSort === "highest") {
+        return Number(b?.rating || 0) - Number(a?.rating || 0);
+      }
+      if (photoModalSort === "lowest") {
+        return Number(a?.rating || 0) - Number(b?.rating || 0);
+      }
+      return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
+    });
+  const allReviewsWithPhotosCount = reviews.filter((review) => review?.image_url).length;
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
@@ -863,7 +880,32 @@ export default function ProductDetailPage() {
                 x
               </button>
             </div>
+            <div className="product-review-photos-modal__filters">
+              <label>
+                <span>Sort by</span>
+                <select className="field" value={photoModalSort} onChange={(event) => setPhotoModalSort(event.target.value)}>
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="highest">Highest rating</option>
+                  <option value="lowest">Lowest rating</option>
+                </select>
+              </label>
+              <label>
+                <span>Rating</span>
+                <select className="field" value={photoModalRatingFilter} onChange={(event) => setPhotoModalRatingFilter(event.target.value)}>
+                  <option value="all">All ratings</option>
+                  <option value="5">5 stars</option>
+                  <option value="4">4 stars</option>
+                  <option value="3">3 stars</option>
+                  <option value="2">2 stars</option>
+                  <option value="1">1 star</option>
+                </select>
+              </label>
+            </div>
             <div className="product-review-photos-modal__list">
+              {!reviewsWithPhotos.length ? (
+                <p className="product-review-photos-modal__empty">No photos match this filter.</p>
+              ) : null}
               {reviewsWithPhotos.map((review, index) => {
                 const reviewerName = review?.user?.name || review?.name || "Customer";
                 return (
@@ -1402,13 +1444,13 @@ export default function ProductDetailPage() {
                       </label>
                     ) : null}
                   </div>
-                  {reviewsWithPhotos.length ? (
+                  {allReviewsWithPhotosCount > 0 ? (
                     <button
                       type="button"
                       className="product-review-photos-trigger"
                       onClick={() => setReviewPhotosModalOpen(true)}
                     >
-                      View photos from reviews ({reviewsWithPhotos.length})
+                      View photos from reviews ({allReviewsWithPhotosCount})
                     </button>
                   ) : null}
                   <div className="product-review-list">
