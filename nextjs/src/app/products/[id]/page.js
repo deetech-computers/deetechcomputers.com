@@ -747,8 +747,7 @@ export default function ProductDetailPage() {
     }
     return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
   });
-  const reviewsWithPhotos = reviews
-    .filter((review) => review?.image_url)
+  const reviewsForModal = reviews
     .filter((review) => photoModalRatingFilter === "all" || Number(review?.rating || 0) === Number(photoModalRatingFilter))
     .sort((a, b) => {
       if (photoModalSort === "oldest") {
@@ -762,7 +761,6 @@ export default function ProductDetailPage() {
       }
       return new Date(b?.createdAt || 0).getTime() - new Date(a?.createdAt || 0).getTime();
     });
-  const allReviewsWithPhotosCount = reviews.filter((review) => review?.image_url).length;
   const relatedProducts = allProducts
     .filter((item) => String(item?._id) !== String(product?._id))
     .filter((item) => canonicalCategory(item?.category) === canonicalCategory(product?.category))
@@ -875,7 +873,7 @@ export default function ProductDetailPage() {
           <div className="product-review-photos-modal__overlay" onClick={() => setReviewPhotosModalOpen(false)} />
           <div className="product-review-photos-modal__panel">
             <div className="product-review-photos-modal__head">
-              <h3>Photos from reviews</h3>
+              <h3>More from reviews</h3>
               <button type="button" onClick={() => setReviewPhotosModalOpen(false)} aria-label="Close">
                 x
               </button>
@@ -903,32 +901,37 @@ export default function ProductDetailPage() {
               </label>
             </div>
             <div className="product-review-photos-modal__list">
-              {!reviewsWithPhotos.length ? (
-                <p className="product-review-photos-modal__empty">No photos match this filter.</p>
+              {!reviewsForModal.length ? (
+                <p className="product-review-photos-modal__empty">No reviews match this filter.</p>
               ) : null}
-              {reviewsWithPhotos.map((review, index) => {
+              {reviewsForModal.map((review, index) => {
                 const reviewerName = review?.user?.name || review?.name || "Customer";
+                const hasPhoto = Boolean(review?.image_url);
                 return (
-                  <button
-                    key={review?._id || index}
-                    type="button"
-                    className="product-review-photos-modal__item"
-                    onClick={() => {
-                      setReviewPhotosModalOpen(false);
-                      setReviewImagePreview(resolveProductImage(review.image_url));
-                    }}
-                  >
-                    <StableImage
-                      src={resolveProductImage(review.image_url)}
-                      alt={review?.title || "Review upload"}
-                      width={90}
-                      height={90}
-                    />
+                  <div key={review?._id || index} className="product-review-photos-modal__item">
+                    {hasPhoto ? (
+                      <button
+                        type="button"
+                        className="product-review-photos-modal__item-thumb"
+                        onClick={() => {
+                          setReviewPhotosModalOpen(false);
+                          setReviewImagePreview(resolveProductImage(review.image_url));
+                        }}
+                        aria-label="View photo full size"
+                      >
+                        <StableImage
+                          src={resolveProductImage(review.image_url)}
+                          alt={review?.title || "Review upload"}
+                          width={90}
+                          height={90}
+                        />
+                      </button>
+                    ) : null}
                     <span>
                       <strong>{reviewerName}</strong>
                       <small>{review?.comment || "No review text provided."}</small>
                     </span>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -1444,13 +1447,17 @@ export default function ProductDetailPage() {
                       </label>
                     ) : null}
                   </div>
-                  {allReviewsWithPhotosCount > 0 ? (
+                  {reviews.length > 0 ? (
                     <button
                       type="button"
                       className="product-review-photos-trigger"
                       onClick={() => setReviewPhotosModalOpen(true)}
                     >
-                      View photos from reviews ({allReviewsWithPhotosCount})
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M5 12.5 9.5 17 19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      More from reviews ({reviews.length})
+                      <span aria-hidden="true">{"›"}</span>
                     </button>
                   ) : null}
                   <div className="product-review-list">
