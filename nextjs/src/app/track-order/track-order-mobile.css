@@ -64,6 +64,12 @@
   .track-order-hero h1 {
     font-size: 1.4rem;
   }
+  .track-order-hero__title-row {
+    display: block;
+  }
+  .track-order-hero__back {
+    display: none;
+  }
   .track-order-hero__crumbs {
     justify-content: flex-start;
   }

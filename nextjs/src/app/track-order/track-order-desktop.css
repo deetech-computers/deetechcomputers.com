@@ -82,10 +82,6 @@
   margin-bottom: 28px;
   text-align: center;
 }
-.track-order-hero:has(.track-order-hero__title-row) {
-  justify-items: start;
-  text-align: left;
-}
 .track-order-hero h1 {
   margin: 0;
   color: #003714;
@@ -95,14 +91,19 @@
   line-height: 1.15;
 }
 .track-order-hero__title-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: flex-start;
   gap: 16px;
-  flex-wrap: wrap;
   width: 100%;
 }
+.track-order-hero__title-row h1 {
+  grid-column: 2;
+  text-align: center;
+}
 .track-order-hero__back {
+  grid-column: 1;
+  justify-self: start;
   flex: 0 0 auto;
   white-space: nowrap;
 }
