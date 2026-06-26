@@ -3,10 +3,10 @@
   .product-detail,
   .product-detail-view { grid-template-columns: 1fr; }
   .product-detail-loading--desktop {
-    display: none;
+    display: none !important;
   }
   .product-detail-loading--mobile {
-    display: grid;
+    display: grid !important;
     gap: 10px;
   }
   .product-detail-loading__crumb {
