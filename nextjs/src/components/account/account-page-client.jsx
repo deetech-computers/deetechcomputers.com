@@ -186,6 +186,20 @@ function getAccountDisplayName(profile) {
   return fullName || profile?.email || "DEETECH Customer";
 }
 
+function buildProfileFormState(profile) {
+  const nextProfile = profile || {};
+  return {
+    firstName: nextProfile?.firstName || nextProfile?.name?.split(" ")?.[0] || "",
+    lastName: nextProfile?.lastName || nextProfile?.name?.split(" ")?.slice(1).join(" ") || "",
+    email: nextProfile?.email || "",
+    phone: nextProfile?.phone || "",
+    city: nextProfile?.city || "",
+    region: nextProfile?.region || "",
+    address: nextProfile?.address || "",
+    avatarUrl: nextProfile?.avatarUrl || "",
+  };
+}
+
 function getAccountInitials(profile) {
   const name = getAccountDisplayName(profile);
   return name
@@ -1649,21 +1663,11 @@ export default function AccountPageClient({ initialTab = "" }) {
   const router = useRouter();
   const { pushToast } = useToast();
   const { isAuthenticated, logout, refreshProfile, saveProfile, uploadAvatar, status, token, user } = useAuth();
-  const [loadingProfile, setLoadingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [profileForm, setProfileForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    city: "",
-    region: "",
-    address: "",
-    avatarUrl: "",
-  });
+  const [profileForm, setProfileForm] = useState(() => buildProfileFormState(user));
   const [orders, setOrders] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [affiliateSummary, setAffiliateSummary] = useState({
@@ -1720,17 +1724,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   }, [user]);
 
   function fillProfileForm(profile) {
-    const nextProfile = profile || {};
-    setProfileForm({
-      firstName: nextProfile?.firstName || nextProfile?.name?.split(" ")?.[0] || "",
-      lastName: nextProfile?.lastName || nextProfile?.name?.split(" ")?.slice(1).join(" ") || "",
-      email: nextProfile?.email || "",
-      phone: nextProfile?.phone || "",
-      city: nextProfile?.city || "",
-      region: nextProfile?.region || "",
-      address: nextProfile?.address || "",
-      avatarUrl: nextProfile?.avatarUrl || "",
-    });
+    setProfileForm(buildProfileFormState(profile));
   }
 
   useEffect(() => {
@@ -1742,13 +1736,10 @@ export default function AccountPageClient({ initialTab = "" }) {
     if (profileHydratedRef.current) return;
 
     profileHydratedRef.current = true;
-    setLoadingProfile(true);
 
-    refreshProfile()
-      .then((profile) => {
-        fillProfileForm(profile || user || {});
-      })
-      .finally(() => setLoadingProfile(false));
+    refreshProfile().then((profile) => {
+      fillProfileForm(profile || user || {});
+    });
   }, [isAuthenticated, refreshProfile, status, token, user]);
 
   useEffect(() => {
@@ -2059,7 +2050,7 @@ export default function AccountPageClient({ initialTab = "" }) {
     }
   }, [isAuthenticated, router, status]);
 
-  if (status === "loading" || (isAuthenticated && loadingProfile)) {
+  if (status === "loading") {
     return <AccountTransientState mode="loading" />;
   }
 

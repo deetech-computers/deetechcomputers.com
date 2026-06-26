@@ -3244,7 +3244,7 @@
     overflow: visible;
   }
   .account-dashboard__sidebar .account-sidebar-profile {
-    display: none;
+    margin-bottom: 14px;
   }
   .account-dashboard__content {
     display: block;
