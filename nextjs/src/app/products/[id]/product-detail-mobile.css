@@ -260,6 +260,15 @@
     min-width: 0;
     width: 100%;
   }
+  .product-review-form {
+    padding: 18px;
+  }
+  .product-review-form .product-review-form__submit {
+    max-width: none;
+  }
+  .product-review-score-card__trust {
+    text-align: center;
+  }
   .product-review__header {
     flex-direction: column;
     align-items: start;
