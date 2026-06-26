@@ -209,6 +209,7 @@ export default function ProductDetailPage() {
   const [reviewsLoaded, setReviewsLoaded] = useState(false);
   const [myReview, setMyReview] = useState(null);
   const [reviewSort, setReviewSort] = useState("newest");
+  const [visibleReviewCount, setVisibleReviewCount] = useState(5);
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "", imageUrl: "" });
   const [reviewStatus, setReviewStatus] = useState("idle");
   const [uploadingReviewImage, setUploadingReviewImage] = useState(false);
@@ -298,6 +299,7 @@ export default function ProductDetailPage() {
     if (!productId) return;
 
     setReviewsLoaded(false);
+    setVisibleReviewCount(5);
     requestJson(`${API_BASE}/reviews/product/${productId}`)
       .then((items) => {
         setReviews(Array.isArray(items) ? items : []);
@@ -1236,23 +1238,32 @@ export default function ProductDetailPage() {
                       {myReview ? "Update your review" : "Write a Review"}
                     </button>
                   ) : null}
+                  {reviewCount > 0 ? (
+                    <div className="product-review-score-card__trust">
+                      <strong>Verified Reviews</strong>
+                      <span>Reviews are tied to a signed-in DEETECH account.</span>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="product-review-list-wrap">
-                  {reviewCount > 0 ? (
-                    <label className="product-review-actions__sort">
-                      <span>Sort by</span>
-                      <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
-                        <option value="newest">Newest</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="highest">Highest rating</option>
-                        <option value="lowest">Lowest rating</option>
-                      </select>
-                    </label>
-                  ) : null}
+                  <div className="product-review-list-wrap__head">
+                    <h3>Community Feedback</h3>
+                    {reviewCount > 0 ? (
+                      <label className="product-review-actions__sort">
+                        <span>Sort by</span>
+                        <select className="field" value={reviewSort} onChange={(event) => setReviewSort(event.target.value)}>
+                          <option value="newest">Newest</option>
+                          <option value="oldest">Oldest</option>
+                          <option value="highest">Highest rating</option>
+                          <option value="lowest">Lowest rating</option>
+                        </select>
+                      </label>
+                    ) : null}
+                  </div>
                   <div className="product-review-list">
                     {sortedReviews.length ? (
-                      sortedReviews.map((review, index) => {
+                      sortedReviews.slice(0, visibleReviewCount).map((review, index) => {
                         const reviewerName = review?.user?.name || review?.name || "Customer";
                         return (
                           <article key={review?._id || index} className="product-review">
@@ -1283,6 +1294,15 @@ export default function ProductDetailPage() {
                       <p className="product-review-list__empty">No reviews yet. Be the first to share your experience with this product.</p>
                     )}
                   </div>
+                  {sortedReviews.length > visibleReviewCount ? (
+                    <button
+                      type="button"
+                      className="product-review-list__load-more"
+                      onClick={() => setVisibleReviewCount((current) => current + 5)}
+                    >
+                      Load More Reviews
+                    </button>
+                  ) : null}
                 </div>
               </div>
 
