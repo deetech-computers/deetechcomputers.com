@@ -229,6 +229,7 @@ export default function ProductDetailPage() {
   const [mainImageLoading, setMainImageLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [reviewImagePreview, setReviewImagePreview] = useState("");
   const [portalReady, setPortalReady] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const thumbnailRailRef = useRef(null);
@@ -520,6 +521,39 @@ export default function ProductDetailPage() {
     };
   }, [images.length, previewOpen]);
 
+  useEffect(() => {
+    if (!reviewImagePreview) return undefined;
+
+    const scrollY = window.scrollY;
+    const previousOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setReviewImagePreview("");
+      }
+    };
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [reviewImagePreview]);
+
   function scrollPreviewThumbnailRail(direction) {
     const rail = previewThumbnailRailRef.current;
     if (!rail) return;
@@ -763,6 +797,26 @@ export default function ProductDetailPage() {
       )
     : null;
 
+  const reviewImagePreviewModal = reviewImagePreview
+    ? createPortal(
+        <div className="product-preview product-preview--review" role="dialog" aria-modal="true" aria-label="Review photo preview">
+          <button type="button" className="product-preview__close" onClick={() => setReviewImagePreview("")} aria-label="Close preview">
+            x
+          </button>
+          <div className="product-preview__stage" onClick={() => setReviewImagePreview("")}>
+            <StableImage
+              src={reviewImagePreview}
+              alt="Review photo"
+              onClick={(event) => event.stopPropagation()}
+              width={1200}
+              height={1200}
+            />
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
   function decrementQty() {
     setQty((current) => Math.max(1, current - 1));
   }
@@ -879,12 +933,19 @@ export default function ProductDetailPage() {
       setMyReview(nextReview);
       setReviews((current) => {
         const others = current.filter((item) => String(item?._id) !== String(nextReview?._id));
-        return nextReview ? [nextReview, ...others] : others;
+        return nextReview && nextReview.status === "approved" ? [nextReview, ...others] : others;
       });
       setActiveTab("reviews");
       setReviewStatus("idle");
       setReviewFormOpen(false);
-      pushToast(myReview ? "Review updated" : "Review submitted", "success");
+      pushToast(
+        nextReview && nextReview.status !== "approved"
+          ? "Review submitted - it will appear once approved by an admin"
+          : myReview
+            ? "Review updated"
+            : "Review submitted",
+        "success"
+      );
     } catch (submitError) {
       setReviewStatus("idle");
       pushToast(submitError.message || "Could not save review", "warning");
@@ -1268,25 +1329,30 @@ export default function ProductDetailPage() {
                         const reviewerName = review?.user?.name || review?.name || "Customer";
                         return (
                           <article key={review?._id || index} className="product-review">
-                            <div className="product-review__header">
-                              <strong>{reviewerName}</strong>
-                              <time>{getReviewTimeLabel(review?.createdAt)}</time>
-                            </div>
                             <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
                               {Array.from({ length: 5 }, (_, index) => (
                                 <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
                               ))}
                             </p>
+                            <div className="product-review__header">
+                              <strong>{reviewerName}</strong>
+                              <time>{getReviewTimeLabel(review?.createdAt)}</time>
+                            </div>
                             <p>{review?.comment || review?.message || "No review text provided."}</p>
                             {review?.image_url ? (
-                              <div className="product-review__media">
+                              <button
+                                type="button"
+                                className="product-review__media"
+                                onClick={() => setReviewImagePreview(resolveProductImage(review.image_url))}
+                                aria-label="View review photo full size"
+                              >
                                 <StableImage
                                   src={resolveProductImage(review.image_url)}
                                   alt={review?.title || "Review upload"}
                                   width={280}
                                   height={280}
                                 />
-                              </div>
+                              </button>
                             ) : null}
                           </article>
                         );
@@ -1453,6 +1519,7 @@ export default function ProductDetailPage() {
       </div>
 
       {portalReady ? previewModal : null}
+      {portalReady ? reviewImagePreviewModal : null}
     </main>
   );
 }

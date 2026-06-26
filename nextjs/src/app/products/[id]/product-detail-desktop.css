@@ -888,6 +888,13 @@
   overflow: hidden;
   border-radius: 4px;
   background: #fbfaf7;
+  border: 0;
+  padding: 0;
+  cursor: zoom-in;
+  transition: opacity 160ms ease;
+}
+.product-review__media:hover {
+  opacity: 0.88;
 }
 .product-review__media img {
   width: 100%;
