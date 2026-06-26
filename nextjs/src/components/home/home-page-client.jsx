@@ -166,6 +166,14 @@ function isLaptopDesktopCategory(item) {
   return slug === "laptops" || label.includes("desktop");
 }
 
+function isOthersCategory(item) {
+  return canonicalCategory(item?.slug || "") === "others";
+}
+
+function isAccessoriesCategory(item) {
+  return canonicalCategory(item?.slug || "") === "accessories";
+}
+
 function HomeProductsSkeleton() {
   return (
     <div className="homepage-products__stack" aria-busy="true">
@@ -618,7 +626,7 @@ export default function HomePage() {
           loading={isPriority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={isPriority ? "high" : "low"}
-          className={`category-tile__image${isLaptopDesktopCategory(item) ? " category-tile__image--laptops-desktops" : ""}`}
+          className={`category-tile__image${isLaptopDesktopCategory(item) ? " category-tile__image--laptops-desktops" : ""}${isOthersCategory(item) ? " category-tile__image--others" : ""}${isAccessoriesCategory(item) ? " category-tile__image--accessories" : ""}`}
           fallback={<div className={`category-art category-art--${artKey}`} aria-hidden="true" />}
           fallbackClassName="category-tile__fallback"
         />

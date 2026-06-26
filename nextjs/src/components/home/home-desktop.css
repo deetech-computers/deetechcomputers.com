@@ -269,9 +269,11 @@
 }
 .category-tile__image--laptops-desktops {
   object-position: center center;
-  padding: clamp(6px, 1.2vw, 12px);
-  transform: scale(1.08);
-  transform-origin: center;
+  padding: clamp(14px, 2.4vw, 22px);
+}
+.category-tile__image--others,
+.category-tile__image--accessories {
+  padding: clamp(20px, 3.4vw, 32px);
 }
 .category-tile__fallback {
   background:
