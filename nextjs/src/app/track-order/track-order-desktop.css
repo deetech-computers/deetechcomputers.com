@@ -1,4 +1,7 @@
 
+.track-order-mobile-bar {
+  display: none;
+}
 .track-order-product__meta span {
   color: var(--muted);
   font-size: 0.82rem;
@@ -86,6 +89,17 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.15;
+}
+.track-order-hero__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.track-order-hero__back {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .track-order-hero p {
   max-width: 680px;
@@ -337,22 +351,6 @@
   grid-template-columns: minmax(0, 1fr) minmax(260px, auto);
   align-items: start;
   gap: 24px;
-}
-.track-order-top__back {
-  width: fit-content;
-  min-height: 36px;
-  margin-bottom: 14px;
-  padding-inline: 0;
-  border: 0;
-  color: #184f27;
-  background: transparent;
-  font-weight: 700;
-  font-size: 0.86rem;
-  text-decoration: none;
-}
-.track-order-top__back:hover,
-.track-order-top__back:focus-visible {
-  text-decoration: underline;
 }
 .track-order-top__header h2 {
   color: #003714;

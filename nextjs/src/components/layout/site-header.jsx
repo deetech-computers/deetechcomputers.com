@@ -938,8 +938,19 @@ export default function SiteHeader() {
       return (
         <>
           <div className="account-dropdown__head">
-            <p>Signed in as</p>
-            <strong>{user?.firstName || user?.name || "Customer"}</strong>
+            <div className="account-dropdown__avatar" aria-hidden="true">
+              <StableImage
+                src={user?.avatarUrl || ""}
+                alt=""
+                width={44}
+                height={44}
+                fallback={String(user?.firstName || user?.name || "C").trim().charAt(0).toUpperCase()}
+              />
+            </div>
+            <div className="account-dropdown__identity">
+              <strong>{`${user?.firstName || ""} ${user?.lastName || ""}`.trim() || user?.name || "Customer"}</strong>
+              <span>{user?.email || ""}</span>
+            </div>
           </div>
           <div className="account-dropdown__links">
             <Link href="/account" className="account-dropdown__link" onClick={onSelect}>

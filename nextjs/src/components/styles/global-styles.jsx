@@ -1217,6 +1217,11 @@ button, input, select, textarea { font: inherit; }
   padding-bottom: 10px;
   border-bottom: 1px solid #e6edf7;
 }
+.account-dropdown__head:has(.account-dropdown__avatar) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .account-dropdown__head p {
   margin: 0;
   color: #617086;
@@ -1228,6 +1233,47 @@ button, input, select, textarea { font: inherit; }
   color: #121c2d;
   font-size: 1rem;
   font-weight: 700;
+}
+.account-dropdown__avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid #184f27;
+}
+.account-dropdown__avatar img,
+.account-dropdown__avatar .product-card__placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.account-dropdown__avatar .product-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #a6f5af;
+  color: #003714;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.account-dropdown__identity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.account-dropdown__identity strong {
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-dropdown__identity span {
+  color: #617086;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .account-dropdown__links {
   display: grid;

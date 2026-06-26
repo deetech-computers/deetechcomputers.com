@@ -211,8 +211,31 @@ export default function TrackOrderPage() {
   const activeStep = steps.find((step) => step.active) || steps[steps.length - 1];
   const currentStepLabel = TRACK_STEPS.find((step) => step.key === activeStep?.key)?.label || "Order Status";
 
+  function handleMobileBack() {
+    if (guestToken) {
+      router.back();
+    } else {
+      router.push("/account?tab=orders");
+    }
+  }
+
   return (
     <main className="track-order-page">
+      <header className="track-order-mobile-bar">
+        <button type="button" className="track-order-mobile-bar__back" onClick={handleMobileBack} aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 5 8 12l7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <span className="track-order-mobile-bar__title">Track Your Order</span>
+        <span className="track-order-mobile-bar__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M2 7h11v8H2zM13 10h4l3 3v2h-7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            <circle cx="6.5" cy="17.5" r="1.6" fill="currentColor" />
+            <circle cx="16.5" cy="17.5" r="1.6" fill="currentColor" />
+          </svg>
+        </span>
+      </header>
       <div className="shell track-order-page__shell">
         <section className="track-order-hero">
           <p className="track-order-hero__crumbs">
@@ -222,7 +245,18 @@ export default function TrackOrderPage() {
             <span>/</span>
             <span>Track Your Order</span>
           </p>
-          <h1>Track Your Order</h1>
+          <div className="track-order-hero__title-row">
+            <h1>Track Your Order</h1>
+            {guestToken ? (
+              <Link href="/" className="ghost-button track-order-hero__back">
+                Back to Home
+              </Link>
+            ) : (
+              <Link href="/account?tab=orders" className="ghost-button track-order-hero__back">
+                Back to My Orders
+              </Link>
+            )}
+          </div>
           <p>Follow payment review, processing, dispatch, and delivery progress from one clean view.</p>
         </section>
 
@@ -263,15 +297,6 @@ export default function TrackOrderPage() {
             <div className="track-order-top panel">
               <div className="track-order-top__header">
                 <div>
-                  {guestToken ? (
-                    <Link href="/" className="ghost-link track-order-top__back">
-                      Back to Home
-                    </Link>
-                  ) : (
-                    <Link href="/account?tab=orders" className="ghost-link track-order-top__back">
-                      Back to My Orders
-                    </Link>
-                  )}
                   <h2>Order Status</h2>
                   <p>Order ID : #{order.orderNumber || order._id}</p>
                 </div>
