@@ -27,13 +27,21 @@
   .account-skeleton__sidebar {
     gap: 12px;
   }
-  .account-skeleton__nav {
+  .account-skeleton__nav-list .account-skeleton__nav {
     display: none;
   }
-  .account-skeleton__nav:nth-child(2),
-  .account-skeleton__nav:nth-child(3) {
+  .account-skeleton__nav-list .account-skeleton__nav:nth-child(1),
+  .account-skeleton__nav-list .account-skeleton__nav:nth-child(2) {
     display: block;
-    min-height: 64px;
+    min-height: 56px;
+  }
+  .account-skeleton__summary {
+    min-height: 92px;
+    padding: 14px;
+  }
+  .account-skeleton__avatar--sm {
+    width: 42px;
+    height: 42px;
   }
   .account-skeleton__content {
     min-height: 320px;

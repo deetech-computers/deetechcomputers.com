@@ -514,6 +514,9 @@ function AccountNavIcon({ name }) {
         <path d="M11 18h2" />
       </>
     ),
+    phone: (
+      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" />
+    ),
   };
   return (
     <svg className="account-dashboard__nav-icon" viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -615,8 +618,8 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
               <StableImage
                 src={form.avatarUrl || ""}
                 alt=""
-                width={70}
-                height={70}
+                width={84}
+                height={84}
                 fallback={getAccountInitials(form)}
               />
             </span>
@@ -665,8 +668,10 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
         <label className="account-dashboard__field account-dashboard__field--full account-personal-field">
           <span>Phone Number <small>*</small></span>
           <div className="account-phone-input">
-            <span className="account-phone-input__code">+233</span>
-            <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="Enter Phone Number" required />
+            <span className="account-phone-input__icon" aria-hidden="true">
+              <AccountNavIcon name="phone" />
+            </span>
+            <input className="field" value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="+233 XX XXX XXXX" required />
           </div>
         </label>
         <div className="account-personal-actions">
@@ -1320,6 +1325,7 @@ function PasswordSection({
             <input type="password" value={confirmPassword} onChange={(event) => onChange("confirmPassword", event.target.value)} placeholder="Repeat new password" required />
             <AccountNavIcon name="eye" />
           </div>
+          <small aria-hidden="true">&nbsp;</small>
         </label>
         <div className="account-password-actions">
           <button type="submit" className="primary-button" disabled={submitting}>
@@ -1373,13 +1379,22 @@ function AccountLoadingSkeleton() {
               <span className="account-skeleton__line account-skeleton__line--name" />
               <span className="account-skeleton__line account-skeleton__line--email" />
             </div>
-            {Array.from({ length: 7 }).map((_, index) => (
-              <span key={index} className="account-skeleton__nav" />
-            ))}
+            <div className="account-skeleton__nav-list">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <span key={index} className="account-skeleton__nav" />
+              ))}
+            </div>
           </div>
           <div className="account-skeleton__content">
+            <div className="account-skeleton__summary">
+              <span className="account-skeleton__avatar account-skeleton__avatar--sm" />
+              <div className="account-skeleton__summary-copy">
+                <span className="account-skeleton__line account-skeleton__line--eyebrow" />
+                <span className="account-skeleton__line account-skeleton__line--name" />
+                <span className="account-skeleton__line account-skeleton__line--email" />
+              </div>
+            </div>
             <span className="account-skeleton__line account-skeleton__line--title" />
-            <span className="account-skeleton__line" />
             <span className="account-skeleton__line account-skeleton__line--short" />
             <div className="account-skeleton__grid">
               <span className="account-skeleton__block" />
