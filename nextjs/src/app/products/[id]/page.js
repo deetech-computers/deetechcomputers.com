@@ -1308,8 +1308,7 @@ export default function ProductDetailPage() {
 
               {reviewFormOpen && isAuthenticated ? (
                 <aside id="product-review-form-body" className="product-review-form product-review-form--full">
-                  <h3>{myReview ? "Update your review" : "Write a review"}</h3>
-                  <p>Share your real experience to help other customers buy with confidence.</p>
+                  <h3>{myReview ? "Update Your Review" : "Write a Review"}</h3>
                   <form className="auth-form" onSubmit={handleReviewSubmit}>
                     <label>
                       <span>Rating</span>
@@ -1350,25 +1349,34 @@ export default function ProductDetailPage() {
                     </label>
                     <label>
                       <span>Photo (optional)</span>
-                      {reviewForm.imageUrl ? (
-                        <div className="product-review-form__photo-preview">
-                          <StableImage src={resolveProductImage(reviewForm.imageUrl)} alt="Your review photo" width={84} height={84} />
-                          <button type="button" className="product-review-form__photo-remove" onClick={handleReviewImageRemove}>
-                            Remove photo
-                          </button>
-                        </div>
-                      ) : (
-                        <label className="product-review-form__photo-upload">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            disabled={uploadingReviewImage}
-                            onChange={handleReviewImageSelect}
-                          />
-                          {uploadingReviewImage ? "Uploading..." : "Add a photo (1 image)"}
-                        </label>
-                      )}
+                      <div className="product-review-form__photo-dropzone">
+                        {reviewForm.imageUrl ? (
+                          <div className="product-review-form__photo-preview">
+                            <StableImage src={resolveProductImage(reviewForm.imageUrl)} alt="Your review photo" width={84} height={84} />
+                            <button type="button" className="product-review-form__photo-remove" onClick={handleReviewImageRemove}>
+                              Remove photo
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <svg viewBox="0 0 24 24" aria-hidden="true" className="product-review-form__photo-icon">
+                              <path d="M4 8h3l2-3h6l2 3h3v11H4V8Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+                              <circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                            </svg>
+                            <label className="product-review-form__photo-upload">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="sr-only"
+                                disabled={uploadingReviewImage}
+                                onChange={handleReviewImageSelect}
+                              />
+                              {uploadingReviewImage ? "Uploading..." : "Add a photo (1 image)"}
+                            </label>
+                            <small>Supported formats: JPG, PNG. Max 5MB.</small>
+                          </>
+                        )}
+                      </div>
                     </label>
                     <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving" || uploadingReviewImage}>
                       {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
