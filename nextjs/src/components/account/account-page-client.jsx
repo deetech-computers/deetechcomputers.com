@@ -1728,6 +1728,12 @@ export default function AccountPageClient({ initialTab = "" }) {
   }
 
   useEffect(() => {
+    if (user && !profileForm.email) {
+      fillProfileForm(user);
+    }
+  }, [user, profileForm.email]);
+
+  useEffect(() => {
     if (status !== "ready") return;
     if (!isAuthenticated || !token) {
       profileHydratedRef.current = false;
