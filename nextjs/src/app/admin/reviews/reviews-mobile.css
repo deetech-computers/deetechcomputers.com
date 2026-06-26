@@ -348,6 +348,18 @@
     color: var(--reviews-red);
   }
 
+  .admin-reviews-route .admin-reviews-row-button.is-restore {
+    border: 1px solid #cbd5c0;
+    background: #ffffff;
+    color: var(--reviews-text);
+  }
+
+  .admin-reviews-route .admin-reviews-row-button.is-permanent-delete {
+    border: 1px solid #f1cfd0;
+    background: #fff8f8;
+    color: var(--reviews-red);
+  }
+
   .admin-reviews-route .admin-reviews-mobile-card__open {
     width: 100%;
     border: 1px solid var(--reviews-line);

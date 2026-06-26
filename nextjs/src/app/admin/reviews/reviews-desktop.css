@@ -212,6 +212,18 @@
     color: var(--reviews-red);
   }
 
+  .admin-reviews-route .admin-reviews-row-button.is-restore {
+    border: 1px solid var(--reviews-line-strong);
+    background: #ffffff;
+    color: var(--reviews-text);
+  }
+
+  .admin-reviews-route .admin-reviews-row-button.is-permanent-delete {
+    border: 1px solid #f1cfd0;
+    background: #fff8f8;
+    color: var(--reviews-red);
+  }
+
   .admin-reviews-route .ghost-button:disabled,
   .admin-reviews-route .primary-button:disabled,
   .admin-reviews-route .admin-reviews-row-button:disabled,

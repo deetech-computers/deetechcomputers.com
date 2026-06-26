@@ -1497,14 +1497,24 @@ function ReviewsWorkspaceStitch({
                       <div className="admin-reviews-desktop-row__actions">
                         <div className="admin-reviews-desktop-row__buttons">
                           {reviewStatus === "rejected" ? (
-                            <button
-                              type="button"
-                              className="admin-reviews-row-button is-approve"
-                              disabled={isBusy}
-                              onClick={() => runAction("moderateReview", item, null, "approved")}
-                            >
-                              Restore
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                className="admin-reviews-row-button is-restore"
+                                disabled={isBusy}
+                                onClick={() => runAction("moderateReview", item, null, "approved")}
+                              >
+                                Restore
+                              </button>
+                              <button
+                                type="button"
+                                className="admin-reviews-row-button is-permanent-delete"
+                                disabled={isBusy}
+                                onClick={() => runAction("deleteReview", item)}
+                              >
+                                Permanent Delete
+                              </button>
+                            </>
                           ) : (
                             <>
                               <button
@@ -1530,9 +1540,11 @@ function ReviewsWorkspaceStitch({
                         </div>
                         <div className="admin-reviews-desktop-row__links">
                           {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}><AdminProductsIcon name="external" />Open Product</Link> : null}
-                          <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                            <AdminProductsIcon name="delete" />{reviewStatus === "rejected" ? "Permanent Delete" : "Delete"}
-                          </button>
+                          {reviewStatus !== "rejected" ? (
+                            <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+                              <AdminProductsIcon name="delete" />Delete
+                            </button>
+                          ) : null}
                         </div>
                       </div>
                     </article>
@@ -1635,14 +1647,24 @@ function ReviewsWorkspaceStitch({
                   <div className="admin-reviews-mobile-card__actions">
                     <div className="admin-reviews-mobile-card__buttons">
                       {reviewStatus === "rejected" ? (
-                        <button
-                          type="button"
-                          className="admin-reviews-row-button is-approve"
-                          disabled={isBusy}
-                          onClick={() => runAction("moderateReview", item, null, "approved")}
-                        >
-                          <AdminProductsIcon name="check" />Restore
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            className="admin-reviews-row-button is-restore"
+                            disabled={isBusy}
+                            onClick={() => runAction("moderateReview", item, null, "approved")}
+                          >
+                            <AdminProductsIcon name="check" />Restore
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-reviews-row-button is-permanent-delete"
+                            disabled={isBusy}
+                            onClick={() => runAction("deleteReview", item)}
+                          >
+                            <AdminProductsIcon name="delete" />Permanent Delete
+                          </button>
+                        </>
                       ) : (
                         <>
                           {reviewStatus !== "approved" ? (
@@ -1671,11 +1693,13 @@ function ReviewsWorkspaceStitch({
                         <AdminProductsIcon name="external" />Open Product
                       </Link>
                     ) : null}
-                    <div className="admin-reviews-mobile-card__links">
+                    {reviewStatus !== "rejected" ? (
+                      <div className="admin-reviews-mobile-card__links">
                         <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                          {reviewStatus === "rejected" ? "Permanent Delete" : "Delete"}
+                          Delete
                         </button>
-                    </div>
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               );
