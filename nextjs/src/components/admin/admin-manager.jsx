@@ -1422,7 +1422,17 @@ function ReviewDesktopRow({ item, selected, onToggleSelected, busyAction, runAct
             </h3>
             <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
           </button>
+          {item?.title ? <p className="admin-reviews-desktop-row__title">{item.title}</p> : null}
           <blockquote id={bodyId} className={isExpanded ? "is-expanded" : "is-collapsed"}>{comment}</blockquote>
+          {isExpanded && item?.image_url ? (
+            <StableImage
+              className="admin-reviews-desktop-row__photo"
+              src={resolveProductImage(item.image_url)}
+              alt={`Photo attached to ${reviewerName}'s review`}
+              width={160}
+              height={160}
+            />
+          ) : null}
         </div>
       </div>
       <div className="admin-reviews-desktop-row__actions">
@@ -1468,6 +1478,7 @@ function ReviewMobileCard({ item, busyAction, runAction, renderStars }) {
         {renderStars(item?.rating, "admin-reviews-stars")}
         <time>{formatDate(item?.createdAt)}</time>
       </div>
+      {item?.title ? <p className="admin-reviews-mobile-card__title">{item.title}</p> : null}
       <button
         type="button"
         className="admin-collapsible__header admin-reviews-mobile-card__expand"
@@ -1479,6 +1490,15 @@ function ReviewMobileCard({ item, busyAction, runAction, renderStars }) {
         <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
       </button>
       <blockquote id={bodyId} className={isExpanded ? "is-expanded" : "is-collapsed"}>{comment}</blockquote>
+      {isExpanded && item?.image_url ? (
+        <StableImage
+          className="admin-reviews-mobile-card__photo"
+          src={resolveProductImage(item.image_url)}
+          alt={`Photo attached to ${reviewerName}'s review`}
+          width={160}
+          height={160}
+        />
+      ) : null}
       <div className="admin-reviews-mobile-card__actions">
         <div className="admin-reviews-mobile-card__buttons">
           <ReviewModerationActions reviewStatus={reviewStatus} isBusy={isBusy} runAction={runAction} item={item} iconified />

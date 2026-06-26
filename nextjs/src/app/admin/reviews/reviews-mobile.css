@@ -311,6 +311,21 @@
     font-weight: 700;
   }
 
+  .admin-reviews-route .admin-reviews-mobile-card__title {
+    margin: -6px 0 0;
+    color: var(--reviews-text);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .admin-reviews-route .admin-reviews-mobile-card__photo {
+    width: 88px;
+    height: 88px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid var(--reviews-line);
+  }
+
   .admin-reviews-route .admin-reviews-mobile-card__actions {
     display: grid;
     gap: 10px;
