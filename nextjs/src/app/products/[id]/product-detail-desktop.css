@@ -1052,10 +1052,11 @@
 }
 .product-review-form .product-review-form__submit {
   width: 100%;
-  min-height: 52px;
+  max-width: 260px;
+  min-height: 50px;
   padding: 14px 28px;
   border-radius: 4px !important;
-  justify-self: stretch;
+  justify-self: center;
   margin-top: 4px;
   font-size: 1rem;
   background: #184f27 !important;

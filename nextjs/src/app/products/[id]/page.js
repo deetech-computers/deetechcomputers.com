@@ -883,6 +883,7 @@ export default function ProductDetailPage() {
       });
       setActiveTab("reviews");
       setReviewStatus("idle");
+      setReviewFormOpen(false);
       pushToast(myReview ? "Review updated" : "Review submitted", "success");
     } catch (submitError) {
       setReviewStatus("idle");
