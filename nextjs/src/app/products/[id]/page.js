@@ -721,6 +721,8 @@ export default function ProductDetailPage() {
   const originalPrice = displayPricing.originalPrice;
   const discountPercent = displayPricing.discountPercent;
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
+  const isLaptopCategory = canonicalCategory(product?.category) === "laptops";
+  const attentionBadgeLabel = isLaptopCategory ? "Free Delivery" : "Quality Guaranteed";
   const productSpecs = applyUpgradeSelectionToSpecs(
     getProductSpecs(product).filter(([, value]) => String(value || "").trim()),
     selectedUpgrades
@@ -1171,11 +1173,35 @@ export default function ProductDetailPage() {
             </div>
           ) : null}
           <div className="product-summary__price-group">
-            {hasDiscount && discountPercent > 0 ? (
-              <span className="product-summary__discount-badge">Save {discountPercent}%</span>
-            ) : null}
             {hasDiscount ? <p className="product-summary__price-old">{formatCurrency(originalPrice)}</p> : null}
-            <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
+            <div className="product-summary__price-row">
+              <p className="product-summary__price">{formatCurrency(currentPrice)}</p>
+              {hasDiscount && discountPercent > 0 ? (
+                <span className="product-summary__discount-badge">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M20.59 13.41 12 22l-9.41-9.41a2 2 0 0 1 0-2.83L11.17 2H20a2 2 0 0 1 2 2v8.83a2 2 0 0 1-.41 1.58Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                    <circle cx="16" cy="8" r="1.6" fill="currentColor" />
+                  </svg>
+                  Save {discountPercent}%
+                </span>
+              ) : (
+                <span className="product-summary__attention-badge">
+                  {isLaptopCategory ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M2 7h11v8H2zM13 10h4l3 3v2h-7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                      <circle cx="6.5" cy="17.5" r="1.6" fill="currentColor" />
+                      <circle cx="16.5" cy="17.5" r="1.6" fill="currentColor" />
+                    </svg>
+                  ) : (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                      <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                  {attentionBadgeLabel}
+                </span>
+              )}
+            </div>
             {pricing.isTimedDiscount && pricing.discountEndsAt ? (
               <p className="product-summary__discount-note">
                 Offer ends {formatDateTime(pricing.discountEndsAt)}

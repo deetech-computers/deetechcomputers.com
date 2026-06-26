@@ -265,6 +265,12 @@
   display: grid;
   gap: 6px;
 }
+.product-summary__price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 .product-summary__price-old {
   margin: 0;
   color: #665d52;
@@ -272,19 +278,28 @@
   font-weight: 600;
   text-decoration: line-through;
 }
-.product-summary__discount-badge {
+.product-summary__discount-badge,
+.product-summary__attention-badge {
   width: fit-content;
-  min-height: 30px;
+  min-height: 28px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   justify-content: center;
-  background: #d92626;
-  color: #fff;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.product-summary__discount-badge {
+  background: #d92626;
+  color: #fff;
+}
+.product-summary__attention-badge {
+  background: #a6f5af;
+  color: #003714;
 }
 .product-summary__discount-note {
   margin: 0;
@@ -836,6 +851,9 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+.product-review-actions__sort select.field {
+  border-radius: 4px;
 }
 .product-review-list {
   display: grid;
