@@ -1047,9 +1047,11 @@
   gap: 18px;
   align-items: center;
   padding: 24px;
+  border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
-  background: #7c2f43;
-  color: #ffffff;
+  background: #ffffff;
+  box-shadow: 0 18px 60px rgba(27, 25, 22, 0.08);
+  color: #1b1916;
 }
 .account-security-strip > span {
   display: inline-grid;
@@ -1057,16 +1059,17 @@
   height: 48px;
   place-items: center;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.14);
+  background: #a6f5af;
+  color: #184f27;
 }
 .account-security-strip strong {
   display: block;
-  color: #ffffff;
+  color: #1b1916;
   font-size: 1.05rem;
 }
 .account-security-strip p {
   margin: 4px 0 0;
-  color: rgba(255, 255, 255, 0.86);
+  color: #665d52;
   line-height: 1.45;
 }
 .account-dashboard__nav--logout {

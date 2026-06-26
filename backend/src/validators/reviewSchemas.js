@@ -16,7 +16,7 @@ export const updateReviewSchema = Joi.object({
 }).min(1); // must include at least one field
 
 export const moderateReviewSchema = Joi.object({
-  approved: Joi.boolean().required(),
+  status: Joi.string().valid("pending", "approved", "rejected").required(),
 });
 
 

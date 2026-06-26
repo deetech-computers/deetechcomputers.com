@@ -39,7 +39,7 @@ export const addReview = asyncHandler(async (req, res) => {
     title: String(title || "").trim(),
     comment,
     image_url: String(image_url || "").trim(),
-    approved: true,
+    status: "pending",
   });
 
   product.reviews.push(review._id);
@@ -81,7 +81,7 @@ export const updateReview = asyncHandler(async (req, res) => {
   review.title = title !== undefined ? String(title || "").trim() : review.title;
   review.comment = comment ?? review.comment;
   review.image_url = image_url !== undefined ? String(image_url || "").trim() : review.image_url;
-  review.approved = true;
+  review.status = "pending";
   review.moderatedAt = null;
 
   const updated = await review.save();
@@ -122,7 +122,7 @@ export const deleteReview = asyncHandler(async (req, res) => {
 export const getProductReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find({
     product: req.params.productId,
-    approved: true,
+    status: "approved",
   })
     .populate("user", "name email")
     .sort({ createdAt: -1 });
@@ -163,8 +163,7 @@ export const getAllReviews = asyncHandler(async (req, res) => {
   const q = String(req.query.q || "").trim();
 
   const filter = {};
-  if (status === "approved") filter.approved = true;
-  if (status === "rejected") filter.approved = false;
+  if (["pending", "approved", "rejected"].includes(status)) filter.status = status;
 
   const reviews = await Review.find(filter)
     .populate(reviewPopulate)
@@ -193,7 +192,13 @@ export const getAllReviews = asyncHandler(async (req, res) => {
 // @route   PUT /api/reviews/:id/moderate
 // @access  Admin
 export const moderateReview = asyncHandler(async (req, res) => {
-  const { approved } = req.body;
+  const { status } = req.body;
+
+  if (!["pending", "approved", "rejected"].includes(status)) {
+    res.status(400);
+    throw new Error("Status must be one of: pending, approved, rejected");
+  }
+
   const review = await Review.findById(req.params.id);
 
   if (!review) {
@@ -201,7 +206,7 @@ export const moderateReview = asyncHandler(async (req, res) => {
     throw new Error("Review not found");
   }
 
-  review.approved = approved;
+  review.status = status;
   review.moderatedAt = new Date();
   const updated = await review.save();
   const populated = await Review.findById(updated._id).populate(reviewPopulate);

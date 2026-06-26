@@ -1348,9 +1348,9 @@ function ReviewsWorkspaceStitch({
   };
 
   const handleBatchApprove = async () => {
-    const targets = pagedItems.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && !item?.approved);
+    const targets = pagedItems.filter((item) => visibleSelectedIds.includes(String(item?._id || item?.id || "")) && item?.status !== "approved");
     for (const target of targets) {
-      await runAction("moderateReview", target, null, true);
+      await runAction("moderateReview", target, null, "approved");
     }
     setSelectedReviewIds([]);
   };
@@ -1464,7 +1464,7 @@ function ReviewsWorkspaceStitch({
                   const productId = item?.product?._id || item?.product?.id || item?.productId || "";
                   const reviewerName = item?.user?.name || item?.user?.email || "Customer";
                   const productName = item?.product?.name || "Product";
-                  const isApproved = Boolean(item?.approved);
+                  const reviewStatus = item?.status || "pending";
                   const isBusy = busyAction === reviewId;
 
                   return (
@@ -1480,8 +1480,8 @@ function ReviewsWorkspaceStitch({
                       <div className="admin-reviews-desktop-row__content">
                         <div className="admin-reviews-desktop-row__meta">
                           {renderStars(item?.rating, "admin-reviews-stars")}
-                          <span className={`admin-reviews-status-pill ${isApproved ? "is-approved" : "is-rejected"}`}>
-                            {isApproved ? "Approved" : "Pending"}
+                          <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
+                            {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
                           </span>
                           <time>{formatDateTime(item?.createdAt)}</time>
                         </div>
@@ -1496,29 +1496,42 @@ function ReviewsWorkspaceStitch({
                       </div>
                       <div className="admin-reviews-desktop-row__actions">
                         <div className="admin-reviews-desktop-row__buttons">
-                          <button
-                            type="button"
-                            className="admin-reviews-row-button is-reject"
-                            disabled={isBusy}
-                            onClick={() => runAction("moderateReview", item, null, false)}
-                          >
-                            Reject
-                          </button>
-                          {!isApproved ? (
+                          {reviewStatus === "rejected" ? (
                             <button
                               type="button"
                               className="admin-reviews-row-button is-approve"
                               disabled={isBusy}
-                              onClick={() => runAction("moderateReview", item, null, true)}
+                              onClick={() => runAction("moderateReview", item, null, "approved")}
                             >
-                              Approve
+                              Restore
                             </button>
-                          ) : null}
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="admin-reviews-row-button is-reject"
+                                disabled={isBusy}
+                                onClick={() => runAction("moderateReview", item, null, "rejected")}
+                              >
+                                Reject
+                              </button>
+                              {reviewStatus !== "approved" ? (
+                                <button
+                                  type="button"
+                                  className="admin-reviews-row-button is-approve"
+                                  disabled={isBusy}
+                                  onClick={() => runAction("moderateReview", item, null, "approved")}
+                                >
+                                  Approve
+                                </button>
+                              ) : null}
+                            </>
+                          )}
                         </div>
                         <div className="admin-reviews-desktop-row__links">
                           {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}><AdminProductsIcon name="external" />Open Product</Link> : null}
                           <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                            <AdminProductsIcon name="delete" />Delete
+                            <AdminProductsIcon name="delete" />{reviewStatus === "rejected" ? "Permanent Delete" : "Delete"}
                           </button>
                         </div>
                       </div>
@@ -1600,7 +1613,7 @@ function ReviewsWorkspaceStitch({
               const productId = item?.product?._id || item?.product?.id || item?.productId || "";
               const reviewerName = item?.user?.name || item?.user?.email || "Customer";
               const productName = item?.product?.name || "Product";
-              const isApproved = Boolean(item?.approved);
+              const reviewStatus = item?.status || "pending";
               const isBusy = busyAction === reviewId;
 
               return (
@@ -1610,8 +1623,8 @@ function ReviewsWorkspaceStitch({
                       <h3>{productName}</h3>
                       <p>{reviewerName}</p>
                     </div>
-                    <span className={`admin-reviews-status-pill ${isApproved ? "is-approved" : "is-rejected"}`}>
-                      {isApproved ? "Approved" : "Pending"}
+                    <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
+                      {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
                     </span>
                   </div>
                   <div className="admin-reviews-mobile-card__rating">
@@ -1620,40 +1633,49 @@ function ReviewsWorkspaceStitch({
                   </div>
                   <blockquote>{item?.comment || "No review text."}</blockquote>
                   <div className="admin-reviews-mobile-card__actions">
-                    {!isApproved ? (
-                      <>
-                        <div className="admin-reviews-mobile-card__buttons">
-                          <button
-                            type="button"
-                            className="admin-reviews-row-button is-approve"
-                            disabled={isBusy}
-                            onClick={() => runAction("moderateReview", item, null, true)}
-                          >
-                            <AdminProductsIcon name="check" />Approve
-                          </button>
+                    <div className="admin-reviews-mobile-card__buttons">
+                      {reviewStatus === "rejected" ? (
+                        <button
+                          type="button"
+                          className="admin-reviews-row-button is-approve"
+                          disabled={isBusy}
+                          onClick={() => runAction("moderateReview", item, null, "approved")}
+                        >
+                          <AdminProductsIcon name="check" />Restore
+                        </button>
+                      ) : (
+                        <>
+                          {reviewStatus !== "approved" ? (
+                            <button
+                              type="button"
+                              className="admin-reviews-row-button is-approve"
+                              disabled={isBusy}
+                              onClick={() => runAction("moderateReview", item, null, "approved")}
+                            >
+                              <AdminProductsIcon name="check" />Approve
+                            </button>
+                          ) : null}
                           <button
                             type="button"
                             className="admin-reviews-row-button is-reject"
                             disabled={isBusy}
-                            onClick={() => runAction("moderateReview", item, null, false)}
+                            onClick={() => runAction("moderateReview", item, null, "rejected")}
                           >
                             <AdminProductsIcon name="delete" />Reject
                           </button>
-                        </div>
-                        {productId ? (
-                          <Link className="admin-reviews-mobile-card__open" href={`/products/${productId}`}>
-                            <AdminProductsIcon name="external" />Open Product
-                          </Link>
-                        ) : null}
-                      </>
-                    ) : (
-                      <div className="admin-reviews-mobile-card__links">
-                        {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}>Product Details</Link> : null}
+                        </>
+                      )}
+                    </div>
+                    {productId ? (
+                      <Link className="admin-reviews-mobile-card__open" href={`/products/${productId}`}>
+                        <AdminProductsIcon name="external" />Open Product
+                      </Link>
+                    ) : null}
+                    <div className="admin-reviews-mobile-card__links">
                         <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                          Delete
+                          {reviewStatus === "rejected" ? "Permanent Delete" : "Delete"}
                         </button>
-                      </div>
-                    )}
+                    </div>
                   </div>
                 </article>
               );
@@ -3968,8 +3990,9 @@ export default function AdminManager({ type, productMode = "list", productId = "
   const reviewStats = useMemo(() => {
     if (type !== "reviews") return null;
     const all = Array.isArray(payload) ? payload : [];
-    const approved = all.filter((item) => Boolean(item?.approved)).length;
-    const rejected = all.length - approved;
+    const approved = all.filter((item) => item?.status === "approved").length;
+    const rejected = all.filter((item) => item?.status === "rejected").length;
+    const pending = all.filter((item) => item?.status === "pending").length;
     const avgRating = all.length
       ? all.reduce((sum, item) => sum + Number(item?.rating || 0), 0) / all.length
       : 0;
@@ -3978,6 +4001,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
       filtered: items.length,
       approved,
       rejected,
+      pending,
       avgRating,
     };
   }, [items.length, payload, type]);
@@ -4263,7 +4287,7 @@ export default function AdminManager({ type, productMode = "list", productId = "
         }
         await requestWithToken(`${API_BASE_USERS}/admin/users/${item._id}`, token, { method: "DELETE" });
       }
-      if (action === "moderateReview") await requestWithToken(`${API_BASE}/reviews/${item._id}/moderate`, token, { method: "PUT", body: JSON.stringify({ approved: value }) });
+      if (action === "moderateReview") await requestWithToken(`${API_BASE}/reviews/${item._id}/moderate`, token, { method: "PUT", body: JSON.stringify({ status: value }) });
       if (action === "deleteReview") await requestWithToken(`${API_BASE}/reviews/${item._id}`, token, { method: "DELETE" });
       if (action === "affiliateStatus") await requestWithToken(`${API_BASE}/affiliates/admin/${item._id}/status`, token, { method: "PUT", body: JSON.stringify({ isActive: value }) });
       if (action === "affiliateMomoVerification") {

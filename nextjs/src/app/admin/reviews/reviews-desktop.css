@@ -439,9 +439,14 @@
     color: var(--reviews-green);
   }
 
-  .admin-reviews-route .admin-reviews-status-pill.is-rejected {
+  .admin-reviews-route .admin-reviews-status-pill.is-pending {
     background: var(--reviews-gold-soft);
     color: #966400;
+  }
+
+  .admin-reviews-route .admin-reviews-status-pill.is-rejected {
+    background: var(--reviews-red-soft);
+    color: var(--reviews-red);
   }
 
   .admin-reviews-route .admin-reviews-desktop-row__meta time {

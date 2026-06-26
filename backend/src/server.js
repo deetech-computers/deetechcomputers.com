@@ -5,6 +5,7 @@ import { PORT, NODE_ENV } from "./config/env.js";
 import connectDB from "./config/db.js";
 import createApp from "./app.js";
 import logger from "./utils/logger.js";
+import { migrateLegacyReviewStatus } from "./utils/reviewStatusMigration.js";
 
 let server;
 let shutdownStarted = false;
@@ -77,6 +78,7 @@ async function start() {
     });
 
     await connectToMongoWithRecovery();
+    await migrateLegacyReviewStatus();
   } catch (err) {
     logger.error("❌ Failed to start server", { error: err.stack || err.message });
     process.exit(1);

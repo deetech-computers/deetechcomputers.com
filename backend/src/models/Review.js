@@ -13,16 +13,20 @@ const reviewSchema = new mongoose.Schema(
     title: { type: String, trim: true, default: "", maxlength: 150 },
     comment: { type: String, required: true },
     image_url: { type: String, trim: true, default: "" },
-    approved: { type: Boolean, default: true },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
     moderatedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
-reviewSchema.index({ product: 1, approved: 1, createdAt: -1 });
+reviewSchema.index({ product: 1, status: 1, createdAt: -1 });
 reviewSchema.index({ product: 1, user: 1 });
 reviewSchema.index({ user: 1, updatedAt: -1, createdAt: -1 });
-reviewSchema.index({ approved: 1, createdAt: -1 });
+reviewSchema.index({ status: 1, createdAt: -1 });
 
 const Review = mongoose.model("Review", reviewSchema);
 export default Review;
