@@ -1466,16 +1466,6 @@ export default function ProductDetailPage() {
                         const reviewerName = review?.user?.name || review?.name || "Customer";
                         return (
                           <article key={review?._id || index} className="product-review">
-                            <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
-                              {Array.from({ length: 5 }, (_, index) => (
-                                <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
-                              ))}
-                            </p>
-                            <div className="product-review__header">
-                              <strong>{reviewerName}</strong>
-                              <time>{getReviewTimeLabel(review?.createdAt)}</time>
-                            </div>
-                            <p>{review?.comment || review?.message || "No review text provided."}</p>
                             {review?.image_url ? (
                               <button
                                 type="button"
@@ -1491,6 +1481,18 @@ export default function ProductDetailPage() {
                                 />
                               </button>
                             ) : null}
+                            <div className="product-review__body">
+                              <p className="product-card__rating" aria-label={`${Number(review?.rating || 0)} out of 5 stars`}>
+                                {Array.from({ length: 5 }, (_, index) => (
+                                  <span key={index} className={index < Number(review?.rating || 0) ? "is-filled" : ""}>{"★"}</span>
+                                ))}
+                              </p>
+                              <div className="product-review__header">
+                                <strong>{reviewerName}</strong>
+                                <time>{getReviewTimeLabel(review?.createdAt)}</time>
+                              </div>
+                              <p>{review?.comment || review?.message || "No review text provided."}</p>
+                            </div>
                           </article>
                         );
                       })
@@ -1505,6 +1507,15 @@ export default function ProductDetailPage() {
                       onClick={() => setVisibleReviewCount((current) => current + 5)}
                     >
                       Load More Reviews
+                    </button>
+                  ) : null}
+                  {sortedReviews.length > 4 ? (
+                    <button
+                      type="button"
+                      className="product-review-list__view-more-mobile"
+                      onClick={() => setReviewPhotosModalOpen(true)}
+                    >
+                      View More Reviews
                     </button>
                   ) : null}
                 </div>

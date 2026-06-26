@@ -809,6 +809,9 @@
 .product-review-photos-trigger {
   display: none;
 }
+.product-review-list__view-more-mobile {
+  display: none;
+}
 .product-review-photos-modal {
   display: none;
 }
@@ -908,19 +911,15 @@
   height: 100%;
   object-fit: cover;
 }
+.product-review__body {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
 .product-review:has(.product-review__media) {
   grid-template-columns: 110px 1fr;
   align-items: start;
   column-gap: 16px;
-}
-.product-review:has(.product-review__media) .product-review__media {
-  grid-row: 1 / -1;
-  grid-column: 1;
-}
-.product-review:has(.product-review__media) .product-card__rating,
-.product-review:has(.product-review__media) .product-review__header,
-.product-review:has(.product-review__media) p {
-  grid-column: 2;
 }
 .product-review-form {
   display: grid;

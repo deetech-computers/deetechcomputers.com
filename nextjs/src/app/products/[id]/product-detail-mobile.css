@@ -269,20 +269,36 @@
   .product-review-score-card__trust {
     text-align: center;
   }
+  .product-review-list .product-review:nth-of-type(n + 5) {
+    display: none;
+  }
+  .product-review-list__load-more {
+    display: none;
+  }
+  .product-review-list__view-more-mobile {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    margin-top: 4px;
+    border: 1px solid #184f27;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #184f27;
+    font-weight: 700;
+    font-size: 0.86rem;
+    cursor: pointer;
+  }
   .product-review__header {
-    flex-direction: column;
-    align-items: start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
   }
   .product-review__media {
     display: none;
   }
   .product-review:has(.product-review__media) {
     grid-template-columns: 1fr;
-  }
-  .product-review:has(.product-review__media) .product-card__rating,
-  .product-review:has(.product-review__media) .product-review__header,
-  .product-review:has(.product-review__media) p {
-    grid-column: 1;
   }
   .product-review p {
     display: -webkit-box;
