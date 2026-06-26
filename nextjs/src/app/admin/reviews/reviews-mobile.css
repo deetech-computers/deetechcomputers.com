@@ -6,10 +6,10 @@
     --reviews-line: #d7dfd3;
     --reviews-text: #16203a;
     --reviews-muted: #677085;
-    --reviews-green: #135c2a;
-    --reviews-green-strong: #0d4a22;
+    --reviews-green: #184f27;
+    --reviews-green-strong: #003714;
     --reviews-green-soft: #dff6e6;
-    --reviews-red: #c83f3a;
+    --reviews-red: #ba1a1a;
     --reviews-gold-soft: #fff2ca;
   }
 
@@ -343,8 +343,8 @@
   }
 
   .admin-reviews-route .admin-reviews-row-button.is-reject {
-    border: 1px solid #f1cfd0 !important;
-    background: #fff8f8 !important;
+    border: 1px solid var(--reviews-red) !important;
+    background: #ffffff !important;
     color: var(--reviews-red) !important;
   }
 
@@ -355,8 +355,8 @@
   }
 
   .admin-reviews-route .admin-reviews-row-button.is-permanent-delete {
-    border: 1px solid #f1cfd0 !important;
-    background: #fff8f8 !important;
+    border: 1px solid var(--reviews-red) !important;
+    background: #ffffff !important;
     color: var(--reviews-red) !important;
   }
 
