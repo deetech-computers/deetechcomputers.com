@@ -336,6 +336,7 @@ export const getProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({})
       .populate({
         path: "reviews",
+        match: { status: "approved" },
         populate: { path: "user", select: "name email" },
       });
     res.json(products);
@@ -354,6 +355,7 @@ export const getProductById = asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate({
       path: "reviews",
+      match: { status: "approved" },
       populate: { path: "user", select: "name email" },
     });
 

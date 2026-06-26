@@ -206,10 +206,12 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [reviewsLoaded, setReviewsLoaded] = useState(false);
   const [myReview, setMyReview] = useState(null);
   const [reviewSort, setReviewSort] = useState("newest");
-  const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "" });
+  const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "", imageUrl: "" });
   const [reviewStatus, setReviewStatus] = useState("idle");
+  const [uploadingReviewImage, setUploadingReviewImage] = useState(false);
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [affiliateShareCode, setAffiliateShareCode] = useState("");
 
@@ -295,12 +297,16 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!productId) return;
 
+    setReviewsLoaded(false);
     requestJson(`${API_BASE}/reviews/product/${productId}`)
       .then((items) => {
         setReviews(Array.isArray(items) ? items : []);
       })
       .catch(() => {
         setReviews([]);
+      })
+      .finally(() => {
+        setReviewsLoaded(true);
       });
   }, [productId]);
 
@@ -461,7 +467,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!myReview) {
-      setReviewForm({ rating: 5, title: "", comment: "" });
+      setReviewForm({ rating: 5, title: "", comment: "", imageUrl: "" });
       return;
     }
 
@@ -469,6 +475,7 @@ export default function ProductDetailPage() {
       rating: Math.max(1, Math.min(5, Number(myReview?.rating) || 5)),
       title: String(myReview?.title || ""),
       comment: String(myReview?.comment || ""),
+      imageUrl: String(myReview?.image_url || ""),
     });
   }, [myReview]);
 
@@ -650,9 +657,12 @@ export default function ProductDetailPage() {
   const summary = getProductSummary(product);
   const displayBrand = normalizeDisplayTitle(product?.brand || categoryLabel);
   const displayName = normalizeDisplayTitle(product?.name);
-  const ratingValue = Math.max(0, Math.min(5, reviews.length ? getReviewAverage(reviews) : getProductRating(product)));
+  const ratingValue = Math.max(
+    0,
+    Math.min(5, reviews.length ? getReviewAverage(reviews) : reviewsLoaded ? 0 : getProductRating(product))
+  );
   const rating = Math.round(ratingValue);
-  const reviewCount = reviews.length || getProductReviewCount(product);
+  const reviewCount = reviews.length || (reviewsLoaded ? 0 : getProductReviewCount(product));
   const sortedReviews = [...reviews].sort((a, b) => {
     if (reviewSort === "oldest") {
       return new Date(a?.createdAt || 0).getTime() - new Date(b?.createdAt || 0).getTime();
@@ -805,6 +815,31 @@ export default function ProductDetailPage() {
     pushToast(wishlisted ? "Removed from wishlist" : "Saved to wishlist", wishlisted ? "info" : "success");
   }
 
+  async function handleReviewImageSelect(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !token) return;
+
+    setUploadingReviewImage(true);
+    try {
+      const form = new FormData();
+      form.append("image", file);
+      const result = await requestWithToken(`${API_BASE}/reviews/upload`, token, {
+        method: "POST",
+        body: form,
+      });
+      setReviewForm((current) => ({ ...current, imageUrl: result?.imageUrl || "" }));
+    } catch (uploadError) {
+      pushToast(uploadError.message || "Could not upload image", "warning");
+    } finally {
+      setUploadingReviewImage(false);
+    }
+  }
+
+  function handleReviewImageRemove() {
+    setReviewForm((current) => ({ ...current, imageUrl: "" }));
+  }
+
   async function handleReviewSubmit(event) {
     event.preventDefault();
 
@@ -817,6 +852,7 @@ export default function ProductDetailPage() {
       rating: Math.max(1, Math.min(5, Number(reviewForm.rating) || 5)),
       title: String(reviewForm.title || "").trim(),
       comment: String(reviewForm.comment || "").trim(),
+      image_url: String(reviewForm.imageUrl || "").trim(),
     };
 
     if (payload.title.length < 2 || payload.comment.length < 3) {
@@ -1292,7 +1328,29 @@ export default function ProductDetailPage() {
                         placeholder="Tell other customers what stood out to you"
                       />
                     </label>
-                    <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving"}>
+                    <label>
+                      <span>Photo (optional)</span>
+                      {reviewForm.imageUrl ? (
+                        <div className="product-review-form__photo-preview">
+                          <StableImage src={resolveProductImage(reviewForm.imageUrl)} alt="Your review photo" width={84} height={84} />
+                          <button type="button" className="product-review-form__photo-remove" onClick={handleReviewImageRemove}>
+                            Remove photo
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="product-review-form__photo-upload">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="sr-only"
+                            disabled={uploadingReviewImage}
+                            onChange={handleReviewImageSelect}
+                          />
+                          {uploadingReviewImage ? "Uploading..." : "Add a photo (1 image)"}
+                        </label>
+                      )}
+                    </label>
+                    <button type="submit" className="primary-button product-review-form__submit" disabled={reviewStatus === "saving" || uploadingReviewImage}>
                       {reviewStatus === "saving" ? "Saving review..." : myReview ? "Update review" : "Submit review"}
                     </button>
                   </form>

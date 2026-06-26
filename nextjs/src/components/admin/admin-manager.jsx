@@ -1171,97 +1171,17 @@ function ReviewsWorkspaceStitch({
           ) : (
             <>
               <div className="admin-reviews-desktop-list">
-                {pagedItems.map((item) => {
-                  const reviewId = String(item?._id || item?.id || "");
-                  const productId = item?.product?._id || item?.product?.id || item?.productId || "";
-                  const reviewerName = item?.user?.name || item?.user?.email || "Customer";
-                  const productName = item?.product?.name || "Product";
-                  const reviewStatus = item?.status || "pending";
-                  const isBusy = busyAction === reviewId;
-
-                  return (
-                    <article key={reviewId} className="admin-reviews-desktop-row">
-                      <div className="admin-reviews-desktop-row__toggle">
-                        <input
-                          type="checkbox"
-                          checked={selectedReviewIds.includes(reviewId)}
-                          onChange={() => toggleSelected(reviewId)}
-                          aria-label={`Select review by ${reviewerName}`}
-                        />
-                      </div>
-                      <div className="admin-reviews-desktop-row__content">
-                        <div className="admin-reviews-desktop-row__meta">
-                          {renderStars(item?.rating, "admin-reviews-stars")}
-                          <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
-                            {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
-                          </span>
-                          <time>{formatDateTime(item?.createdAt)}</time>
-                        </div>
-                        <div className="admin-reviews-desktop-row__body">
-                          <h3>
-                            {reviewerName}
-                            <i> on </i>
-                            {productId ? <Link href={`/products/${productId}`}>{productName}</Link> : <strong>{productName}</strong>}
-                          </h3>
-                          <blockquote>{item?.comment || "No review text."}</blockquote>
-                        </div>
-                      </div>
-                      <div className="admin-reviews-desktop-row__actions">
-                        <div className="admin-reviews-desktop-row__buttons">
-                          {reviewStatus === "rejected" ? (
-                            <>
-                              <button
-                                type="button"
-                                className="admin-reviews-row-button is-restore"
-                                disabled={isBusy}
-                                onClick={() => runAction("moderateReview", item, null, "approved")}
-                              >
-                                Restore
-                              </button>
-                              <button
-                                type="button"
-                                className="admin-reviews-row-button is-permanent-delete"
-                                disabled={isBusy}
-                                onClick={() => runAction("deleteReview", item)}
-                              >
-                                Permanent Delete
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                type="button"
-                                className="admin-reviews-row-button is-reject"
-                                disabled={isBusy}
-                                onClick={() => runAction("moderateReview", item, null, "rejected")}
-                              >
-                                Reject
-                              </button>
-                              {reviewStatus !== "approved" ? (
-                                <button
-                                  type="button"
-                                  className="admin-reviews-row-button is-approve"
-                                  disabled={isBusy}
-                                  onClick={() => runAction("moderateReview", item, null, "approved")}
-                                >
-                                  Approve
-                                </button>
-                              ) : null}
-                            </>
-                          )}
-                        </div>
-                        <div className="admin-reviews-desktop-row__links">
-                          {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}><AdminProductsIcon name="external" />Open Product</Link> : null}
-                          {reviewStatus !== "rejected" ? (
-                            <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                              <AdminProductsIcon name="delete" />Delete
-                            </button>
-                          ) : null}
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                {pagedItems.map((item) => (
+                  <ReviewDesktopRow
+                    key={String(item?._id || item?.id || "")}
+                    item={item}
+                    selected={selectedReviewIds.includes(String(item?._id || item?.id || ""))}
+                    onToggleSelected={toggleSelected}
+                    busyAction={busyAction}
+                    runAction={runAction}
+                    renderStars={renderStars}
+                  />
+                ))}
               </div>
               <footer className="admin-reviews-desktop-pagination">
                 <p>
@@ -1332,90 +1252,15 @@ function ReviewsWorkspaceStitch({
           </div>
         ) : (
           <div className="admin-reviews-mobile-list">
-            {items.map((item) => {
-              const reviewId = String(item?._id || item?.id || "");
-              const productId = item?.product?._id || item?.product?.id || item?.productId || "";
-              const reviewerName = item?.user?.name || item?.user?.email || "Customer";
-              const productName = item?.product?.name || "Product";
-              const reviewStatus = item?.status || "pending";
-              const isBusy = busyAction === reviewId;
-
-              return (
-                <article key={reviewId} className="admin-reviews-mobile-card">
-                  <div className="admin-reviews-mobile-card__head">
-                    <div>
-                      <h3>{productName}</h3>
-                      <p>{reviewerName}</p>
-                    </div>
-                    <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
-                      {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
-                    </span>
-                  </div>
-                  <div className="admin-reviews-mobile-card__rating">
-                    {renderStars(item?.rating, "admin-reviews-stars")}
-                    <time>{formatDate(item?.createdAt)}</time>
-                  </div>
-                  <blockquote>{item?.comment || "No review text."}</blockquote>
-                  <div className="admin-reviews-mobile-card__actions">
-                    <div className="admin-reviews-mobile-card__buttons">
-                      {reviewStatus === "rejected" ? (
-                        <>
-                          <button
-                            type="button"
-                            className="admin-reviews-row-button is-restore"
-                            disabled={isBusy}
-                            onClick={() => runAction("moderateReview", item, null, "approved")}
-                          >
-                            <AdminProductsIcon name="check" />Restore
-                          </button>
-                          <button
-                            type="button"
-                            className="admin-reviews-row-button is-permanent-delete"
-                            disabled={isBusy}
-                            onClick={() => runAction("deleteReview", item)}
-                          >
-                            <AdminProductsIcon name="delete" />Permanent Delete
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          {reviewStatus !== "approved" ? (
-                            <button
-                              type="button"
-                              className="admin-reviews-row-button is-approve"
-                              disabled={isBusy}
-                              onClick={() => runAction("moderateReview", item, null, "approved")}
-                            >
-                              <AdminProductsIcon name="check" />Approve
-                            </button>
-                          ) : null}
-                          <button
-                            type="button"
-                            className="admin-reviews-row-button is-reject"
-                            disabled={isBusy}
-                            onClick={() => runAction("moderateReview", item, null, "rejected")}
-                          >
-                            <AdminProductsIcon name="delete" />Reject
-                          </button>
-                        </>
-                      )}
-                    </div>
-                    {productId ? (
-                      <Link className="admin-reviews-mobile-card__open" href={`/products/${productId}`}>
-                        <AdminProductsIcon name="external" />Open Product
-                      </Link>
-                    ) : null}
-                    {reviewStatus !== "rejected" ? (
-                      <div className="admin-reviews-mobile-card__links">
-                        <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
-                          Delete
-                        </button>
-                      </div>
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })}
+            {items.map((item) => (
+              <ReviewMobileCard
+                key={String(item?._id || item?.id || "")}
+                item={item}
+                busyAction={busyAction}
+                runAction={runAction}
+                renderStars={renderStars}
+              />
+            ))}
           </div>
         )}
       </section>
@@ -1482,6 +1327,176 @@ function ReviewsWorkspaceStitch({
 
       <MobileNavDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </section>
+  );
+}
+
+function ReviewModerationActions({ reviewStatus, isBusy, runAction, item, iconified = false }) {
+  if (reviewStatus === "rejected") {
+    return (
+      <>
+        <button
+          type="button"
+          className="admin-reviews-row-button is-restore"
+          disabled={isBusy}
+          onClick={() => runAction("moderateReview", item, null, "approved")}
+        >
+          {iconified ? <AdminProductsIcon name="check" /> : null}Restore
+        </button>
+        <button
+          type="button"
+          className="admin-reviews-row-button is-permanent-delete"
+          disabled={isBusy}
+          onClick={() => runAction("deleteReview", item)}
+        >
+          {iconified ? <AdminProductsIcon name="delete" /> : null}Permanent Delete
+        </button>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {reviewStatus !== "approved" ? (
+        <button
+          type="button"
+          className="admin-reviews-row-button is-approve"
+          disabled={isBusy}
+          onClick={() => runAction("moderateReview", item, null, "approved")}
+        >
+          {iconified ? <AdminProductsIcon name="check" /> : null}Approve
+        </button>
+      ) : null}
+      <button
+        type="button"
+        className="admin-reviews-row-button is-reject"
+        disabled={isBusy}
+        onClick={() => runAction("moderateReview", item, null, "rejected")}
+      >
+        {iconified ? <AdminProductsIcon name="delete" /> : null}Reject
+      </button>
+    </>
+  );
+}
+
+function ReviewDesktopRow({ item, selected, onToggleSelected, busyAction, runAction, renderStars }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const reviewId = String(item?._id || item?.id || "");
+  const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+  const reviewerName = item?.user?.name || item?.user?.email || "Customer";
+  const productName = item?.product?.name || "Product";
+  const reviewStatus = item?.status || "pending";
+  const isBusy = busyAction === reviewId;
+  const comment = item?.comment || "No review text.";
+  const bodyId = `review-body-${reviewId}`;
+
+  return (
+    <article className={`admin-reviews-desktop-row ${isExpanded ? "is-expanded" : ""}`}>
+      <div className="admin-reviews-desktop-row__toggle">
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => onToggleSelected(reviewId)}
+          aria-label={`Select review by ${reviewerName}`}
+        />
+      </div>
+      <div className="admin-reviews-desktop-row__content">
+        <div className="admin-reviews-desktop-row__meta">
+          {renderStars(item?.rating, "admin-reviews-stars")}
+          <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
+            {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
+          </span>
+          <time>{formatDateTime(item?.createdAt)}</time>
+        </div>
+        <div className="admin-reviews-desktop-row__body">
+          <button
+            type="button"
+            className="admin-collapsible__header admin-reviews-desktop-row__expand"
+            onClick={() => setIsExpanded((current) => !current)}
+            aria-expanded={isExpanded}
+            aria-controls={bodyId}
+          >
+            <h3>
+              {reviewerName}
+              <i> on </i>
+              {productId ? <Link href={`/products/${productId}`}>{productName}</Link> : <strong>{productName}</strong>}
+            </h3>
+            <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+          </button>
+          <blockquote id={bodyId} className={isExpanded ? "is-expanded" : "is-collapsed"}>{comment}</blockquote>
+        </div>
+      </div>
+      <div className="admin-reviews-desktop-row__actions">
+        <div className="admin-reviews-desktop-row__buttons">
+          <ReviewModerationActions reviewStatus={reviewStatus} isBusy={isBusy} runAction={runAction} item={item} />
+        </div>
+        <div className="admin-reviews-desktop-row__links">
+          {productId ? <Link className="admin-reviews-inline-link" href={`/products/${productId}`}><AdminProductsIcon name="external" />Open Product</Link> : null}
+          {reviewStatus !== "rejected" ? (
+            <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+              <AdminProductsIcon name="delete" />Delete
+            </button>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ReviewMobileCard({ item, busyAction, runAction, renderStars }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const reviewId = String(item?._id || item?.id || "");
+  const productId = item?.product?._id || item?.product?.id || item?.productId || "";
+  const reviewerName = item?.user?.name || item?.user?.email || "Customer";
+  const productName = item?.product?.name || "Product";
+  const reviewStatus = item?.status || "pending";
+  const isBusy = busyAction === reviewId;
+  const comment = item?.comment || "No review text.";
+  const bodyId = `review-body-m-${reviewId}`;
+
+  return (
+    <article className={`admin-reviews-mobile-card ${isExpanded ? "is-expanded" : ""}`}>
+      <div className="admin-reviews-mobile-card__head">
+        <div>
+          <h3>{productName}</h3>
+          <p>{reviewerName}</p>
+        </div>
+        <span className={`admin-reviews-status-pill is-${reviewStatus}`}>
+          {reviewStatus.charAt(0).toUpperCase() + reviewStatus.slice(1)}
+        </span>
+      </div>
+      <div className="admin-reviews-mobile-card__rating">
+        {renderStars(item?.rating, "admin-reviews-stars")}
+        <time>{formatDate(item?.createdAt)}</time>
+      </div>
+      <button
+        type="button"
+        className="admin-collapsible__header admin-reviews-mobile-card__expand"
+        onClick={() => setIsExpanded((current) => !current)}
+        aria-expanded={isExpanded}
+        aria-controls={bodyId}
+      >
+        <span>{isExpanded ? "Hide full review" : "Read full review"}</span>
+        <span className="admin-collapsible__icon" aria-hidden="true">{isExpanded ? "-" : "+"}</span>
+      </button>
+      <blockquote id={bodyId} className={isExpanded ? "is-expanded" : "is-collapsed"}>{comment}</blockquote>
+      <div className="admin-reviews-mobile-card__actions">
+        <div className="admin-reviews-mobile-card__buttons">
+          <ReviewModerationActions reviewStatus={reviewStatus} isBusy={isBusy} runAction={runAction} item={item} iconified />
+        </div>
+        {productId ? (
+          <Link className="admin-reviews-mobile-card__open" href={`/products/${productId}`}>
+            <AdminProductsIcon name="external" />Open Product
+          </Link>
+        ) : null}
+        {reviewStatus !== "rejected" ? (
+          <div className="admin-reviews-mobile-card__links">
+            <button type="button" className="admin-reviews-inline-link is-danger" disabled={isBusy} onClick={() => runAction("deleteReview", item)}>
+              Delete
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
