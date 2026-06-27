@@ -121,15 +121,43 @@
   .checkout-hubtel-modal__actions .checkout-payment__secondary {
     width: 100%;
   }
-  .checkout-customer-card {
-    padding: 18px 16px;
+  .checkout-customer-card,
+  .checkout-customer-card__edit-desktop {
+    display: none;
   }
-  .checkout-customer-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .checkout-customer-card-mobile {
+    display: grid;
+    gap: 6px;
+    padding: 12px 14px;
+    border: 1px solid #ece5d9;
+    border-radius: 4px;
+    background: #ffffff;
   }
-  .checkout-customer-grid strong {
-    max-width: 100%;
+  .checkout-customer-card-mobile__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .checkout-customer-card-mobile__head span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8f8a80;
+  }
+  .checkout-customer-card-mobile__head a {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0088cc;
+    text-decoration: none;
+  }
+  .checkout-customer-card-mobile strong {
+    color: #1f1d1b;
+    font-size: 0.94rem;
+  }
+  .checkout-customer-card-mobile span {
+    color: #5c503f;
+    font-size: 0.84rem;
   }
   .checkout-payment__proof-preview {
     grid-template-columns: 1fr;

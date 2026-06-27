@@ -1028,19 +1028,39 @@ export default function CheckoutPaymentPage() {
         <div className="checkout-layout">
           <section className="checkout-form panel">
             <div className="checkout-form__header">
-              <h2>Select Payment Method</h2>
+              <div className="checkout-form__header-row">
+                <h2>Select Payment Method</h2>
+                <Link href="/checkout" className="checkout-payment__secondary checkout-payment__secondary--inline checkout-customer-card__edit-desktop">
+                  Edit billing details
+                </Link>
+              </div>
               <p>Phase two uses your saved billing details. Refresh will keep both steps active until the order is submitted.</p>
             </div>
 
             <section className="checkout-customer-card">
               <div className="checkout-customer-grid">
-                <div><span>Name</span><strong>{[form.firstName, form.lastName].filter(Boolean).join(" ")}</strong></div>
-                <div><span>Email</span><strong>{form.shippingEmail}</strong></div>
-                <div><span>Phone</span><strong>{form.mobileNumber}</strong></div>
-                <div><span>Region</span><strong>{form.deliveryRegion}</strong></div>
-                <div className="checkout-customer-grid__full"><span>Address</span><strong>{form.shippingAddress}, {form.shippingCity}</strong></div>
+                <div className="checkout-customer-group">
+                  <span className="checkout-customer-group__label">Customer</span>
+                  <strong>{[form.firstName, form.lastName].filter(Boolean).join(" ")}</strong>
+                  <span>{form.shippingEmail}</span>
+                  <span>{form.mobileNumber}</span>
+                </div>
+                <div className="checkout-customer-group">
+                  <span className="checkout-customer-group__label">Billing Address</span>
+                  <strong>{form.deliveryRegion} Region</strong>
+                  <span>{form.shippingAddress}</span>
+                  <span>{form.shippingCity}, Ghana</span>
+                </div>
               </div>
-              <Link href="/checkout" className="checkout-payment__secondary checkout-payment__secondary--inline">Edit billing details</Link>
+            </section>
+
+            <section className="checkout-customer-card-mobile">
+              <div className="checkout-customer-card-mobile__head">
+                <span>Billing Address</span>
+                <Link href="/checkout">Edit</Link>
+              </div>
+              <strong>{[form.firstName, form.lastName].filter(Boolean).join(" ")}</strong>
+              <span>{[form.shippingAddress, form.shippingCity, "Ghana"].filter(Boolean).join(", ")}</span>
             </section>
 
             <section className="checkout-payment__flow-options">
