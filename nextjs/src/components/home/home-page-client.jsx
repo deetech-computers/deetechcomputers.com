@@ -82,8 +82,8 @@ const HOME_CATEGORY_IMAGES = {
     displayWidth: 360,
   },
   desktops: {
-    src: "/home-edited/laptops-removebg-preview-mobile.png",
-    mobileSrc: "/home-edited/laptops-removebg-preview-mobile.png",
+    src: "/home-edited/desktops.png",
+    mobileSrc: "/home-edited/desktops.png",
     mobileWidth: 360,
     displayWidth: 360,
   },
@@ -461,7 +461,7 @@ export default function HomePage() {
   const homeSectionsSignature = visibleHomepageSections.map((section) => `${section.key}:${section.allProducts.length}`).join("|");
   const categories = deriveCategories(products);
   const hasCategoryCounts = categories.some((item) => item.count > 0);
-  const featuredCategoryOrder = ["laptops", "desktops", "phones", "accessories", "monitors", "printers", "storage", "others"];
+  const featuredCategoryOrder = ["laptops", "phones", "desktops", "accessories", "monitors", "printers", "storage", "others"];
   const orderedCategories = [...categories].sort((a, b) => {
     const featuredIndexA = featuredCategoryOrder.indexOf(a.slug);
     const featuredIndexB = featuredCategoryOrder.indexOf(b.slug);
@@ -479,7 +479,9 @@ export default function HomePage() {
     orderedCategories.find((item) => item.slug === "laptops") ||
     orderedCategories[0] ||
     null;
-  const secondaryCategories = orderedCategories.filter((item) => item.slug !== featuredCategory?.slug);
+  const secondaryCategories = orderedCategories.filter(
+    (item) => item.slug !== featuredCategory?.slug && item.slug !== "others"
+  );
   const fallbackHeroBanner = {
     imageUrl: "",
     link: "",
