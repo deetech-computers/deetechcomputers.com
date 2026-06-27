@@ -929,10 +929,35 @@ export default function CheckoutPaymentPage() {
   if (!items.length && transitionStage === "idle") {
     return (
       <main className="shell page-section checkout-payment-route">
-        <section className="panel cart-empty">
-          <h2>Your cart is empty</h2>
-          <p className="hero-copy">Add products to your cart before moving to checkout.</p>
-          <Link href="/products" className="primary-link">Browse products</Link>
+        <section className="checkout-hero">
+          <h1>Checkout</h1>
+          <p className="checkout-hero__crumbs">
+            <Link href="/">Home</Link>
+            <span>/</span>
+            <span>Checkout</span>
+          </p>
+        </section>
+        <section className="cart-empty-state" aria-labelledby="payment-empty-title">
+          <div className="cart-empty-state__card">
+            <div className="cart-empty-state__mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 7h16l-2 9H7L4 7Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                <path d="M7 7 8.4 4h7.2L17 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M8 20h.01M17 20h.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h2 id="payment-empty-title">Your cart is empty</h2>
+            <p>
+              Add products to your cart before moving to checkout. Explore our premium selection of laptops and accessories.
+            </p>
+            <Link href="/products" className="cart-empty-state__primary">
+              Browse products
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </Link>
+          </div>
         </section>
       </main>
     );

@@ -7,6 +7,15 @@
   }
 }
 @media (max-width: 640px) {
+  .checkout-payment-route .cart-empty-state__card {
+    padding: 36px 22px;
+  }
+  .checkout-payment-route .cart-empty-state__card h2 {
+    font-size: 1.4rem;
+  }
+  .checkout-payment-route .cart-empty-state__primary {
+    width: 100%;
+  }
   .checkout-payment__option {
     min-height: 56px;
     padding: 10px 12px;
@@ -275,6 +284,9 @@
   }
   .checkout-payment-route .checkout-summary__line strong {
     max-width: 150px;
+  }
+  .checkout-payment-route .checkout-summary__actions {
+    display: none;
   }
   .checkout-payment-route .checkout-mobile-action-bar {
     display: grid;
