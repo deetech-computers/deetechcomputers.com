@@ -498,7 +498,7 @@
   margin: 0; color: white; font-size: clamp(1.25rem, 4vw, 2rem); line-height: 1.05;
 }
 .category-tile__cta {
-  color: var(--brand);
+  color: #d9a441;
 }
 .category-tile__count,
 .category-tile__content h2,

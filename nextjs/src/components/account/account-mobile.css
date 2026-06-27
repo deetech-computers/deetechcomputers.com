@@ -1876,12 +1876,12 @@
     justify-content: center;
     margin-top: 28px;
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
     font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
-    box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-reviews__empty strong {
     color: #7d867d;

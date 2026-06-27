@@ -2416,7 +2416,7 @@
   gap: 10px;
   margin-top: 12px;
   border-radius: 4px;
-  background: #14552b;
+  background: #0088cc;
   color: #ffffff;
   font-size: 0.84rem;
   font-weight: 900;
@@ -2990,12 +2990,12 @@
   font-weight: 900;
 }
 .account-order-card__actions .primary-button {
-  background: #006e9e;
+  background: #003714;
   box-shadow: none;
 }
 .account-order-card__actions .ghost-button {
-  border-color: #0088cc;
-  color: #0088cc;
+  border-color: #184f27;
+  color: #184f27;
 }
 .account-order-card__actions .account-dashboard__nav-icon {
   width: 18px;
@@ -3281,9 +3281,9 @@
     box-shadow: none;
   }
   .account-dashboard__nav.is-active {
-    background: #a6f5af;
+    background: #d6eefc;
     border-color: transparent;
-    color: #27723a;
+    color: #006e9e;
   }
   .account-dashboard__nav.is-active::before {
     display: none;
