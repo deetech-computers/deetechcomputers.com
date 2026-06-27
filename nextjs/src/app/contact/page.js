@@ -178,6 +178,7 @@ export default function ContactPage() {
 
       <article className="shell page-section policy-content policy-content--standalone contact-page-simple">
         <section className="contact-page-simple__map">
+          <h2 className="contact-page-simple__map-title">Find Our Shop</h2>
           <div className="contact-map-selector" role="tablist" aria-label="Select shop location">
             {shopLocations.map((location) => (
               <button
