@@ -81,6 +81,12 @@ const HOME_CATEGORY_IMAGES = {
     mobileWidth: 360,
     displayWidth: 360,
   },
+  desktops: {
+    src: "/home-edited/laptops-removebg-preview-mobile.png",
+    mobileSrc: "/home-edited/laptops-removebg-preview-mobile.png",
+    mobileWidth: 360,
+    displayWidth: 360,
+  },
   phones: {
     src: "/home-edited/mobilephones-removebg-preview-mobile.png",
     mobileSrc: "/home-edited/mobilephones-removebg-preview-mobile.png",
@@ -128,7 +134,7 @@ const HOME_CATEGORY_IMAGES = {
 function getCategoryArtKey(slug, label, index) {
   const value = `${slug} ${label}`.toLowerCase();
 
-  if (value.includes("laptop")) return "laptops";
+  if (value.includes("laptop") || value.includes("desktop") || value.includes("workstation")) return "laptops";
   if (value.includes("phone")) return "phones";
   if (value.includes("monitor")) return "monitors";
   if (value.includes("printer")) return "printers";
@@ -162,8 +168,7 @@ function getCategoryImageSrcSet(image) {
 
 function isLaptopDesktopCategory(item) {
   const slug = canonicalCategory(item?.slug || "");
-  const label = String(item?.label || "").toLowerCase();
-  return slug === "laptops" || label.includes("desktop");
+  return slug === "laptops" || slug === "desktops";
 }
 
 function isOthersCategory(item) {
@@ -456,7 +461,7 @@ export default function HomePage() {
   const homeSectionsSignature = visibleHomepageSections.map((section) => `${section.key}:${section.allProducts.length}`).join("|");
   const categories = deriveCategories(products);
   const hasCategoryCounts = categories.some((item) => item.count > 0);
-  const featuredCategoryOrder = ["laptops", "phones", "accessories", "monitors", "printers", "storage", "others"];
+  const featuredCategoryOrder = ["laptops", "desktops", "phones", "accessories", "monitors", "printers", "storage", "others"];
   const orderedCategories = [...categories].sort((a, b) => {
     const featuredIndexA = featuredCategoryOrder.indexOf(a.slug);
     const featuredIndexB = featuredCategoryOrder.indexOf(b.slug);

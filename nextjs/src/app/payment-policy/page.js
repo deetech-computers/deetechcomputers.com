@@ -67,7 +67,7 @@ const page = {
         {
           title: "Delivery Charges",
           items: [
-            "Free Delivery: Available for laptop purchases anywhere in Ghana.",
+            "Free Delivery: Available for laptop and desktop purchases anywhere in Ghana.",
             "Delivery Charges Apply: For accessories and other products.",
           ],
         },

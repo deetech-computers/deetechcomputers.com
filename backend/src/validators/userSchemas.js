@@ -28,7 +28,7 @@ export const trackUserBehaviorSchema = Joi.object({
   category: Joi.string()
     .trim()
     .lowercase()
-    .valid("laptops", "phones", "monitors", "accessories", "printers", "storage", "others"),
+    .valid("laptops", "desktops", "phones", "monitors", "accessories", "printers", "storage", "others"),
 })
   .or("searchTerm", "category")
   .required();

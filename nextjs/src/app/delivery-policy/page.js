@@ -8,12 +8,12 @@ const page = {
   quickFacts: [
     { value: "16", label: "Regions covered" },
     { value: "4-24h", label: "Typical dispatch" },
-    { value: "Free", label: "Laptop delivery" },
+    { value: "Free", label: "Laptop & desktop delivery" },
   ],
   highlights: [
     { title: "Pickup Available", description: "Collect directly from our Kumasi location." },
     { title: "Fast Delivery", description: "4-24 hours for confirmed orders." },
-    { title: "Free Laptop Delivery", description: "Nationwide free delivery for laptops." },
+    { title: "Free Laptop & Desktop Delivery", description: "Nationwide free delivery for laptops and desktops." },
   ],
   sections: [
     {
@@ -49,22 +49,22 @@ const page = {
       title: "Delivery Charges",
       blocks: [
         {
-          title: "4. Free Nationwide Laptop Delivery",
+          title: "4. Free Nationwide Laptop & Desktop Delivery",
           items: [
-            "Free delivery across Ghana on all laptop purchases.",
+            "Free delivery across Ghana on all laptop and desktop purchases.",
             "Valid only after full payment has been received.",
-            "Applies exclusively to laptops (not accessories or other items).",
+            "Applies exclusively to laptops and desktops (not accessories or other items).",
           ],
         },
         {
-          title: "5. Non-Laptop Delivery Fees",
+          title: "5. Other Product Delivery Fees",
           items: [
             "Orders below GHC 60 qualify for free delivery.",
             "Orders from GHC 60 to GHC 299 attract a GHC 30 delivery fee.",
             "Orders from GHC 300 to GHC 999 attract a GHC 50 delivery fee.",
             "Orders from GHC 1,000 to GHC 1,999 attract a GHC 100 delivery fee.",
             "Orders at GHC 2,000 or more qualify for free delivery.",
-            "Delivery fee is based on the product subtotal for non-laptop items.",
+            "Delivery fee is based on the product subtotal for non-laptop/desktop items.",
           ],
         },
       ],
@@ -80,28 +80,28 @@ const page = {
             "Specify product details for confirmation before delivery.",
             "Notification sent when delivery process starts.",
           ],
-          note: "Note: Delivery is not free for laptops when payment is made upon delivery.",
+          note: "Note: Delivery is not free for laptops or desktops when payment is made upon delivery.",
         },
         {
           title: "II. Payment on Delivery - Outside Kumasi",
           items: [
             "Available for selected products only.",
             "70% commitment fee required before dispatch.",
-            "Delivery fee follows the published non-laptop delivery tiers.",
+            "Delivery fee follows the published non-laptop/desktop delivery tiers.",
           ],
           extraTitle: "Eligible Items for Payment on Delivery (Outside Kumasi)",
           extraItems: ["Phone Accessories", "Computer Accessories", "Tablets"],
         },
       ],
-      note: "Important Notice: All laptop orders require full payment before delivery. No exceptions.",
+      note: "Important Notice: All laptop and desktop orders require full payment before delivery. No exceptions.",
     },
     {
       title: "Important Information",
       points: [
         "Kumasi Pickup Available: Collect your orders directly from our main location in Kumasi after notification.",
         "Fast Processing: Most orders are processed and delivered within 4-24 hours after confirmation.",
-        "Free Laptop Delivery: Enjoy complimentary nationwide delivery on all laptop purchases after full payment.",
-        "Tiered Non-Laptop Delivery: Delivery is free below GHC 60, GHC 30 from GHC 60 to GHC 299, GHC 50 from GHC 300 to GHC 999, GHC 100 for GHC 1,000 to GHC 1,999, and free from GHC 2,000 upward.",
+        "Free Laptop & Desktop Delivery: Enjoy complimentary nationwide delivery on all laptop and desktop purchases after full payment.",
+        "Tiered Delivery For Other Items: Delivery is free below GHC 60, GHC 30 from GHC 60 to GHC 299, GHC 50 from GHC 300 to GHC 999, GHC 100 for GHC 1,000 to GHC 1,999, and free from GHC 2,000 upward.",
         "Clear Communication: We maintain transparent communication about delivery fees and timelines.",
       ],
     },

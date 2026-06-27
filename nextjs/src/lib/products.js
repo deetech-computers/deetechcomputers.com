@@ -3,7 +3,8 @@ import { requestJson } from "./http";
 import { getProductPricing } from "./product-pricing";
 
 export const DEFAULT_STOREFRONT_CATEGORIES = [
-  { slug: "laptops", label: "Laptops & Desktops" },
+  { slug: "laptops", label: "Laptops" },
+  { slug: "desktops", label: "Desktops" },
   { slug: "monitors", label: "Monitors" },
   { slug: "printers", label: "Printers" },
   { slug: "accessories", label: "Accessories" },
@@ -18,6 +19,7 @@ export const STOREFRONT_CATEGORY_SLUGS = new Set(
 
 export const DEFAULT_CATEGORY_BRANDS = {
   laptops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
+  desktops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
   phones: ["Apple", "Samsung", "Google", "Huawei", "Xiaomi", "Oppo", "Vivo", "Tecno", "Infinix", "Nokia", "Other"],
   monitors: ["Dell", "HP", "Lenovo", "Samsung", "LG", "Acer", "Asus", "BenQ", "ViewSonic", "Philips", "AOC", "Other"],
   accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX", "Other"],
@@ -158,7 +160,8 @@ export function getProductRating(product) {
 export function canonicalCategory(value) {
   const input = String(value || "").trim().toLowerCase();
   if (!input) return "all";
-  if (input.includes("laptop") || input.includes("desktop") || input.includes("workstation")) return "laptops";
+  if (input.includes("laptop")) return "laptops";
+  if (input.includes("desktop") || input.includes("workstation")) return "desktops";
   if (input.includes("phone") || input.includes("mobile") || input.includes("smartphone")) return "phones";
   if (input.includes("monitor") || input.includes("display")) return "monitors";
   if (input.includes("accessor") || input.includes("peripheral")) return "accessories";

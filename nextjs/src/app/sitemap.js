@@ -4,6 +4,7 @@ const staticRoutes = [
   "",
   "/products",
   "/products/laptops",
+  "/products/desktops",
   "/products/phones",
   "/products/monitors",
   "/products/accessories",

@@ -9,6 +9,7 @@ import { requestWithToken } from "@/lib/resource";
 
 const CATALOG_CATEGORIES = new Set([
   "laptops",
+  "desktops",
   "phones",
   "monitors",
   "accessories",

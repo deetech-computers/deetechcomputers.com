@@ -12,6 +12,7 @@ import { normalizeProductUpgradeSpecsInput } from "../utils/productUpgrades.js";
 
 const BRANDS_BY_CATEGORY = {
   laptops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
+  desktops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
   phones: ["Apple", "Samsung", "Google", "Huawei", "Xiaomi", "Oppo", "Vivo", "Tecno", "Infinix", "Nokia", "Other"],
   monitors: ["Dell", "HP", "Lenovo", "Samsung", "LG", "Acer", "Asus", "BenQ", "ViewSonic", "Philips", "AOC", "Other"],
   accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX", "Other"],
@@ -43,6 +44,7 @@ const MAX_PRODUCT_IMAGES = 6;
 function canonicalCategory(raw) {
   const v = String(raw || "").trim().toLowerCase();
   if (v.startsWith("laptop")) return "laptops";
+  if (v.startsWith("desktop") || v.startsWith("workstation")) return "desktops";
   if (v.startsWith("phone")) return "phones";
   if (v.startsWith("monitor")) return "monitors";
   if (v.startsWith("access")) return "accessories";

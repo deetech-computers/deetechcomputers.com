@@ -721,7 +721,8 @@ export default function ProductDetailPage() {
   const originalPrice = displayPricing.originalPrice;
   const discountPercent = displayPricing.discountPercent;
   const categoryLabel = formatCategoryLabel(product?.category || canonicalCategory(product?.category));
-  const isLaptopCategory = canonicalCategory(product?.category) === "laptops";
+  const productCanonicalCategory = canonicalCategory(product?.category);
+  const isLaptopCategory = productCanonicalCategory === "laptops" || productCanonicalCategory === "desktops";
   const attentionBadgeLabel = isLaptopCategory ? "Free Delivery" : "Quality Guaranteed";
   const productSpecs = applyUpgradeSelectionToSpecs(
     getProductSpecs(product).filter(([, value]) => String(value || "").trim()),

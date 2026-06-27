@@ -5,7 +5,8 @@ import { deleteStoredMedia, storeImageFile } from "../utils/mediaStorage.js";
 function canonicalCategory(value) {
   const input = String(value || "").trim().toLowerCase();
   if (!input) return "all";
-  if (input.includes("laptop") || input.includes("desktop") || input.includes("workstation")) return "laptops";
+  if (input.includes("laptop")) return "laptops";
+  if (input.includes("desktop") || input.includes("workstation")) return "desktops";
   if (input.includes("phone") || input.includes("mobile") || input.includes("smartphone")) return "phones";
   if (input.includes("monitor") || input.includes("display")) return "monitors";
   if (input.includes("accessor") || input.includes("peripheral")) return "accessories";

@@ -26,7 +26,7 @@ export function calculateShippingPrice(items = [], subtotal = 0) {
 
   return normalizedItems.reduce((sum, item) => {
     const category = canonicalCategory(item?.category || item?.categoryName || item?.name || "");
-    if (category === "laptops") return sum;
+    if (category === "laptops" || category === "desktops") return sum;
     const lineTotal = Number(item?.price || 0) * Number(item?.qty || item?.quantity || 1);
     return sum + shippingFeeForLineTotal(lineTotal);
   }, 0);

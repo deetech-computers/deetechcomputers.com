@@ -61,7 +61,7 @@ const ADMIN_MENU_ITEMS = [
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/discounts", label: "Discounts" },
 ];
-const HEADER_CATEGORY_ORDER = ["laptops", "phones", "monitors", "accessories", "storage", "others"];
+const HEADER_CATEGORY_ORDER = ["laptops", "desktops", "phones", "monitors", "accessories", "storage", "others"];
 const BRAND_FALLBACK = (
   <div className="brand-mark__fallback" aria-label="Deetech Computers">
     DEETECH
@@ -199,6 +199,13 @@ function CategoryIcon({ slug }) {
       </svg>
     );
   }
+  if (slug === "desktops") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm2.5 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM7 10h10v1.6H7V10Zm0 3h10v1.6H7V13Z" fill="currentColor" />
+      </svg>
+    );
+  }
   if (slug === "phones") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -268,7 +275,7 @@ export default function SiteHeader() {
       .sort((a, b) => HEADER_CATEGORY_ORDER.indexOf(a.slug) - HEADER_CATEGORY_ORDER.indexOf(b.slug))
       .map((item) => ({
       ...item,
-      label: item.slug === "laptops" ? "Laptops and Desktops" : item.slug === "phones" ? "Phones" : item.label,
+      label: item.slug === "phones" ? "Phones" : item.label,
       sections: brandMap[item.slug] || [],
     }));
   });
@@ -381,7 +388,7 @@ export default function SiteHeader() {
             .sort((a, b) => HEADER_CATEGORY_ORDER.indexOf(a.slug) - HEADER_CATEGORY_ORDER.indexOf(b.slug))
             .map((item) => ({
               ...item,
-              label: item.slug === "laptops" ? "Laptops and Desktops" : item.slug === "phones" ? "Phones" : item.label,
+              label: item.slug === "phones" ? "Phones" : item.label,
               sections: brandMap[item.slug] || [],
             }))
         );
@@ -396,7 +403,7 @@ export default function SiteHeader() {
             .sort((a, b) => HEADER_CATEGORY_ORDER.indexOf(a.slug) - HEADER_CATEGORY_ORDER.indexOf(b.slug))
             .map((item) => ({
               ...item,
-              label: item.slug === "laptops" ? "Laptops and Desktops" : item.slug === "phones" ? "Phones" : item.label,
+              label: item.slug === "phones" ? "Phones" : item.label,
               sections: brandMap[item.slug] || [],
             }))
         );

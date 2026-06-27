@@ -16,7 +16,8 @@ import { formatSelectedUpgrades, normalizeProductUpgradeSpecs } from "@/lib/prod
 import { MobileNavDrawer } from "./admin-nav";
 
 const PRODUCT_CATEGORIES = [
-  ["laptops", "Laptops and Desktops"],
+  ["laptops", "Laptops"],
+  ["desktops", "Desktops"],
   ["phones", "Mobile Phones"],
   ["monitors", "Monitors"],
   ["accessories", "Accessories"],
@@ -27,6 +28,7 @@ const PRODUCT_CATEGORIES = [
 
 const BRANDS_BY_CATEGORY = {
   laptops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
+  desktops: ["HP", "Dell", "Lenovo", "Apple", "Asus", "Acer", "Microsoft", "Samsung", "Toshiba", "MSI", "Other"],
   phones: ["Apple", "Samsung", "Google", "Huawei", "Xiaomi", "Oppo", "Vivo", "Tecno", "Infinix", "Nokia", "Other"],
   monitors: ["Dell", "HP", "Lenovo", "Samsung", "LG", "Acer", "Asus", "BenQ", "ViewSonic", "Philips", "AOC", "Other"],
   accessories: ["Logitech", "Microsoft", "Apple", "Samsung", "Anker", "JBL", "Sony", "Razer", "Corsair", "HyperX", "Other"],
