@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { requestJson } from "@/lib/http";
 import { requestWithToken } from "@/lib/resource";
@@ -77,6 +78,7 @@ const initialForm = {
 };
 
 export default function ContactPage() {
+  const router = useRouter();
   const { isAuthenticated, status: authStatus, token } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: "", text: "" });
@@ -149,6 +151,20 @@ export default function ContactPage() {
 
   return (
     <main className="policy-standalone">
+      <header className="policy-standalone__mobile-bar">
+        <button type="button" className="policy-standalone__mobile-back" onClick={() => router.back()} aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 5 8 12l7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <span className="policy-standalone__mobile-title">Contact Support</span>
+        <span className="policy-standalone__mobile-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 13.5v-2a8 8 0 0 1 16 0v2M4 13.5a2 2 0 0 0-2 2v1.5a2 2 0 0 0 2 2h1v-5.5Zm16 0a2 2 0 0 1 2 2v1.5a2 2 0 0 1-2 2h-1v-5.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </header>
+
       <header className="policy-standalone__hero" role="banner">
         <div className="shell policy-standalone__hero-inner">
           <h1>Contact Support Team</h1>
