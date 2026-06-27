@@ -65,8 +65,21 @@
   height: 48px;
 }
 .checkout-payment__copy {
+  flex: 1 1 auto;
+  min-width: 0;
   display: grid;
   gap: 4px;
+}
+.checkout-payment__check {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #0088cc;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
 }
 .checkout-payment__copy strong,
 .checkout-payment__instruction-head h3 {

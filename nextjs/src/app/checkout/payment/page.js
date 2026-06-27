@@ -1061,7 +1061,7 @@ export default function CheckoutPaymentPage() {
                   ) : null}
                   <span className="checkout-payment__radio" aria-hidden="true" />
                   <span className="checkout-payment__flow-copy">
-                    <strong>Automatic payment</strong>
+                    <strong>Automatic<span className="checkout-payment__flow-suffix"> payment</span></strong>
                     <small>Pay quickly through secure Hubtel checkout. No screenshot upload needed.</small>
                   </span>
                 </button>
@@ -1080,7 +1080,7 @@ export default function CheckoutPaymentPage() {
                   ) : null}
                   <span className="checkout-payment__radio" aria-hidden="true" />
                   <span className="checkout-payment__flow-copy">
-                    <strong>Manual payment</strong>
+                    <strong>Manual<span className="checkout-payment__flow-suffix"> payment</span></strong>
                     <small>Choose a payment method, transfer manually, then upload proof.</small>
                   </span>
                 </button>
@@ -1103,7 +1103,6 @@ export default function CheckoutPaymentPage() {
                       }));
                     }}
                   >
-                    <span className="checkout-payment__radio" aria-hidden="true" />
                     <StableImage
                       src={method.logo}
                       alt={method.label}
@@ -1115,6 +1114,15 @@ export default function CheckoutPaymentPage() {
                       <strong>{method.label}</strong>
                       <small>{method.helper}</small>
                     </span>
+                    {method.id === form.paymentMethod ? (
+                      <span className="checkout-payment__check" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                          <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    ) : (
+                      <span className="checkout-payment__radio" aria-hidden="true" />
+                    )}
                   </button>
                 ))}
               </div>
@@ -1176,28 +1184,35 @@ export default function CheckoutPaymentPage() {
                           </div>
                         );
                       })}
-                      <div className="checkout-payment__instruction-row checkout-payment__instruction-row--reference">
-                        <span>Reference</span>
-                        <strong>
-                          {form.clientOrderRef || "Generated at checkout"}
-                          {form.clientOrderRef ? (
-                            <button
-                              type="button"
-                              className="checkout-payment__copy-button"
-                              aria-label="Copy reference"
-                              onClick={() => {
-                                navigator.clipboard?.writeText(form.clientOrderRef);
-                                pushToast("Reference copied", "success");
-                              }}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
-                                <path d="M5 15V5a1 1 0 0 1 1-1h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                              </svg>
-                            </button>
-                          ) : null}
-                        </strong>
-                      </div>
+                      {(() => {
+                        const referenceLabel =
+                          items.slice(0, 2).map((item) => item.name).join(", ") +
+                          (items.length > 2 ? `, +${items.length - 2} more` : "");
+                        return (
+                          <div className="checkout-payment__instruction-row checkout-payment__instruction-row--reference">
+                            <span>Reference</span>
+                            <strong>
+                              {referenceLabel || "Generated at checkout"}
+                              {referenceLabel ? (
+                                <button
+                                  type="button"
+                                  className="checkout-payment__copy-button"
+                                  aria-label="Copy reference"
+                                  onClick={() => {
+                                    navigator.clipboard?.writeText(referenceLabel);
+                                    pushToast("Reference copied", "success");
+                                  }}
+                                >
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                                    <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+                                    <path d="M5 15V5a1 1 0 0 1 1-1h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                                  </svg>
+                                </button>
+                              ) : null}
+                            </strong>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 

@@ -90,10 +90,17 @@
   }
   .checkout-payment__flow-copy strong {
     font-size: 0.86rem;
+    white-space: nowrap;
+  }
+  .checkout-payment__flow-suffix {
+    display: none;
   }
   .checkout-payment__flow.is-active {
     background: #0088cc;
     box-shadow: none;
+  }
+  .checkout-payment__flow-check {
+    display: none;
   }
   .checkout-payment__flow.is-active .checkout-payment__flow-copy strong {
     color: #ffffff;
@@ -166,7 +173,6 @@
   }
   .checkout-payment,
   .checkout-payment__details,
-  .checkout-payment__option,
   .checkout-payment__auto-head {
     display: grid;
     grid-template-columns: 1fr;
