@@ -8,17 +8,17 @@
 }
 @media (max-width: 640px) {
   .checkout-payment__option {
-    min-height: 76px;
-    padding: 14px;
-    gap: 12px;
+    min-height: 56px;
+    padding: 10px 12px;
+    gap: 10px;
   }
   .checkout-payment__logo.stable-image {
-    width: 88px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
   }
   .checkout-payment__logo--large.stable-image {
-    width: 108px;
-    height: 38px;
+    width: 48px;
+    height: 48px;
   }
   .checkout-payment__instruction-card,
   .checkout-payment__upload-card {

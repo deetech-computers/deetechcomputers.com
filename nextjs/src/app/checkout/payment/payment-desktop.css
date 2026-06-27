@@ -11,14 +11,14 @@
 }
 .checkout-payment__option {
   width: 100%;
-  min-height: 82px;
+  min-height: 60px;
   border: 2px solid #ece5d9;
   border-radius: 4px;
   background: #ffffff;
-  padding: 15px 17px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   text-align: left;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
@@ -55,20 +55,32 @@
   background: #0088cc;
 }
 .checkout-payment__logo.stable-image {
-  width: 120px;
+  width: 40px;
   height: 40px;
   object-fit: contain;
   flex: 0 0 auto;
 }
 .checkout-payment__logo--large.stable-image {
-  width: 132px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
 }
 .checkout-payment__copy {
   flex: 1 1 auto;
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 2px;
+}
+.checkout-payment__copy strong,
+.checkout-payment__copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.checkout-payment__copy strong {
+  font-size: 0.92rem;
+}
+.checkout-payment__copy small {
+  font-size: 0.8rem;
 }
 .checkout-payment__check {
   width: 22px;
