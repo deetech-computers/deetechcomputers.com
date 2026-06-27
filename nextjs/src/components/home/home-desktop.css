@@ -267,13 +267,15 @@
   padding: clamp(10px, 2vw, 18px);
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms ease;
 }
-.category-tile__image--laptops-desktops {
-  object-position: center center;
-  padding: clamp(14px, 2.4vw, 22px);
-}
+.category-tile__image--laptops-desktops,
 .category-tile__image--others,
 .category-tile__image--accessories {
-  padding: clamp(20px, 3.4vw, 32px);
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  padding: clamp(26px, 4.4vw, 40px) !important;
+  transform: none !important;
 }
 .category-tile__fallback {
   background:
