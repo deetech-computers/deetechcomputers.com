@@ -308,7 +308,7 @@
     font-weight: 800;
   }
   .account-mobile-home__progress strong {
-    color: #0b4423;
+    color: #14552b;
   }
   .account-mobile-home__progress i {
     display: block;
@@ -321,7 +321,7 @@
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: #00401b;
+    background: #14552b;
   }
   .account-mobile-home__menu {
     display: grid;
@@ -344,7 +344,7 @@
     text-decoration: none;
   }
   .account-mobile-home__item .account-mobile-home__icon:first-child {
-    color: #0b4423;
+    color: #006e9e;
   }
   .account-mobile-home__item .account-mobile-home__icon:last-child {
     width: 18px;
@@ -360,7 +360,7 @@
     align-items: center;
     padding: 0 8px;
     border-radius: 999px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
     font-size: 0.65rem;
     font-style: normal;
@@ -537,7 +537,7 @@
   }
   .account-mobile-address__grid input:focus,
   .account-mobile-address__grid select:focus {
-    box-shadow: inset 0 0 0 2px #00401b;
+    box-shadow: inset 0 0 0 2px #006e9e;
   }
   .account-mobile-address__select,
   .account-mobile-address__phone,
@@ -608,12 +608,12 @@
     gap: 10px;
     border: 0;
     border-radius: 4px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
     font: inherit;
     font-size: 1rem;
     font-weight: 800;
-    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-address__submit button:disabled {
     opacity: 0.7;
@@ -1118,8 +1118,8 @@
   }
   .account-mobile-messages__message.is-user p {
     justify-self: end;
-    background: #18572a;
-    color: #a8d4ad;
+    background: #0088cc;
+    color: #ffffff;
   }
   .account-mobile-messages__attachment {
     display: block;
@@ -1240,9 +1240,9 @@
     place-items: center;
     border: 0;
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
-    box-shadow: 0 8px 18px rgba(0, 64, 27, 0.24);
+    box-shadow: none;
   }
   .account-mobile-messages__composer > button:disabled {
     opacity: 0.62;
@@ -1304,7 +1304,7 @@
     border: 1px solid #e3e8df;
     border-radius: 4px;
     background: #ffffff;
-    color: #14552b;
+    color: #0088cc;
     box-shadow: 0 10px 20px rgba(17, 24, 39, 0.12);
   }
   .account-mobile-messages__empty-mark i .account-mobile-messages__icon {
@@ -1313,7 +1313,7 @@
   }
   .account-mobile-messages__empty h2 {
     margin: 0;
-    color: #00401b;
+    color: #006e9e;
     font-size: 1.32rem;
     line-height: 1.18;
   }
@@ -1367,7 +1367,7 @@
   }
   .account-mobile-notifications__title h1 {
     margin: 0;
-    color: #00401b;
+    color: #006e9e;
     font-size: 1.38rem;
     line-height: 1.1;
   }
@@ -1480,10 +1480,10 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: 1px solid #18572a;
+    border: 1px solid #0088cc;
     border-radius: 4px;
-    background: #18572a;
-    color: #a8d4ad;
+    background: #0088cc;
+    color: #ffffff;
     font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
@@ -1544,7 +1544,7 @@
   }
   .account-mobile-notifications__empty h2 {
     margin: 0;
-    color: #00401b;
+    color: #006e9e;
     font-size: 1.35rem;
     line-height: 1.08;
   }
@@ -1564,12 +1564,12 @@
     gap: 10px;
     margin-top: min(18vh, 130px);
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
     font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
-    box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-notifications__empty-action .account-mobile-notifications__icon {
     width: 19px;
@@ -1642,7 +1642,7 @@
   }
   .account-mobile-reviews__title h1 {
     margin: 0;
-    color: #00401b;
+    color: #006e9e;
     font-size: 1.85rem;
     line-height: 1.1;
   }
@@ -1772,7 +1772,7 @@
     justify-content: center;
     gap: 6px;
     border-radius: 4px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
     font-size: 0.82rem;
     font-weight: 900;
@@ -1830,7 +1830,7 @@
     margin-top: -12px;
     border-radius: 4px;
     background: #ffffff;
-    color: #14552b;
+    color: #0088cc;
     box-shadow: 0 14px 26px rgba(17, 24, 39, 0.08);
   }
   .account-mobile-reviews__empty-mark > .account-mobile-reviews__icon {
@@ -1847,9 +1847,9 @@
     height: 50px;
     place-items: center;
     border-radius: 4px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
-    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.24);
+    box-shadow: none;
   }
   .account-mobile-reviews__empty-mark i .account-mobile-reviews__icon {
     width: 24px;
@@ -1965,9 +1965,9 @@
     height: 126px;
     place-items: center;
     border-radius: 999px;
-    background: #18572a;
-    color: #a6dbaa;
-    box-shadow: 0 18px 34px rgba(0, 64, 27, 0.15);
+    background: #0088cc;
+    color: #ffffff;
+    box-shadow: none;
   }
   .account-mobile-password__seal > .account-mobile-password__icon {
     width: 72px;
@@ -1981,8 +1981,8 @@
     height: 38px;
     place-items: center;
     border-radius: 999px;
-    background: #18572a;
-    color: #a6dbaa;
+    background: #0088cc;
+    color: #ffffff;
   }
   .account-mobile-password__seal span .account-mobile-password__icon {
     width: 24px;
@@ -2043,7 +2043,7 @@
     color: #6b7280;
   }
   .account-mobile-password__field:focus-within {
-    box-shadow: inset 0 0 0 2px #00401b;
+    box-shadow: inset 0 0 0 2px #006e9e;
   }
   .account-mobile-password__field button {
     display: grid;
@@ -2079,12 +2079,12 @@
     margin-top: 14px;
     border: 0;
     border-radius: 4px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
     font: inherit;
     font-size: 1.1rem;
     font-weight: 900;
-    box-shadow: 0 12px 22px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-password__form > button:disabled {
     opacity: 0.7;
@@ -2317,7 +2317,7 @@
     margin-top: -18px;
     border-radius: 4px;
     background: #dce7fb;
-    color: #00401b;
+    color: #006e9e;
     box-shadow: 0 14px 26px rgba(17, 24, 39, 0.04);
   }
   .account-mobile-wishlist__empty-mark > .account-mobile-wishlist__icon {
@@ -2363,12 +2363,12 @@
     justify-content: center;
     margin-top: 28px;
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
     font-size: 1.2rem;
     font-weight: 900;
     text-decoration: none;
-    box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-wishlist__empty-categories {
     display: grid;
@@ -2437,12 +2437,12 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
     font-size: 0.98rem;
     font-weight: 800;
     text-decoration: none;
-    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-orders {
     display: block;
@@ -2772,8 +2772,8 @@
     max-height: 108px !important;
     border: 5px solid #ffffff;
     border-radius: 4px;
-    background: #18572a;
-    color: #a6dbaa;
+    background: #0088cc;
+    color: #ffffff;
     font-size: 2.25rem;
     font-weight: 900;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.18);
@@ -2804,10 +2804,10 @@
     height: 42px;
     border: 0;
     border-radius: 4px;
-    background: #00401b;
+    background: #006e9e;
     color: #ffffff;
     cursor: pointer;
-    box-shadow: 0 8px 18px rgba(0, 64, 27, 0.26);
+    box-shadow: none;
   }
   .account-mobile-personal__avatar button:disabled {
     opacity: 0.7;
@@ -2860,7 +2860,7 @@
     padding: 0 18px;
   }
   .account-mobile-personal__form input:focus {
-    box-shadow: inset 0 0 0 2px #00401b;
+    box-shadow: inset 0 0 0 2px #006e9e;
   }
   .account-mobile-personal__readonly,
   .account-mobile-personal__phone {
@@ -2945,12 +2945,12 @@
     min-height: 60px;
     border: 0;
     border-radius: 4px;
-    background: #18572a;
+    background: #0088cc;
     color: #ffffff;
     font: inherit;
     font-size: 1.05rem;
     font-weight: 800;
-    box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
+    box-shadow: none;
   }
   .account-mobile-personal__submit button:disabled {
     opacity: 0.7;
