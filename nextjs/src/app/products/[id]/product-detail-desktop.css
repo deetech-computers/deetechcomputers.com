@@ -115,7 +115,7 @@
 .product-gallery__main {
   width: 100%;
   aspect-ratio: 3 / 4;
-  background: transparent;
+  background: #ffffff;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -141,7 +141,7 @@
 .product-gallery__main img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 .product-gallery__main-loading {
