@@ -431,10 +431,10 @@
   border-radius: 4px !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  background: #2563eb !important;
+  background: #0088cc !important;
   color: #ffffff !important;
-  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.2);
-  transition: background 220ms ease, color 220ms ease, transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: none !important;
+  transition: background 220ms ease, color 220ms ease, transform 180ms ease;
 }
 .product-summary__cart svg {
   width: 18px;
@@ -442,7 +442,7 @@
   flex: 0 0 auto;
 }
 .product-summary__cart:hover {
-  background: #1d4ed8 !important;
+  background: #006e9e !important;
   transform: translateY(-1px);
 }
 .product-summary__inline-actions {
