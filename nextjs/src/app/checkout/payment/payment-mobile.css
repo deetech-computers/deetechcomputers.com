@@ -7,6 +7,45 @@
   }
 }
 @media (max-width: 640px) {
+  .app-shell:has(.checkout-payment-route) .site-header {
+    display: none;
+  }
+  .checkout-payment-mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+  }
+  .checkout-payment-mobile-bar__back,
+  .checkout-payment-mobile-bar__icon {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #0088cc;
+  }
+  .checkout-payment-mobile-bar__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+    color: #0088cc;
+    font-weight: 700;
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .checkout-payment-route .cart-empty-state__card {
     padding: 36px 22px;
   }

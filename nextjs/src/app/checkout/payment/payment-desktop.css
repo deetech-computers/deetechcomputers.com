@@ -467,6 +467,15 @@
   background: #ffffff;
   color: #1f1d1b;
 }
+.checkout-payment__secondary--danger {
+  border-color: #f3c4bd;
+  color: #b42318;
+}
+.checkout-payment__secondary--danger:hover,
+.checkout-payment__secondary--danger:focus-visible {
+  border-color: #b42318;
+  background: #fdf3f1;
+}
 .checkout-payment__upload-button:hover,
 .checkout-payment__upload-button:focus-visible {
   transform: translateY(-2px);
@@ -744,6 +753,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+.checkout-payment-mobile-bar {
+  display: none;
 }
 .checkout-payment-route .checkout-hero {
   padding: 28px 0 32px;
