@@ -311,10 +311,10 @@
   gap: 8px;
   min-height: 48px;
   padding: 0 20px;
-  border: 2px solid #14552b;
+  border: 2px solid #0088cc;
   border-radius: 4px;
   background: transparent;
-  color: #14552b;
+  color: #0088cc;
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -325,7 +325,7 @@
   height: 18px;
 }
 .account-notifications-mark-read:hover {
-  background: #14552b;
+  background: #0088cc;
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -401,11 +401,11 @@
   gap: 12px;
   padding: 0 28px;
   border-radius: 4px;
-  background: #00401b;
+  background: #0088cc;
   color: #ffffff;
   font-weight: 900;
   text-decoration: none;
-  box-shadow: 0 10px 22px rgba(0, 64, 27, 0.18);
+  box-shadow: none;
 }
 .account-notification-empty-card__action .account-dashboard__nav-icon {
   width: 19px;
@@ -498,7 +498,7 @@
   gap: 6px;
   width: fit-content;
   margin-top: 8px;
-  color: #14552b;
+  color: #0088cc;
   font-weight: 900;
   text-decoration: none;
 }
@@ -534,7 +534,7 @@
 .account-notification-older button {
   border: 0;
   background: transparent;
-  color: #14552b;
+  color: #0088cc;
   font: inherit;
   font-weight: 900;
   cursor: pointer;
@@ -1166,11 +1166,11 @@
   gap: 10px;
   padding: 0 28px;
   border-radius: 4px;
-  background: #00401b;
+  background: #0088cc;
   color: #ffffff;
   font-weight: 900;
   text-decoration: none;
-  box-shadow: 0 10px 22px rgba(0, 64, 27, 0.18);
+  box-shadow: none;
 }
 .account-support-empty-card__action .account-dashboard__nav-icon {
   width: 20px;
@@ -1464,7 +1464,7 @@
 }
 .account-support-side-card a {
   min-height: 38px;
-  color: #00401b;
+  color: #0088cc;
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -1474,12 +1474,12 @@
 }
 .account-support-side-card a::after {
   content: ">";
-  color: #1d6a33;
+  color: #0088cc;
   font-weight: 900;
 }
 .account-support-side-card a:hover,
 .account-support-side-card a:focus-visible {
-  color: #1d6a33;
+  color: #006e9e;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
@@ -2159,12 +2159,12 @@
   justify-content: center;
   margin-top: 10px;
   border-radius: 4px;
-  background: #18572a;
+  background: #0088cc;
   color: #ffffff;
   font-size: 1.2rem;
   font-weight: 900;
   text-decoration: none;
-  box-shadow: 0 10px 22px rgba(0, 64, 27, 0.2);
+  box-shadow: none;
 }
 .account-wishlist-empty-card__categories {
   display: grid;
@@ -2556,9 +2556,9 @@
   min-width: 154px;
   min-height: 40px;
   justify-content: center;
-  border: 2px solid #00401b;
+  border: 2px solid #0088cc;
   border-radius: 4px;
-  color: #00401b;
+  color: #0088cc;
   font-size: 0.82rem;
   font-weight: 900;
 }
@@ -2594,8 +2594,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: #acf0b9;
-  color: #14552b;
+  background: #0088cc;
+  color: #ffffff;
   font-weight: 900;
   text-decoration: none;
 }
@@ -2658,7 +2658,7 @@
   transition: border-color 0.18s ease, background 0.18s ease;
 }
 .account-password-input:focus-within {
-  border-color: #14552b;
+  border-color: #0088cc;
   background: #ffffff;
 }
 .account-password-input input {
@@ -2692,7 +2692,7 @@
   border-radius: 4px;
 }
 .account-password-actions > a {
-  color: #14552b;
+  color: #0088cc;
   font-size: 0.82rem;
   font-weight: 900;
   text-decoration: none;
