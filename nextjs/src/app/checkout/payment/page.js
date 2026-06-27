@@ -1302,7 +1302,13 @@ export default function CheckoutPaymentPage() {
                           <small>PNG, JPG or PDF (Max. 5MB)</small>
                         </span>
                       ) : null}
-                      <span className="checkout-payment__upload-button">
+                      <span
+                        className={
+                          form.paymentProofUrl
+                            ? "checkout-payment__upload-button"
+                            : "checkout-payment__upload-button checkout-payment__upload-button--initial"
+                        }
+                      >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                           <path d="M12 3 4 6.5V12c0 4.5 3.4 7.9 8 9 4.6-1.1 8-4.5 8-9V6.5L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
                           <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

@@ -16,6 +16,9 @@
   .checkout-payment-route .cart-empty-state__primary {
     width: 100%;
   }
+  .checkout-payment__upload-button--initial {
+    display: none;
+  }
   .checkout-payment__option {
     min-height: 56px;
     padding: 10px 12px;
