@@ -278,7 +278,7 @@
   transform: none !important;
 }
 .category-tile__image--laptops-desktops {
-  padding: clamp(10px, 1.8vw, 18px) !important;
+  padding: clamp(6px, 1.2vw, 12px) !important;
 }
 .category-tile__fallback {
   background:
