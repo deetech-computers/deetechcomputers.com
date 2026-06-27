@@ -56,20 +56,8 @@
   }
 }
 @media (max-width: 640px) {
-  .app-shell:has(.policy-standalone) .site-header {
-    display: none;
-  }
   .policy-standalone__mobile-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 0 16px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    position: sticky;
-    top: 0;
-    z-index: 20;
+    display: none !important;
   }
   .policy-standalone__mobile-back,
   .policy-standalone__mobile-icon {

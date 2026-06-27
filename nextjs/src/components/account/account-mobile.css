@@ -825,13 +825,15 @@
   .account-mobile-affiliates__stats article {
     display: grid;
     gap: 10px;
+    min-width: 0;
     min-height: 132px;
     align-content: center;
-    padding: 18px;
+    padding: 18px 14px;
     border: 1px solid #c1c9bd;
     border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 10px 24px rgba(27, 25, 22, 0.035);
+    overflow: hidden;
   }
   .account-mobile-affiliates__stats article.is-gold {
     border-color: #d7bc80;
@@ -847,9 +849,13 @@
     letter-spacing: 0.05em;
   }
   .account-mobile-affiliates__stats strong {
+    display: block;
     color: #111827;
-    font-size: 1.45rem;
-    line-height: 1;
+    font-size: clamp(1rem, 5.5vw, 1.45rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 0;
   }
   .account-mobile-affiliates__stats .account-mobile-affiliates__icon {
     color: #17602d;
