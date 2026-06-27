@@ -1229,13 +1229,15 @@ export default function CheckoutPaymentPage() {
 
                     <label className="checkout-payment__upload" ref={registerFieldRef("paymentProof")}>
                       <input id="checkout-payment-proof-input" type="file" accept="image/*" onChange={handleProofUpload} />
-                      <span className="checkout-payment__dropzone">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M7 18a4 4 0 0 1-1-7.87A5 5 0 0 1 16.9 9H17a4 4 0 0 1 1 7.87M12 11v8m0-8 3 3m-3-3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <strong>Click to select file or drag and drop</strong>
-                        <small>PNG, JPG or PDF (Max. 5MB)</small>
-                      </span>
+                      {!form.paymentProofUrl ? (
+                        <span className="checkout-payment__dropzone">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M7 18a4 4 0 0 1-1-7.87A5 5 0 0 1 16.9 9H17a4 4 0 0 1 1 7.87M12 11v8m0-8 3 3m-3-3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <strong>Click to select file or drag and drop</strong>
+                          <small>PNG, JPG or PDF (Max. 5MB)</small>
+                        </span>
+                      ) : null}
                       <span className="checkout-payment__upload-button">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                           <path d="M12 3 4 6.5V12c0 4.5 3.4 7.9 8 9 4.6-1.1 8-4.5 8-9V6.5L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -1243,7 +1245,9 @@ export default function CheckoutPaymentPage() {
                         </svg>
                         {proofUploading ? "Uploading proof..." : form.paymentProofUrl ? "Replace payment proof" : "Upload payment proof"}
                       </span>
-                      <small className="checkout-payment__helper">Accepted: screenshot or clear image of the successful payment receipt.</small>
+                      {!form.paymentProofUrl ? (
+                        <small className="checkout-payment__helper">Accepted: screenshot or clear image of the successful payment receipt.</small>
+                      ) : null}
                     </label>
                   </div>
                 </>

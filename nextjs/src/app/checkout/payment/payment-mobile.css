@@ -39,11 +39,17 @@
     padding: 7px 0;
   }
   .checkout-payment__instruction-row--reference {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
     margin-top: 4px;
     padding: 10px 12px;
     border: 1px solid #f0bf3f;
     border-radius: 4px;
     background: #f8e8b8;
+  }
+  .checkout-payment__instruction-row--reference strong {
+    font-size: 0.92rem;
   }
   .checkout-payment__dropzone {
     padding: 24px 14px;
