@@ -29,7 +29,7 @@ import {
 async function processOrderItems(orderItems, session, options = {}) {
   let total = 0;
   const processedItems = [];
-  const itemCategories = [];
+  const lineItems = [];
   const enforceStock = options.enforceStock !== false;
 
   for (const item of orderItems) {
@@ -71,7 +71,7 @@ async function processOrderItems(orderItems, session, options = {}) {
       originalPrice > discountPrice;
 
     total += qty * price;
-    itemCategories.push(product?.category || "");
+    lineItems.push({ category: product?.category || "", lineTotal: qty * price });
     processedItems.push({
       product: product._id,
       qty,
@@ -93,7 +93,7 @@ async function processOrderItems(orderItems, session, options = {}) {
     });
   }
 
-  return { total, processedItems, itemCategories };
+  return { total, processedItems, lineItems };
 }
 
 export async function previewOrderPricing(req, res) {
@@ -113,12 +113,12 @@ export async function previewOrderPricing(req, res) {
     });
   }
 
-  const { total, itemCategories } = await processOrderItems(orderItems, null, { enforceStock: false });
+  const { total, lineItems } = await processOrderItems(orderItems, null, { enforceStock: false });
   const discounted = await applyDiscount(discountCode, total, null);
   const pricing = buildOrderPricing({
     itemsPrice: total,
     discountPercent: discounted.percent,
-    categoryInputs: itemCategories,
+    lineItems,
   });
 
   res.json({
@@ -1246,12 +1246,12 @@ export async function createOrder(req, res) {
   let reservedStock = [];
   let usedDiscount = null;
   try {
-    const { total, processedItems, itemCategories } = await processOrderItems(orderItems);
+    const { total, processedItems, lineItems } = await processOrderItems(orderItems);
     const discounted = await applyDiscount(discountCode, total, req.user?._id);
     const pricing = buildOrderPricing({
       itemsPrice: total,
       discountPercent: discounted.percent,
-      categoryInputs: itemCategories,
+      lineItems,
     });
     const affiliate = await resolveAffiliateByCode(affiliateCode, req.user?._id);
     const commissionRate = Number(affiliate?.commissionRate || 5);
@@ -1670,12 +1670,12 @@ export async function createGuestOrder(req, res) {
         },
     });
 
-    const { total, processedItems, itemCategories } = await processOrderItems(orderItems);
+    const { total, processedItems, lineItems } = await processOrderItems(orderItems);
     const discounted = await applyDiscount(discountCode, total, null);
     const pricing = buildOrderPricing({
       itemsPrice: total,
       discountPercent: discounted.percent,
-      categoryInputs: itemCategories,
+      lineItems,
     });
     const affiliate = await resolveAffiliateByCode(affiliateCode, null);
     const commissionRate = Number(affiliate?.commissionRate || 5);

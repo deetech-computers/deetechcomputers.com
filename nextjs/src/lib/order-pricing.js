@@ -2,21 +2,34 @@ import { API_BASE_ORDERS } from "./config";
 import { requestJson } from "./http";
 import { canonicalCategory } from "./products";
 
-export function calculateShippingPrice(items = [], subtotal = 0) {
-  const safeSubtotal = Math.max(0, Number(subtotal || 0));
-  const normalizedItems = Array.isArray(items) ? items : [];
-  const categories = normalizedItems.map((item) =>
-    canonicalCategory(item?.category || item?.categoryName || item?.name || "")
-  );
-  const hasItems = categories.length > 0;
-  const allLaptops = hasItems && categories.every((category) => category === "laptops");
-
-  if (allLaptops) return 0;
-  if (safeSubtotal >= 2000) return 0;
-  if (safeSubtotal >= 1000) return 100;
-  if (safeSubtotal >= 300) return 50;
-  if (safeSubtotal >= 60) return 30;
+function shippingFeeForLineTotal(lineTotal) {
+  const safeLineTotal = Math.max(0, Number(lineTotal || 0));
+  if (safeLineTotal >= 2000) return 0;
+  if (safeLineTotal >= 1000) return 100;
+  if (safeLineTotal >= 300) return 50;
+  if (safeLineTotal >= 60) return 30;
   return 0;
+}
+
+// Each cart line is priced for shipping independently based on its own
+// (price * qty) subtotal, then summed - so one item crossing the
+// free-shipping threshold (or being a laptop) never exempts a separate,
+// lower-priced item in the same cart from its own shipping fee. Mirrors
+// backend/src/utils/orderPricing.js, which is the authoritative source
+// once the /preview request resolves - this is just the local fallback.
+export function calculateShippingPrice(items = [], subtotal = 0) {
+  const normalizedItems = Array.isArray(items) ? items : [];
+
+  if (!normalizedItems.length) {
+    return shippingFeeForLineTotal(subtotal);
+  }
+
+  return normalizedItems.reduce((sum, item) => {
+    const category = canonicalCategory(item?.category || item?.categoryName || item?.name || "");
+    if (category === "laptops") return sum;
+    const lineTotal = Number(item?.price || 0) * Number(item?.qty || item?.quantity || 1);
+    return sum + shippingFeeForLineTotal(lineTotal);
+  }, 0);
 }
 
 export function buildCheckoutPricing({ items = [], subtotal = 0, discountAmount = 0 } = {}) {
