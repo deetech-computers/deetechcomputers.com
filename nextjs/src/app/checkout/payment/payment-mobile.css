@@ -18,9 +18,15 @@
     padding: 0 16px;
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 80;
+  }
+  .checkout-payment-route .checkout-hero {
+    margin-top: 52px;
   }
   .checkout-payment-mobile-bar__back,
   .checkout-payment-mobile-bar__icon {

@@ -1045,8 +1045,9 @@ export default function CheckoutPaymentPage() {
         <span className="checkout-payment-mobile-bar__title">Payment</span>
         <span className="checkout-payment-mobile-bar__icon" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M12 3 4 6.5V12c0 4.5 3.4 7.9 8 9 4.6-1.1 8-4.5 8-9V6.5L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-            <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="2.5" y="6" width="19" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" />
+            <circle cx="12" cy="12" r="2.6" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M6 9v6M18 9v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
         </span>
       </header>
