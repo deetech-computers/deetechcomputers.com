@@ -1152,23 +1152,52 @@ export default function CheckoutPaymentPage() {
               {isManualFlow ? (
                 <>
                   <div className="checkout-payment__instruction-card">
-                    <div className="checkout-payment__instruction-head">
-                      <StableImage
-                        src={activeManualPaymentMethod.logo}
-                        alt={activeManualPaymentMethod.label}
-                        className="checkout-payment__logo checkout-payment__logo--large"
-                        width={84}
-                        height={84}
-                      />
-                      <div>
-                        <h3>{activeManualPaymentMethod.label}</h3>
-                        <p>Use the exact DEETECH payment details below, then upload your transaction screenshot.</p>
-                      </div>
+                    <div className="checkout-payment__instruction-title">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+                        <path d="M12 8v.01M12 11v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                      Payment Instructions
                     </div>
                     <div className="checkout-payment__instruction-grid">
-                      {activeManualPaymentMethod.lines.map((line) => (
-                        <div key={line} className="checkout-payment__instruction-block">{line}</div>
-                      ))}
+                      {activeManualPaymentMethod.lines.map((line) => {
+                        const separatorIndex = line.indexOf(":");
+                        if (separatorIndex === -1) {
+                          return (
+                            <p key={line} className="checkout-payment__instruction-note">{line}</p>
+                          );
+                        }
+                        const label = line.slice(0, separatorIndex).trim();
+                        const value = line.slice(separatorIndex + 1).trim();
+                        return (
+                          <div key={line} className="checkout-payment__instruction-row">
+                            <span>{label}</span>
+                            <strong>{value}</strong>
+                          </div>
+                        );
+                      })}
+                      <div className="checkout-payment__instruction-row checkout-payment__instruction-row--reference">
+                        <span>Reference</span>
+                        <strong>
+                          {form.clientOrderRef || "Generated at checkout"}
+                          {form.clientOrderRef ? (
+                            <button
+                              type="button"
+                              className="checkout-payment__copy-button"
+                              aria-label="Copy reference"
+                              onClick={() => {
+                                navigator.clipboard?.writeText(form.clientOrderRef);
+                                pushToast("Reference copied", "success");
+                              }}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                                <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+                                <path d="M5 15V5a1 1 0 0 1 1-1h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                              </svg>
+                            </button>
+                          ) : null}
+                        </strong>
+                      </div>
                     </div>
                   </div>
 
