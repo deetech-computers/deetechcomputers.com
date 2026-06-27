@@ -10,7 +10,7 @@
 .auth-hp-card {
   width: min(560px, calc(100vw - 24px));
   background: #f4f5f7;
-  border: 2px solid #0d56da;
+  border: 2px solid #0088cc;
   border-radius: 18px;
   padding: 16px;
   display: grid;
@@ -40,7 +40,7 @@
   aspect-ratio: auto !important;
 }
 .auth-hp-head a {
-  color: #0d56da;
+  color: #0088cc;
   font-weight: 500;
   font-size: 0.92rem;
   white-space: nowrap;
@@ -86,7 +86,7 @@
   transform: translateY(-50%);
   border: 0;
   background: transparent;
-  color: #0d56da;
+  color: #0088cc;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -97,17 +97,17 @@
 }
 .auth-hp-form .password-field__toggle:hover,
 .auth-hp-form .password-field__toggle:focus-visible {
-  color: #004aad;
+  color: #006e9e;
   transform: translateY(calc(-50% - 1px));
 }
 .auth-hp-form .password-field__toggle:focus-visible {
-  outline: 2px solid #0d56da;
+  outline: 2px solid #0088cc;
   outline-offset: 3px;
   border-radius: 6px;
 }
 .auth-hp-form .field:focus {
-  border-color: #0d56da;
-  box-shadow: 0 0 0 3px rgba(13, 86, 218, 0.14);
+  border-color: #0088cc;
+  box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.14);
 }
 .auth-hp-grid-two {
   display: grid;
@@ -129,10 +129,10 @@
     color 0.22s ease;
 }
 .auth-hp-btn--primary {
-  background: #0d56da;
-  border-color: #0d56da;
+  background: #0088cc;
+  border-color: #0088cc;
   color: #fff;
-  box-shadow: 0 14px 30px rgba(13, 86, 218, 0.2);
+  box-shadow: none;
 }
 .auth-hp-btn:not(:disabled):hover,
 .auth-hp-btn:not(:disabled):focus-visible {
@@ -140,14 +140,12 @@
 }
 .auth-hp-btn--primary:not(:disabled):hover,
 .auth-hp-btn--primary:not(:disabled):focus-visible {
-  background: #004aad;
-  border-color: #004aad;
+  background: #006e9e;
+  border-color: #006e9e;
   color: #fff;
-  box-shadow: 0 18px 38px rgba(13, 86, 218, 0.28);
 }
 .auth-hp-btn:not(:disabled):active {
   transform: translateY(0);
-  box-shadow: 0 10px 22px rgba(13, 86, 218, 0.18);
 }
 .auth-hp-btn:disabled {
   opacity: 0.72;
@@ -157,7 +155,7 @@
 }
 .auth-hp-link-row {
   justify-self: center;
-  color: #0d56da;
+  color: #0088cc;
   text-decoration: none;
   text-underline-offset: 2px;
   font-weight: 500;
@@ -168,9 +166,9 @@
 }
 .auth-hp-link-row:hover,
 .auth-hp-link-row:focus-visible {
-  color: #004aad;
+  color: #006e9e;
   text-decoration: underline;
-  text-decoration-color: rgba(0, 74, 173, 0.5);
+  text-decoration-color: rgba(0, 110, 158, 0.5);
   transform: translateY(-1px);
 }
 .auth-hp-foot {
@@ -200,7 +198,7 @@
 }
 .auth-hp-privacy:hover,
 .auth-hp-privacy:focus-visible {
-  color: #0d56da;
+  color: #0088cc;
   text-decoration: underline;
   text-underline-offset: 2px;
   transform: translateY(-1px);
