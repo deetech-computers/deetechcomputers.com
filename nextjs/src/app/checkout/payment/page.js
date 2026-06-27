@@ -1012,7 +1012,7 @@ export default function CheckoutPaymentPage() {
       ) : null}
 
       <section className="checkout-hero">
-        <h1>Checkout</h1>
+        <h1>Checkout <span className="checkout-hero__step">(Step 2 of 2)</span></h1>
         <p className="checkout-hero__crumbs">
           <Link href="/">Home</Link>
           <span>/</span>

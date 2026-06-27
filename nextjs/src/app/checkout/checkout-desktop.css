@@ -138,11 +138,116 @@
   gap: 28px;
   align-items: start;
 }
+.checkout-page-route .checkout-sidebar {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
 .checkout-page-route .checkout-form,
-  .checkout-page-route .checkout-summary {
+  .checkout-page-route .checkout-summary,
+  .checkout-page-route .checkout-progress-card,
+  .checkout-page-route .checkout-help-card {
   border-radius: 4px;
   background: #ffffff;
   box-shadow: none;
+}
+.checkout-page-route .checkout-progress-card {
+  padding: 22px 24px;
+  border: 1px solid #ece5d9;
+  display: grid;
+  gap: 16px;
+}
+.checkout-page-route .checkout-progress-card h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.checkout-page-route .checkout-progress-steps {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.checkout-page-route .checkout-progress-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 22px;
+}
+.checkout-page-route .checkout-progress-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 28px;
+  bottom: 2px;
+  width: 2px;
+  background: #ece5d9;
+}
+.checkout-page-route .checkout-progress-step__badge {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #e3f2fd;
+  color: #8f8a80;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.checkout-page-route .checkout-progress-step.is-current .checkout-progress-step__badge {
+  background: #0088cc;
+  color: #ffffff;
+}
+.checkout-page-route .checkout-progress-step__copy {
+  display: grid;
+  gap: 2px;
+  padding-top: 2px;
+}
+.checkout-page-route .checkout-progress-step__copy strong {
+  color: #1f1d1b;
+  font-size: 0.94rem;
+}
+.checkout-page-route .checkout-progress-step__copy span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.checkout-page-route .checkout-progress-card__note {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid #ece5d9;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.checkout-page-route .checkout-help-card {
+  padding: 20px 22px;
+  border: 1px solid #cfe1fb;
+  background: #eaf3ff;
+  display: grid;
+  gap: 6px;
+}
+.checkout-page-route .checkout-help-card strong {
+  color: #1f1d1b;
+}
+.checkout-page-route .checkout-help-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.checkout-page-route .checkout-help-card a {
+  color: #0088cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+.checkout-page-route .checkout-help-card a:hover {
+  text-decoration: underline;
+}
+.checkout-page-route .checkout-mobile-progress {
+  display: none;
 }
 .checkout-page-route .checkout-form {
   padding: 0;

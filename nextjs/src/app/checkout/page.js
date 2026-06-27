@@ -23,12 +23,15 @@ import {
   shouldAutoApplyAffiliateAttribution,
 } from "@/lib/affiliate-attribution";
 import { fetchProfile } from "@/lib/auth";
+import { buildCheckoutPricing } from "@/lib/order-pricing";
+import { formatCurrency } from "@/lib/format";
 import "./checkout-desktop.css";
 import "./checkout-mobile.css";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items } = useCart();
+  const { items, subtotal } = useCart();
+  const pricing = buildCheckoutPricing({ items, subtotal });
   const { isAuthenticated, token, user } = useAuth();
   const { pushToast } = useToast();
   const [phaseSaved, setPhaseSaved] = useState(false);
@@ -310,6 +313,16 @@ export default function CheckoutPage() {
         </p>
       </section>
 
+      <div className="checkout-mobile-progress">
+        <div className="checkout-mobile-progress__label">
+          <span>Step 1 of 2: Billing</span>
+          <strong>50%</strong>
+        </div>
+        <div className="checkout-mobile-progress__track">
+          <div className="checkout-mobile-progress__fill" style={{ width: "50%" }} />
+        </div>
+      </div>
+
       <section className="checkout-shell">
         <div className="checkout-layout">
           <section className="checkout-form panel">
@@ -417,30 +430,66 @@ export default function CheckoutPage() {
             </form>
           </section>
 
-          <aside className="checkout-summary panel">
-            <h2>Step Guide</h2>
-            <div className="checkout-summary__lines">
-              <div className="checkout-summary__line">
-                <span>Step 1</span>
-                <strong>Billing details</strong>
-              </div>
-              <div className="checkout-summary__line">
-                <span>Step 2</span>
-                <strong>Manual payment</strong>
-              </div>
-              <div className="checkout-summary__line">
-                <span>Saved Draft</span>
-                <strong>Active</strong>
-              </div>
+          <aside className="checkout-sidebar">
+            <div className="checkout-progress-card panel">
+              <h2>Checkout Progress</h2>
+              <ol className="checkout-progress-steps">
+                <li className="checkout-progress-step is-current">
+                  <span className="checkout-progress-step__badge" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="checkout-progress-step__copy">
+                    <strong>Billing details</strong>
+                    <span>Personal information and address</span>
+                  </span>
+                </li>
+                <li className="checkout-progress-step">
+                  <span className="checkout-progress-step__badge" aria-hidden="true">2</span>
+                  <span className="checkout-progress-step__copy">
+                    <strong>Manual payment</strong>
+                    <span>Review and finalize order</span>
+                  </span>
+                </li>
+              </ol>
+              <p className="checkout-progress-card__note">
+                Entered details stay saved across refresh. Your privacy is protected by 256-bit encryption.
+              </p>
             </div>
-            <div className="checkout-summary__note">
-              Your entered details stay saved, so refresh will not clear phase one or phase two.
+
+            <aside className="checkout-summary panel">
+              <h2>Order Summary</h2>
+              <div className="checkout-summary__lines">
+                <div className="checkout-summary__line">
+                  <span>Subtotal ({items.length} item{items.length === 1 ? "" : "s"})</span>
+                  <strong>{formatCurrency(pricing.subtotal)}</strong>
+                </div>
+                <div className="checkout-summary__line">
+                  <span>Shipping</span>
+                  <strong>{pricing.shipping === 0 ? "Free" : formatCurrency(pricing.shipping)}</strong>
+                </div>
+              </div>
+              <div className="checkout-summary__total">
+                <span>Total</span>
+                <strong>{formatCurrency(pricing.total)}</strong>
+              </div>
+            </aside>
+
+            <div className="checkout-help-card panel">
+              <strong>Need help?</strong>
+              <p>Our procurement specialists are available to assist with your order.</p>
+              <a href="tel:+233591755964">+233 59 175 5964</a>
             </div>
           </aside>
         </div>
       </section>
 
       <div className="checkout-mobile-action-bar">
+        <div className="checkout-mobile-action-bar__summary">
+          <span>{items.length} item{items.length === 1 ? "" : "s"} in cart</span>
+          <strong>{formatCurrency(pricing.total)}</strong>
+        </div>
         <button type="submit" form="checkout-phase-one-form" className="checkout-summary__button checkout-mobile-action-bar__button">
           Proceed to Payment
         </button>

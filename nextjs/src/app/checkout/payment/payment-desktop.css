@@ -614,6 +614,12 @@
   font-size: clamp(1.8rem, 3vw, 2.5rem);
   line-height: 1.1;
 }
+.checkout-payment-route .checkout-hero__step {
+  font-size: 0.5em;
+  font-weight: 500;
+  color: var(--muted);
+  vertical-align: middle;
+}
 .checkout-payment-route .checkout-hero__crumbs {
   margin: 0;
   display: inline-flex;
