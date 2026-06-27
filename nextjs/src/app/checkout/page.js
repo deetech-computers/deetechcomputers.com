@@ -327,7 +327,15 @@ export default function CheckoutPage() {
         <div className="checkout-layout">
           <section className="checkout-form panel">
             <div className="checkout-form__header">
-              <h2>Billing Details</h2>
+              <div className="checkout-form__header-row">
+                <h2>Billing Details</h2>
+                {hasSavedCheckoutProfile(form) ? (
+                  <span className="checkout-draft-badge">
+                    <span className="checkout-draft-badge__dot" aria-hidden="true" />
+                    Saved draft: active
+                  </span>
+                ) : null}
+              </div>
               <p>Phase one collects the customer and delivery details. Payment continues on the next step.</p>
             </div>
 
@@ -487,8 +495,16 @@ export default function CheckoutPage() {
 
       <div className="checkout-mobile-action-bar">
         <div className="checkout-mobile-action-bar__summary">
-          <span>{items.length} item{items.length === 1 ? "" : "s"} in cart</span>
-          <strong>{formatCurrency(pricing.total)}</strong>
+          <span className="checkout-mobile-action-bar__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16M7 6l1.2 12.2A2 2 0 0 0 10.2 20h3.6a2 2 0 0 0 2-1.8L17 6M9 10v5M15 10v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="checkout-mobile-action-bar__copy">
+            <strong>{items.length} item{items.length === 1 ? "" : "s"} in cart</strong>
+            <span>{items.slice(0, 2).map((item) => item.name).join(", ")}{items.length > 2 ? `, +${items.length - 2} more` : ""}</span>
+          </span>
+          <strong className="checkout-mobile-action-bar__price">{formatCurrency(pricing.total)}</strong>
         </div>
         <button type="submit" form="checkout-phase-one-form" className="checkout-summary__button checkout-mobile-action-bar__button">
           Proceed to Payment

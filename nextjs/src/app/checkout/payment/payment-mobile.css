@@ -28,6 +28,9 @@
   .checkout-payment__upload-card {
     padding: 18px 16px;
   }
+  .checkout-payment__dropzone {
+    padding: 24px 14px;
+  }
   .checkout-payment__auto-card {
     padding: 18px 16px;
   }
@@ -36,7 +39,48 @@
     flex-direction: column;
   }
   .checkout-payment__flow-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 4px;
+    background: #f1ece3;
+    border-radius: 999px;
+  }
+  .checkout-payment__flow {
+    min-height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    padding: 0 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .checkout-payment__flow .checkout-payment__radio {
+    display: none;
+  }
+  .checkout-payment__flow-copy {
+    align-items: center;
+    text-align: center;
+  }
+  .checkout-payment__flow-copy small {
+    display: none;
+  }
+  .checkout-payment__flow-copy strong {
+    font-size: 0.86rem;
+  }
+  .checkout-payment__flow.is-active {
+    background: #0088cc;
+    box-shadow: none;
+  }
+  .checkout-payment__flow.is-active .checkout-payment__flow-copy strong {
+    color: #ffffff;
+  }
+  .checkout-payment__flow-check {
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.3);
   }
   .checkout-hubtel-modal__card {
     padding: 18px;
@@ -100,7 +144,6 @@
   .checkout-payment,
   .checkout-payment__details,
   .checkout-payment__option,
-  .checkout-payment__flow,
   .checkout-payment__auto-head,
   .checkout-payment__instruction-head {
     display: grid;

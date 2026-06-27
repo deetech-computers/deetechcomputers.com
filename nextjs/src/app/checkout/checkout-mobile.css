@@ -54,7 +54,9 @@
     border-radius: 999px;
   }
   .checkout-page-route .checkout-progress-card,
-  .checkout-page-route .checkout-help-card {
+  .checkout-page-route .checkout-help-card,
+  .checkout-page-route .checkout-summary,
+  .checkout-page-route .checkout-draft-badge {
     display: none;
   }
 }
@@ -107,13 +109,39 @@
   .checkout-page-route .checkout-mobile-action-bar__summary {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
     font-size: 0.86rem;
   }
-  .checkout-page-route .checkout-mobile-action-bar__summary span {
-    color: var(--muted);
+  .checkout-page-route .checkout-mobile-action-bar__icon {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: #f1ece3;
+    color: #5c503f;
   }
-  .checkout-page-route .checkout-mobile-action-bar__summary strong {
+  .checkout-page-route .checkout-mobile-action-bar__copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 1px;
+  }
+  .checkout-page-route .checkout-mobile-action-bar__copy strong {
+    color: #1f1d1b;
+    font-size: 0.86rem;
+  }
+  .checkout-page-route .checkout-mobile-action-bar__copy span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .checkout-page-route .checkout-mobile-action-bar__price {
+    flex: 0 0 auto;
     color: #1f1d1b;
     font-size: 1rem;
   }

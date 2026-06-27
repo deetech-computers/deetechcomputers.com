@@ -1052,6 +1052,13 @@ export default function CheckoutPaymentPage() {
                   className={isAutoFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
                   onClick={selectAutomaticPayment}
                 >
+                  {isAutoFlow ? (
+                    <span className="checkout-payment__flow-check" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  ) : null}
                   <span className="checkout-payment__radio" aria-hidden="true" />
                   <span className="checkout-payment__flow-copy">
                     <strong>Automatic payment</strong>
@@ -1064,6 +1071,13 @@ export default function CheckoutPaymentPage() {
                   className={isManualFlow ? "checkout-payment__flow is-active" : "checkout-payment__flow"}
                   onClick={selectManualPayment}
                 >
+                  {isManualFlow ? (
+                    <span className="checkout-payment__flow-check" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  ) : null}
                   <span className="checkout-payment__radio" aria-hidden="true" />
                   <span className="checkout-payment__flow-copy">
                     <strong>Manual payment</strong>
@@ -1186,7 +1200,18 @@ export default function CheckoutPaymentPage() {
 
                     <label className="checkout-payment__upload" ref={registerFieldRef("paymentProof")}>
                       <input id="checkout-payment-proof-input" type="file" accept="image/*" onChange={handleProofUpload} />
+                      <span className="checkout-payment__dropzone">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M7 18a4 4 0 0 1-1-7.87A5 5 0 0 1 16.9 9H17a4 4 0 0 1 1 7.87M12 11v8m0-8 3 3m-3-3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <strong>Click to select file or drag and drop</strong>
+                        <small>PNG, JPG or PDF (Max. 5MB)</small>
+                      </span>
                       <span className="checkout-payment__upload-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M12 3 4 6.5V12c0 4.5 3.4 7.9 8 9 4.6-1.1 8-4.5 8-9V6.5L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                          <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                         {proofUploading ? "Uploading proof..." : form.paymentProofUrl ? "Replace payment proof" : "Upload payment proof"}
                       </span>
                       <small className="checkout-payment__helper">Accepted: screenshot or clear image of the successful payment receipt.</small>
