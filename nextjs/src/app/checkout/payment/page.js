@@ -1444,6 +1444,10 @@ export default function CheckoutPaymentPage() {
             onClick={handleConfirmPayment}
             disabled={submitDisabled}
           >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+              <path d="m8 12.5 2.6 2.6L16 9.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             {submitting
               ? "Confirming Order..."
               : isAutoFlow
@@ -1457,6 +1461,10 @@ export default function CheckoutPaymentPage() {
               ? "checkout-summary__button checkout-mobile-action-bar__button is-disabled"
               : "checkout-summary__button checkout-mobile-action-bar__button"}
           >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3 4 6.5V12c0 4.5 3.4 7.9 8 9 4.6-1.1 8-4.5 8-9V6.5L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             {proofUploading ? "Uploading proof..." : "Upload Payment Proof"}
           </label>
         )}

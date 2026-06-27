@@ -314,8 +314,12 @@
     letter-spacing: 0.01em;
     display: flex;
     align-items: center;
+    gap: 8px;
     text-align: center;
     justify-content: center;
+  }
+  .checkout-payment-route .checkout-mobile-action-bar__button svg {
+    flex: 0 0 auto;
   }
   .checkout-payment-route .checkout-mobile-action-bar__button.is-disabled {
     opacity: 0.72;
