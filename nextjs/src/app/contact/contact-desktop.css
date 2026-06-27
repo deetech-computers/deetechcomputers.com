@@ -190,14 +190,16 @@
 }
 .contact-info-simple__item {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  align-items: start;
-  gap: 10px;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
 }
 .contact-info-simple__icon {
-  width: 28px;
-  height: 28px;
-  color: #0d56da;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(0, 136, 204, 0.1);
+  color: #0088cc;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -215,7 +217,7 @@
   font-weight: 500;
 }
 .contact-info-simple__copy span {
-  color: #ef4444;
+  color: #666f7d;
   font-size: 1rem;
 }
 .contact-form--simple {
@@ -232,8 +234,11 @@
 .contact-form__submit--simple {
   border-radius: 8px;
   min-height: 52px;
-  background: #e52f2f;
+  background: #0088cc;
   box-shadow: none;
+}
+.contact-form__submit--simple:hover:not(:disabled) {
+  background: #006e9e;
 }
 .contact-page-simple .contact-support-preview {
   display: grid;
@@ -261,8 +266,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  background: #2bd567;
-  box-shadow: 0 10px 22px rgba(43, 213, 103, 0.22);
+  background: #0088cc;
+  box-shadow: none;
 }
 .contact-page-simple .contact-support-preview__latest {
   border: 0;
@@ -278,7 +283,7 @@
 .contact-page-simple .contact-support-preview__latest p > span {
   text-transform: capitalize;
   font-weight: 700;
-  color: #0d56da;
+  color: #0088cc;
 }
 .contact-page-simple .contact-support-preview__cta {
   min-height: 40px;
@@ -287,7 +292,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #0d56da;
+  background: #0088cc;
   color: #fff;
   font-weight: 700;
   font-size: 0.9rem;
@@ -295,5 +300,5 @@
   letter-spacing: 0.04em;
 }
 .contact-page-simple .contact-support-preview__cta:hover {
-  background: #0b49ba;
+  background: #006e9e;
 }

@@ -2427,7 +2427,7 @@ button, input, select, textarea { font: inherit; }
   color: rgba(255,255,255,0.84);
 }
 .site-footer a:hover {
-  color: #f4d28f;
+  color: #4aa0ff;
 }
 .footer-meta {
   padding: 24px 0 34px;
