@@ -54,6 +54,38 @@ body:has(.admin-route) .app-content,
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Small, consistent press/hover feedback for every button and link across
+   the admin section, so clickable elements feel responsive without each
+   route needing its own animation rules. Scoped to not fight components
+   that already animate position (e.g. expanding records, modals). */
+.admin-route button:not(:disabled),
+.admin-route a {
+  transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease,
+    border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.admin-route button:not(:disabled):active,
+.admin-route a:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .admin-route .primary-button:not(:disabled):hover,
+  .admin-route .ghost-button:not(:disabled):hover,
+  .admin-route .danger-button:not(:disabled):hover,
+  .admin-route .admin-chip:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-route button,
+  .admin-route a {
+    transition: none !important;
+  }
+  .admin-route button:active,
+  .admin-route a:active {
+    transform: none !important;
+  }
+}
+
 /* Subtle, barely-rounded corners across the admin area only (overrides the
    site-wide pill-shaped .field/.panel/.ghost-button/.primary-button/.danger-button). */
 .admin-route .field,
