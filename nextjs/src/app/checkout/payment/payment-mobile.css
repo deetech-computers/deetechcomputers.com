@@ -63,13 +63,13 @@
   }
   .checkout-payment__flow-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    padding: 4px;
+    gap: 6px;
+    padding: 3px;
     background: #f1ece3;
     border-radius: 999px;
   }
   .checkout-payment__flow {
-    min-height: 44px;
+    min-height: 40px;
     border: 0;
     border-radius: 999px;
     background: transparent;
@@ -195,7 +195,6 @@
   }
 }
 @media (max-width: 760px) {
-  .checkout-payment__flow-grid,
   .checkout-customer-grid {
     padding: 18px 14px;
   }
