@@ -25,12 +25,12 @@
     border: 0;
     border-radius: 4px;
     background: transparent;
-    color: #003714;
+    color: #006e9e;
     cursor: pointer;
   }
   .track-order-mobile-bar__title {
     flex: 1 1 auto;
-    color: #003714;
+    color: #006e9e;
     font-weight: 700;
     font-size: 1rem;
     text-align: center;
@@ -45,7 +45,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #184f27;
+    color: #0088cc;
   }
   .track-order-page {
     min-height: 100dvh;

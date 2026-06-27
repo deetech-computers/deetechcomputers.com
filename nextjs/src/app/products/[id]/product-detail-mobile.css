@@ -171,8 +171,8 @@
   }
   .product-summary__icon-action:hover,
   .product-summary__icon-action.is-active {
-    color: #184f27;
-    border-color: #184f27;
+    color: #0088cc;
+    border-color: #0088cc;
   }
   .product-summary__icon-action svg,
   .product-summary__icon-action span[aria-hidden="true"] {
@@ -280,10 +280,10 @@
     width: 100%;
     min-height: 46px;
     margin-top: 4px;
-    border: 1px solid #184f27;
+    border: 1px solid #0088cc;
     border-radius: 4px;
     background: #ffffff;
-    color: #184f27;
+    color: #0088cc;
     font-weight: 700;
     font-size: 0.86rem;
     cursor: pointer;
@@ -315,7 +315,7 @@
     border: 0;
     background: transparent;
     padding: 4px 0;
-    color: #184f27;
+    color: #0088cc;
     font-weight: 700;
     font-size: 0.82rem;
     cursor: pointer;

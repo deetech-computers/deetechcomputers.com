@@ -168,17 +168,17 @@
   border-radius: 4px;
 }
 .track-order-entry-card .primary-button {
-  background: #184f27;
+  background: #0088cc;
   background-image: none;
   box-shadow: none;
   border-radius: 4px;
   font-weight: 700;
 }
 .track-order-entry-card .primary-button:hover {
-  background: #003714;
+  background: #006e9e;
 }
 .track-order-state__actions .primary-link {
-  background: #184f27;
+  background: #0088cc;
   background-image: none;
   box-shadow: none;
   border-radius: 4px;
@@ -186,13 +186,13 @@
   font-weight: 700;
 }
 .track-order-state__actions .primary-link:hover {
-  background: #003714;
+  background: #006e9e;
 }
 .track-order-state__actions .ghost-link,
 .track-order-state .ghost-button {
-  border-color: #184f27;
+  border-color: #0088cc;
   border-radius: 4px;
-  color: #184f27;
+  color: #0088cc;
   font-weight: 700;
 }
 .track-order-state__actions .ghost-link:hover,
@@ -289,7 +289,7 @@
   margin-top: 4px;
   border: 0;
   border-radius: 4px;
-  background: #184f27;
+  background: #0088cc;
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
@@ -297,7 +297,7 @@
 }
 .track-order-summary__download:hover,
 .track-order-summary__download:focus-visible {
-  background: #003714;
+  background: #006e9e;
 }
 .track-order-summary__download svg {
   width: 20px;

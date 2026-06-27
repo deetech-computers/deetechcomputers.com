@@ -7,8 +7,8 @@
   --text: #1b1916;
   --muted: #665d52;
   --line: #e8e0d4;
-  --brand: #d9a441;
-  --brand-strong: #b98014;
+  --brand: #0088cc;
+  --brand-strong: #006e9e;
   --accent: #1d1a16;
   --danger: #c0392b;
   --shadow: 0 18px 60px rgba(27, 25, 22, 0.08);
@@ -1919,7 +1919,7 @@ button, input, select, textarea { font: inherit; }
 }
 .primary-link, .primary-button {
   background: linear-gradient(135deg, var(--brand), var(--brand-strong));
-  color: #fff; box-shadow: var(--shadow); font-weight: 700;
+  color: #fff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); font-weight: 700;
 }
 .ghost-link, .ghost-button { background: white; color: var(--text); border: 1px solid var(--line); }
 .cart-pill { background: var(--text); color: white; }
@@ -2159,25 +2159,23 @@ button, input, select, textarea { font: inherit; }
 }
 .empty-state .primary-link,
 .empty-state .primary-button {
-  background: #184f27 !important;
+  background: #0088cc !important;
   background-image: none !important;
   color: #ffffff !important;
-  box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
+  box-shadow: none;
   border-radius: 4px;
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  transition: transform 180ms ease, background 180ms ease;
 }
 .empty-state .primary-link:hover,
 .empty-state .primary-link:focus-visible,
 .empty-state .primary-button:hover,
 .empty-state .primary-button:focus-visible {
-  background: #003714 !important;
+  background: #006e9e !important;
   transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(24, 79, 39, 0.28);
 }
 .empty-state .primary-link:active,
 .empty-state .primary-button:active {
   transform: translateY(0);
-  box-shadow: 0 10px 24px rgba(24, 79, 39, 0.2);
 }
 .auth-form { display: grid; gap: 14px; margin-top: 18px; }
 .auth-links {
@@ -2189,9 +2187,9 @@ button, input, select, textarea { font: inherit; }
   color: var(--muted);
 }
 .auth-links a {
-  color: #184f27;
+  color: #0088cc;
   font-weight: 800;
-  text-decoration-color: rgba(24, 79, 39, 0.35);
+  text-decoration-color: rgba(0, 136, 204, 0.35);
   text-underline-offset: 4px;
   transition:
     color 0.18s ease,

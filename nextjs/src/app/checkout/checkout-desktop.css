@@ -27,8 +27,8 @@
   box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.08);
 }
 .checkout-field .field.field--valid {
-  border-color: rgba(24, 77, 34, 0.38);
-  box-shadow: 0 0 0 4px rgba(24, 77, 34, 0.08);
+  border-color: rgba(24, 79, 39, 0.38);
+  box-shadow: 0 0 0 4px rgba(24, 79, 39, 0.08);
 }
 .checkout-delivery {
   gap: 14px;
@@ -51,8 +51,8 @@
   text-align: left;
 }
 .checkout-delivery__choice.is-active {
-  border-color: #184f27;
-  box-shadow: inset 0 0 0 1px #184f27;
+  border-color: #0088cc;
+  box-shadow: inset 0 0 0 1px #0088cc;
 }
 .checkout-delivery__radio {
   width: 18px;
@@ -65,14 +65,14 @@
   flex: 0 0 auto;
 }
 .checkout-delivery__choice.is-active .checkout-delivery__radio {
-  border-color: #184f27;
+  border-color: #0088cc;
 }
 .checkout-delivery__choice.is-active .checkout-delivery__radio::after {
   content: "";
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: #184f27;
+  background: #0088cc;
 }
 .checkout-phase-action {
   display: grid;
@@ -111,7 +111,7 @@
   justify-items: start;
 }
 .checkout-page-route .cart-empty .primary-link {
-  background: #184f27 !important;
+  background: #0088cc !important;
   color: #ffffff !important;
   border-radius: 4px;
   box-shadow: none;
@@ -119,7 +119,7 @@
 }
 .checkout-page-route .cart-empty .primary-link:hover,
   .checkout-page-route .cart-empty .primary-link:focus-visible {
-  background: #003714 !important;
+  background: #006e9e !important;
   transform: translateY(-1px);
 }
 .checkout-page-route .cart-empty .primary-link:active {
@@ -245,22 +245,20 @@
   padding: 0 32px;
   border: 0;
   border-radius: 4px;
-  background: #184f27;
+  background: #0088cc;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 12px 26px rgba(24, 77, 34, 0.16);
-  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease;
+  box-shadow: none;
+  transition: transform 0.18s ease, background 0.22s ease;
 }
 .checkout-page-route .checkout-summary__button:hover,
   .checkout-page-route .checkout-summary__button:focus-visible {
   transform: translateY(-2px);
-  background: #003714;
-  box-shadow: 0 16px 32px rgba(24, 77, 34, 0.22);
+  background: #006e9e;
 }
 .checkout-page-route .checkout-summary__button:active {
   transform: translateY(0);
-  box-shadow: 0 8px 18px rgba(24, 77, 34, 0.16);
 }
 .checkout-page-route .checkout-summary__button:disabled {
   opacity: 0.6;

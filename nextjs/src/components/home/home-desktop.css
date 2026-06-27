@@ -1087,12 +1087,12 @@
   transition: background 220ms ease, color 220ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 .home-page-route .product-card__cart-button:hover {
-  background: #184f27;
+  background: #0088cc;
   color: #ffffff;
   transform: translateY(-1px);
 }
 .home-page-route .product-card__cart-button.is-in-cart {
-  background: #173d16;
+  background: #006e9e;
   color: #ffffff;
 }
 .home-page-route .product-card__cart-button.is-just-added {
@@ -1117,7 +1117,7 @@
   }
   .home-page-route .product-card:hover .product-card__price,
   .home-page-route .product-card:focus-within .product-card__price {
-    color: #184f27;
+    color: #0088cc;
   }
   .home-page-route .product-card--home .product-card__footer--reveal {
     display: grid;

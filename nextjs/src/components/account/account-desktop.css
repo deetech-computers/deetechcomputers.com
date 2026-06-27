@@ -12,7 +12,7 @@
 .account-nav a {
   padding: 10px 12px; border-radius: 4px; border: 1px solid var(--line); background: white; color: var(--muted);
 }
-.account-nav a:hover, .account-nav a.active { background: rgba(24, 79, 39, 0.1); color: #184f27; border-color: rgba(24, 79, 39, 0.28); }
+.account-nav a:hover, .account-nav a.active { background: rgba(0, 136, 204, 0.1); color: #0088cc; border-color: rgba(0, 136, 204, 0.28); }
 .account-transient-page {
   display: grid;
   align-items: center;
@@ -29,7 +29,7 @@
   width: 32px;
   height: 32px;
   border: 3px solid #e2e8e4;
-  border-top-color: #184f27;
+  border-top-color: #0088cc;
   border-radius: 999px;
   animation: accountTransientSpin 0.7s linear infinite;
 }
@@ -213,16 +213,16 @@
 .account-dashboard__nav:hover,
 .account-dashboard__nav:focus-visible {
   transform: translateY(-2px);
-  border-color: rgba(24, 79, 39, 0.28);
-  box-shadow: 0 14px 28px rgba(24, 79, 39, 0.1);
+  border-color: rgba(0, 136, 204, 0.28);
+  box-shadow: 0 14px 28px rgba(0, 136, 204, 0.1);
 }
 .account-dashboard__nav:active {
   transform: translateY(0);
-  box-shadow: 0 8px 18px rgba(24, 79, 39, 0.08);
+  box-shadow: 0 8px 18px rgba(0, 136, 204, 0.08);
 }
 .account-dashboard__nav.is-active {
-  background: #184f27;
-  border-color: #184f27;
+  background: #0088cc;
+  border-color: #0088cc;
   color: #fff;
 }
 .account-dashboard__content {
@@ -542,23 +542,22 @@
 .account-dashboard .primary-button,
 .account-dashboard .primary-link,
 .account-dashboard__content .primary-button {
-  background: linear-gradient(135deg, #1d6a33, #184f27);
+  background: linear-gradient(135deg, #0088cc, #006e9e);
   color: #ffffff;
-  box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
-  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+  box-shadow: none;
+  transition: transform 0.18s ease, background 0.22s ease, border-color 0.22s ease;
 }
 .account-dashboard__content .primary-link {
-  background: linear-gradient(135deg, #1d6a33, #184f27);
+  background: linear-gradient(135deg, #0088cc, #006e9e);
   color: #ffffff;
-  box-shadow: 0 14px 32px rgba(24, 79, 39, 0.22);
-  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+  box-shadow: none;
+  transition: transform 0.18s ease, background 0.22s ease, border-color 0.22s ease;
 }
 .account-dashboard .primary-button:hover,
 .account-dashboard .primary-link:hover,
 .account-dashboard__content .primary-button:hover {
-  background: linear-gradient(135deg, #16572a, #123f1f);
+  background: linear-gradient(135deg, #006e9e, #005580);
   transform: translateY(-2px);
-  box-shadow: 0 18px 36px rgba(24, 79, 39, 0.28);
 }
 .account-dashboard__content .primary-link:hover {
   background: linear-gradient(135deg, #16572a, #123f1f);
@@ -769,7 +768,7 @@
   place-items: center;
   border: 2px solid #ffffff;
   border-radius: 999px;
-  background: #184f27;
+  background: #0088cc;
   color: #ffffff;
   cursor: pointer;
 }
@@ -845,9 +844,9 @@
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 .account-personal-form .field:focus {
-  border-color: #184f27;
+  border-color: #0088cc;
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(24, 79, 39, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 136, 204, 0.1);
 }
 .account-readonly-input {
   position: relative;
@@ -889,15 +888,15 @@
 .account-personal-form .account-dashboard__submit {
   min-height: 50px;
   border-radius: 4px;
-  background: #1d6a33;
+  background: #006e9e;
 }
 .account-dashboard__nav {
   position: relative;
 }
 .account-dashboard__nav.is-active {
-  background: #a6f5af;
-  border-color: rgba(24, 79, 39, 0.22);
-  color: #184f27;
+  background: #d6eefc;
+  border-color: rgba(0, 136, 204, 0.22);
+  color: #006e9e;
 }
 .account-dashboard__nav.is-active::before {
   content: "";
@@ -907,7 +906,7 @@
   bottom: 18px;
   width: 4px;
   border-radius: 999px;
-  background: #184f27;
+  background: #0088cc;
 }
 .account-sidebar-brand {
   display: grid;
@@ -944,7 +943,7 @@
   background: #edf2f7;
 }
 .account-phone-input:focus-within {
-  box-shadow: inset 0 0 0 2px #184f27;
+  box-shadow: inset 0 0 0 2px #0088cc;
 }
 .account-phone-input__icon {
   display: inline-flex;
@@ -1011,7 +1010,7 @@
 }
 .account-personal-form .account-dashboard__submit {
   border-radius: 4px;
-  background: #184f27;
+  background: #0088cc;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 .account-dashboard__nav-icon {
@@ -1038,7 +1037,7 @@
   min-width: 200px;
   min-height: 56px;
   border-radius: 4px;
-  background: #184f27;
+  background: #0088cc;
   font-weight: 900;
 }
 .account-personal-discard {
@@ -1308,7 +1307,7 @@
 }
 .account-support-chat__bubble.is-user p {
   margin-left: auto;
-  background: #184f27;
+  background: #0088cc;
   color: #ffffff;
 }
 .account-support-chat__bubble.is-user p,
@@ -1382,7 +1381,7 @@
   gap: 8px;
   border-radius: 4px;
   padding: 0 18px;
-  background: #003714;
+  background: #006e9e;
   font-size: 0.95rem;
   font-weight: 800;
   box-shadow: none;
@@ -1598,8 +1597,8 @@
   min-width: 190px;
   min-height: 56px;
   border-radius: 4px;
-  background: #003714;
-  box-shadow: 0 8px 18px rgba(0, 55, 20, 0.16);
+  background: #006e9e;
+  box-shadow: none;
 }
 .account-address-tip {
   display: grid;
@@ -2789,7 +2788,7 @@
 .account-mini-row__product:focus-visible strong,
 .account-review-card__product:hover strong,
 .account-review-card__product:focus-visible strong {
-  color: #184f27;
+  color: #0088cc;
 }
 .account-mini-row__thumb,
 .account-review-card__thumb,
@@ -2991,12 +2990,12 @@
   font-weight: 900;
 }
 .account-order-card__actions .primary-button {
-  background: #003714;
+  background: #006e9e;
   box-shadow: none;
 }
 .account-order-card__actions .ghost-button {
-  border-color: #184f27;
-  color: #184f27;
+  border-color: #0088cc;
+  color: #0088cc;
 }
 .account-order-card__actions .account-dashboard__nav-icon {
   width: 18px;
@@ -3392,7 +3391,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #184f27;
+  background: #0088cc;
   color: #fff;
   font-weight: 700;
   font-size: 0.9rem;
@@ -3400,5 +3399,5 @@
   letter-spacing: 0.04em;
 }
 .account-support-sidebar .contact-support-preview__cta:hover {
-  background: #003714;
+  background: #006e9e;
 }
