@@ -268,7 +268,7 @@
 }
 @media (max-width: 640px) {
   .home-page-route .homepage-products__mobile-rail .product-card {
-    flex: 0 0 min(68vw, 220px);
+    flex: 0 0 calc((100% - 12px) / 2);
     scroll-snap-align: start;
     scroll-snap-stop: always;
     border: 1px solid #ece7de;
