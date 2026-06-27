@@ -12,6 +12,7 @@ import "./products-listing-mobile.css";
 import {
   buildProductsHref,
   canonicalCategory,
+  DEFAULT_STOREFRONT_CATEGORIES,
   deriveCategories,
   deriveCategoryBrandStats,
   fetchProducts,
@@ -370,7 +371,7 @@ export default function ProductsPageClient({ initialFilters }) {
       return available;
     }
 
-    return [
+    const withActive = [
       ...available,
       {
         slug: category,
@@ -380,6 +381,16 @@ export default function ProductsPageClient({ initialFilters }) {
         product: null,
       },
     ];
+
+    return withActive.sort((a, b) => {
+      const defaultIndexA = DEFAULT_STOREFRONT_CATEGORIES.findIndex((item) => item.slug === a.slug);
+      const defaultIndexB = DEFAULT_STOREFRONT_CATEGORIES.findIndex((item) => item.slug === b.slug);
+
+      if (defaultIndexA !== -1 && defaultIndexB !== -1) return defaultIndexA - defaultIndexB;
+      if (defaultIndexA !== -1) return -1;
+      if (defaultIndexB !== -1) return 1;
+      return a.label.localeCompare(b.label);
+    });
   }, [category, products]);
 
   useEffect(() => {
