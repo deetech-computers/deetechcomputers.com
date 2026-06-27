@@ -121,8 +121,7 @@
   .checkout-hubtel-modal__actions .checkout-payment__secondary {
     width: 100%;
   }
-  .checkout-customer-card,
-  .checkout-customer-card__edit-desktop {
+  .checkout-customer-card {
     display: none;
   }
   .checkout-customer-card-mobile {

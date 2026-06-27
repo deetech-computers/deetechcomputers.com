@@ -1028,12 +1028,7 @@ export default function CheckoutPaymentPage() {
         <div className="checkout-layout">
           <section className="checkout-form panel">
             <div className="checkout-form__header">
-              <div className="checkout-form__header-row">
-                <h2>Select Payment Method</h2>
-                <Link href="/checkout" className="checkout-payment__secondary checkout-payment__secondary--inline checkout-customer-card__edit-desktop">
-                  Edit billing details
-                </Link>
-              </div>
+              <h2>Select Payment Method</h2>
               <p>Phase two uses your saved billing details. Refresh will keep both steps active until the order is submitted.</p>
             </div>
 
@@ -1046,7 +1041,15 @@ export default function CheckoutPaymentPage() {
                   <span>{form.mobileNumber}</span>
                 </div>
                 <div className="checkout-customer-group">
-                  <span className="checkout-customer-group__label">Billing Address</span>
+                  <div className="checkout-customer-group__label-row">
+                    <span className="checkout-customer-group__label">Billing Address</span>
+                    <Link href="/checkout" className="checkout-customer-group__edit">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="m16.5 3.5 4 4L8 20H4v-4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                      </svg>
+                      Edit
+                    </Link>
+                  </div>
                   <strong>{form.deliveryRegion} Region</strong>
                   <span>{form.shippingAddress}</span>
                   <span>{form.shippingCity}, Ghana</span>
@@ -1205,9 +1208,10 @@ export default function CheckoutPaymentPage() {
                         );
                       })}
                       {(() => {
-                        const referenceLabel =
+                        const fullReferenceLabel =
                           items.slice(0, 2).map((item) => item.name).join(", ") +
                           (items.length > 2 ? `, +${items.length - 2} more` : "");
+                        const referenceLabel = fullReferenceLabel.slice(0, 28).trim();
                         return (
                           <div className="checkout-payment__instruction-row checkout-payment__instruction-row--reference">
                             <span>Reference</span>
