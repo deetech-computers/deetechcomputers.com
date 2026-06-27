@@ -139,9 +139,9 @@
   min-height: 44px;
   padding: 0 20px;
   border-radius: 4px;
-  border: 2px solid #184f27;
+  border: 2px solid #0088cc;
   background: transparent;
-  color: #184f27;
+  color: #0088cc;
   font-weight: 700;
   font-size: 0.86rem;
   cursor: pointer;
@@ -153,10 +153,10 @@
 }
 .order-complete__invoice:hover,
 .order-complete__invoice:focus-visible {
-  background: rgba(24, 79, 39, 0.06);
+  background: rgba(0, 136, 204, 0.06);
 }
 .order-complete__invoice:active {
-  background: rgba(24, 79, 39, 0.12);
+  background: rgba(0, 136, 204, 0.12);
 }
 .order-complete__primary,
 .order-complete__outline,
@@ -171,21 +171,21 @@
   transition: transform 0.18s ease, background 0.18s ease;
 }
 .order-complete__primary {
-  background: #184f27;
+  background: #0088cc;
   color: #fff;
 }
 .order-complete__primary:hover,
 .order-complete__primary:focus-visible {
-  background: #003714;
+  background: #006e9e;
   transform: translateY(-1px);
 }
 .order-complete__outline {
-  border: 2px solid #184f27;
-  color: #184f27;
+  border: 2px solid #0088cc;
+  color: #0088cc;
 }
 .order-complete__outline:hover,
 .order-complete__outline:focus-visible {
-  background: rgba(24, 79, 39, 0.06);
+  background: rgba(0, 136, 204, 0.06);
 }
 .order-complete__text-link {
   min-height: auto;
@@ -195,7 +195,7 @@
 }
 .order-complete__text-link:hover,
 .order-complete__text-link:focus-visible {
-  color: #184f27;
+  color: #0088cc;
 }
 .order-complete__primary:active,
 .order-complete__outline:active {
@@ -469,7 +469,7 @@
   height: 40px;
   border-radius: 999px;
   border: 3px solid #e2e8e4;
-  border-top-color: #184f27;
+  border-top-color: #0088cc;
   animation: checkoutSuccessSpin 0.85s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
