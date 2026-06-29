@@ -1108,7 +1108,7 @@ export default function ProductDetailPage() {
                     sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
                     alt={product.name}
                     width={560}
-                    height={560}
+                    height={420}
                     loading="eager"
                     fetchPriority="high"
                     className="product-gallery__main-image"
