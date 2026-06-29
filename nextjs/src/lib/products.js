@@ -43,6 +43,8 @@ export function resolveProductImage(src) {
   return src;
 }
 
+const CLOUDINARY_GRAVITY_CROP_MODES = new Set(["fill", "fill_pad", "crop", "thumb", "lfill"]);
+
 export function optimizeCloudinaryImage(src, options = {}) {
   const url = resolveProductImage(src);
   if (!url || !/res\.cloudinary\.com\/[^/]+\/image\/upload\//i.test(url)) return url;
@@ -50,7 +52,10 @@ export function optimizeCloudinaryImage(src, options = {}) {
   const height = Math.max(1, Number(options.height || width));
   const crop = String(options.crop || "fill").replace(/[^a-z_]/gi, "") || "fill";
   const gravity = String(options.gravity || "auto").replace(/[^a-z_]/gi, "") || "auto";
-  const transform = `f_auto,q_auto,c_${crop},g_${gravity},w_${width},h_${height}`;
+  // Cloudinary rejects (HTTP 400) a gravity param on crop modes that don't
+  // crop/focal-point at all, like "fit" - only attach it when the mode uses it.
+  const gravitySegment = CLOUDINARY_GRAVITY_CROP_MODES.has(crop) ? `,g_${gravity}` : "";
+  const transform = `f_auto,q_auto,c_${crop}${gravitySegment},w_${width},h_${height}`;
   const hasExistingTransform = /\/image\/upload\/[^/]*(?:f_auto|q_auto|w_\d+)/i.test(url);
 
   if (hasExistingTransform && options.force) {
