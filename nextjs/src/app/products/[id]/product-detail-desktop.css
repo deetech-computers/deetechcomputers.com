@@ -48,7 +48,7 @@
   align-items: start;
 }
 .product-detail-loading__gallery.panel {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   min-height: 520px;
   border-radius: 4px;
   background:
@@ -114,8 +114,8 @@
 }
 .product-gallery__main {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  background: #ffffff;
+  aspect-ratio: 3 / 4;
+  background: transparent;
   display: grid;
   place-items: center;
   overflow: hidden;

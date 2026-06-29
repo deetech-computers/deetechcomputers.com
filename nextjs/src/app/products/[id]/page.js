@@ -366,15 +366,15 @@ export default function ProductDetailPage() {
   const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
   const currentImage = images[activeImageIndex] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 420, crop: "fill", gravity: "auto", force: true }),
+    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 747, force: true }),
     [currentImage]
   );
   const optimizedCurrentImageSrcSet = useMemo(
-    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true, heightRatio: 3 / 4 }),
+    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fill", gravity: "auto", force: true, heightRatio: 4 / 3 }),
     [currentImage]
   );
   const optimizedGalleryImages = useMemo(
-    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 420, crop: "fill", gravity: "auto", force: true })),
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 747, force: true })),
     [images]
   );
   const optimizedThumbnailImages = useMemo(
@@ -1108,7 +1108,7 @@ export default function ProductDetailPage() {
                     sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 980px) min(720px, calc(100vw - 32px)), 613px"
                     alt={product.name}
                     width={560}
-                    height={420}
+                    height={560}
                     loading="eager"
                     fetchPriority="high"
                     className="product-gallery__main-image"

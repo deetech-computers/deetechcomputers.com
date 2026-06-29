@@ -21,7 +21,7 @@
   .product-detail-loading__gallery-m {
     width: 100vw;
     margin-inline: calc(50% - 50vw);
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
     border-radius: 4px;
     background: linear-gradient(90deg, rgba(248, 245, 240, 0.72), rgba(255, 255, 255, 0.92), rgba(248, 245, 240, 0.72));
     background-size: 220% 100%;
@@ -187,7 +187,7 @@
     box-shadow: 0 6px 18px rgba(27, 25, 22, 0.08);
   }
   .product-gallery__main img {
-    object-fit: cover;
+    object-fit: contain;
   }
   .product-gallery__selector {
     min-height: 52px;
