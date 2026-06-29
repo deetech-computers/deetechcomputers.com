@@ -10,7 +10,7 @@ import {
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
 } from "../config/env.js";
-import { sendPasswordResetEmail } from "../utils/emailService.js";
+import { sendPasswordResetEmail, sendWelcomeEmail } from "../utils/emailService.js";
 import { logActivity } from "../utils/activityLog.js";
 
 function generateToken(user) {
@@ -76,6 +76,9 @@ export async function registerUser(req, res) {
     targetLabel: user.email,
     description: "New account registered",
   });
+
+  // First-time account creation only — never fires again for this user.
+  await sendWelcomeEmail(user.email, user.name);
 
   res.status(201).json(buildAuthResponse(user));
 }
@@ -300,6 +303,9 @@ export async function googleAuth(req, res) {
     targetLabel: user.email,
     description: "New account registered with Google",
   });
+
+  // First-time account creation only — the existing-user branch above never reaches here.
+  await sendWelcomeEmail(user.email, user.name);
 
   return res.status(201).json(buildAuthResponse(user));
 }

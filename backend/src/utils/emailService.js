@@ -17,6 +17,7 @@ import {
   EMAILJS_PRIVATE_KEY,
   EMAILJS_RESET_PUBLIC_KEY,
   EMAILJS_RESET_PRIVATE_KEY,
+  EMAILJS_WELCOME_TEMPLATE_ID,
 } from "../config/env.js";
 import logger from "./logger.js";
 
@@ -24,6 +25,7 @@ const COMPANY_NAME = "DEETECH COMPUTERS";
 const SUPPORT_EMAIL = "deetechcomputers01@gmail.com";
 const SUPPORT_PHONE = "+233 59 175 5964";
 const CURRENCY_SYMBOL = "GH₵";
+const DEETECH_LOGO_URL = "https://res.cloudinary.com/dt8bwsleg/image/upload/f_auto,q_auto/logo_p8idca";
 
 let transporter = null;
 
@@ -73,6 +75,12 @@ function canUseOrderEmailJs() {
       EMAILJS_PRIVATE_KEY &&
       EMAILJS_ORDER_TEMPLATE_ID &&
       EMAILJS_ADMIN_ORDER_TEMPLATE_ID
+  );
+}
+
+function canUseWelcomeEmailJs() {
+  return Boolean(
+    EMAILJS_SERVICE_ID && EMAILJS_PUBLIC_KEY && EMAILJS_PRIVATE_KEY && EMAILJS_WELCOME_TEMPLATE_ID
   );
 }
 
@@ -248,11 +256,43 @@ async function sendEmail({ to, subject, html, text }) {
 }
 
 export async function sendWelcomeEmail(to, name = "") {
-  const safeName = escapeHtml(name || "there");
+  const inferredName =
+    String(name || "").trim() || String(to || "").split("@")[0].replace(/[._-]+/g, " ").trim();
+  const toName = inferredName ? inferredName.replace(/\b\w/g, (m) => m.toUpperCase()) : "there";
+  const websiteUrl = trimTrailingSlash(FRONTEND_URL) || "https://deetechcomputers-com.vercel.app";
+  const subject = `Welcome to ${COMPANY_NAME}`;
+
+  if (canUseWelcomeEmailJs()) {
+    try {
+      await sendEmailJsTemplate(EMAILJS_WELCOME_TEMPLATE_ID, {
+        email: to,
+        to_email: to,
+        to_name: toName,
+        name: toName,
+        company_name: COMPANY_NAME,
+        company_email: SUPPORT_EMAIL,
+        support_email: SUPPORT_EMAIL,
+        support_phone: SUPPORT_PHONE,
+        support_whatsapp: "https://wa.me/233591755964",
+        website_url: websiteUrl,
+        website_link: websiteUrl,
+        logo_url: DEETECH_LOGO_URL,
+        current_year: String(new Date().getFullYear()),
+        subject,
+      });
+      return true;
+    } catch (err) {
+      logger.error(`Welcome EmailJS send failed for ${to}: ${err.message}`);
+      return false;
+    }
+  }
+
+  const safeName = escapeHtml(toName);
   const html = `
     <div style="font-family:Arial,sans-serif;background:#f7f7f7;padding:24px;">
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">
         <div style="background:linear-gradient(135deg,#0b75c9 0%,#0a5ea8 100%);padding:28px;color:#ffffff;text-align:center;">
+          <img src="${DEETECH_LOGO_URL}" alt="${COMPANY_NAME}" style="height:32px;margin-bottom:14px;" />
           <h1 style="margin:0;font-size:28px;letter-spacing:1px;">Welcome to ${COMPANY_NAME}</h1>
           <p style="margin:10px 0 0;font-size:15px;opacity:0.95;">Tech Excellence Delivered.</p>
         </div>
@@ -269,13 +309,13 @@ export async function sendWelcomeEmail(to, name = "") {
     </div>
   `;
 
-  const text = `Welcome to ${COMPANY_NAME}, ${name || "there"}! Your account has been created successfully.`;
-  return sendEmail({
-    to,
-    subject: `Welcome to ${COMPANY_NAME}`,
-    html,
-    text,
-  });
+  const text = `Welcome to ${COMPANY_NAME}, ${toName}! Your account has been created successfully.`;
+  try {
+    return await sendEmail({ to, subject, html, text });
+  } catch (err) {
+    logger.error(`Welcome SMTP send failed for ${to}: ${err.message}`);
+    return false;
+  }
 }
 
 export async function sendOrderNotification(to, orderDetails = {}) {
@@ -637,7 +677,7 @@ export async function sendPasswordResetEmail(to, resetUrl) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);
   const websiteUrl = trimTrailingSlash(FRONTEND_URL) || "https://deetechfullytested.vercel.app";
-  const logoUrl = "https://res.cloudinary.com/dt8bwsleg/image/upload/f_auto,q_auto/logo_p8idca";
+  const logoUrl = DEETECH_LOGO_URL;
   const inferredName = String(to || "")
     .split("@")[0]
     .replace(/[._-]+/g, " ")
