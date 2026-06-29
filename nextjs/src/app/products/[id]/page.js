@@ -366,15 +366,15 @@ export default function ProductDetailPage() {
   const activeImageIndex = images.length ? Math.min(activeImage, images.length - 1) : 0;
   const currentImage = images[activeImageIndex] || "";
   const optimizedCurrentImage = useMemo(
-    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 747, crop: "fit", force: true }),
+    () => optimizeCloudinaryImage(currentImage, { width: 560, height: 420, crop: "fit", force: true }),
     [currentImage]
   );
   const optimizedCurrentImageSrcSet = useMemo(
-    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fit", gravity: "auto", force: true, heightRatio: 4 / 3 }),
+    () => buildCloudinarySrcSet(currentImage, [360, 480, 560, 640], { crop: "fit", gravity: "auto", force: true, heightRatio: 3 / 4 }),
     [currentImage]
   );
   const optimizedGalleryImages = useMemo(
-    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 747, crop: "fit", force: true })),
+    () => images.map((image) => optimizeCloudinaryImage(image, { width: 560, height: 420, crop: "fit", force: true })),
     [images]
   );
   const optimizedThumbnailImages = useMemo(
