@@ -78,9 +78,14 @@ function canUseOrderEmailJs() {
   );
 }
 
+// The Welcome template lives under the same EmailJS service as the password
+// reset template (service_4zch1g9), not the main order service.
 function canUseWelcomeEmailJs() {
   return Boolean(
-    EMAILJS_SERVICE_ID && EMAILJS_PUBLIC_KEY && EMAILJS_PRIVATE_KEY && EMAILJS_WELCOME_TEMPLATE_ID
+    EMAILJS_RESET_SERVICE_ID &&
+      EMAILJS_RESET_PUBLIC_KEY &&
+      EMAILJS_RESET_PRIVATE_KEY &&
+      EMAILJS_WELCOME_TEMPLATE_ID
   );
 }
 
@@ -264,22 +269,38 @@ export async function sendWelcomeEmail(to, name = "") {
 
   if (canUseWelcomeEmailJs()) {
     try {
-      await sendEmailJsTemplate(EMAILJS_WELCOME_TEMPLATE_ID, {
-        email: to,
-        to_email: to,
-        to_name: toName,
-        name: toName,
-        company_name: COMPANY_NAME,
-        company_email: SUPPORT_EMAIL,
-        support_email: SUPPORT_EMAIL,
-        support_phone: SUPPORT_PHONE,
-        support_whatsapp: "https://wa.me/233591755964",
-        website_url: websiteUrl,
-        website_link: websiteUrl,
-        logo_url: DEETECH_LOGO_URL,
-        current_year: String(new Date().getFullYear()),
-        subject,
+      // Welcome template lives under the reset service/account, not the order one.
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: EMAILJS_RESET_SERVICE_ID,
+          template_id: EMAILJS_WELCOME_TEMPLATE_ID,
+          user_id: EMAILJS_RESET_PUBLIC_KEY,
+          accessToken: EMAILJS_RESET_PRIVATE_KEY,
+          template_params: {
+            email: to,
+            to_email: to,
+            to_name: toName,
+            name: toName,
+            company_name: COMPANY_NAME,
+            company_email: SUPPORT_EMAIL,
+            support_email: SUPPORT_EMAIL,
+            support_phone: SUPPORT_PHONE,
+            support_whatsapp: "https://wa.me/233591755964",
+            website_url: websiteUrl,
+            website_link: websiteUrl,
+            logo_url: DEETECH_LOGO_URL,
+            current_year: String(new Date().getFullYear()),
+            subject,
+          },
+        }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "");
+        throw new Error(`EmailJS welcome send failed (${response.status}): ${errorText || "Unknown error"}`);
+      }
       return true;
     } catch (err) {
       logger.error(`Welcome EmailJS send failed for ${to}: ${err.message}`);
