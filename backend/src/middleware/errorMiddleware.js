@@ -1,6 +1,7 @@
 // backend/src/middleware/errorMiddleware.js
 
-import { AppError } from "../utils/errorHandler.js"; // import custom error class if needed
+import { AppError } from "../utils/errorHandler.js";
+import logger from "../utils/logger.js";
 
 // 404 Not Found handler
 export function notFound(req, res, next) {
@@ -30,6 +31,10 @@ export function errorHandler(err, req, res, next) {
   // Ensure operational AppError gets proper code
   if (err instanceof AppError && err.isOperational) {
     statusCode = err.statusCode;
+  }
+
+  if (statusCode >= 500) {
+    logger.error(`${req.method} ${req.originalUrl} → ${statusCode}: ${message}${err.stack ? "\n" + err.stack : ""}`);
   }
 
   res.status(statusCode).json({

@@ -158,17 +158,11 @@ function resolvePublicBaseUrlFromRequest(req) {
   return derived || configured;
 }
 
-function resolveFrontendBaseUrl(frontendOriginRaw, req) {
-  const requested = String(frontendOriginRaw || "").trim().replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(requested)) {
-    return requested;
-  }
+function resolveFrontendBaseUrl(req) {
   const frontend = String(FRONTEND_URL || "").split(",")[0].trim().replace(/\/+$/, "");
   if (frontend) return frontend;
   const originHeader = String(req?.headers?.origin || "").trim().replace(/\/+$/, "");
-  if (/^https?:\/\//i.test(originHeader)) {
-    return originHeader;
-  }
+  if (/^https?:\/\//i.test(originHeader)) return originHeader;
   return "http://localhost:3000";
 }
 
@@ -1101,7 +1095,6 @@ export async function createOrder(req, res) {
     shippingAddress,
     shippingCity,
     clientOrderRef,
-    frontendOrigin,
     paymentScreenshotUrl,
     discountCode,
     affiliateCode,
@@ -1347,7 +1340,7 @@ export async function createOrder(req, res) {
       const statusToken = buildHubtelStatusToken(clientReference);
       const returnToken = buildHubtelReturnToken(clientReference, order);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
-      const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
+      const frontendBase = resolveFrontendBaseUrl(req);
       const hubtel = await initiateHubtelCheckout({
         amount: pricing.totalPrice,
         description: `DEETECH Order ${order._id}`,
@@ -1535,7 +1528,6 @@ export async function createGuestOrder(req, res) {
     guestCity,
     guestNotes,
     clientOrderRef,
-    frontendOrigin,
     paymentScreenshotUrl,
     discountCode,
     affiliateCode,
@@ -1777,7 +1769,7 @@ export async function createGuestOrder(req, res) {
       const statusToken = buildHubtelStatusToken(clientReference);
       const returnToken = buildHubtelReturnToken(clientReference, order);
       const backendBase = resolvePublicBaseUrlFromRequest(req);
-      const frontendBase = resolveFrontendBaseUrl(frontendOrigin, req);
+      const frontendBase = resolveFrontendBaseUrl(req);
       const hubtel = await initiateHubtelCheckout({
         amount: pricing.totalPrice,
         description: `DEETECH Guest Order ${order._id}`,

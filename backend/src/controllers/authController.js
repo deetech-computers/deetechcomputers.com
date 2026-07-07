@@ -12,6 +12,7 @@ import {
 } from "../config/env.js";
 import { sendPasswordResetEmail, sendWelcomeEmail } from "../utils/emailService.js";
 import { logActivity } from "../utils/activityLog.js";
+import logger from "../utils/logger.js";
 
 function generateToken(user) {
   return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
@@ -87,13 +88,16 @@ export async function registerUser(req, res) {
 export async function loginUser(req, res) {
   const { email, password } = req.body;
 
+  const loginIp = String(req?.headers?.["x-forwarded-for"] || req?.ip || "").split(",")[0].trim();
   const user = await User.findOne({ email });
   if (!user) {
+    logger.warn(`Login failed - unknown email: ${email} | IP: ${loginIp}`);
     res.status(401);
     throw new Error("Invalid credentials");
   }
 
   if (user.isActive === false) {
+    logger.warn(`Login blocked - disabled account: ${email} | IP: ${loginIp}`);
     res.status(403);
     throw new Error("Account is temporarily disabled. Contact support.");
   }
@@ -102,6 +106,7 @@ export async function loginUser(req, res) {
   const match = await user.matchPassword(password);
 
   if (!match) {
+    logger.warn(`Login failed - wrong password: ${email} | IP: ${loginIp}`);
     res.status(401);
     throw new Error("Invalid credentials");
   }
@@ -213,6 +218,8 @@ export async function googleAuth(req, res) {
     });
     payload = ticket.getPayload();
   } catch {
+    const authIp = String(req?.headers?.["x-forwarded-for"] || req?.ip || "").split(",")[0].trim();
+    logger.warn(`Google auth failed - token verification error | IP: ${authIp}`);
     res.status(401);
     throw new Error("Google sign-in could not be verified.");
   }
@@ -235,6 +242,8 @@ export async function googleAuth(req, res) {
 
   if (user) {
     if (user.isActive === false) {
+      const authIp = String(req?.headers?.["x-forwarded-for"] || req?.ip || "").split(",")[0].trim();
+      logger.warn(`Google auth blocked - disabled account: ${email} | IP: ${authIp}`);
       res.status(403);
       throw new Error("Account is temporarily disabled. Contact support.");
     }
