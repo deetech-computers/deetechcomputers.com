@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
 import "@/components/auth/auth-hp-desktop.css";
@@ -17,6 +17,8 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [transitionStage, setTransitionStage] = useState("idle");
+  const [loadingStep, setLoadingStep] = useState(0);
+  const stepTimers = useRef([]);
 
   useEffect(() => {
     if (status === "ready" && isAuthenticated) {
@@ -37,11 +39,26 @@ export default function LoginPage() {
     );
   }
 
+  function startSteps() {
+    stepTimers.current.forEach(clearTimeout);
+    setLoadingStep(0);
+    stepTimers.current = [
+      setTimeout(() => setLoadingStep(1), 233),
+      setTimeout(() => setLoadingStep(2), 466),
+    ];
+  }
+
+  function clearSteps() {
+    stepTimers.current.forEach(clearTimeout);
+    setLoadingStep(0);
+  }
+
   const onSubmit = async (event) => {
     event.preventDefault();
     setSubmitting(true);
     setError("");
     setTransitionStage("loading");
+    startSteps();
     const loadStart = Date.now();
 
     try {
@@ -51,9 +68,11 @@ export default function LoginPage() {
       });
       const remaining = Math.max(0, 700 - (Date.now() - loadStart));
       await new Promise((r) => setTimeout(r, remaining));
+      clearSteps();
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
+      clearSteps();
       setTransitionStage("idle");
       setError(err.message);
       setSubmitting(false);
@@ -64,14 +83,17 @@ export default function LoginPage() {
     setSubmitting(true);
     setError("");
     setTransitionStage("loading");
+    startSteps();
     const loadStart = Date.now();
     try {
       await loginWithGoogle(credential);
       const remaining = Math.max(0, 700 - (Date.now() - loadStart));
       await new Promise((r) => setTimeout(r, remaining));
+      clearSteps();
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
+      clearSteps();
       setTransitionStage("idle");
       setError(err.message || "Google sign-in failed.");
       setSubmitting(false);
@@ -102,13 +124,13 @@ export default function LoginPage() {
                 : "Verifying your credentials and setting up your session."}
             </p>
             <div className="auth-transition__steps" aria-hidden="true">
-              <span className={`auth-transition__step${transitionStage === "success" ? " is-done" : " is-active"}`}>
+              <span className={`auth-transition__step${transitionStage === "success" || loadingStep > 0 ? " is-done" : " is-active"}`}>
                 <span className="auth-transition__step-dot" />Verify
               </span>
-              <span className={`auth-transition__step${transitionStage === "success" ? " is-done" : ""}`}>
+              <span className={`auth-transition__step${transitionStage === "success" || loadingStep > 1 ? " is-done" : loadingStep === 1 ? " is-active" : ""}`}>
                 <span className="auth-transition__step-dot" />Authenticate
               </span>
-              <span className={`auth-transition__step${transitionStage === "success" ? " is-done is-active" : ""}`}>
+              <span className={`auth-transition__step${transitionStage === "success" ? " is-done is-active" : loadingStep === 2 ? " is-active" : ""}`}>
                 <span className="auth-transition__step-dot" />Done
               </span>
             </div>
