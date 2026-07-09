@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: GET /api/health
-        run: curl -fsS --max-time 45 --retry 2 --retry-delay 5 --retry-all-errors https://deetechcomputers-com.onrender.com/api/health
+        run: curl -fsS --max-time 120 --retry 3 --retry-delay 30 --retry-all-errors https://deetechcomputers-com.onrender.com/api/health
