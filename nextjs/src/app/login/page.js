@@ -42,12 +42,15 @@ export default function LoginPage() {
     setSubmitting(true);
     setError("");
     setTransitionStage("loading");
+    const loadStart = Date.now();
 
     try {
       await login({
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
+      const remaining = Math.max(0, 700 - (Date.now() - loadStart));
+      await new Promise((r) => setTimeout(r, remaining));
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
@@ -61,8 +64,11 @@ export default function LoginPage() {
     setSubmitting(true);
     setError("");
     setTransitionStage("loading");
+    const loadStart = Date.now();
     try {
       await loginWithGoogle(credential);
+      const remaining = Math.max(0, 700 - (Date.now() - loadStart));
+      await new Promise((r) => setTimeout(r, remaining));
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
