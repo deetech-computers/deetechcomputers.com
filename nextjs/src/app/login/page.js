@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [transitionStage, setTransitionStage] = useState("idle");
 
   useEffect(() => {
     if (status === "ready" && isAuthenticated) {
@@ -40,16 +41,18 @@ export default function LoginPage() {
     event.preventDefault();
     setSubmitting(true);
     setError("");
+    setTransitionStage("loading");
 
     try {
       await login({
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
-      router.push("/");
+      setTransitionStage("success");
+      setTimeout(() => router.push("/"), 900);
     } catch (err) {
+      setTransitionStage("idle");
       setError(err.message);
-    } finally {
       setSubmitting(false);
     }
   };
@@ -57,18 +60,55 @@ export default function LoginPage() {
   const handleGoogleAuth = async (credential) => {
     setSubmitting(true);
     setError("");
+    setTransitionStage("loading");
     try {
       await loginWithGoogle(credential);
-      router.push("/");
+      setTransitionStage("success");
+      setTimeout(() => router.push("/"), 900);
     } catch (err) {
+      setTransitionStage("idle");
       setError(err.message || "Google sign-in failed.");
-    } finally {
       setSubmitting(false);
     }
   };
 
   return (
     <main className="auth-hp-page">
+      {transitionStage !== "idle" ? (
+        <div className="auth-transition" aria-live="polite">
+          <div className="auth-transition__card">
+            <div className={transitionStage === "success" ? "auth-transition__badge auth-transition__badge--success" : "auth-transition__badge"} aria-hidden="true">
+              {transitionStage === "success" ? (
+                <svg className="auth-transition__check" viewBox="0 0 52 52" fill="none">
+                  <circle className="auth-transition__check-ring" cx="26" cy="26" r="24" />
+                  <path className="auth-transition__check-mark" d="M15 27.5 22.5 35 38 18" />
+                </svg>
+              ) : (
+                <span className="auth-transition__spinner" />
+              )}
+            </div>
+            <strong className="auth-transition__title">
+              {transitionStage === "success" ? "Welcome back!" : "Signing you in…"}
+            </strong>
+            <p className="auth-transition__message">
+              {transitionStage === "success"
+                ? "Login successful. Taking you to the homepage."
+                : "Verifying your credentials and setting up your session."}
+            </p>
+            <div className="auth-transition__steps" aria-hidden="true">
+              <span className={`auth-transition__step${transitionStage === "success" ? " is-done" : " is-active"}`}>
+                <span className="auth-transition__step-dot" />Verify
+              </span>
+              <span className={`auth-transition__step${transitionStage === "success" ? " is-done" : ""}`}>
+                <span className="auth-transition__step-dot" />Authenticate
+              </span>
+              <span className={`auth-transition__step${transitionStage === "success" ? " is-done is-active" : ""}`}>
+                <span className="auth-transition__step-dot" />Done
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <section className="auth-hp-card auth-hp-card--login">
         <div className="auth-hp-frame">
           <header className="auth-hp-head">
