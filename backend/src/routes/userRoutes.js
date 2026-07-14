@@ -11,6 +11,8 @@ import {
   resetUserPasswordAdmin,
   updateUserStatusAdmin,
   trackUserBehavior,
+  getNotificationReadIds,
+  syncNotificationReadIds,
 } from "../controllers/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import { validateRequest } from "../middleware/validateMiddleware.js";
@@ -45,6 +47,11 @@ router
 router
   .route("/behavior")
   .post(protect, validateRequest(trackUserBehaviorSchema), trackUserBehavior);
+
+router
+  .route("/notifications/read-ids")
+  .get(protect, getNotificationReadIds)
+  .patch(protect, syncNotificationReadIds);
 
 // Admin user management
 router.route("/admin/users").get(protect, admin, getAllUsersAdmin);

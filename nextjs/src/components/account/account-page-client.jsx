@@ -28,10 +28,13 @@ import {
   buildAdminNotifications,
   buildNotificationScope,
   buildUserNotifications,
+  fetchRemoteReadIds,
   formatNotificationTime,
   HEADER_NOTIFICATIONS_UPDATED_EVENT,
   markNotificationsAsRead,
   readNotificationReadIds,
+  syncRemoteReadIds,
+  writeNotificationReadIds,
 } from "@/lib/header-notifications";
 import { downloadInvoiceHtml } from "@/lib/invoice";
 import { readWishlistEntries } from "@/lib/wishlist";
@@ -1723,6 +1726,21 @@ export default function AccountPageClient({ initialTab = "" }) {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (!token) return undefined;
+    const notificationScope = buildNotificationScope(user);
+    let cancelled = false;
+    fetchRemoteReadIds(token).then((remoteIds) => {
+      if (cancelled || !remoteIds.length) return;
+      const current = readNotificationReadIds(notificationScope);
+      const merged = Array.from(new Set([...current, ...remoteIds]));
+      if (merged.length > current.length) {
+        writeNotificationReadIds(notificationScope, merged);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [token, user]);
+
   function fillProfileForm(profile) {
     setProfileForm(buildProfileFormState(profile));
   }
@@ -1941,11 +1959,19 @@ export default function AccountPageClient({ initialTab = "" }) {
     if (!notificationId) return;
     const notificationScope = buildNotificationScope(user);
     markNotificationsAsRead(notificationScope, [notificationId]);
+    if (token) {
+      const all = readNotificationReadIds(notificationScope);
+      syncRemoteReadIds(token, all);
+    }
   }
 
   function handleMarkAllNotificationsRead() {
     const notificationScope = buildNotificationScope(user);
     markNotificationsAsRead(notificationScope, accountNotifications.map((item) => item?.id));
+    if (token) {
+      const all = readNotificationReadIds(notificationScope);
+      syncRemoteReadIds(token, all);
+    }
   }
 
   async function handleSupportReplySubmit(event) {

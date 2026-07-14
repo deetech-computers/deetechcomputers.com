@@ -40,12 +40,15 @@ import {
   buildQuickNotificationItems,
   buildNotificationScope,
   buildUserNotifications,
+  fetchRemoteReadIds,
   formatNotificationTime,
   HEADER_NOTIFICATIONS_UPDATED_EVENT,
   markNotificationsAsRead,
   readNotificationDismissedIds,
   readNotificationReadIds,
   sanitizeNotificationIds,
+  syncRemoteReadIds,
+  writeNotificationReadIds,
 } from "@/lib/header-notifications";
 
 const adminNavItem = { href: "/admin", label: "Admin", icon: "admin" };
@@ -634,6 +637,20 @@ export default function SiteHeader() {
   }, [notificationScope]);
 
   useEffect(() => {
+    if (!isAuthenticated || !token) return undefined;
+    let cancelled = false;
+    fetchRemoteReadIds(token).then((remoteIds) => {
+      if (cancelled || !remoteIds.length) return;
+      const current = readNotificationReadIds(notificationScope);
+      const merged = Array.from(new Set([...current, ...remoteIds]));
+      if (merged.length > current.length) {
+        writeNotificationReadIds(notificationScope, merged);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [isAuthenticated, token, notificationScope]);
+
+  useEffect(() => {
     if (headerSearchOpen) {
       setAccountMenuOpen(false);
       setCartDrawerOpen(false);
@@ -813,10 +830,19 @@ export default function SiteHeader() {
     setWishlistMenuOpen(false);
   }
 
+  function markAndSyncNotificationsAsRead(ids) {
+    const clean = ids.filter(Boolean);
+    if (!clean.length) return;
+    markNotificationsAsRead(notificationScope, clean);
+    if (token) {
+      const all = readNotificationReadIds(notificationScope);
+      syncRemoteReadIds(token, all);
+    }
+  }
+
   function closeNotificationMenu() {
     if (isAuthenticated && quickNotificationItems.length) {
-      const currentIds = quickNotificationItems.map((item) => item?.id);
-      markNotificationsAsRead(notificationScope, currentIds);
+      markAndSyncNotificationsAsRead(quickNotificationItems.map((item) => item?.id));
     }
     setNotificationMenuOpen(false);
   }
@@ -831,16 +857,14 @@ export default function SiteHeader() {
 
   function handleNotificationCenterSelect() {
     if (isAuthenticated) {
-      const currentIds = quickNotificationItems.map((item) => item?.id);
-      markNotificationsAsRead(notificationScope, currentIds);
+      markAndSyncNotificationsAsRead(quickNotificationItems.map((item) => item?.id));
     }
     closeNotificationMenu();
   }
 
   function handleNotificationItemSelect() {
     if (isAuthenticated && quickNotificationItems.length) {
-      const currentIds = quickNotificationItems.map((item) => item?.id);
-      markNotificationsAsRead(notificationScope, currentIds);
+      markAndSyncNotificationsAsRead(quickNotificationItems.map((item) => item?.id));
     }
     setNotificationMenuOpen(false);
   }

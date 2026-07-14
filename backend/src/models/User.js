@@ -32,6 +32,8 @@ const userSchema = new mongoose.Schema(
         ref: "Product",
       },
     ],
+
+    notificationReadIds: { type: [String], default: [] },
     behavior: {
       preferredCategory: { type: String, trim: true, lowercase: true, default: "" },
       categoryInterests: [

@@ -328,3 +328,38 @@ export async function trackUserBehavior(req, res) {
   await user.save();
   res.json({ behavior: user.behavior });
 }
+
+// @desc    Get notification read IDs for the logged-in user
+// @route   GET /api/users/notifications/read-ids
+// @access  Private
+export async function getNotificationReadIds(req, res) {
+  const user = await User.findById(req.user._id).select("notificationReadIds");
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  res.json({ readIds: user.notificationReadIds || [] });
+}
+
+// @desc    Merge notification read IDs for the logged-in user
+// @route   PATCH /api/users/notifications/read-ids
+// @access  Private
+export async function syncNotificationReadIds(req, res) {
+  const incoming = Array.isArray(req.body.readIds) ? req.body.readIds : [];
+  const clean = [...new Set(
+    incoming.map((v) => String(v || "").trim()).filter(Boolean)
+  )].slice(0, 500);
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const existing = Array.isArray(user.notificationReadIds) ? user.notificationReadIds : [];
+  const merged = [...new Set([...existing, ...clean])].slice(0, 500);
+  user.notificationReadIds = merged;
+  await user.save();
+
+  res.json({ readIds: merged });
+}

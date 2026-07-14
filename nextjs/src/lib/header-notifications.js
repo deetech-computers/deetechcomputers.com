@@ -1,3 +1,5 @@
+import { buildApiUrl } from "./config";
+
 const READ_STORAGE_KEY_PREFIX = "deetech:header-notifications:read";
 const DISMISSED_STORAGE_KEY_PREFIX = "deetech:header-notifications:dismissed";
 export const HEADER_NOTIFICATIONS_UPDATED_EVENT = "deetech:header-notifications:updated";
@@ -308,6 +310,40 @@ export function buildQuickNotificationItems(notifications, readIds = [], dismiss
       return id && !readSet.has(id) && !dismissedSet.has(id);
     })
     .sort((a, b) => Number(b?.timestamp || 0) - Number(a?.timestamp || 0));
+}
+
+export async function fetchRemoteReadIds(token) {
+  if (!token) return [];
+  try {
+    const res = await fetch(buildApiUrl("/api/users/notifications/read-ids"), {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.readIds)
+      ? data.readIds.map((v) => normalizeText(v)).filter(Boolean)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function syncRemoteReadIds(token, ids) {
+  if (!token || !Array.isArray(ids) || !ids.length) return;
+  try {
+    await fetch(buildApiUrl("/api/users/notifications/read-ids"), {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ readIds: ids }),
+      cache: "no-store",
+    });
+  } catch {
+    // Sync failures are non-critical; localStorage is the local source of truth.
+  }
 }
 
 export function formatNotificationTime(value) {
