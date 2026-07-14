@@ -993,6 +993,60 @@
     text-transform: uppercase;
     box-shadow: 0 10px 20px rgba(0, 64, 27, 0.2);
   }
+  .account-mobile-affiliates__join {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    gap: 18px;
+    padding: 48px 24px 56px;
+  }
+  .account-mobile-affiliates__join-icon {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #dff0e4;
+    color: #1f6c35;
+  }
+  .account-mobile-affiliates__join-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+  .account-mobile-affiliates__join h2 {
+    margin: 0;
+    color: #14331f;
+    font-size: 1.3rem;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+  .account-mobile-affiliates__join p {
+    margin: 0;
+    color: #4a5045;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .account-mobile-affiliates__join-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 28px;
+    border-radius: 4px;
+    background: #00401b;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 8px 18px rgba(0, 64, 27, 0.22);
+  }
+  .account-mobile-affiliates__join-cta svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
   .account-mobile-messages {
     display: block;
     min-height: 100dvh;

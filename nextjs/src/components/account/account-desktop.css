@@ -2064,6 +2064,56 @@
   background: #f2d6d2;
   color: #9f2d21;
 }
+.account-affiliate-join {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 20px;
+  padding: 72px 40px;
+  border: 1.5px dashed #b8d4bf;
+  border-radius: 8px;
+  background: #f5fbf6;
+}
+.account-affiliate-join__icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #dff0e4;
+  color: #1f6c35;
+}
+.account-affiliate-join__icon .account-dashboard__nav-icon {
+  width: 34px;
+  height: 34px;
+}
+.account-affiliate-join h3 {
+  margin: 0;
+  color: #14331f;
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.account-affiliate-join p {
+  margin: 0;
+  color: #4a5045;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  max-width: 500px;
+}
+.account-affiliate-join__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 32px;
+  background: #1f6c35;
+  font-size: 1rem;
+}
+.account-affiliate-join__cta .account-dashboard__nav-icon {
+  width: 16px;
+  height: 16px;
+}
 .account-wishlist-section {
   width: 100%;
   max-width: 1120px;

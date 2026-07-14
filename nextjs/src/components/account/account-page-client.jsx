@@ -937,6 +937,27 @@ function AddressSection({ form, onFieldChange, onSubmit, onClear, submitting }) 
 }
 
 function AffiliateSection({ summary, onCopyCode }) {
+  if (!summary.isAffiliate) {
+    return (
+      <section className="account-dashboard__section account-affiliate-section">
+        <div className="account-affiliate-section__head">
+          <h2>Affiliates</h2>
+          <p>Earn commissions by referring customers to Deetech Computers.</p>
+        </div>
+        <div className="account-affiliate-join">
+          <div className="account-affiliate-join__icon" aria-hidden="true">
+            <AccountNavIcon name="users" />
+          </div>
+          <h3>You haven't joined the affiliate program yet</h3>
+          <p>Register as a Deetech affiliate to get your unique referral code, track your earnings, and earn commissions on every qualifying order your referrals complete.</p>
+          <Link href="/affiliates" className="primary-link account-affiliate-join__cta">
+            Join Affiliate Program <AccountNavIcon name="arrowRight" />
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   const totalReferrals = Number(summary.referrals || 0);
   const deliveredReferrals = Number(summary.deliveredReferrals || 0);
   const pendingReferrals = Number(summary.pendingReferrals || 0);

@@ -117,6 +117,36 @@ function MobileAffiliateIcon({ name }) {
 }
 
 export default function MobileAffiliates({ summary }) {
+  if (!summary?.isAffiliate) {
+    return (
+      <section className="account-mobile-affiliates" aria-label="Affiliates">
+        <header className="account-mobile-affiliates__head">
+          <Link href="/account" aria-label="Back to account">
+            <MobileAffiliateIcon name="arrowLeft" />
+            <span>Account</span>
+          </Link>
+          <div><h1>Affiliates</h1></div>
+          <span className="account-mobile-affiliates__section-icon" aria-hidden="true">
+            <MobileAffiliateIcon name="users" />
+          </span>
+        </header>
+        <div className="account-mobile-affiliates__body">
+          <div className="account-mobile-affiliates__join">
+            <span className="account-mobile-affiliates__join-icon" aria-hidden="true">
+              <MobileAffiliateIcon name="users" />
+            </span>
+            <h2>Not registered yet</h2>
+            <p>Join the Deetech affiliate program to get your referral code, track earnings, and earn commissions on qualifying orders.</p>
+            <Link href="/affiliates" className="account-mobile-affiliates__join-cta">
+              Join Affiliate Program
+              <MobileAffiliateIcon name="arrowRight" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const commissionRate = Number(summary?.commissionRate || 0);
   const tier = summary?.tier || "starter";
   const referralCode = summary?.code || "Not created";
