@@ -1,6 +1,31 @@
 // backend/src/controllers/userController.js
 import User from "../models/User.js";
+import Support from "../models/Support.js";
+import Review from "../models/Review.js";
+import Cart from "../models/Cart.js";
+import Order from "../models/Order.js";
+import Affiliate from "../models/Affiliate.js";
+import Referral from "../models/Referral.js";
 import { storeImageFile, deleteStoredMedia } from "../utils/mediaStorage.js";
+
+async function purgeUserData(user) {
+  const userId = user._id;
+  const email = String(user.email || "").toLowerCase().trim();
+
+  await Promise.all([
+    Support.deleteMany({ email }),
+    Review.deleteMany({ user: userId }),
+    Cart.deleteOne({ user: userId }),
+    Order.updateMany({ user: userId }, { $unset: { user: 1 } }),
+    Affiliate.findOne({ user: userId }).then((affiliate) => {
+      if (!affiliate) return null;
+      return Promise.all([
+        Referral.deleteMany({ affiliate: affiliate._id }),
+        affiliate.deleteOne(),
+      ]);
+    }),
+  ]);
+}
 
 function normalizeSearchTerm(value) {
   return String(value || "")
@@ -137,6 +162,7 @@ export async function deleteUser(req, res) {
     throw new Error("Admin accounts cannot be deleted");
   }
 
+  await purgeUserData(user);
   await user.deleteOne();
   res.json({ message: "User deleted successfully" });
 }
@@ -185,6 +211,7 @@ export async function deleteUserAdmin(req, res) {
     throw new Error("Admin accounts cannot be deleted");
   }
 
+  await purgeUserData(user);
   await user.deleteOne();
   res.json({ message: "User deleted successfully" });
 }
