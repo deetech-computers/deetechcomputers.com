@@ -1406,8 +1406,6 @@
   display: grid;
   align-content: start;
   gap: 24px;
-  position: sticky;
-  top: 96px;
 }
 .account-support-side-card {
   display: grid;
