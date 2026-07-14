@@ -970,13 +970,16 @@ export default function SiteHeader() {
         <>
           <div className="account-dropdown__head">
             <div className="account-dropdown__avatar" aria-hidden="true">
-              <StableImage
-                src={user?.avatarUrl || ""}
-                alt=""
-                width={44}
-                height={44}
-                fallback={String(user?.firstName || user?.name || "C").trim().charAt(0).toUpperCase()}
-              />
+              {user?.avatarUrl ? (
+                <StableImage src={user.avatarUrl} alt="" width={44} height={44} />
+              ) : (
+                <span className="account-avatar-initials">
+                  {[
+                    String(user?.firstName || user?.name || "").trim().charAt(0),
+                    String(user?.lastName || "").trim().charAt(0),
+                  ].filter(Boolean).join("").toUpperCase() || "?"}
+                </span>
+              )}
             </div>
             <div className="account-dropdown__identity">
               <strong>{`${user?.firstName || ""} ${user?.lastName || ""}`.trim() || user?.name || "Customer"}</strong>

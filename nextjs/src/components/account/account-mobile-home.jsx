@@ -143,13 +143,11 @@ export default function MobileAccountHome({
 
         <article className="account-mobile-home__profile">
           <div className="account-mobile-home__avatar" aria-hidden="true">
-            <StableImage
-              src={profile?.avatarUrl || ""}
-              alt=""
-              width={64}
-              height={64}
-              fallback={getInitials(profile)}
-            />
+            {profile?.avatarUrl ? (
+              <StableImage src={profile.avatarUrl} alt="" width={64} height={64} />
+            ) : (
+              <span className="account-avatar-initials">{getInitials(profile)}</span>
+            )}
           </div>
           <div className="account-mobile-home__identity">
             <strong>{displayName}</strong>

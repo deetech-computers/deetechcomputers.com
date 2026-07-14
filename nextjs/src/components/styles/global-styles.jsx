@@ -1236,17 +1236,34 @@ button, input, select, textarea { font: inherit; }
 }
 .account-dropdown__avatar {
   flex: 0 0 auto;
+  display: grid;
+  place-items: center;
   width: 44px;
   height: 44px;
   border-radius: 999px;
   overflow: hidden;
   border: 2px solid #184f27;
+  background: #a6f5af;
+  color: #003714;
+  font-size: 1rem;
+  font-weight: 900;
 }
 .account-dropdown__avatar img,
 .account-dropdown__avatar .product-card__placeholder {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.account-dropdown__avatar .account-avatar-initials {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  line-height: 1;
+  user-select: none;
 }
 .account-dropdown__avatar .product-card__placeholder {
   display: flex;

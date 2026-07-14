@@ -654,6 +654,18 @@
   object-fit: cover;
   border-radius: inherit;
 }
+.account-avatar-initials {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  line-height: 1;
+  user-select: none;
+}
 .account-sidebar-profile__avatar {
   width: 58px !important;
   height: 58px !important;
@@ -3228,6 +3240,16 @@
 }
 .account-mobile-wishlist {
   display: none;
+}
+@media (max-width: 1060px) {
+  .account-support-chat {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .account-support-sidebar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .account-dashboard__nav,

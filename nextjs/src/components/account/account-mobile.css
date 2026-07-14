@@ -274,6 +274,17 @@
     max-height: 100% !important;
     object-fit: cover;
   }
+  .account-mobile-home__avatar .account-avatar-initials {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    line-height: 1;
+    user-select: none;
+  }
   .account-mobile-home__identity {
     display: grid;
     gap: 6px;
@@ -2853,6 +2864,17 @@
     max-height: 100% !important;
     object-fit: cover;
     border-radius: 4px;
+  }
+  .account-mobile-personal__avatar-image .account-avatar-initials {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    user-select: none;
   }
   .account-mobile-personal__avatar button {
     position: absolute;
