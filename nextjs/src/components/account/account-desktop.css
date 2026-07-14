@@ -1200,12 +1200,14 @@
 .account-support-chat {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
   gap: 28px;
 }
 .account-support-chat__thread-wrap {
   min-width: 0;
   display: grid;
-  grid-template-rows: auto minmax(520px, 1fr) auto;
+  grid-template-rows: auto 1fr auto;
+  height: 640px;
   border: 1px solid rgba(217, 226, 240, 0.95);
   border-radius: 4px;
   overflow: hidden;
@@ -1258,9 +1260,8 @@
   display: grid;
   align-content: start;
   gap: 18px;
-  min-height: 520px;
-  max-height: none;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 28px;
 }
 .account-support-chat__date-pill {
