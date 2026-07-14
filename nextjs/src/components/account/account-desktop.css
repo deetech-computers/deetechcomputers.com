@@ -1408,8 +1408,6 @@
   gap: 24px;
   position: sticky;
   top: 96px;
-  max-height: calc(100dvh - 120px);
-  overflow: auto;
 }
 .account-support-side-card {
   display: grid;
