@@ -110,9 +110,8 @@ export default function ProductCard({ product, onAddToCart, variant = "default",
   const sharePayload = useMemo(
     () => ({
       title: product?.name || "Deetech product",
-      text: summary,
     }),
-    [product, summary]
+    [product]
   );
   const cartQuantity = useMemo(
     () =>

@@ -28,7 +28,7 @@ export const metadata = {
     default: APP_NAME,
     template: `%s | ${APP_NAME}`,
   },
-  description: "Standalone Next.js storefront for Deetech Computers.",
+  description: "Shop laptops, phones, monitors, and accessories at Deetech Computers — Ghana's trusted tech store. Fast delivery across Accra and beyond.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
@@ -40,7 +40,7 @@ export const metadata = {
   },
   openGraph: {
     title: APP_NAME,
-    description: "Standalone Next.js storefront for Deetech Computers.",
+    description: "Shop laptops, phones, monitors, and accessories at Deetech Computers — Ghana's trusted tech store. Fast delivery across Accra and beyond.",
     url: buildSiteUrl("/"),
     siteName: APP_NAME,
     type: "website",
@@ -50,7 +50,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: APP_NAME,
-    description: "Standalone Next.js storefront for Deetech Computers.",
+    description: "Shop laptops, phones, monitors, and accessories at Deetech Computers — Ghana's trusted tech store. Fast delivery across Accra and beyond.",
     site: "@deetechcomputers",
     creator: "@deetechcomputers",
     images: [

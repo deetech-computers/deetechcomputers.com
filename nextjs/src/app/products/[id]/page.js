@@ -973,7 +973,7 @@ export default function ProductDetailPage() {
     const url = buildShareUrl();
     try {
       if (navigator.share) {
-        await navigator.share({ title: product?.name || "Deetech product", text: description, url });
+        await navigator.share({ title: product?.name || "Deetech product", url });
         pushToast("Product shared", "success");
         return;
       }
