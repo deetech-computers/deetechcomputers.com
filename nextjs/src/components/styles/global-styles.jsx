@@ -981,17 +981,20 @@ button, input, select, textarea { font: inherit; }
 }
 .notification-dropdown__backdrop {
   position: fixed;
-  inset: 0;
+  top: 114px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2147483645;
   background: transparent;
   cursor: default;
 }
 .notification-dropdown__panel {
   position: fixed;
-  top: 0;
+  top: 114px;
   right: 0;
   width: min(400px, 100vw);
-  height: 100dvh;
+  height: calc(100dvh - 114px);
   border-left: 1px solid #d7dde8;
   background: #ffffff;
   box-shadow: -18px 0 42px rgba(11, 35, 67, 0.18);
@@ -1001,6 +1004,8 @@ button, input, select, textarea { font: inherit; }
   animation: notificationSlideIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .notification-dropdown__panel--mobile {
+  top: 0;
+  height: 100dvh;
   width: min(372px, 100vw);
 }
 @keyframes notificationSlideIn {
