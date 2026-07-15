@@ -1554,14 +1554,17 @@ export default function SiteHeader() {
                             </span>
                           ) : null}
                         </button>
-                        {notificationMenuOpen && isMobileViewport ? (
-                          <>
-                            <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
-                            <div className="notification-dropdown__panel notification-dropdown__panel--mobile" ref={mobileNotificationMenuRef} role="menu" aria-label="Notifications">
-                              {renderNotificationMenuContent()}
-                            </div>
-                          </>
-                        ) : null}
+                        {notificationMenuOpen && isMobileViewport && typeof document !== "undefined"
+                          ? createPortal(
+                              <>
+                                <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
+                                <div className="notification-dropdown__panel notification-dropdown__panel--mobile" ref={mobileNotificationMenuRef} role="menu" aria-label="Notifications">
+                                  {renderNotificationMenuContent()}
+                                </div>
+                              </>,
+                              document.body
+                            )
+                          : null}
                       </div>
                     ) : null}
                     <Link
@@ -1746,14 +1749,17 @@ export default function SiteHeader() {
                       </span>
                     ) : null}
                   </button>
-                  {notificationMenuOpen && !isMobileViewport ? (
-                    <>
-                      <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
-                      <div className="notification-dropdown__panel" ref={desktopNotificationMenuRef} role="menu" aria-label="Notifications">
-                        {renderNotificationMenuContent()}
-                      </div>
-                    </>
-                  ) : null}
+                  {notificationMenuOpen && !isMobileViewport && typeof document !== "undefined"
+                    ? createPortal(
+                        <>
+                          <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
+                          <div className="notification-dropdown__panel" ref={desktopNotificationMenuRef} role="menu" aria-label="Notifications">
+                            {renderNotificationMenuContent()}
+                          </div>
+                        </>,
+                        document.body
+                      )
+                    : null}
                 </div>
               ) : null}
               <div

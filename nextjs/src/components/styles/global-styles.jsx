@@ -45,7 +45,7 @@ button, input, select, textarea { font: inherit; }
 .shell { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
 .site-header .shell { width: calc(100vw - 24px); max-width: none; }
 .site-header {
-  position: sticky; top: 0; z-index: 25; backdrop-filter: blur(18px);
+  position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
   background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid rgba(232, 224, 212, 0.92);
 }
 .header-topbar {
@@ -982,7 +982,7 @@ button, input, select, textarea { font: inherit; }
 .notification-dropdown__backdrop {
   position: fixed;
   inset: 0;
-  z-index: 15;
+  z-index: 2147483645;
   background: transparent;
   cursor: default;
 }
@@ -996,7 +996,7 @@ button, input, select, textarea { font: inherit; }
   background: #ffffff;
   box-shadow: -18px 0 42px rgba(11, 35, 67, 0.18);
   border-radius: 0;
-  z-index: 18;
+  z-index: 2147483646;
   overflow: hidden;
   animation: notificationSlideIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
