@@ -45,7 +45,7 @@ button, input, select, textarea { font: inherit; }
 .shell { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
 .site-header .shell { width: calc(100vw - 24px); max-width: none; }
 .site-header {
-  position: sticky; top: 0; z-index: 2147483647; backdrop-filter: blur(18px);
+  position: sticky; top: 0; z-index: 20; backdrop-filter: blur(18px);
   background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid rgba(232, 224, 212, 0.92);
 }
 .header-topbar {

@@ -571,12 +571,6 @@ export default function SiteHeader() {
   useEffect(() => {
     if (!notificationMenuOpen) return undefined;
 
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
     const onKeyDown = (event) => {
       if (event.key === "Escape") setNotificationMenuOpen(false);
     };
@@ -584,8 +578,6 @@ export default function SiteHeader() {
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.overflow = previousBodyOverflow;
     };
   }, [notificationMenuOpen]);
 
