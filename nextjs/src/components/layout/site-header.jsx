@@ -571,32 +571,32 @@ export default function SiteHeader() {
   useEffect(() => {
     if (!notificationMenuOpen) return undefined;
 
+    const scrollY = window.scrollY;
     const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
     const previousHtmlOverflow = document.documentElement.style.overflow;
 
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-
-    const onPointerDown = (event) => {
-      if (desktopNotificationMenuRef.current?.contains(event.target)) return;
-      if (mobileNotificationMenuRef.current?.contains(event.target)) return;
-      setNotificationMenuOpen(false);
-    };
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setNotificationMenuOpen(false);
-      }
+      if (event.key === "Escape") setNotificationMenuOpen(false);
     };
-
-    document.addEventListener("mousedown", onPointerDown);
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("mousedown", onPointerDown);
       window.removeEventListener("keydown", onKeyDown);
       document.documentElement.style.overflow = previousHtmlOverflow;
       document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
     };
   }, [notificationMenuOpen]);
 
@@ -1566,9 +1566,12 @@ export default function SiteHeader() {
                           ) : null}
                         </button>
                         {notificationMenuOpen && isMobileViewport ? (
-                          <div className="notification-dropdown__panel notification-dropdown__panel--mobile" role="menu" aria-label="Notifications">
-                            {renderNotificationMenuContent()}
-                          </div>
+                          <>
+                            <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
+                            <div className="notification-dropdown__panel notification-dropdown__panel--mobile" ref={mobileNotificationMenuRef} role="menu" aria-label="Notifications">
+                              {renderNotificationMenuContent()}
+                            </div>
+                          </>
                         ) : null}
                       </div>
                     ) : null}
@@ -1755,9 +1758,12 @@ export default function SiteHeader() {
                     ) : null}
                   </button>
                   {notificationMenuOpen && !isMobileViewport ? (
-                    <div className="notification-dropdown__panel" role="menu" aria-label="Notifications">
-                      {renderNotificationMenuContent()}
-                    </div>
+                    <>
+                      <div className="notification-dropdown__backdrop" onClick={closeNotificationMenu} aria-hidden="true" />
+                      <div className="notification-dropdown__panel" ref={desktopNotificationMenuRef} role="menu" aria-label="Notifications">
+                        {renderNotificationMenuContent()}
+                      </div>
+                    </>
                   ) : null}
                 </div>
               ) : null}
