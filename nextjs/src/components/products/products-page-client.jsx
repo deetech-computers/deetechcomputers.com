@@ -596,7 +596,9 @@ export default function ProductsPageClient({ initialFilters }) {
         sortedItems = items.sort((a, b) => getProductPrice(b) - getProductPrice(a));
         break;
       case "rating":
-        sortedItems = items.sort((a, b) => getProductRating(b) - getProductRating(a));
+        sortedItems = items
+          .filter((p) => getProductRating(p) > 0)
+          .sort((a, b) => getProductRating(b) - getProductRating(a));
         break;
       case "name":
         sortedItems = items.sort((a, b) => String(a?.name || "").localeCompare(String(b?.name || "")));
