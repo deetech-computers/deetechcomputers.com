@@ -288,7 +288,7 @@ export default function ProductsPageClient({ initialFilters }) {
   const [category, setCategory] = useState(initialFilters.category);
   const [brand, setBrand] = useState(initialFilters.brand);
   const [availability, setAvailability] = useState("all");
-  const [sortBy, setSortBy] = useState("name");
+  const [sortBy, setSortBy] = useState("latest");
   const [reviewMin, setReviewMin] = useState("all");
   const [promotion, setPromotion] = useState(canonicalHomeSectionKey(initialFilters.promotion || "all"));
   const [selectedSpecs, setSelectedSpecs] = useState({});
