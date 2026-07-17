@@ -24,6 +24,7 @@ async function purgeUserData(user) {
         affiliate.deleteOne(),
       ]);
     }),
+    user.avatarUrl ? deleteStoredMedia(user.avatarUrl).catch(() => {}) : Promise.resolve(),
   ]);
 }
 

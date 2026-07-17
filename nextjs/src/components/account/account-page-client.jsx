@@ -610,7 +610,86 @@ function AccountSidebar({ activeSection, onChange, isAdmin, hasSupportTickets, p
   );
 }
 
-function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar }) {
+function DeleteAccountModal({ userEmail, confirmEmail, onConfirmEmailChange, onConfirm, onClose, deleting }) {
+  const emailMatches = confirmEmail.trim().toLowerCase() === String(userEmail || "").trim().toLowerCase();
+  return (
+    <div className="account-delete-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+      <div className="account-delete-modal">
+        <button type="button" className="account-delete-modal__close" onClick={onClose} aria-label="Close" disabled={deleting}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+        <div className="account-delete-modal__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </div>
+        <h2 id="delete-modal-title" className="account-delete-modal__title">Delete your account?</h2>
+        <p className="account-delete-modal__subtitle">This action is permanent and cannot be undone.</p>
+        <div className="account-delete-modal__what">
+          <div className="account-delete-modal__what-col account-delete-modal__what-col--remove">
+            <strong>Will be removed</strong>
+            <ul>
+              <li>Affiliate code &amp; earnings</li>
+              <li>Messages &amp; support tickets</li>
+              <li>Notifications</li>
+              <li>Your order history view</li>
+              <li>Profile &amp; personal data</li>
+            </ul>
+          </div>
+          <div className="account-delete-modal__what-col account-delete-modal__what-col--keep">
+            <strong>Admin retains</strong>
+            <ul>
+              <li>All order records</li>
+              <li>Transaction history</li>
+            </ul>
+          </div>
+        </div>
+        <label className="account-delete-modal__confirm-label">
+          <span>Type your email address to confirm</span>
+          <input
+            className="field account-delete-modal__confirm-input"
+            type="email"
+            value={confirmEmail}
+            onChange={(e) => onConfirmEmailChange(e.target.value)}
+            placeholder={userEmail || "your@email.com"}
+            disabled={deleting}
+            autoComplete="off"
+          />
+        </label>
+        <div className="account-delete-modal__actions">
+          <button type="button" className="account-delete-modal__cancel" onClick={onClose} disabled={deleting}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="account-delete-modal__confirm"
+            onClick={onConfirm}
+            disabled={!emailMatches || deleting}
+          >
+            {deleting ? "Deleting..." : "Delete My Account"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteDangerZone({ onOpenModal }) {
+  return (
+    <div className="account-delete-zone">
+      <div className="account-delete-zone__copy">
+        <strong>Delete Account</strong>
+        <p>Permanently remove your profile, messages, and affiliate data. Your past orders remain on record for our team.</p>
+      </div>
+      <button type="button" className="account-delete-zone__btn" onClick={onOpenModal}>
+        Delete My Account
+      </button>
+    </div>
+  );
+}
+
+function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar, onOpenDeleteModal }) {
   const displayName = getAccountDisplayName(form);
   const avatarInputRef = useRef(null);
 
@@ -700,6 +779,7 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
           <p>Your account is currently protected with standard security.</p>
         </div>
       </div>
+      <DeleteDangerZone onOpenModal={onOpenDeleteModal} />
     </section>
   );
 }
@@ -1717,6 +1797,9 @@ export default function AccountPageClient({ initialTab = "" }) {
   const [activeSection, setActiveSection] = useState(() =>
     normalizeAccountTab(String(initialTab || "").toLowerCase())
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteConfirmEmail, setDeleteConfirmEmail] = useState("");
 
   useEffect(() => {
     setActiveSection(normalizeAccountTab(String(initialTab || "").toLowerCase()));
@@ -1965,6 +2048,19 @@ export default function AccountPageClient({ initialTab = "" }) {
     router.push("/");
   }
 
+  async function handleDeleteAccount() {
+    if (!token) return;
+    setDeletingAccount(true);
+    try {
+      await requestWithToken(`${API_BASE}/users/profile`, token, { method: "DELETE" });
+      logout();
+      router.push("/");
+    } catch (error) {
+      pushToast(error.message || "Could not delete account. Please try again.", "warning");
+      setDeletingAccount(false);
+    }
+  }
+
   function handleSectionChange(section) {
     const nextSection = normalizeAccountTab(String(section || "").toLowerCase());
     const nextHref = nextSection === "personal" ? "/account" : `/account?tab=${encodeURIComponent(nextSection)}`;
@@ -2089,6 +2185,7 @@ export default function AccountPageClient({ initialTab = "" }) {
         submitting={savingProfile}
         onAvatarUpload={handleAvatarUpload}
         uploadingAvatar={uploadingAvatar}
+        onOpenDeleteModal={() => { setDeleteConfirmEmail(""); setShowDeleteModal(true); }}
       />
     );
   }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleAvatarUpload, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, uploadingAvatar, wishlistItems]);
@@ -2139,6 +2236,7 @@ export default function AccountPageClient({ initialTab = "" }) {
           submitting={savingProfile}
           onAvatarUpload={handleAvatarUpload}
           uploadingAvatar={uploadingAvatar}
+          onOpenDeleteModal={() => { setDeleteConfirmEmail(""); setShowDeleteModal(true); }}
         />
       ) : null}
       {shouldShowMobileOrders ? (
@@ -2206,6 +2304,16 @@ export default function AccountPageClient({ initialTab = "" }) {
           </div>
         </div>
       </section>
+      {showDeleteModal && (
+        <DeleteAccountModal
+          userEmail={profileForm.email}
+          confirmEmail={deleteConfirmEmail}
+          onConfirmEmailChange={setDeleteConfirmEmail}
+          onConfirm={handleDeleteAccount}
+          onClose={() => !deletingAccount && setShowDeleteModal(false)}
+          deleting={deletingAccount}
+        />
+      )}
     </main>
   );
 }

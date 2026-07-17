@@ -3470,3 +3470,197 @@
 .account-support-sidebar .contact-support-preview__cta:hover {
   background: #006e9e;
 }
+
+/* ── Delete Account Danger Zone ── */
+.account-delete-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: clamp(16px, 2vw, 22px);
+  border-radius: 4px;
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+}
+.account-delete-zone__copy {
+  min-width: 0;
+}
+.account-delete-zone__copy strong {
+  display: block;
+  color: #991b1b;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.account-delete-zone__copy p {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.account-delete-zone__btn {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1.5px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.account-delete-zone__btn:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* ── Delete Account Modal ── */
+.account-delete-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 12, 8, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.account-delete-modal {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  padding: 36px 32px 28px;
+  width: 100%;
+  max-width: 520px;
+  display: grid;
+  gap: 18px;
+  box-shadow: 0 20px 60px rgba(15, 12, 8, 0.22);
+}
+.account-delete-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: #665d52;
+  cursor: pointer;
+}
+.account-delete-modal__close:hover {
+  background: #f3f4f6;
+}
+.account-delete-modal__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: #dc2626;
+  margin: 0 auto;
+}
+.account-delete-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111c2c;
+  text-align: center;
+}
+.account-delete-modal__subtitle {
+  margin: 0;
+  color: #665d52;
+  text-align: center;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.account-delete-modal__what {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+.account-delete-modal__what-col {
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.account-delete-modal__what-col strong {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.account-delete-modal__what-col ul {
+  margin: 0;
+  padding: 0 0 0 16px;
+  display: grid;
+  gap: 4px;
+  line-height: 1.5;
+}
+.account-delete-modal__what-col--remove {
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+.account-delete-modal__what-col--remove strong {
+  color: #991b1b;
+}
+.account-delete-modal__what-col--keep {
+  background: #f0fdf4;
+  color: #14532d;
+}
+.account-delete-modal__what-col--keep strong {
+  color: #166534;
+}
+.account-delete-modal__confirm-label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+.account-delete-modal__confirm-input {
+  width: 100%;
+}
+.account-delete-modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.account-delete-modal__cancel {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1px solid var(--line, #e2e8e4);
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.account-delete-modal__cancel:hover {
+  background: #f9fafb;
+}
+.account-delete-modal__confirm {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.account-delete-modal__confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.account-delete-modal__confirm:not(:disabled):hover {
+  background: #b91c1c;
+}

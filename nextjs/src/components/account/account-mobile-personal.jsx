@@ -83,7 +83,7 @@ function MobilePersonalIcon({ name }) {
   );
 }
 
-export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar }) {
+export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, submitting, onAvatarUpload, uploadingAvatar, onOpenDeleteModal }) {
   const avatarInputRef = useRef(null);
 
   function handleAvatarInputChange(event) {
@@ -180,6 +180,11 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
       <div className="account-mobile-personal__submit">
         <button type="submit" form="account-mobile-personal-form" disabled={submitting}>
           {submitting ? "Updating..." : "Update Changes"}
+        </button>
+      </div>
+      <div className="account-mobile-personal__delete-zone">
+        <button type="button" onClick={onOpenDeleteModal}>
+          Delete My Account
         </button>
       </div>
     </section>

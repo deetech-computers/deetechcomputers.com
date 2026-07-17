@@ -3038,6 +3038,26 @@
     opacity: 0.7;
     cursor: not-allowed;
   }
+  .account-mobile-personal__delete-zone {
+    padding: 20px 16px 32px;
+    display: grid;
+  }
+  .account-mobile-personal__delete-zone button {
+    width: 100%;
+    min-height: 52px;
+    border: 1.5px solid #dc2626;
+    border-radius: 4px;
+    background: transparent;
+    color: #dc2626;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .account-mobile-personal__delete-zone button:active {
+    background: #dc2626;
+    color: #fff;
+  }
   .account-mobile-personal__head,
   .account-mobile-address__head,
   .account-mobile-affiliates__head,
