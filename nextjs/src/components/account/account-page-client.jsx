@@ -1534,15 +1534,36 @@ function AccountLoadingSkeleton() {
   );
 }
 
-function AccountTransientState({ mode = "loading" }) {
+function AccountTransientState({ mode = "loading", errorMessage = "" }) {
   if (mode === "loading") {
     return <AccountLoadingSkeleton />;
   }
+  const isError = mode === "error";
   return (
     <main className="shell page-section account-transient-page">
       <section className="account-transient-card" aria-live="polite">
-        <span className="account-transient-spinner" aria-hidden="true" />
-        <p>Redirecting to login...</p>
+        <div className={`account-transient-badge${isError ? " account-transient-badge--error" : ""}`} aria-hidden="true">
+          <span className="account-transient-spinner" />
+        </div>
+        <strong className="account-transient-title">
+          {isError ? "Session ended" : "Loading account..."}
+        </strong>
+        <p className="account-transient-subtitle">
+          {isError
+            ? (errorMessage || "Session expired — redirecting to login...")
+            : "Verifying your session and loading your data."}
+        </p>
+        <div className="account-transient-steps" aria-hidden="true">
+          <span className="account-transient-step is-done">
+            <span className="account-transient-step__dot" />Verify
+          </span>
+          <span className={`account-transient-step${isError ? " is-done" : " is-active"}`}>
+            <span className="account-transient-step__dot" />Load
+          </span>
+          <span className={`account-transient-step${isError ? " is-error" : ""}`}>
+            <span className="account-transient-step__dot" />{isError ? "Failed" : "Ready"}
+          </span>
+        </div>
       </section>
     </main>
   );
@@ -1811,6 +1832,7 @@ export default function AccountPageClient({ initialTab = "" }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteConfirmEmail, setDeleteConfirmEmail] = useState("");
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
     setActiveSection(normalizeAccountTab(String(initialTab || "").toLowerCase()));
@@ -1876,8 +1898,8 @@ export default function AccountPageClient({ initialTab = "" }) {
       fillProfileForm(profile || user || {});
     }).catch((error) => {
       if (error?.status === 401) {
-        logout();
-        router.replace("/login");
+        setAuthError("Session expired — redirecting to login...");
+        setTimeout(() => { logout(); router.replace("/login"); }, 1500);
       }
     });
   }, [isAuthenticated, logout, refreshProfile, router, status, token, user]);
@@ -1897,8 +1919,8 @@ export default function AccountPageClient({ initialTab = "" }) {
       const isUnauthorized = (result) =>
         result.status === "rejected" && Number(result.reason?.status) === 401;
       if ([ordersResult, affiliateResult, reviewsResult, supportResult].some(isUnauthorized)) {
-        logout();
-        router.replace("/login");
+        setAuthError("Session expired — redirecting to login...");
+        setTimeout(() => { logout(); router.replace("/login"); }, 1500);
         return;
       }
 
@@ -2215,10 +2237,14 @@ export default function AccountPageClient({ initialTab = "" }) {
   }, [accountNotifications, activeSection, activeSupportTicketId, affiliateSummary, handleAddressSubmit, handleAvatarUpload, handleLogout, handleMarkAllNotificationsRead, handleNotificationOpen, handlePasswordSubmit, handleProfileSubmit, handleSupportReplySubmit, notificationReadIds, orders, passwordForm.confirmPassword, passwordForm.currentPassword, passwordForm.newPassword, profileForm, reviews, router, savingAddress, savingPassword, savingProfile, sendingSupportReply, supportReplyDraft, supportTickets, uploadingAvatar, wishlistItems]);
 
   useEffect(() => {
-    if (status !== "loading" && !isAuthenticated) {
+    if (status !== "loading" && !isAuthenticated && !authError) {
       router.replace("/login");
     }
-  }, [isAuthenticated, router, status]);
+  }, [authError, isAuthenticated, router, status]);
+
+  if (authError) {
+    return <AccountTransientState mode="error" errorMessage={authError} />;
+  }
 
   if (status === "loading") {
     return <AccountTransientState mode="loading" />;
