@@ -343,6 +343,19 @@
 .auth-transition__step.is-done .auth-transition__step-dot {
   background: #0088cc;
 }
+.auth-transition__step.is-error {
+  color: #dc2626;
+}
+.auth-transition__step.is-error .auth-transition__step-dot {
+  background: #dc2626;
+}
+.auth-transition__badge--error {
+  background: #fef2f2;
+}
+.auth-transition__badge--error .auth-transition__spinner {
+  border-color: rgba(220, 38, 38, 0.12);
+  border-top-color: #dc2626;
+}
 @media (prefers-reduced-motion: reduce) {
   .auth-transition,
   .auth-transition__card,

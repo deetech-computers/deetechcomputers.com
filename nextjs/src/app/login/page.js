@@ -72,10 +72,16 @@ export default function LoginPage() {
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
-      clearSteps();
-      setTransitionStage("idle");
-      setError(err.message);
-      setSubmitting(false);
+      stepTimers.current.forEach(clearTimeout);
+      setLoadingStep(2);
+      setTransitionStage("error");
+      const msg = err.message;
+      setTimeout(() => {
+        setLoadingStep(0);
+        setTransitionStage("idle");
+        setError(msg);
+        setSubmitting(false);
+      }, 1200);
     }
   };
 
@@ -93,10 +99,16 @@ export default function LoginPage() {
       setTransitionStage("success");
       setTimeout(() => router.push("/"), 900);
     } catch (err) {
-      clearSteps();
-      setTransitionStage("idle");
-      setError(err.message || "Google sign-in failed.");
-      setSubmitting(false);
+      stepTimers.current.forEach(clearTimeout);
+      setLoadingStep(2);
+      setTransitionStage("error");
+      const msg = err.message || "Google sign-in failed.";
+      setTimeout(() => {
+        setLoadingStep(0);
+        setTransitionStage("idle");
+        setError(msg);
+        setSubmitting(false);
+      }, 1200);
     }
   };
 
@@ -105,7 +117,7 @@ export default function LoginPage() {
       {transitionStage !== "idle" ? (
         <div className="auth-transition" aria-live="polite">
           <div className="auth-transition__card">
-            <div className={transitionStage === "success" ? "auth-transition__badge auth-transition__badge--success" : "auth-transition__badge"} aria-hidden="true">
+            <div className={`auth-transition__badge${transitionStage === "success" ? " auth-transition__badge--success" : transitionStage === "error" ? " auth-transition__badge--error" : ""}`} aria-hidden="true">
               {transitionStage === "success" ? (
                 <svg className="auth-transition__check" viewBox="0 0 52 52" fill="none">
                   <circle className="auth-transition__check-ring" cx="26" cy="26" r="24" />
@@ -116,21 +128,23 @@ export default function LoginPage() {
               )}
             </div>
             <strong className="auth-transition__title">
-              {transitionStage === "success" ? "Welcome back!" : "Signing you in…"}
+              {transitionStage === "success" ? "Welcome back!" : transitionStage === "error" ? "Sign in failed" : "Signing you in…"}
             </strong>
             <p className="auth-transition__message">
               {transitionStage === "success"
                 ? "Login successful. Taking you to the homepage."
+                : transitionStage === "error"
+                ? "Please check your credentials and try again."
                 : "Verifying your credentials and setting up your session."}
             </p>
             <div className="auth-transition__steps" aria-hidden="true">
-              <span className={`auth-transition__step${transitionStage === "success" || loadingStep > 0 ? " is-done" : " is-active"}`}>
+              <span className={`auth-transition__step${transitionStage === "success" || transitionStage === "error" || loadingStep > 0 ? " is-done" : " is-active"}`}>
                 <span className="auth-transition__step-dot" />Verify
               </span>
-              <span className={`auth-transition__step${transitionStage === "success" || loadingStep > 1 ? " is-done" : loadingStep === 1 ? " is-active" : ""}`}>
+              <span className={`auth-transition__step${transitionStage === "success" || transitionStage === "error" || loadingStep > 1 ? " is-done" : loadingStep === 1 ? " is-active" : ""}`}>
                 <span className="auth-transition__step-dot" />Authenticate
               </span>
-              <span className={`auth-transition__step${transitionStage === "success" ? " is-done is-active" : loadingStep === 2 ? " is-active" : ""}`}>
+              <span className={`auth-transition__step${transitionStage === "success" ? " is-done is-active" : transitionStage === "error" ? " is-error" : loadingStep === 2 ? " is-active" : ""}`}>
                 <span className="auth-transition__step-dot" />Done
               </span>
             </div>
