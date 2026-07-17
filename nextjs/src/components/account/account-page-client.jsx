@@ -1863,8 +1863,13 @@ export default function AccountPageClient({ initialTab = "" }) {
 
     refreshProfile().then((profile) => {
       fillProfileForm(profile || user || {});
+    }).catch((error) => {
+      if (error?.status === 401) {
+        logout();
+        router.replace("/login");
+      }
     });
-  }, [isAuthenticated, refreshProfile, status, token, user]);
+  }, [isAuthenticated, logout, refreshProfile, router, status, token, user]);
 
   useEffect(() => {
     if (status !== "ready" || !isAuthenticated || !token) return;
@@ -1877,6 +1882,14 @@ export default function AccountPageClient({ initialTab = "" }) {
       fetchProducts(),
     ]).then((results) => {
       const [ordersResult, affiliateResult, reviewsResult, supportResult, productsResult] = results;
+
+      const isUnauthorized = (result) =>
+        result.status === "rejected" && Number(result.reason?.status) === 401;
+      if ([ordersResult, affiliateResult, reviewsResult, supportResult].some(isUnauthorized)) {
+        logout();
+        router.replace("/login");
+        return;
+      }
 
       if (ordersResult.status === "fulfilled") {
         setOrders(Array.isArray(ordersResult.value) ? ordersResult.value : []);
@@ -1928,7 +1941,7 @@ export default function AccountPageClient({ initialTab = "" }) {
         setWishlistItems(nextWishlistItems);
       }
     });
-  }, [isAuthenticated, status, token]);
+  }, [isAuthenticated, logout, router, status, token]);
 
   function handleProfileFieldChange(field, value) {
     setProfileForm((current) => ({ ...current, [field]: value }));
