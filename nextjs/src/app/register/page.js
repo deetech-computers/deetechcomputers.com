@@ -9,10 +9,14 @@ import { useAuth } from "@/hooks/use-auth";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
 
+const REGISTER_DRAFT_KEY = "deetech:register-draft";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function RegisterPage() {
   const router = useRouter();
   const { isAuthenticated, loginWithGoogle, register, status } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
+  const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -26,6 +30,56 @@ export default function RegisterPage() {
       router.replace("/");
     }
   }, [isAuthenticated, router, status]);
+
+  // Restore a partially-filled signup (name/email only - never the password) so
+  // someone who navigates away mid-registration doesn't have to start over.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(REGISTER_DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      setForm((current) => ({
+        ...current,
+        firstName: draft.firstName || current.firstName,
+        lastName: draft.lastName || current.lastName,
+        email: draft.email || current.email,
+      }));
+    } catch {
+      // ignore malformed/unavailable storage
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        REGISTER_DRAFT_KEY,
+        JSON.stringify({ firstName: form.firstName, lastName: form.lastName, email: form.email })
+      );
+    } catch {
+      // ignore unavailable storage (private browsing, etc.)
+    }
+  }, [form.firstName, form.lastName, form.email]);
+
+  const emailValid = form.email.trim().length === 0 ? null : EMAIL_PATTERN.test(form.email.trim());
+  const passwordHasMinLength = form.password.length >= 6;
+  const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
+
+  const fieldErrors = {
+    firstName: form.firstName.trim().length === 0 ? "First name is required" : "",
+    lastName: form.lastName.trim().length === 0 ? "Last name is required" : "",
+    email:
+      form.email.trim().length === 0
+        ? "Email address is required"
+        : !emailValid
+        ? "Enter a valid email address"
+        : "",
+    password: !passwordHasMinLength ? "Password must be at least 6 characters" : "",
+    confirmPassword: !passwordsMatch ? "Passwords must match" : "",
+  };
+
+  const isFormValid = Object.values(fieldErrors).every((message) => message === "");
+
+  const markTouched = (field) => setTouched((current) => ({ ...current, [field]: true }));
 
   if (status === "loading" || isAuthenticated) {
     return (
@@ -57,9 +111,9 @@ export default function RegisterPage() {
   const onSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    setTouched({ firstName: true, lastName: true, email: true, password: true, confirmPassword: true });
 
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+    if (!isFormValid) {
       return;
     }
 
@@ -73,6 +127,11 @@ export default function RegisterPage() {
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
+      try {
+        window.localStorage.removeItem(REGISTER_DRAFT_KEY);
+      } catch {
+        // ignore unavailable storage
+      }
       const remaining = Math.max(0, 700 - (Date.now() - loadStart));
       await new Promise((r) => setTimeout(r, remaining));
       clearSteps();
@@ -168,29 +227,74 @@ export default function RegisterPage() {
           <h1>Create account</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
             <div className="auth-hp-grid-two">
-              <label className="field-group">
-                <span>First name</span>
-                <input className="field" type="text" placeholder="First name *" value={form.firstName} onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))} required />
+              <label className={`field-group${touched.firstName && fieldErrors.firstName ? " field-group--error" : ""}`}>
+                <span>
+                  First name
+                  <em className="field-group__required">Required</em>
+                </span>
+                <input
+                  className="field"
+                  type="text"
+                  placeholder="First name"
+                  value={form.firstName}
+                  onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))}
+                  onBlur={() => markTouched("firstName")}
+                  aria-invalid={touched.firstName && !!fieldErrors.firstName}
+                  required
+                />
+                {touched.firstName && fieldErrors.firstName ? <p className="field-group__error">{fieldErrors.firstName}</p> : null}
               </label>
-              <label className="field-group">
-                <span>Last name</span>
-                <input className="field" type="text" placeholder="Last name *" value={form.lastName} onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))} required />
+              <label className={`field-group${touched.lastName && fieldErrors.lastName ? " field-group--error" : ""}`}>
+                <span>
+                  Last name
+                  <em className="field-group__required">Required</em>
+                </span>
+                <input
+                  className="field"
+                  type="text"
+                  placeholder="Last name"
+                  value={form.lastName}
+                  onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))}
+                  onBlur={() => markTouched("lastName")}
+                  aria-invalid={touched.lastName && !!fieldErrors.lastName}
+                  required
+                />
+                {touched.lastName && fieldErrors.lastName ? <p className="field-group__error">{fieldErrors.lastName}</p> : null}
               </label>
             </div>
-            <label className="field-group">
-              <span>Email address</span>
-              <input className="field" type="email" placeholder="Email address *" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} autoComplete="email" required />
+            <label className={`field-group${touched.email && fieldErrors.email ? " field-group--error" : ""}`}>
+              <span>
+                Email address
+                <em className="field-group__required">Required</em>
+              </span>
+              <input
+                className="field"
+                type="email"
+                placeholder="Email address"
+                value={form.email}
+                onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
+                onBlur={() => markTouched("email")}
+                autoComplete="email"
+                aria-invalid={touched.email && !!fieldErrors.email}
+                required
+              />
+              {touched.email && fieldErrors.email ? <p className="field-group__error">{fieldErrors.email}</p> : null}
             </label>
-            <label className="field-group">
-              <span>Password</span>
+            <label className={`field-group${touched.password && fieldErrors.password ? " field-group--error" : ""}`}>
+              <span>
+                Password
+                <em className="field-group__required">Required</em>
+              </span>
               <div className="password-field">
                 <input
                   className="field"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Password *"
+                  placeholder="Password"
                   value={form.password}
                   onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                  onBlur={() => markTouched("password")}
                   autoComplete="new-password"
+                  aria-invalid={touched.password && !!fieldErrors.password}
                   required
                 />
                 <button
@@ -203,17 +307,28 @@ export default function RegisterPage() {
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
+              <ul className="password-requirements">
+                <li className={`password-requirements__item${passwordHasMinLength ? " is-met" : ""}`}>
+                  <span className="password-requirements__item-icon" aria-hidden="true">✓</span>
+                  At least 6 characters
+                </li>
+              </ul>
             </label>
-            <label className="field-group">
-              <span>Confirm password</span>
+            <label className={`field-group${touched.confirmPassword && fieldErrors.confirmPassword ? " field-group--error" : ""}`}>
+              <span>
+                Confirm password
+                <em className="field-group__required">Required</em>
+              </span>
               <div className="password-field">
                 <input
                   className="field"
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm password *"
+                  placeholder="Confirm password"
                   value={form.confirmPassword}
                   onChange={(event) => setForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+                  onBlur={() => markTouched("confirmPassword")}
                   autoComplete="new-password"
+                  aria-invalid={touched.confirmPassword && !!fieldErrors.confirmPassword}
                   required
                 />
                 <button
@@ -226,9 +341,15 @@ export default function RegisterPage() {
                   {showConfirmPassword ? "Hide" : "Show"}
                 </button>
               </div>
+              <ul className="password-requirements">
+                <li className={`password-requirements__item${passwordsMatch ? " is-met" : ""}`}>
+                  <span className="password-requirements__item-icon" aria-hidden="true">✓</span>
+                  Passwords match
+                </li>
+              </ul>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
-            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
+            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting || !isFormValid}>
               {submitting ? "Creating account..." : "Create"}
             </button>
             <GoogleAuthButton

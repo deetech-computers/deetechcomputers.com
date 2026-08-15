@@ -64,6 +64,16 @@
 .auth-hp-form .field-group span {
   color: #1b2432;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.auth-hp-form .field-group__required {
+  color: #b3261e;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .auth-hp-form .field {
   min-height: 54px;
@@ -72,6 +82,55 @@
   background: #fff;
   padding-inline: 14px;
   font-size: 1rem;
+}
+.auth-hp-form .field-group--error .field {
+  border-color: #b3261e;
+}
+.auth-hp-form .field-group--error .field:focus {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.14);
+}
+.auth-hp-form .field-group__error {
+  margin: 0;
+  color: #b3261e;
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+.auth-hp-form .password-requirements {
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+.auth-hp-form .password-requirements__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 0.86rem;
+}
+.auth-hp-form .password-requirements__item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid #aab2bf;
+  color: transparent;
+  font-size: 0.66rem;
+  line-height: 1;
+  flex: none;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+.auth-hp-form .password-requirements__item.is-met {
+  color: #1a7f37;
+}
+.auth-hp-form .password-requirements__item.is-met .password-requirements__item-icon {
+  background: #1a7f37;
+  border-color: #1a7f37;
+  color: #fff;
 }
 .auth-hp-form .password-field {
   position: relative;

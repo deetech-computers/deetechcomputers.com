@@ -9,10 +9,14 @@ import { useAuth } from "@/hooks/use-auth";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
 
+const LAST_EMAIL_KEY = "deetech:last-login-email";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, login, loginWithGoogle, status } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -25,6 +29,32 @@ export default function LoginPage() {
       router.replace("/");
     }
   }, [isAuthenticated, router, status]);
+
+  // Prefill the email of whoever last signed in successfully on this browser,
+  // so a returning user doesn't have to retype it every time.
+  useEffect(() => {
+    try {
+      const rememberedEmail = window.localStorage.getItem(LAST_EMAIL_KEY);
+      if (rememberedEmail) {
+        setForm((current) => ({ ...current, email: rememberedEmail }));
+      }
+    } catch {
+      // ignore unavailable storage
+    }
+  }, []);
+
+  const emailValid = form.email.trim().length === 0 ? null : EMAIL_PATTERN.test(form.email.trim());
+  const fieldErrors = {
+    email:
+      form.email.trim().length === 0
+        ? "Email address is required"
+        : !emailValid
+        ? "Enter a valid email address"
+        : "",
+    password: form.password.length === 0 ? "Password is required" : "",
+  };
+  const isFormValid = Object.values(fieldErrors).every((message) => message === "");
+  const markTouched = (field) => setTouched((current) => ({ ...current, [field]: true }));
 
   if (status === "loading" || isAuthenticated) {
     return (
@@ -55,17 +85,27 @@ export default function LoginPage() {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    setSubmitting(true);
     setError("");
+    setTouched({ email: true, password: true });
+    if (!isFormValid) {
+      return;
+    }
+    setSubmitting(true);
     setTransitionStage("loading");
     startSteps();
     const loadStart = Date.now();
 
     try {
+      const trimmedEmail = form.email.trim().toLowerCase();
       await login({
-        email: form.email.trim().toLowerCase(),
+        email: trimmedEmail,
         password: form.password,
       });
+      try {
+        window.localStorage.setItem(LAST_EMAIL_KEY, trimmedEmail);
+      } catch {
+        // ignore unavailable storage
+      }
       const remaining = Math.max(0, 700 - (Date.now() - loadStart));
       await new Promise((r) => setTimeout(r, remaining));
       clearSteps();
@@ -160,20 +200,29 @@ export default function LoginPage() {
           </header>
           <h1>Sign in</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
-            <label className="field-group">
-              <span>Email address</span>
+            <label className={`field-group${touched.email && fieldErrors.email ? " field-group--error" : ""}`}>
+              <span>
+                Email address
+                <em className="field-group__required">Required</em>
+              </span>
               <input
                 className="field"
                 type="email"
-                placeholder="Username or Email Address"
+                placeholder="Email address"
                 value={form.email}
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
+                onBlur={() => markTouched("email")}
                 autoComplete="email"
+                aria-invalid={touched.email && !!fieldErrors.email}
                 required
               />
+              {touched.email && fieldErrors.email ? <p className="field-group__error">{fieldErrors.email}</p> : null}
             </label>
-            <label className="field-group">
-              <span>Password</span>
+            <label className={`field-group${touched.password && fieldErrors.password ? " field-group--error" : ""}`}>
+              <span>
+                Password
+                <em className="field-group__required">Required</em>
+              </span>
               <div className="password-field">
                 <input
                   className="field"
@@ -181,7 +230,9 @@ export default function LoginPage() {
                   placeholder="Use your password"
                   value={form.password}
                   onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                  onBlur={() => markTouched("password")}
                   autoComplete="current-password"
+                  aria-invalid={touched.password && !!fieldErrors.password}
                   required
                 />
                 <button
@@ -196,7 +247,7 @@ export default function LoginPage() {
               </div>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
-            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting}>
+            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting || !isFormValid}>
               {submitting ? "Logging in..." : "Login"}
             </button>
             <GoogleAuthButton
