@@ -10,6 +10,7 @@ import {
   socialLogin,
   googleAuth,
   googleAuthConfig,
+  checkEmailDomain,
 } from "../controllers/authController.js";
 import { validateRequest } from "../middleware/validateMiddleware.js";
 import {
@@ -35,9 +36,16 @@ const forgotPasswordLimiter = createRateLimiter({
   message: { message: "Too many reset attempts, try again later." },
 });
 
+const emailCheckLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: { message: "Too many email checks, try again later." },
+});
+
 // user registration & login
 router.post("/register", authLimiter, validateRequest(registerSchema), registerUser);
 router.post("/login", authLimiter, validateRequest(loginSchema), loginUser);
+router.get("/check-email-domain", emailCheckLimiter, checkEmailDomain);
 router.get("/google/config", googleAuthConfig);
 router.post("/google", authLimiter, validateRequest(googleAuthSchema), googleAuth);
 router.post("/logout", logoutUser);

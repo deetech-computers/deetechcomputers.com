@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
+import { checkEmailDomain } from "@/lib/auth";
 import { getEmailFeedback } from "@/lib/validate-email";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
@@ -19,6 +20,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [touched, setTouched] = useState({});
   const [emailSettled, setEmailSettled] = useState(false);
+  const [domainCheck, setDomainCheck] = useState({ status: "idle" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -66,13 +68,36 @@ export default function RegisterPage() {
   const passwordHasMinLength = form.password.length >= 6;
   const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
 
-  // Wait until the user pauses typing before judging the email format/junk
-  // check, so we're not flashing "invalid" on every half-typed keystroke.
+  // Wait until the user pauses typing before judging the email: first the
+  // format/junk check, then (if that passes) ask the backend whether the
+  // domain can actually receive mail at all, so a typo'd/made-up domain
+  // like "gmial.com" gets caught before the account is even submitted.
   useEffect(() => {
+    let cancelled = false;
     setEmailSettled(false);
+    setDomainCheck({ status: "idle" });
     if (emailFeedback.status === "empty") return undefined;
-    const timer = setTimeout(() => setEmailSettled(true), EMAIL_CHECK_DELAY_MS);
-    return () => clearTimeout(timer);
+
+    const timer = setTimeout(async () => {
+      if (cancelled) return;
+      setEmailSettled(true);
+      if (emailFeedback.status !== "valid") return;
+
+      setDomainCheck({ status: "checking" });
+      try {
+        const result = await checkEmailDomain(form.email.trim());
+        if (cancelled) return;
+        setDomainCheck(result?.ok ? { status: "ok" } : { status: "invalid" });
+      } catch {
+        // Our own check failing shouldn't block a real signup.
+        if (!cancelled) setDomainCheck({ status: "ok" });
+      }
+    }, EMAIL_CHECK_DELAY_MS);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [form.email]);
 
   const isEmpty = {
@@ -95,10 +120,26 @@ export default function RegisterPage() {
 
   const showEmailCheck = emailSettled && emailFeedback.status !== "empty";
 
+  // What the email checklist tag actually shows: local format/junk problems
+  // take priority, then the async domain-can-receive-mail result.
+  let emailCheckState = "invalid";
+  let emailCheckMessage = "";
+  if (emailFeedback.status === "invalid") {
+    emailCheckMessage = emailFeedback.message;
+  } else if (domainCheck.status === "checking") {
+    emailCheckState = "checking";
+    emailCheckMessage = "Checking email address…";
+  } else if (domainCheck.status === "invalid") {
+    emailCheckMessage = "We couldn't verify this email's domain";
+  } else if (domainCheck.status === "ok") {
+    emailCheckState = "valid";
+    emailCheckMessage = "Valid email address";
+  }
+
   const fieldHasError = {
     firstName: showRequired.firstName,
     lastName: showRequired.lastName,
-    email: showRequired.email || (showEmailCheck && emailFeedback.status === "invalid"),
+    email: showRequired.email || (showEmailCheck && emailCheckState === "invalid"),
     password: showRequired.password,
     confirmPassword: showRequired.confirmPassword,
   };
@@ -107,6 +148,7 @@ export default function RegisterPage() {
     !isEmpty.firstName &&
     !isEmpty.lastName &&
     emailFeedback.status === "valid" &&
+    domainCheck.status === "ok" &&
     passwordHasMinLength &&
     passwordsMatch;
 
@@ -309,11 +351,15 @@ export default function RegisterPage() {
               />
               {showEmailCheck ? (
                 <ul className="password-requirements">
-                  <li className={`password-requirements__item${emailFeedback.status === "valid" ? " is-met" : " is-invalid"}`}>
+                  <li
+                    className={`password-requirements__item${
+                      emailCheckState === "valid" ? " is-met" : emailCheckState === "checking" ? "" : " is-invalid"
+                    }`}
+                  >
                     <span className="password-requirements__item-icon" aria-hidden="true">
-                      {emailFeedback.status === "valid" ? "✓" : "!"}
+                      {emailCheckState === "valid" ? "✓" : emailCheckState === "invalid" ? "!" : ""}
                     </span>
-                    {emailFeedback.status === "valid" ? "Valid email address" : emailFeedback.message}
+                    {emailCheckMessage}
                   </li>
                 </ul>
               ) : null}

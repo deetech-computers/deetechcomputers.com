@@ -11,6 +11,7 @@ import {
   GOOGLE_CLIENT_ID,
 } from "../config/env.js";
 import { sendPasswordResetEmail, sendWelcomeEmail } from "../utils/emailService.js";
+import { domainCanReceiveMail } from "../utils/emailDomain.js";
 import { logActivity } from "../utils/activityLog.js";
 import logger from "../utils/logger.js";
 
@@ -64,6 +65,13 @@ export async function registerUser(req, res) {
     throw new Error("User already exists");
   }
 
+  const emailDomain = String(email).split("@")[1] || "";
+  const domainAcceptsMail = await domainCanReceiveMail(emailDomain.toLowerCase());
+  if (!domainAcceptsMail) {
+    res.status(400);
+    throw new Error("We couldn't verify this email's domain. Please check for typos or use a different email address.");
+  }
+
   // 🚀 Let the User model pre-save hook handle hashing
   const user = await User.create({ name, email, password });
 
@@ -82,6 +90,20 @@ export async function registerUser(req, res) {
   await sendWelcomeEmail(user.email, user.name);
 
   res.status(201).json(buildAuthResponse(user));
+}
+
+// Lightweight, read-only check the register form calls (debounced) to warn
+// about a typo'd/made-up email domain before the user submits.
+export async function checkEmailDomain(req, res) {
+  const email = String(req.query.email || "").trim();
+  const domain = (email.split("@")[1] || "").toLowerCase();
+
+  if (!domain) {
+    return res.json({ ok: false });
+  }
+
+  const ok = await domainCanReceiveMail(domain);
+  res.json({ ok });
 }
 
 // LOGIN
