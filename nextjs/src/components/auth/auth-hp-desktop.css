@@ -207,10 +207,18 @@
   transform: translateY(0);
 }
 .auth-hp-btn:disabled {
-  opacity: 0.72;
-  cursor: wait;
+  cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+.auth-hp-btn--primary:disabled {
+  background: #d7dbe3;
+  border-color: #d7dbe3;
+  color: #8a90a0;
+}
+.auth-hp-btn--loading:disabled {
+  cursor: wait;
+  opacity: 0.85;
 }
 .auth-hp-link-row {
   justify-self: center;

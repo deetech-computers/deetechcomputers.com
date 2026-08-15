@@ -64,20 +64,41 @@ export default function RegisterPage() {
   const passwordHasMinLength = form.password.length >= 6;
   const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
 
-  const fieldErrors = {
-    firstName: form.firstName.trim().length === 0 ? "First name is required" : "",
-    lastName: form.lastName.trim().length === 0 ? "Last name is required" : "",
-    email:
-      form.email.trim().length === 0
-        ? "Email address is required"
-        : !emailValid
-        ? "Enter a valid email address"
-        : "",
-    password: !passwordHasMinLength ? "Password must be at least 6 characters" : "",
-    confirmPassword: !passwordsMatch ? "Passwords must match" : "",
+  const isEmpty = {
+    firstName: form.firstName.trim().length === 0,
+    lastName: form.lastName.trim().length === 0,
+    email: form.email.trim().length === 0,
+    password: form.password.length === 0,
+    confirmPassword: form.confirmPassword.length === 0,
   };
 
-  const isFormValid = Object.values(fieldErrors).every((message) => message === "");
+  // "Required" tags only appear once the user leaves a field blank - never on
+  // load, and never once a field has something in it (typed or prefilled).
+  const showRequired = {
+    firstName: touched.firstName && isEmpty.firstName,
+    lastName: touched.lastName && isEmpty.lastName,
+    email: touched.email && isEmpty.email,
+    password: touched.password && isEmpty.password,
+    confirmPassword: touched.confirmPassword && isEmpty.confirmPassword,
+  };
+
+  const emailFormatError = touched.email && !isEmpty.email && !emailValid ? "Enter a valid email address" : "";
+
+  const fieldHasError = {
+    firstName: showRequired.firstName,
+    lastName: showRequired.lastName,
+    email: showRequired.email || !!emailFormatError,
+    password: showRequired.password,
+    confirmPassword: showRequired.confirmPassword,
+  };
+
+  const isFormValid =
+    !isEmpty.firstName &&
+    !isEmpty.lastName &&
+    !isEmpty.email &&
+    emailValid === true &&
+    passwordHasMinLength &&
+    passwordsMatch;
 
   const markTouched = (field) => setTouched((current) => ({ ...current, [field]: true }));
 
@@ -227,10 +248,10 @@ export default function RegisterPage() {
           <h1>Create account</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
             <div className="auth-hp-grid-two">
-              <label className={`field-group${touched.firstName && fieldErrors.firstName ? " field-group--error" : ""}`}>
+              <label className={`field-group${fieldHasError.firstName ? " field-group--error" : ""}`}>
                 <span>
                   First name
-                  <em className="field-group__required">Required</em>
+                  {showRequired.firstName ? <em className="field-group__required">Required</em> : null}
                 </span>
                 <input
                   className="field"
@@ -239,15 +260,14 @@ export default function RegisterPage() {
                   value={form.firstName}
                   onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))}
                   onBlur={() => markTouched("firstName")}
-                  aria-invalid={touched.firstName && !!fieldErrors.firstName}
+                  aria-invalid={fieldHasError.firstName}
                   required
                 />
-                {touched.firstName && fieldErrors.firstName ? <p className="field-group__error">{fieldErrors.firstName}</p> : null}
               </label>
-              <label className={`field-group${touched.lastName && fieldErrors.lastName ? " field-group--error" : ""}`}>
+              <label className={`field-group${fieldHasError.lastName ? " field-group--error" : ""}`}>
                 <span>
                   Last name
-                  <em className="field-group__required">Required</em>
+                  {showRequired.lastName ? <em className="field-group__required">Required</em> : null}
                 </span>
                 <input
                   className="field"
@@ -256,16 +276,15 @@ export default function RegisterPage() {
                   value={form.lastName}
                   onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))}
                   onBlur={() => markTouched("lastName")}
-                  aria-invalid={touched.lastName && !!fieldErrors.lastName}
+                  aria-invalid={fieldHasError.lastName}
                   required
                 />
-                {touched.lastName && fieldErrors.lastName ? <p className="field-group__error">{fieldErrors.lastName}</p> : null}
               </label>
             </div>
-            <label className={`field-group${touched.email && fieldErrors.email ? " field-group--error" : ""}`}>
+            <label className={`field-group${fieldHasError.email ? " field-group--error" : ""}`}>
               <span>
                 Email address
-                <em className="field-group__required">Required</em>
+                {showRequired.email ? <em className="field-group__required">Required</em> : null}
               </span>
               <input
                 className="field"
@@ -275,15 +294,15 @@ export default function RegisterPage() {
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 onBlur={() => markTouched("email")}
                 autoComplete="email"
-                aria-invalid={touched.email && !!fieldErrors.email}
+                aria-invalid={fieldHasError.email}
                 required
               />
-              {touched.email && fieldErrors.email ? <p className="field-group__error">{fieldErrors.email}</p> : null}
+              {emailFormatError ? <p className="field-group__error">{emailFormatError}</p> : null}
             </label>
-            <label className={`field-group${touched.password && fieldErrors.password ? " field-group--error" : ""}`}>
+            <label className={`field-group${fieldHasError.password ? " field-group--error" : ""}`}>
               <span>
                 Password
-                <em className="field-group__required">Required</em>
+                {showRequired.password ? <em className="field-group__required">Required</em> : null}
               </span>
               <div className="password-field">
                 <input
@@ -294,7 +313,7 @@ export default function RegisterPage() {
                   onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
                   onBlur={() => markTouched("password")}
                   autoComplete="new-password"
-                  aria-invalid={touched.password && !!fieldErrors.password}
+                  aria-invalid={fieldHasError.password}
                   required
                 />
                 <button
@@ -314,10 +333,10 @@ export default function RegisterPage() {
                 </li>
               </ul>
             </label>
-            <label className={`field-group${touched.confirmPassword && fieldErrors.confirmPassword ? " field-group--error" : ""}`}>
+            <label className={`field-group${fieldHasError.confirmPassword ? " field-group--error" : ""}`}>
               <span>
                 Confirm password
-                <em className="field-group__required">Required</em>
+                {showRequired.confirmPassword ? <em className="field-group__required">Required</em> : null}
               </span>
               <div className="password-field">
                 <input
@@ -328,7 +347,7 @@ export default function RegisterPage() {
                   onChange={(event) => setForm((current) => ({ ...current, confirmPassword: event.target.value }))}
                   onBlur={() => markTouched("confirmPassword")}
                   autoComplete="new-password"
-                  aria-invalid={touched.confirmPassword && !!fieldErrors.confirmPassword}
+                  aria-invalid={fieldHasError.confirmPassword}
                   required
                 />
                 <button
@@ -349,7 +368,11 @@ export default function RegisterPage() {
               </ul>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
-            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting || !isFormValid}>
+            <button
+              type="submit"
+              className={`auth-hp-btn auth-hp-btn--primary${submitting ? " auth-hp-btn--loading" : ""}`}
+              disabled={submitting || !isFormValid}
+            >
               {submitting ? "Creating account..." : "Create"}
             </button>
             <GoogleAuthButton

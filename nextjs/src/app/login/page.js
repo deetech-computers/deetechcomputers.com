@@ -44,16 +44,26 @@ export default function LoginPage() {
   }, []);
 
   const emailValid = form.email.trim().length === 0 ? null : EMAIL_PATTERN.test(form.email.trim());
-  const fieldErrors = {
-    email:
-      form.email.trim().length === 0
-        ? "Email address is required"
-        : !emailValid
-        ? "Enter a valid email address"
-        : "",
-    password: form.password.length === 0 ? "Password is required" : "",
+  const isEmpty = {
+    email: form.email.trim().length === 0,
+    password: form.password.length === 0,
   };
-  const isFormValid = Object.values(fieldErrors).every((message) => message === "");
+
+  // "Required" tags only appear once the user leaves a field blank - never on
+  // load, and never once a field has something in it (typed or prefilled).
+  const showRequired = {
+    email: touched.email && isEmpty.email,
+    password: touched.password && isEmpty.password,
+  };
+
+  const emailFormatError = touched.email && !isEmpty.email && !emailValid ? "Enter a valid email address" : "";
+
+  const fieldHasError = {
+    email: showRequired.email || !!emailFormatError,
+    password: showRequired.password,
+  };
+
+  const isFormValid = !isEmpty.email && emailValid === true && !isEmpty.password;
   const markTouched = (field) => setTouched((current) => ({ ...current, [field]: true }));
 
   if (status === "loading" || isAuthenticated) {
@@ -200,10 +210,10 @@ export default function LoginPage() {
           </header>
           <h1>Sign in</h1>
           <form className="auth-hp-form" onSubmit={onSubmit}>
-            <label className={`field-group${touched.email && fieldErrors.email ? " field-group--error" : ""}`}>
+            <label className={`field-group${fieldHasError.email ? " field-group--error" : ""}`}>
               <span>
                 Email address
-                <em className="field-group__required">Required</em>
+                {showRequired.email ? <em className="field-group__required">Required</em> : null}
               </span>
               <input
                 className="field"
@@ -213,15 +223,15 @@ export default function LoginPage() {
                 onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
                 onBlur={() => markTouched("email")}
                 autoComplete="email"
-                aria-invalid={touched.email && !!fieldErrors.email}
+                aria-invalid={fieldHasError.email}
                 required
               />
-              {touched.email && fieldErrors.email ? <p className="field-group__error">{fieldErrors.email}</p> : null}
+              {emailFormatError ? <p className="field-group__error">{emailFormatError}</p> : null}
             </label>
-            <label className={`field-group${touched.password && fieldErrors.password ? " field-group--error" : ""}`}>
+            <label className={`field-group${fieldHasError.password ? " field-group--error" : ""}`}>
               <span>
                 Password
-                <em className="field-group__required">Required</em>
+                {showRequired.password ? <em className="field-group__required">Required</em> : null}
               </span>
               <div className="password-field">
                 <input
@@ -232,7 +242,7 @@ export default function LoginPage() {
                   onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
                   onBlur={() => markTouched("password")}
                   autoComplete="current-password"
-                  aria-invalid={touched.password && !!fieldErrors.password}
+                  aria-invalid={fieldHasError.password}
                   required
                 />
                 <button
@@ -247,7 +257,11 @@ export default function LoginPage() {
               </div>
             </label>
             {error ? <p className="form-error">{error}</p> : null}
-            <button type="submit" className="auth-hp-btn auth-hp-btn--primary" disabled={submitting || !isFormValid}>
+            <button
+              type="submit"
+              className={`auth-hp-btn auth-hp-btn--primary${submitting ? " auth-hp-btn--loading" : ""}`}
+              disabled={submitting || !isFormValid}
+            >
               {submitting ? "Logging in..." : "Login"}
             </button>
             <GoogleAuthButton
