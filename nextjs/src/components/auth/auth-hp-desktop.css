@@ -132,6 +132,14 @@
   border-color: #1a7f37;
   color: #fff;
 }
+.auth-hp-form .password-requirements__item.is-invalid {
+  color: #b3261e;
+}
+.auth-hp-form .password-requirements__item.is-invalid .password-requirements__item-icon {
+  background: #b3261e;
+  border-color: #b3261e;
+  color: #fff;
+}
 .auth-hp-form .password-field {
   position: relative;
 }

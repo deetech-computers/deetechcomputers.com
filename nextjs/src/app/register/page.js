@@ -6,17 +6,19 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
+import { getEmailFeedback } from "@/lib/validate-email";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
 
 const REGISTER_DRAFT_KEY = "deetech:register-draft";
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_CHECK_DELAY_MS = 2000;
 
 export default function RegisterPage() {
   const router = useRouter();
   const { isAuthenticated, loginWithGoogle, register, status } = useAuth();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [touched, setTouched] = useState({});
+  const [emailSettled, setEmailSettled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -60,14 +62,23 @@ export default function RegisterPage() {
     }
   }, [form.firstName, form.lastName, form.email]);
 
-  const emailValid = form.email.trim().length === 0 ? null : EMAIL_PATTERN.test(form.email.trim());
+  const emailFeedback = getEmailFeedback(form.email);
   const passwordHasMinLength = form.password.length >= 6;
   const passwordsMatch = form.confirmPassword.length > 0 && form.password === form.confirmPassword;
+
+  // Wait until the user pauses typing before judging the email format/junk
+  // check, so we're not flashing "invalid" on every half-typed keystroke.
+  useEffect(() => {
+    setEmailSettled(false);
+    if (emailFeedback.status === "empty") return undefined;
+    const timer = setTimeout(() => setEmailSettled(true), EMAIL_CHECK_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [form.email]);
 
   const isEmpty = {
     firstName: form.firstName.trim().length === 0,
     lastName: form.lastName.trim().length === 0,
-    email: form.email.trim().length === 0,
+    email: emailFeedback.status === "empty",
     password: form.password.length === 0,
     confirmPassword: form.confirmPassword.length === 0,
   };
@@ -82,12 +93,12 @@ export default function RegisterPage() {
     confirmPassword: touched.confirmPassword && isEmpty.confirmPassword,
   };
 
-  const emailFormatError = touched.email && !isEmpty.email && !emailValid ? "Enter a valid email address" : "";
+  const showEmailCheck = emailSettled && emailFeedback.status !== "empty";
 
   const fieldHasError = {
     firstName: showRequired.firstName,
     lastName: showRequired.lastName,
-    email: showRequired.email || !!emailFormatError,
+    email: showRequired.email || (showEmailCheck && emailFeedback.status === "invalid"),
     password: showRequired.password,
     confirmPassword: showRequired.confirmPassword,
   };
@@ -95,8 +106,7 @@ export default function RegisterPage() {
   const isFormValid =
     !isEmpty.firstName &&
     !isEmpty.lastName &&
-    !isEmpty.email &&
-    emailValid === true &&
+    emailFeedback.status === "valid" &&
     passwordHasMinLength &&
     passwordsMatch;
 
@@ -297,7 +307,16 @@ export default function RegisterPage() {
                 aria-invalid={fieldHasError.email}
                 required
               />
-              {emailFormatError ? <p className="field-group__error">{emailFormatError}</p> : null}
+              {showEmailCheck ? (
+                <ul className="password-requirements">
+                  <li className={`password-requirements__item${emailFeedback.status === "valid" ? " is-met" : " is-invalid"}`}>
+                    <span className="password-requirements__item-icon" aria-hidden="true">
+                      {emailFeedback.status === "valid" ? "✓" : "!"}
+                    </span>
+                    {emailFeedback.status === "valid" ? "Valid email address" : emailFeedback.message}
+                  </li>
+                </ul>
+              ) : null}
             </label>
             <label className={`field-group${fieldHasError.password ? " field-group--error" : ""}`}>
               <span>

@@ -6,17 +6,19 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
+import { getEmailFeedback } from "@/lib/validate-email";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
 
 const LAST_EMAIL_KEY = "deetech:last-login-email";
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_CHECK_DELAY_MS = 2000;
 
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, login, loginWithGoogle, status } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [touched, setTouched] = useState({});
+  const [emailSettled, setEmailSettled] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -43,9 +45,19 @@ export default function LoginPage() {
     }
   }, []);
 
-  const emailValid = form.email.trim().length === 0 ? null : EMAIL_PATTERN.test(form.email.trim());
+  const emailFeedback = getEmailFeedback(form.email);
+
+  // Wait until the user pauses typing before judging the email format/junk
+  // check, so we're not flashing "invalid" on every half-typed keystroke.
+  useEffect(() => {
+    setEmailSettled(false);
+    if (emailFeedback.status === "empty") return undefined;
+    const timer = setTimeout(() => setEmailSettled(true), EMAIL_CHECK_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [form.email]);
+
   const isEmpty = {
-    email: form.email.trim().length === 0,
+    email: emailFeedback.status === "empty",
     password: form.password.length === 0,
   };
 
@@ -56,14 +68,14 @@ export default function LoginPage() {
     password: touched.password && isEmpty.password,
   };
 
-  const emailFormatError = touched.email && !isEmpty.email && !emailValid ? "Enter a valid email address" : "";
+  const showEmailCheck = emailSettled && emailFeedback.status !== "empty";
 
   const fieldHasError = {
-    email: showRequired.email || !!emailFormatError,
+    email: showRequired.email || (showEmailCheck && emailFeedback.status === "invalid"),
     password: showRequired.password,
   };
 
-  const isFormValid = !isEmpty.email && emailValid === true && !isEmpty.password;
+  const isFormValid = emailFeedback.status === "valid" && !isEmpty.password;
   const markTouched = (field) => setTouched((current) => ({ ...current, [field]: true }));
 
   if (status === "loading" || isAuthenticated) {
@@ -226,7 +238,16 @@ export default function LoginPage() {
                 aria-invalid={fieldHasError.email}
                 required
               />
-              {emailFormatError ? <p className="field-group__error">{emailFormatError}</p> : null}
+              {showEmailCheck ? (
+                <ul className="password-requirements">
+                  <li className={`password-requirements__item${emailFeedback.status === "valid" ? " is-met" : " is-invalid"}`}>
+                    <span className="password-requirements__item-icon" aria-hidden="true">
+                      {emailFeedback.status === "valid" ? "✓" : "!"}
+                    </span>
+                    {emailFeedback.status === "valid" ? "Valid email address" : emailFeedback.message}
+                  </li>
+                </ul>
+              ) : null}
             </label>
             <label className={`field-group${fieldHasError.password ? " field-group--error" : ""}`}>
               <span>
