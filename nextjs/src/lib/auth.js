@@ -26,9 +26,11 @@ export async function fetchGoogleAuthConfig() {
   return requestJson(`${API_BASE_AUTH}/google/config`);
 }
 
-export async function checkEmailDomain(email) {
+export async function checkEmailDomain(email, signal) {
   return requestJson(`${API_BASE_AUTH}/check-email-domain?email=${encodeURIComponent(email)}`, {
-    timeoutMs: 4000,
+    timeoutMs: 2800,
+    retries: 0,
+    signal,
   });
 }
 

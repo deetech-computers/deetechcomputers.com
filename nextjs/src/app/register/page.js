@@ -7,12 +7,14 @@ import { useEffect, useRef, useState } from "react";
 import GoogleAuthButton from "@/components/auth/google-auth-button";
 import { useAuth } from "@/hooks/use-auth";
 import { checkEmailDomain } from "@/lib/auth";
+import { createEmailDomainChecker } from "@/lib/email-domain-checker";
 import { getEmailFeedback } from "@/lib/validate-email";
 import "@/components/auth/auth-hp-desktop.css";
 import "@/components/auth/auth-hp-mobile.css";
 
 const REGISTER_DRAFT_KEY = "deetech:register-draft";
 const EMAIL_CHECK_DELAY_MS = 2000;
+const EMAIL_CHECK_TIMEOUT_MS = 2800;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,7 +22,22 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [touched, setTouched] = useState({});
   const [emailSettled, setEmailSettled] = useState(false);
-  const [domainCheck, setDomainCheck] = useState({ status: "idle" });
+  const [domainCheck, setDomainCheck] = useState({ status: "idle", message: "" });
+  const [emailChecker] = useState(() =>
+    createEmailDomainChecker({
+      settleDelayMs: EMAIL_CHECK_DELAY_MS,
+      timeoutMs: EMAIL_CHECK_TIMEOUT_MS,
+      checkFn: async (email, signal) => {
+        const feedback = getEmailFeedback(email);
+        if (feedback.status !== "valid") {
+          // Bad format or a known disposable domain - no need to hit the
+          // network at all, we already know the answer.
+          return { ok: false, reason: feedback.message };
+        }
+        return checkEmailDomain(email, signal);
+      },
+    })
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -70,35 +87,36 @@ export default function RegisterPage() {
 
   // Wait until the user pauses typing before judging the email: first the
   // format/junk check, then (if that passes) ask the backend whether the
-  // domain can actually receive mail at all, so a typo'd/made-up domain
-  // like "gmial.com" gets caught before the account is even submitted.
+  // domain can actually receive mail at all, so a typo'd/made-up domain like
+  // "gmial.com" gets caught before the account is even submitted. The
+  // checker itself guarantees a result within EMAIL_CHECK_TIMEOUT_MS no
+  // matter what the network does, falling back to the local format/junk
+  // verdict if the domain check can't complete - never blocks on the network.
   useEffect(() => {
-    let cancelled = false;
     setEmailSettled(false);
-    setDomainCheck({ status: "idle" });
-    if (emailFeedback.status === "empty") return undefined;
+    setDomainCheck({ status: "idle", message: "" });
 
-    const timer = setTimeout(async () => {
-      if (cancelled) return;
-      setEmailSettled(true);
-      if (emailFeedback.status !== "valid") return;
+    if (getEmailFeedback(form.email).status === "empty") {
+      emailChecker.cancel();
+      return undefined;
+    }
 
-      setDomainCheck({ status: "checking" });
-      try {
-        const result = await checkEmailDomain(form.email.trim());
-        if (cancelled) return;
-        setDomainCheck(result?.ok ? { status: "ok" } : { status: "invalid" });
-      } catch {
-        // Our own check failing shouldn't block a real signup.
-        if (!cancelled) setDomainCheck({ status: "ok" });
-      }
-    }, EMAIL_CHECK_DELAY_MS);
+    emailChecker.submit(form.email.trim(), {
+      onSettled: () => {
+        setEmailSettled(true);
+        setDomainCheck({ status: "checking", message: "" });
+      },
+      onResult: (result) => {
+        setDomainCheck(
+          result.ok
+            ? { status: "ok", message: "" }
+            : { status: "invalid", message: result.reason || "We couldn't verify this email's domain" }
+        );
+      },
+    });
 
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [form.email]);
+    return () => emailChecker.cancel();
+  }, [form.email, emailChecker]);
 
   const isEmpty = {
     firstName: form.firstName.trim().length === 0,
@@ -118,23 +136,15 @@ export default function RegisterPage() {
     confirmPassword: touched.confirmPassword && isEmpty.confirmPassword,
   };
 
-  const showEmailCheck = emailSettled && emailFeedback.status !== "empty";
-
-  // What the email checklist tag actually shows: local format/junk problems
-  // take priority, then the async domain-can-receive-mail result.
-  let emailCheckState = "invalid";
-  let emailCheckMessage = "";
-  if (emailFeedback.status === "invalid") {
-    emailCheckMessage = emailFeedback.message;
-  } else if (domainCheck.status === "checking") {
-    emailCheckState = "checking";
-    emailCheckMessage = "Checking email address…";
-  } else if (domainCheck.status === "invalid") {
-    emailCheckMessage = "We couldn't verify this email's domain";
-  } else if (domainCheck.status === "ok") {
-    emailCheckState = "valid";
-    emailCheckMessage = "Valid email address";
-  }
+  const showEmailCheck = emailSettled;
+  const emailCheckState =
+    domainCheck.status === "ok" ? "valid" : domainCheck.status === "checking" ? "checking" : "invalid";
+  const emailCheckMessage =
+    domainCheck.status === "ok"
+      ? "Valid email address"
+      : domainCheck.status === "checking"
+      ? "Checking email address…"
+      : domainCheck.message;
 
   const fieldHasError = {
     firstName: showRequired.firstName,
@@ -147,7 +157,6 @@ export default function RegisterPage() {
   const isFormValid =
     !isEmpty.firstName &&
     !isEmpty.lastName &&
-    emailFeedback.status === "valid" &&
     domainCheck.status === "ok" &&
     passwordHasMinLength &&
     passwordsMatch;

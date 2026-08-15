@@ -60,6 +60,10 @@ export async function requestJson(url, options = {}) {
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    if (options.signal) {
+      if (options.signal.aborted) controller.abort();
+      else options.signal.addEventListener("abort", () => controller.abort(), { once: true });
+    }
 
     try {
       const response = await fetch(requestUrl, {
