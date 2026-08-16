@@ -78,7 +78,10 @@ export function MobileNavDrawer({ open, onClose }) {
       <nav className="admin-mobile-menu__panel" aria-label="Admin sections">
         <div className="admin-mobile-menu__head">
           <strong>DEETECH Admin</strong>
-          <button type="button" onClick={onClose}>Close</button>
+          <button type="button" className="admin-mobile-menu__close" onClick={onClose} aria-label="Close admin menu">
+            <span />
+            <span />
+          </button>
         </div>
         {items.map(([href, label, icon]) => (
           <Link key={href} href={href} className={isActive(href) ? "active" : ""} onClick={onClose}>

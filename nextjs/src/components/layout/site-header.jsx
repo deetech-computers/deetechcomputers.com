@@ -819,6 +819,12 @@ export default function SiteHeader() {
     setNotificationMenuOpen(false);
   }
 
+  function handleMarkAllNotificationsRead() {
+    if (isAuthenticated && quickNotificationItems.length) {
+      markAndSyncNotificationsAsRead(quickNotificationItems.map((item) => item?.id));
+    }
+  }
+
   function removeFromCartPreview(event, lineKey) {
     event.preventDefault();
     event.stopPropagation();
@@ -873,7 +879,13 @@ export default function SiteHeader() {
           </button>
         </div>
         <div className="notification-dropdown__status">
-          <span className={unreadCount > 0 ? "notification-dropdown__check is-unread" : "notification-dropdown__check is-read"} aria-hidden="true" />
+          <button
+            type="button"
+            className={unreadCount > 0 ? "notification-dropdown__check is-unread" : "notification-dropdown__check is-read"}
+            onClick={handleMarkAllNotificationsRead}
+            disabled={unreadCount === 0}
+            aria-label="Mark all notifications as read"
+          />
           <span>{unreadCount} unread out of {totalCount}</span>
         </div>
         <div className="notification-dropdown__items">

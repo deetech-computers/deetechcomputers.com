@@ -1173,6 +1173,18 @@ button, input, select, textarea { font: inherit; }
   border-bottom: 2px solid #fff;
   transform: rotate(-45deg) translateY(-1px);
 }
+button.notification-dropdown__check {
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+button.notification-dropdown__check:hover:not(:disabled) {
+  border-color: #4f5359;
+}
+button.notification-dropdown__check:disabled {
+  cursor: default;
+}
 .notification-dropdown__cta {
   margin: 0;
   min-height: 48px;

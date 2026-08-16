@@ -301,14 +301,35 @@ body:has(.admin-route) .app-content,
     font-weight: 800;
   }
 
-  .admin-mobile-menu__head button {
-    min-height: 36px;
-    padding: 0 12px;
+  .admin-mobile-menu__close {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
     border: 1px solid #c1c9bd;
     border-radius: 4px;
     background: #fff;
-    color: #003714;
-    font-weight: 700;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  .admin-mobile-menu__close span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    background: #003714;
+    border-radius: 999px;
+  }
+
+  .admin-mobile-menu__close span:first-child {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .admin-mobile-menu__close span:last-child {
+    transform: translate(-50%, -50%) rotate(-45deg);
   }
 
   .admin-mobile-menu__panel a,
