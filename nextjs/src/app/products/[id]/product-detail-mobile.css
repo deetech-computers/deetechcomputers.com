@@ -215,10 +215,10 @@
     font-size: 1.6rem;
   }
   .product-gallery__nav--left {
-    left: 8px;
+    left: 16px;
   }
   .product-gallery__nav--right {
-    right: 8px;
+    right: 16px;
   }
   .product-tabs__nav {
     justify-content: flex-start;
