@@ -196,11 +196,20 @@ export function mergeCartItems(serverItems = [], localItems = []) {
   return Array.from(map.values());
 }
 
-// Cart writes get a couple of quick retries (http.js only retries on
-// network-level failures or 429/5xx - never on a genuine 4xx like stock
-// exceeded) so a single dropped packet on a flaky mobile connection doesn't
-// immediately look like a "sync issue" to the user.
-const CART_RETRIES = 2;
+// Cart writes get a few quick retries (http.js only retries on network-level
+// failures or 429/5xx - never on a genuine 4xx like stock exceeded) so a
+// dropped packet or two on a flaky mobile connection doesn't immediately
+// look like a "sync issue" to the user. Mobile data connections drop
+// packets far more often than desktop wifi/ethernet, so this is tuned
+// generously - each retry only costs the background sync a few hundred ms,
+// never the visible optimistic UI update.
+const CART_RETRIES = 3;
+// Shorter than http.js's 20s default - this is a background sync behind an
+// already-applied optimistic UI update, so it's better to give up and
+// reconcile sooner than to let a single attempt hang for 20s each, which
+// with 3 retries could otherwise stack up to 80s before the user hears
+// anything back.
+const CART_TIMEOUT_MS = 8000;
 
 export async function fetchServerCart(token) {
   const payload = await requestJson(API_BASE_CART, {
@@ -208,6 +217,7 @@ export async function fetchServerCart(token) {
       Authorization: `Bearer ${token}`,
     },
     retries: CART_RETRIES,
+    timeoutMs: CART_TIMEOUT_MS,
   });
 
   return normalizeServerCart(payload);
@@ -225,6 +235,7 @@ export async function upsertServerCartItem(token, productId, payload) {
       selectedUpgrades: normalizeUpgradeSelection(payload?.selectedUpgrades),
     }),
     retries: CART_RETRIES,
+    timeoutMs: CART_TIMEOUT_MS,
   });
   unmarkRemovedCartItem(String(payload?.lineKey || productId));
 }
@@ -237,6 +248,7 @@ export async function removeServerCartItem(token, productId, lineKey = "") {
       Authorization: `Bearer ${token}`,
     },
     retries: CART_RETRIES,
+    timeoutMs: CART_TIMEOUT_MS,
   });
 }
 
@@ -247,5 +259,6 @@ export async function clearServerCart(token) {
       Authorization: `Bearer ${token}`,
     },
     retries: CART_RETRIES,
+    timeoutMs: CART_TIMEOUT_MS,
   });
 }
