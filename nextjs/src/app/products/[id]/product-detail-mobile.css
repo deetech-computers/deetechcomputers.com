@@ -209,6 +209,17 @@
   .product-gallery__preview-badge-text--mobile {
     display: inline;
   }
+  .product-gallery__nav {
+    width: 42px;
+    height: 42px;
+    font-size: 1.6rem;
+  }
+  .product-gallery__nav--left {
+    left: 10px;
+  }
+  .product-gallery__nav--right {
+    right: 10px;
+  }
   .product-tabs__nav {
     justify-content: flex-start;
     gap: 16px;
