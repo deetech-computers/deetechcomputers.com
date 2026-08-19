@@ -71,6 +71,49 @@ export const getCart = async (req, res) => {
   }
 };
 
+// Atomically set the qty on an existing line, or push a new line - never
+// reads a document into memory and writes it back, so two concurrent
+// requests for the same cart (e.g. rapid +/- clicks) can't silently clobber
+// each other. Each step is a single indivisible Mongo operation instead of
+// the old find -> mutate in JS -> save() pattern, which raced under load:
+// a document.save() with no matching array-element update doesn't trip
+// Mongoose's version check, so concurrent saves could silently overwrite
+// one another with stale in-memory state and no error at all.
+export async function upsertCartLine(userId, lineKey, productId, qty, selectedUpgrades) {
+  const existingLineUpdate = await Cart.findOneAndUpdate(
+    { user: userId, "items.lineKey": lineKey },
+    { $set: { "items.$.qty": qty, "items.$.selectedUpgrades": selectedUpgrades } },
+    { new: true }
+  );
+  if (existingLineUpdate) return existingLineUpdate;
+
+  try {
+    return await Cart.findOneAndUpdate(
+      { user: userId },
+      {
+        $push: { items: { product: productId, qty, lineKey, selectedUpgrades } },
+        $setOnInsert: { user: userId },
+      },
+      { new: true, upsert: true }
+    );
+  } catch (error) {
+    // Two concurrent "first add of this line" requests both missed the
+    // $set above and raced to create/push here - exactly one wins the
+    // insert, the other gets a duplicate-key error on the cart's unique
+    // `user` index. Retry the $set: the winner's push means the line now
+    // exists, so this always succeeds on retry.
+    if (error?.code === 11000) {
+      const retried = await Cart.findOneAndUpdate(
+        { user: userId, "items.lineKey": lineKey },
+        { $set: { "items.$.qty": qty, "items.$.selectedUpgrades": selectedUpgrades } },
+        { new: true }
+      );
+      if (retried) return retried;
+    }
+    throw error;
+  }
+}
+
 // @desc    Add or update product in cart
 // @route   POST /api/cart/:productId
 // @access  Private
@@ -91,33 +134,13 @@ export const addToCart = async (req, res) => {
       return res.status(400).json({ message: "Requested quantity exceeds available stock" });
     }
 
-    let cart = await Cart.findOne({ user: req.user._id });
+    const upgradesToStore = {
+      ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
+      storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
+    };
 
-    if (!cart) {
-      cart = new Cart({ user: req.user._id, items: [] });
-    } else if (ensureCartLineKeys(cart)) {
-      await cart.save();
-    }
+    const cart = await upsertCartLine(req.user._id, lineKey, productId, qty, upgradesToStore);
 
-    const existingItem = cart.items.find(
-      (item) => String(item.lineKey || "") === lineKey
-    );
-
-    if (existingItem) {
-      existingItem.qty = qty; // Always overwrite with provided qty
-    } else {
-      cart.items.push({
-        product: productId,
-        qty,
-        lineKey,
-        selectedUpgrades: {
-          ram: resolvedUpgrades.selectedUpgrades?.ram?.label || "",
-          storage: resolvedUpgrades.selectedUpgrades?.storage?.label || "",
-        },
-      });
-    }
-
-    await cart.save();
     const updatedCart = await Cart.findById(cart._id)
       .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images upgradeSpecs")
       .lean();
@@ -137,21 +160,16 @@ export const removeFromCart = async (req, res) => {
     const { productId } = req.params;
     const lineKey = String(req.query?.lineKey || "").trim();
 
-    const cart = await Cart.findOne({ user: req.user._id });
-    if (!cart) return res.json({ message: "Item removed from cart", items: [] });
-
-    if (ensureCartLineKeys(cart)) {
-      await cart.save();
-    }
-
-    cart.items = cart.items.filter(
-      (item) =>
-        lineKey
-          ? String(item.lineKey || "") !== lineKey
-          : item.product.toString() !== productId
+    // $pull is a single atomic op - safe to run concurrently with another
+    // request adding/updating a different line on the same cart document.
+    const cart = await Cart.findOneAndUpdate(
+      { user: req.user._id },
+      { $pull: { items: lineKey ? { lineKey } : { product: productId } } },
+      { new: true }
     );
 
-    await cart.save();
+    if (!cart) return res.json({ message: "Item removed from cart", items: [] });
+
     const updatedCart = await Cart.findById(cart._id)
       .populate("items.product", "name price discountPrice discountMode discountStartsAt discountEndsAt images upgradeSpecs")
       .lean();
@@ -168,15 +186,10 @@ export const removeFromCart = async (req, res) => {
 // @access  Private
 export const clearCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user._id });
-    if (!cart) return res.json({ message: "Cart cleared", items: [] });
-
-    if (ensureCartLineKeys(cart)) {
-      await cart.save();
-    }
-
-    cart.items = [];
-    await cart.save();
+    await Cart.findOneAndUpdate(
+      { user: req.user._id },
+      { $set: { items: [] } }
+    );
 
     res.json({ message: "Cart cleared", items: [] });
   } catch (error) {

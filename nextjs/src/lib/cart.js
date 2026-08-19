@@ -196,11 +196,18 @@ export function mergeCartItems(serverItems = [], localItems = []) {
   return Array.from(map.values());
 }
 
+// Cart writes get a couple of quick retries (http.js only retries on
+// network-level failures or 429/5xx - never on a genuine 4xx like stock
+// exceeded) so a single dropped packet on a flaky mobile connection doesn't
+// immediately look like a "sync issue" to the user.
+const CART_RETRIES = 2;
+
 export async function fetchServerCart(token) {
   const payload = await requestJson(API_BASE_CART, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    retries: CART_RETRIES,
   });
 
   return normalizeServerCart(payload);
@@ -217,6 +224,7 @@ export async function upsertServerCartItem(token, productId, payload) {
       lineKey: String(payload?.lineKey || "").trim(),
       selectedUpgrades: normalizeUpgradeSelection(payload?.selectedUpgrades),
     }),
+    retries: CART_RETRIES,
   });
   unmarkRemovedCartItem(String(payload?.lineKey || productId));
 }
@@ -228,6 +236,7 @@ export async function removeServerCartItem(token, productId, lineKey = "") {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    retries: CART_RETRIES,
   });
 }
 
@@ -237,5 +246,6 @@ export async function clearServerCart(token) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    retries: CART_RETRIES,
   });
 }

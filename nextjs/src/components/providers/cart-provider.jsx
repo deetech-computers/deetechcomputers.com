@@ -82,6 +82,26 @@ function getStockLimitMessage(stock) {
   return `Only ${available} items are available for this product.`;
 }
 
+// Guards against a slow/failed request for a cart line being reconciled
+// AFTER a newer request for the SAME line has already been issued (e.g.
+// rapid +/- clicks firing several overlapping requests). Without this, a
+// stale request's failure could trigger a "Cart sync issue" warning even
+// though a newer, successful write already superseded it and the cart is
+// actually fine - the server-side fix (atomic per-line updates) prevents
+// data loss, but the client still needs to know which in-flight request's
+// outcome is the one worth acting on.
+const cartLineWriteSeq = new Map();
+
+function nextCartLineSeq(lineKey) {
+  const seq = (cartLineWriteSeq.get(lineKey) || 0) + 1;
+  cartLineWriteSeq.set(lineKey, seq);
+  return seq;
+}
+
+function isLatestCartLineSeq(lineKey, seq) {
+  return cartLineWriteSeq.get(lineKey) === seq;
+}
+
 export function CartProvider({ children }) {
   const { token, status: authStatus } = useAuth();
   const { pushToast } = useToast();
@@ -290,11 +310,13 @@ export function CartProvider({ children }) {
       );
     }
     if (token && serverQty) {
+      const seq = nextCartLineSeq(lineKey);
       upsertServerCartItem(token, id, {
         qty: serverQty,
         lineKey,
         selectedUpgrades,
       }).catch(() => {
+        if (!isLatestCartLineSeq(lineKey, seq)) return;
         reconcileServerCartAfterFailure(
           token,
           (serverItems) =>
@@ -341,11 +363,13 @@ export function CartProvider({ children }) {
     }
 
     if (token && serverQty) {
+      const seq = nextCartLineSeq(lineKey);
       upsertServerCartItem(token, id, {
         qty: serverQty,
         lineKey,
         selectedUpgrades,
       }).catch(() => {
+        if (!isLatestCartLineSeq(lineKey, seq)) return;
         reconcileServerCartAfterFailure(
           token,
           (serverItems) =>
@@ -379,8 +403,10 @@ export function CartProvider({ children }) {
     });
     writeStoredCart(nextItems);
     if (token) {
+      const seq = nextCartLineSeq(lineKey);
       if (isLastVisibleItem) {
         clearServerCart(token).catch(() => {
+          if (!isLatestCartLineSeq(lineKey, seq)) return;
           reconcileServerCartAfterFailure(
             token,
             (serverItems) => serverItems.length === 0
@@ -388,6 +414,7 @@ export function CartProvider({ children }) {
         });
       } else {
         removeServerCartItem(token, id, lineKey).catch(() => {
+          if (!isLatestCartLineSeq(lineKey, seq)) return;
           reconcileServerCartAfterFailure(
             token,
             (serverItems) => !hasCartLine(serverItems, lineKey)
