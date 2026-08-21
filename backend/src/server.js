@@ -1,7 +1,7 @@
 // backend/src/server.js
 import { createServer } from "http";
 import mongoose from "mongoose";
-import { PORT, NODE_ENV, BACKEND_PUBLIC_URL } from "./config/env.js";
+import { PORT, NODE_ENV, ROBOT_LIVE_URL } from "./config/env.js";
 import connectDB from "./config/db.js";
 import createApp from "./app.js";
 import logger from "./utils/logger.js";
@@ -21,9 +21,9 @@ const SELF_PING_INTERVAL_MS = 10 * 60 * 1000;
 
 function startSelfPing() {
   if (NODE_ENV !== "production") return;
-  const publicUrl = String(BACKEND_PUBLIC_URL || "").replace(/\/+$/, "");
+  const publicUrl = String(ROBOT_LIVE_URL || "").replace(/\/+$/, "");
   if (!publicUrl) {
-    logger.warn("BACKEND_PUBLIC_URL is not set - self-ping keep-alive is disabled.");
+    logger.warn("ROBOT_LIVE_URL is not set - self-ping keep-alive is disabled.");
     return;
   }
 

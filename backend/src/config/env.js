@@ -29,6 +29,10 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 export const FRONTEND_URL = process.env.FRONTEND_URL;
 export const BACKEND_PUBLIC_URL = process.env.BACKEND_PUBLIC_URL || "";
+// Dedicated to the self-ping keep-alive in server.js only - kept separate
+// from BACKEND_PUBLIC_URL (used elsewhere for email/payment URLs) so
+// setting one can never affect the other.
+export const ROBOT_LIVE_URL = process.env.ROBOT_LIVE_URL || "";
 export const REDIS_URL = process.env.REDIS_URL || "";
 export const RATE_LIMIT_PREFIX = process.env.RATE_LIMIT_PREFIX || "deetech:rl";
 
