@@ -21,14 +21,7 @@ const coreSkills = [
   "Commerce flows including product pages, cart, account areas, and checkout systems",
 ];
 
-const paymentCapabilities = [
-  "Multi-method payment setup covering MTN Mobile Money, Telecel Cash, Hubtel, and direct CalBank transfer",
-  "Dual Hubtel implementation with both manual shortcode payment and automatic secure checkout flow",
-  "Payment-proof upload handling for manual transactions with image validation and order attachment",
-  "Automatic payment-status confirmation flow with success, cancellation, and retry handling",
-  "Order-state updates connected to checkout, account history, invoices, thank-you flow, and admin management",
-  "Ability to adapt and connect similar manual or gateway-based payment systems for other businesses and use cases",
-];
+const PORTFOLIO_URL = "https://iamdanieladjeimensah.vercel.app";
 
 export default function DeveloperPage() {
   return (
@@ -47,8 +40,18 @@ export default function DeveloperPage() {
       <article className="shell page-section policy-content policy-content--standalone developer-profile">
         <p className="policy-kicker">Developer profile</p>
         <p className="policy-intro">
-          I wanted this page to be simple and honest. It is a short introduction to who I am, what I have learned, and the kind of work I can do for people and businesses that need a solid web presence.
+          A short introduction to who I am and the kind of work I do. For the full picture of my projects and experience, my portfolio is the best place to look.
         </p>
+
+        <section className="policy-content-section policy-content-section--cta developer-portfolio-cta">
+          <h2>See My Full Portfolio</h2>
+          <p>Projects, experience, and more of my work are all there.</p>
+          <div className="policy-cta-actions">
+            <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer">
+              iamdanieladjeimensah.vercel.app
+            </a>
+          </div>
+        </section>
 
         <section className="developer-profile-intro">
           <div className="developer-profile-intro__photo">
@@ -141,36 +144,9 @@ export default function DeveloperPage() {
         </section>
 
         <section className="policy-content-section developer-capability-section">
-          <h2>Payment Integration and Commerce Workflow Experience</h2>
+          <h2>Payment Integration Experience</h2>
           <p>
-            One part of this project that I am especially proud of is the payment and checkout workflow. I did not want it to feel like a basic page with payment details dropped on it. I wanted it to work like a proper system.
-          </p>
-          <p>
-            The setup supports multiple payment channels including MTN Mobile Money, Telecel Cash, Hubtel, and direct bank transfer through CalBank. For manual payments, I built a flow that gives the user the right instructions, accepts proof of payment, checks that the required steps are completed, and ties that proof back to the order itself.
-          </p>
-          <p>
-            I also implemented a more advanced Hubtel automatic checkout flow. That part prepares the checkout session, sends the customer into a secure Hubtel payment process, keeps track of the payment state, handles return cases, checks status, and completes the order only after confirmation comes back. So it is more than just linking to a payment option. It is properly connected to the application.
-          </p>
-          <p>
-            Beyond the customer side, I connected the payment workflow to order summaries, completion pages, invoices, account order history, and the admin side of the system. That was important to me because a real business workflow should stay organized from payment to tracking and support.
-          </p>
-          <p>
-            I think this shows an important side of my work. I can handle both manual and gateway-based payment systems, and I can adapt them based on what a business actually needs. Whether the goal is secure hosted checkout, Mobile Money instructions, manual proof confirmation, or a hybrid payment setup, I can work through the structure and build it in a practical way.
-          </p>
-          <ul className="policy-point-list">
-            {paymentCapabilities.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="policy-content-section">
-          <h2>What This Page Represents</h2>
-          <p>
-            This site is more than a store to me. It is also a live example of how I think, build, test, and improve digital products over time.
-          </p>
-          <p>
-            For anyone visiting this page, I want it to show that I am not only studying software development academically. I am also putting in the work to build complete and useful systems that people can interact with in real life.
+            This site&apos;s checkout supports multiple payment methods, including Mobile Money, Hubtel, and bank transfer. Building it gave me hands-on experience with both manual and gateway-based payment systems. Happy to talk through specifics if you&apos;re looking for someone who can build this kind of system for you.
           </p>
         </section>
 
@@ -191,9 +167,12 @@ export default function DeveloperPage() {
         <section className="policy-content-section policy-content-section--cta developer-cta">
           <h2>Let&apos;s Talk</h2>
           <p>
-            If you feel I would be a good fit for your project or team, feel free to reach out.
+            If you feel I would be a good fit for your project or team, feel free to reach out, or see more of my work on my portfolio.
           </p>
           <div className="policy-cta-actions">
+            <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer">
+              View Portfolio
+            </a>
             <a href="mailto:cartadaniel01@gmail.com">Send Email</a>
             <a href="tel:+2330509673406">Call Phone</a>
           </div>
