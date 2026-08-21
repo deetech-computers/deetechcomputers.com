@@ -1,5 +1,8 @@
 
 @media (max-width: 640px) {
+  .developer-profile-intro__photo {
+    width: min(190px, 60vw);
+  }
   .developer-contact-actions {
     flex-direction: column;
   }

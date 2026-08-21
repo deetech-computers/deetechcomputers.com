@@ -3,7 +3,7 @@ import { createStaticRouteMetadata } from "@/lib/route-metadata";
 export const metadata = createStaticRouteMetadata({
   title: "Developer",
   path: "/developer",
-  description: "About the DEETECH COMPUTERS platform and a link to the developer's portfolio.",
+  description: "Meet the developer behind DEETECH COMPUTERS and see what the platform does.",
 });
 
 export default function DeveloperLayout({ children }) {
