@@ -38,11 +38,15 @@ const shopLocations = [
     id: "bantama-shop-nhis",
     label: "Bantama Shop (NHIS)",
     mapQuery: "Kumasi Bantama NHIS, Ghana",
+    directionsUrl: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Kumasi Bantama NHIS, Ghana"),
   },
   {
     id: "adum-shop",
     label: "Adum Shop",
-    mapQuery: "Kumasi Adum Asempa Building, Ghana",
+    // Exact pin (Asempa Building, Adum) rather than a text search, so the
+    // embed always lands on the right building instead of a nearby match.
+    mapQuery: "6.6864184,-1.6205497",
+    directionsUrl: "https://maps.app.goo.gl/Cgx8pJ33qkUD9euf9",
   },
 ];
 
@@ -195,11 +199,19 @@ export default function ContactPage() {
           <section className="contact-map contact-map--simple">
             <iframe
               title="DEETECH location map"
-              src={`https://www.google.com/maps?q=${encodeURIComponent(activeLocation.mapQuery)}&z=14&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(activeLocation.mapQuery)}&z=17&output=embed`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
           </section>
+          <a
+            className="contact-map-directions"
+            href={activeLocation.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get Directions to {activeLocation.label}
+          </a>
         </section>
 
         <section className="contact-page-simple__layout">

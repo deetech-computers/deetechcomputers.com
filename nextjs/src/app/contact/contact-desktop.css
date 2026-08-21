@@ -160,6 +160,19 @@
 .contact-map--simple iframe {
   min-height: 380px;
 }
+.contact-map-directions {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0088cc;
+  font-weight: 700;
+  text-decoration: none;
+}
+.contact-map-directions:hover,
+.contact-map-directions:focus-visible {
+  text-decoration: underline;
+}
 .contact-page-simple__layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
