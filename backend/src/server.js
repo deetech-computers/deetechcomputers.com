@@ -1,11 +1,40 @@
 // backend/src/server.js
 import { createServer } from "http";
 import mongoose from "mongoose";
-import { PORT, NODE_ENV } from "./config/env.js";
+import { PORT, NODE_ENV, BACKEND_PUBLIC_URL } from "./config/env.js";
 import connectDB from "./config/db.js";
 import createApp from "./app.js";
 import logger from "./utils/logger.js";
 import { migrateLegacyReviewStatus } from "./utils/reviewStatusMigration.js";
+
+// Render's free tier spins a web service down after 15 minutes with no
+// inbound HTTP traffic, then pays a slow cold-start on the next real
+// request. Pinging our own public health endpoint well inside that window
+// counts as normal inbound traffic and keeps the instance warm. This only
+// works while the process is already running - it can't wake up an
+// instance that's already asleep, and won't help if Render restarts the
+// service for its own reasons (a deploy, a crash, host maintenance). It's
+// one layer, not a substitute for an external uptime monitor (e.g.
+// UptimeRobot, cron-job.org) hitting the same endpoint from outside, which
+// also gets you downtime alerts this can't provide.
+const SELF_PING_INTERVAL_MS = 10 * 60 * 1000;
+
+function startSelfPing() {
+  if (NODE_ENV !== "production") return;
+  const publicUrl = String(BACKEND_PUBLIC_URL || "").replace(/\/+$/, "");
+  if (!publicUrl) {
+    logger.warn("BACKEND_PUBLIC_URL is not set - self-ping keep-alive is disabled.");
+    return;
+  }
+
+  const pingUrl = `${publicUrl}/api/health`;
+  setInterval(() => {
+    fetch(pingUrl).catch((err) => {
+      logger.warn("Self-ping keep-alive request failed", { error: err?.message || err });
+    });
+  }, SELF_PING_INTERVAL_MS);
+  logger.info(`Self-ping keep-alive enabled -> ${pingUrl} every ${SELF_PING_INTERVAL_MS / 60000} minutes`);
+}
 
 let server;
 let shutdownStarted = false;
@@ -64,6 +93,7 @@ async function start() {
 
     server.listen(PORT, () => {
       logger.info(`🚀 Deetech backend running in ${NODE_ENV} mode on port ${PORT}`);
+      startSelfPing();
     });
 
     mongoose.connection.on("disconnected", () => {
