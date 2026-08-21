@@ -59,14 +59,6 @@ export default function DeveloperPage() {
             </a>
           </div>
         </section>
-
-        <section className="policy-content-section developer-contact-section">
-          <h2>Contact</h2>
-          <div className="policy-cta-actions developer-contact-actions">
-            <a href="mailto:cartadaniel01@gmail.com">cartadaniel01@gmail.com</a>
-            <a href="tel:+2330509673406">+233 050 967 3406</a>
-          </div>
-        </section>
       </article>
     </main>
   );
