@@ -1,10 +1,6 @@
 
 @media (max-width: 700px) {
   .has-affiliate-mobile-dashboard {
-    width: 100%;
-    max-width: none;
-    margin-inline: 0;
-    padding-inline: 0;
     overflow-x: clip;
   }
   .has-affiliate-mobile-dashboard .affiliate-hero,
@@ -46,6 +42,8 @@
     min-height: 100dvh;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
     margin-inline: auto;
     background: #f4f5f8;
     color: #0f172a;
@@ -107,6 +105,7 @@
     gap: 24px;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     margin-inline: auto;
     padding: 18px 18px 24px;
@@ -495,7 +494,7 @@
   }
   .affiliate-mobile-dashboard__bars > div {
     display: grid;
-    grid-template-columns: minmax(74px, 0.42fr) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr) minmax(0, auto);
     gap: 10px;
     align-items: center;
     padding: 6px 0;
@@ -523,9 +522,11 @@
     background: #a62c22;
   }
   .affiliate-mobile-dashboard__bars strong {
+    min-width: 0;
     color: #1b1916;
     font-weight: 900;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    text-align: right;
   }
   .affiliate-mobile-dashboard__muted {
     margin: 0;
