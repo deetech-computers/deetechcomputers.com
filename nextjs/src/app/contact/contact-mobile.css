@@ -1,5 +1,8 @@
 
 @media (max-width: 640px) {
+  .contact-page-simple__whatsapp {
+    width: 100%;
+  }
   .contact-page-simple__layout {
     grid-template-columns: 1fr;
   }

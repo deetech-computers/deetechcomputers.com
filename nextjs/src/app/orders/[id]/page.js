@@ -251,11 +251,7 @@ export default function TrackOrderPage() {
               <Link href="/" className="ghost-button track-order-hero__back">
                 Back to Home
               </Link>
-            ) : (
-              <Link href="/account?tab=orders" className="ghost-button track-order-hero__back">
-                Back to My Orders
-              </Link>
-            )}
+            ) : null}
           </div>
           <p>Follow payment review, processing, dispatch, and delivery progress from one clean view.</p>
         </section>
@@ -287,9 +283,11 @@ export default function TrackOrderPage() {
           </div>
           <h2>Order not available</h2>
           <p>{error || "We could not load this order right now."}</p>
-          <button type="button" className="ghost-button" onClick={() => router.push(backHref)}>
-            {guestToken ? "Back to Home" : "Back to My Orders"}
-          </button>
+          {guestToken ? (
+            <button type="button" className="ghost-button" onClick={() => router.push(backHref)}>
+              Back to Home
+            </button>
+          ) : null}
         </section>
       ) : (
         <section className="track-order-shell">

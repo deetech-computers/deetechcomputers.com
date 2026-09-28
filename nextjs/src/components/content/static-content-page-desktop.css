@@ -322,7 +322,7 @@
   font-weight: 700;
   color: #1a2230;
 }
-.policy-faq-item summary::-webkit-details-marker {
+.policy-faq-item summary::marker {
   display: none;
 }
 .policy-faq-item summary::after {

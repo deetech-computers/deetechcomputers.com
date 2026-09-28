@@ -214,6 +214,17 @@
   grid-template-columns: 40px minmax(0, 1fr);
   align-items: center;
   gap: 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 6px;
+  margin: -6px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.contact-info-simple__item:hover,
+.contact-info-simple__item:focus-visible {
+  background: rgba(0, 136, 204, 0.08);
+  color: #006e9e;
 }
 .contact-info-simple__icon {
   width: 40px;
@@ -321,5 +332,22 @@
   letter-spacing: 0.04em;
 }
 .contact-page-simple .contact-support-preview__cta:hover {
+  background: #006e9e;
+}
+.contact-page-simple__whatsapp {
+  justify-self: start;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: #0088cc;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  text-decoration: none;
+}
+.contact-page-simple__whatsapp:hover,
+.contact-page-simple__whatsapp:focus-visible {
   background: #006e9e;
 }

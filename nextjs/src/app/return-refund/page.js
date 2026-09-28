@@ -54,7 +54,7 @@ const page = {
     {
       title: "Return Process",
       blocks: [
-        { title: "1. Contact Support", paragraphs: ["Reach out via WhatsApp or call (0591755964) with order details and issue description."] },
+        { title: "1. Contact Support", paragraphs: ["Reach out via WhatsApp or call (+233509673406) with order details and issue description."] },
         { title: "2. Receive Instructions", paragraphs: ["Get clear guidance on return address, packaging, and labeling requirements."] },
         { title: "3. Shipping Cost Responsibility", paragraphs: ["We cover costs for our errors; customer covers other reasons."] },
         { title: "4. Inspection and Resolution", paragraphs: ["Item inspection followed by replacement or refund based on your preference."] },

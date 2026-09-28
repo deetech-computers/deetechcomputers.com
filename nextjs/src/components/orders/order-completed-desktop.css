@@ -1,7 +1,7 @@
 
 .order-completed-route .checkout-hero {
   padding: 16px 0 24px;
-  text-align: left;
+  text-align: center;
   display: grid;
   gap: 4px;
 }
@@ -15,6 +15,7 @@
   margin: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   color: #5b6660;
   font-size: 0.85rem;

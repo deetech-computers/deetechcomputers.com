@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import "./static-content-page-desktop.css";
 import "./static-content-page-mobile.css";
 
+const SUPPORT_WHATSAPP_URL = "https://wa.me/233509673406";
+
+function resolveSupportLink(link) {
+  if (link?.href === "/contact") {
+    return { ...link, href: SUPPORT_WHATSAPP_URL, external: true };
+  }
+  return link;
+}
+
 function PolicyContentBlock({ block }) {
   return (
     <article className="policy-content-block">
@@ -45,11 +54,11 @@ export default function StaticContentPage({ page }) {
           </svg>
         </button>
         <span className="policy-standalone__mobile-title">Policy Details</span>
-        <Link href="/contact" className="policy-standalone__mobile-icon" aria-label="Contact support">
+        <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noreferrer" className="policy-standalone__mobile-icon" aria-label="Chat with support on WhatsApp">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path d="M12 2.5c4 0 7.25 3.18 7.25 7.1 0 4.94-5.66 10.83-6.31 11.48a1.33 1.33 0 0 1-1.88 0C10.41 20.43 4.75 14.54 4.75 9.6 4.75 5.68 8 2.5 12 2.5Zm0 4.2a2.9 2.9 0 1 0 0 5.8 2.9 2.9 0 0 0 0-5.8Z" fill="currentColor" />
           </svg>
-        </Link>
+        </a>
       </header>
 
       <header className="policy-standalone__hero" role="banner">
@@ -122,18 +131,25 @@ export default function StaticContentPage({ page }) {
               <p key={paragraph}>{paragraph}</p>
             ))}
             <div className="policy-cta-actions">
-              {page.cta.links?.map((link) =>
-                link.external ? (
-                  <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link key={link.href} href={link.href}>
-                    {link.label}
-                  </Link>
-                )
-              )}
-              {page.cta.href && page.cta.label ? <Link href={page.cta.href}>{page.cta.label}</Link> : null}
+              {page.cta.links?.map((rawLink) => {
+                const link = resolveSupportLink(rawLink);
+                return (
+                  link.external ? (
+                    <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link key={link.href} href={link.href}>
+                      {link.label}
+                    </Link>
+                  )
+                );
+              })}
+              {page.cta.href && page.cta.label ? (
+                page.cta.href === "/contact" ? (
+                  <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noreferrer">{page.cta.label}</a>
+                ) : <Link href={page.cta.href}>{page.cta.label}</Link>
+              ) : null}
             </div>
           </section>
         ) : null}

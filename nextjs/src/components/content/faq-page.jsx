@@ -4,6 +4,8 @@ import Link from "next/link";
 import "./static-content-page-desktop.css";
 import "./static-content-page-mobile.css";
 
+const SUPPORT_WHATSAPP_URL = "https://wa.me/233509673406";
+
 const items = [
   ["What types of products do you offer?", "We offer laptops, desktops, monitors, accessories, networking gear, printers, gaming devices, and selected mobile devices based on current stock and verified quality."],
   ["How do I place an order?", "You can place an order directly on our website by selecting your preferred product, adding it to cart, and completing checkout. You can also contact us on WhatsApp if you want direct assistance before placing the order."],
@@ -26,7 +28,7 @@ const items = [
   ["What items are not eligible for return?", "Products damaged through customer misuse, software issues caused by user actions, and accessories without manufacturing faults are not eligible for return."],
   ["How does the DEETECH Affiliate Program work?", "Affiliates earn commission on qualified sales completed through their referral links or codes. You can visit the Affiliates page to learn more and get started."],
   ["When and how do affiliates get paid?", "Affiliate commissions are processed through mobile money or bank transfer once qualifying sales are confirmed and cleared."],
-  ["How do I contact customer support?", "You can contact us by email at deetechcomputers01@gmail.com, on WhatsApp at +233 591755964, or by phone at +233 509673406."],
+  ["How do I contact customer support?", "You can contact us by email at deetechcomputers01@gmail.com, on WhatsApp or by phone at +233 509673406."],
   ["What are your working hours?", "Our support and delivery team are available Monday to Saturday from 8:00 AM to 7:00 PM. Sunday responses may be delayed."],
   ["Where is DEETECH COMPUTERS located?", "Our main office is in Kumasi, and we serve customers across Ashanti Region and the rest of Ghana through nationwide delivery."],
 ].map(([question, answer]) => ({ question, answer }));
@@ -76,7 +78,7 @@ export default function FaqPage() {
           <h2>Need More Help?</h2>
           <p>Our support team can assist with product guidance, payment issues, delivery updates, and warranty requests.</p>
           <div className="policy-cta-actions">
-            <Link href="/contact">Contact Technical Support</Link>
+            <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noreferrer">Chat on WhatsApp</a>
             <a href="mailto:deetechcomputers01@gmail.com">Email Support Team</a>
           </div>
         </section>

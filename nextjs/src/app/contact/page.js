@@ -18,18 +18,22 @@ const contactCards = [
     detail: "Kumasi Adum, Asempa Building",
     subdetail: "Kumasi Bantama",
     icon: "location",
+    href: "https://maps.app.goo.gl/Cgx8pJ33qkUD9euf9",
+    external: true,
   },
   {
     title: "Phone",
     detail: "+233 509673406",
-    subdetail: "+233 591755964",
+    subdetail: "Call or WhatsApp support",
     icon: "phone",
+    href: "tel:+233509673406",
   },
   {
     title: "Email",
     detail: "deetechcomputers01@gmail.com",
     subdetail: "Replies during working hours",
     icon: "mail",
+    href: "mailto:deetechcomputers01@gmail.com",
   },
 ];
 
@@ -223,7 +227,13 @@ export default function ContactPage() {
             </p>
             <div className="contact-info-simple">
               {contactCards.map((item) => (
-                <article key={item.title} className="contact-info-simple__item">
+                <a
+                  key={item.title}
+                  className="contact-info-simple__item"
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noreferrer" : undefined}
+                >
                   <span className="contact-info-simple__icon">
                     <ContactIcon name={item.icon} />
                   </span>
@@ -231,9 +241,12 @@ export default function ContactPage() {
                     <strong>{item.detail}</strong>
                     <span>{item.subdetail}</span>
                   </div>
-                </article>
+                </a>
               ))}
             </div>
+            <a className="contact-page-simple__whatsapp" href="https://wa.me/233509673406" target="_blank" rel="noreferrer">
+              Contact Us on WhatsApp
+            </a>
           </div>
 
           <div className="contact-page-simple__right">

@@ -258,7 +258,7 @@ export default function SiteFooter() {
     {
       icon: "service",
       title: "After Sale Service",
-      subtitle: "Call: +233591755964",
+      subtitle: "Call: +233509673406",
     },
   ];
   const paymentMethods = [

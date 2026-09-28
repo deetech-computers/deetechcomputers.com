@@ -122,7 +122,7 @@ const page = {
           paragraphs: [
             "Data Protection Officer",
             "Email: deetechcomputers01@gmail.com",
-            "Phone: 0591755964",
+            "Phone: +233 509 673 406",
             "Business: DEETECH COMPUTERS (DEETEK 360 Enterprise)",
             "We respond promptly to all privacy-related inquiries.",
           ],
@@ -144,7 +144,7 @@ const page = {
     description: "Contact our Data Protection Officer for any privacy concerns or to exercise your rights.",
     links: [
       { href: "mailto:deetechcomputers01@gmail.com", label: "Email Data Protection Officer" },
-      { href: "https://wa.me/233591755964", label: "WhatsApp Support", external: true, secondary: true },
+      { href: "https://wa.me/233509673406", label: "WhatsApp Support", external: true, secondary: true },
     ],
   },
 };

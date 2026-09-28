@@ -419,11 +419,15 @@ export default function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    if (!mobileOpen) return undefined;
+    if (!mobileOpen && !cartDrawerOpen) return undefined;
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
-        setMobileOpen(false);
+        if (cartDrawerOpen) {
+          setCartDrawerOpen(false);
+        } else {
+          setMobileOpen(false);
+        }
       }
     };
 
@@ -450,7 +454,7 @@ export default function SiteHeader() {
       document.body.style.width = previousBodyWidth;
       window.scrollTo(0, scrollY);
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, cartDrawerOpen]);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -611,6 +615,7 @@ export default function SiteHeader() {
 
   useEffect(() => {
     const onCartItemAdded = () => {
+      setMobileOpen(false);
       setCartDrawerOpen(true);
       setWishlistMenuOpen(false);
       setAccountMenuOpen(false);
@@ -765,6 +770,11 @@ export default function SiteHeader() {
 
   function closeCartDrawer() {
     setCartDrawerOpen(false);
+  }
+
+  function toggleCartDrawer() {
+    setMobileOpen(false);
+    setCartDrawerOpen((current) => !current);
   }
 
   function navigateFromCartDrawer(event, href) {
@@ -1024,7 +1034,14 @@ export default function SiteHeader() {
   }
 
   const mobileMenu = mobileOpen ? (
-    <div id="mobile-navigation-menu" className="mobile-menu is-open" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+    <div className="mobile-menu-overlay">
+      <button
+        type="button"
+        className="mobile-menu__backdrop"
+        aria-label="Close menu"
+        onClick={() => setMobileOpen(false)}
+      />
+      <div id="mobile-navigation-menu" className="mobile-menu is-open" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <div className="mobile-menu__header">
         <button
           ref={mobileMenuCloseButtonRef}
@@ -1191,6 +1208,7 @@ export default function SiteHeader() {
               </>
             )}
       </nav>
+      </div>
     </div>
   ) : null;
 
@@ -1509,7 +1527,7 @@ export default function SiteHeader() {
                         setWishlistMenuOpen(false);
                         setAccountMenuOpen(false);
                         setNotificationMenuOpen(false);
-                        setCartDrawerOpen((current) => !current);
+                        toggleCartDrawer();
                       }}
                     >
                       <ActionIcon name="cart" />
@@ -1701,7 +1719,7 @@ export default function SiteHeader() {
                   setWishlistMenuOpen(false);
                   setAccountMenuOpen(false);
                   setNotificationMenuOpen(false);
-                  setCartDrawerOpen((current) => !current);
+                  toggleCartDrawer();
                 }}
                 >
                   <ActionIcon name="cart" />

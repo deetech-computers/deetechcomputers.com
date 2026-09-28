@@ -5,7 +5,7 @@ import { useRef } from "react";
 import StableImage from "@/components/ui/stable-image";
 import { API_BASE } from "@/lib/config";
 
-const SUPPORT_WHATSAPP_LINK = "https://wa.me/message/WEYXKNNA6KXXL1";
+const SUPPORT_WHATSAPP_LINK = "https://wa.me/233509673406";
 
 function formatMessageTime(value) {
   const date = value ? new Date(value) : null;

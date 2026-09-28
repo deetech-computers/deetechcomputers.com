@@ -173,12 +173,12 @@ const page = {
     description: "Contact us for clarification about our Terms of Use or to report concerns.",
     paragraphs: [
       "Email: deetechcomputers01@gmail.com",
-      "Phone: +233 059 175 5964",
-      "WhatsApp: +233 059 175 5964",
+      "Phone: +233 509 673 406",
+      "WhatsApp: +233 509 673 406",
     ],
     links: [
       { href: "mailto:deetechcomputers01@gmail.com", label: "Email Support" },
-      { href: "https://wa.me/233591755964", label: "WhatsApp Support", external: true, secondary: true },
+      { href: "https://wa.me/233509673406", label: "WhatsApp Support", external: true, secondary: true },
     ],
   },
 };

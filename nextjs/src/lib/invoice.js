@@ -1,7 +1,7 @@
 import { formatCurrency } from "@/lib/format";
 import { getLinePricing, getLinesDiscountTotal } from "@/lib/order-line-pricing";
 
-const SUPPORT_PHONE = "+233 591755964";
+const SUPPORT_PHONE = "+233 509673406";
 const SUPPORT_EMAIL = "deetechcomputers01@gmail.com";
 const COMPANY_NAME = "DEETECH COMPUTERS";
 

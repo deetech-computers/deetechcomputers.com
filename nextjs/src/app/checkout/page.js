@@ -514,7 +514,7 @@ export default function CheckoutPage() {
             <div className="checkout-help-card panel">
               <strong>Need help?</strong>
               <p>Our procurement specialists are available to assist with your order.</p>
-              <a href="tel:+233591755964">+233 59 175 5964</a>
+              <a href="tel:+233509673406">+233 50 967 3406</a>
             </div>
           </aside>
         </div>

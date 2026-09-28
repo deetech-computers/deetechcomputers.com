@@ -138,16 +138,16 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
         <form id="account-mobile-personal-form" className="account-mobile-personal__form" onSubmit={onSubmit}>
           <label>
             <span>First Name</span>
-            <input value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
+            <input value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} placeholder="Enter first name" required />
           </label>
           <label>
             <span>Last Name</span>
-            <input value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} required />
+            <input value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} placeholder="Enter last name" required />
           </label>
           <label>
             <span>Email Address</span>
             <div className="account-mobile-personal__readonly">
-              <input value={form.email} readOnly disabled />
+              <input value={form.email} placeholder="Email address" readOnly disabled />
               <MobilePersonalIcon name="lock" />
             </div>
             <small>Email cannot be changed after account verification.</small>
@@ -156,7 +156,7 @@ export default function MobilePersonalInfo({ form, onFieldChange, onSubmit, subm
             <span>Phone Number</span>
             <div className="account-mobile-personal__phone">
               <MobilePersonalIcon name="phone" />
-              <input value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} required />
+              <input value={form.phone} onChange={(event) => onFieldChange("phone", event.target.value)} placeholder="+233 XX XXX XXXX" required />
             </div>
           </label>
         </form>

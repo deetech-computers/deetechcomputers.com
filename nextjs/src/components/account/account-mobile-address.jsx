@@ -142,7 +142,7 @@ export default function MobileAddress({ form, onFieldChange, onSubmit, submittin
             <label className="is-full">
               <span>Email Address</span>
               <div className="account-mobile-address__readonly">
-                <input value={form.email} readOnly disabled />
+                <input value={form.email} placeholder="Email address" readOnly disabled />
                 <MobileAddressIcon name="lock" />
               </div>
               <small>Email is linked to your account security and cannot be changed here.</small>

@@ -67,7 +67,7 @@ const ALLOWED_ACCOUNT_TABS = new Set([
   "logout",
 ]);
 
-const SUPPORT_WHATSAPP_LINK = "https://wa.me/message/WEYXKNNA6KXXL1";
+const SUPPORT_WHATSAPP_LINK = "https://wa.me/233509673406";
 
 function normalizeAccountTab(value) {
   return ALLOWED_ACCOUNT_TABS.has(value) ? value : "personal";
@@ -754,16 +754,16 @@ function PersonalSection({ form, onFieldChange, onSubmit, submitting, onAvatarUp
       <form className="account-dashboard__form account-personal-form account-personal-card" onSubmit={onSubmit}>
         <label className="account-dashboard__field account-personal-field">
           <span>First Name <small>*</small></span>
-          <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} required />
+          <input className="field" value={form.firstName} onChange={(event) => onFieldChange("firstName", event.target.value)} placeholder="Enter first name" required />
         </label>
         <label className="account-dashboard__field account-personal-field">
           <span>Last Name <small>*</small></span>
-          <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} required />
+          <input className="field" value={form.lastName} onChange={(event) => onFieldChange("lastName", event.target.value)} placeholder="Enter last name" required />
         </label>
         <label className="account-dashboard__field account-dashboard__field--full account-personal-field account-personal-field--readonly">
           <span>Email Address <small>*</small></span>
           <div className="account-readonly-input">
-            <input className="field disabled-field" value={form.email} disabled />
+            <input className="field disabled-field" value={form.email} placeholder="Email address" disabled />
             <em aria-hidden="true">Lock</em>
           </div>
           <small>Email is read-only for account security.</small>
@@ -1003,7 +1003,7 @@ function AddressSection({ form, onFieldChange, onSubmit, onClear, submitting }) 
         </label>
         <label className="account-dashboard__field account-dashboard__field--full">
           <span>Email Address (Read-only)</span>
-          <input className="field disabled-field" value={form.email} disabled />
+          <input className="field disabled-field" value={form.email} placeholder="Email address" disabled />
         </label>
         <div className="account-address-actions">
           <button type="submit" className="primary-button account-dashboard__submit" disabled={submitting}>
