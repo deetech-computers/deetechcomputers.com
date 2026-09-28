@@ -1,10 +1,10 @@
 
 @media (max-width: 700px) {
   .shell.has-affiliate-mobile-dashboard {
-    width: min(100%, calc(100vw - 24px));
-    max-width: 480px;
+    width: 100%;
+    max-width: none;
     box-sizing: border-box;
-    margin-inline: auto;
+    margin-inline: 0;
     padding-inline: 0;
     overflow-x: clip;
   }
