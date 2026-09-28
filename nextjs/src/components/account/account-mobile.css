@@ -2239,21 +2239,28 @@
   }
   .account-mobile-wishlist__nav {
     display: flex;
-    min-height: 48px;
+    min-height: 54px;
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid #e8e0d4;
     background: #ffffff;
   }
   .account-mobile-wishlist__nav a {
-    display: inline-flex;
-    min-height: 48px;
+    display: flex;
+    width: 100%;
+    min-height: 54px;
     align-items: center;
-    padding: 0 16px;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
     color: #003714;
     font-size: 0.88rem;
     font-weight: 900;
     text-decoration: none;
+  }
+  .account-mobile-wishlist__nav .account-mobile-wishlist__icon {
+    width: 17px;
+    height: 17px;
   }
   .account-mobile-wishlist__nav a:hover,
   .account-mobile-wishlist__nav a:focus-visible {

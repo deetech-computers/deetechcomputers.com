@@ -19,6 +19,12 @@ function MobileWishlistIcon({ name }) {
         <path d="m12 19-7-7 7-7" />
       </>
     ),
+    arrowRight: (
+      <>
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </>
+    ),
     user: (
       <>
         <circle cx="12" cy="8" r="4" />
@@ -105,11 +111,12 @@ export default function MobileWishlist({ items }) {
         </span>
       </header>
 
-      {hasItems ? (
-        <nav className="account-mobile-wishlist__nav" aria-label="Wishlist navigation">
-          <Link href="/wishlist">Open Wishlist</Link>
-        </nav>
-      ) : null}
+      <nav className="account-mobile-wishlist__nav" aria-label="Wishlist navigation">
+        <Link href="/wishlist">
+          <span>Open Wishlist</span>
+          <MobileWishlistIcon name="arrowRight" />
+        </Link>
+      </nav>
 
       <div className={hasItems ? "account-mobile-wishlist__body" : "account-mobile-wishlist__body is-empty"}>
         {hasItems ? <p>A mini wishlist preview linked to your main saved-products page.</p> : null}
