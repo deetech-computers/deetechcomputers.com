@@ -105,6 +105,12 @@ export default function MobileWishlist({ items }) {
         </span>
       </header>
 
+      {hasItems ? (
+        <nav className="account-mobile-wishlist__nav" aria-label="Wishlist navigation">
+          <Link href="/wishlist">Open Wishlist</Link>
+        </nav>
+      ) : null}
+
       <div className={hasItems ? "account-mobile-wishlist__body" : "account-mobile-wishlist__body is-empty"}>
         {hasItems ? <p>A mini wishlist preview linked to your main saved-products page.</p> : null}
 
@@ -158,11 +164,6 @@ export default function MobileWishlist({ items }) {
         )}
       </div>
 
-      {hasItems ? (
-        <div className="account-mobile-wishlist__submit">
-          <Link href="/wishlist">Open Wishlist</Link>
-        </div>
-      ) : null}
     </section>
   );
 }
