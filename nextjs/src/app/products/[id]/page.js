@@ -125,7 +125,7 @@ function formatDateTime(value) {
 
 const SOCIAL_LINKS = [
   { label: "TikTok", href: "https://www.tiktok.com/@deetech.computers?_r=1&_t=ZS-94rKFc7vpAr", icon: "tiktok" },
-  { label: "WhatsApp", href: "https://wa.me/message/WEYXKNNA6KXXL1", icon: "whatsapp" },
+  { label: "WhatsApp", href: "https://wa.me/233509673406", icon: "whatsapp" },
   { label: "Facebook", href: "https://www.facebook.com/share/19NkhoTCdi/?mibextid=wwXIfr", icon: "facebook" },
   { label: "Instagram", href: "https://www.instagram.com/deetechcomputers1/", icon: "instagram" },
 ];
